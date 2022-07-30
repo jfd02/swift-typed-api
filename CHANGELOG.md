@@ -1,5 +1,22 @@
 # CreateAPI 0.x
 
+## 0.0.5
+
+### July 30, 2022
+
+* Support Linux by @liamnichols in [#43](https://github.com/CreateAPI/CreateAPI/pull/43)
+* Update Makefile by @liamnichols in [#54](https://github.com/CreateAPI/CreateAPI/pull/54)
+* Update generator code to point to https://github.com/kean/Get and not CreateAPI/Get by @liamnichols in [#51](https://github.com/CreateAPI/CreateAPI/pull/51)
+* Remove main.swift and mark CreateAPI as @main type directly by @liamnichols in [#49](https://github.com/CreateAPI/CreateAPI/pull/49)
+* Fix comment generation when using other kind of linebreaks by @liamnichols in [#46](https://github.com/CreateAPI/CreateAPI/pull/46)
+* Support automatically generating `Identifiable` conformance on entities by @LePips in [#61](https://github.com/CreateAPI/CreateAPI/pull/61)
+* Tests - Automatic Path Finding and Remove Environment Variables by @LePips in [#62](https://github.com/CreateAPI/CreateAPI/pull/62)
+* Single source of truth for configuration options by @liamnichols in [#51](https://github.com/CreateAPI/CreateAPI/pull/52)
+* Update README and use new CreateOptions module by @liamnichols in [#65](https://github.com/CreateAPI/CreateAPI/pull/65)
+* Produce an artifactbundle when making releases  by @liamnichols in [#67](https://github.com/CreateAPI/CreateAPI/pull/67)
+
+**Full Changelog**: https://github.com/CreateAPI/CreateAPI/compare/0.0.4...0.0.5
+
 ## 0.0.4
 
 ### June 10, 2022
