@@ -1,6 +1,7 @@
-// Generated using Sourcery 1.8.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.8.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
+// swiftlint:disable all
 
 extension ConfigOptions: Decodable {
     enum KnownKeys: String {

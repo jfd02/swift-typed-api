@@ -1,5 +1,7 @@
 import Foundation
 
+// swiftlint:disable redundant_optional_initialization
+
 // The `ConfigOptions` type defined in this source file serves multiple purposes:
 //
 // 1. A Decodable type that can deserialize the .create-api.yaml options
