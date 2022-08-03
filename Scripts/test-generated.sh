@@ -1,7 +1,6 @@
 #!/bin/sh
 
-set -eo pipefail
+set -e
 
-cd ./Tests
-xcodebuild clean
-xcodebuild build -scheme 'GeneratedPackages' -destination "generic/platform=iOS Simulator"
+cd ./Tests/CreateAPITests/AllPackages
+swift build
