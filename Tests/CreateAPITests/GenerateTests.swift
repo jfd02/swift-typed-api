@@ -13,7 +13,7 @@ final class GenerateTests: GenerateBaseTests {
     func testInlining() throws {
         try testSpec(name: "inlining", ext: "yaml", package: "inlining-default", config: """
         entities:
-          isInliningPropertiesFromReferencedSchemas: true
+          inlineReferencedSchemas: true
           entitiesGeneratedAsClasses:
             - Letter
         """)

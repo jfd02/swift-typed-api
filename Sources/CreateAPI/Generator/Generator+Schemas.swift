@@ -162,7 +162,7 @@ extension Generator {
 
     func makeDeclaration(name: TypeName, schema: JSONSchema, context: Context) throws -> Declaration? {
         let declaration = try _makeDeclaration(name: name, schema: schema, context: context)
-        if options.isInliningTypealiases, let alias = declaration as? TypealiasDeclaration {
+        if options.inlineTypealiases, let alias = declaration as? TypealiasDeclaration {
             return alias.nested
         }
         return declaration
@@ -219,7 +219,7 @@ extension Generator {
     }
 
     private func getIntegerType(for info: JSONSchema.CoreContext<JSONTypeFormat.IntegerFormat>) -> TypeIdentifier {
-        guard options.isUsingIntegersWithPredefinedCapacity else {
+        guard options.useIntegersWithPredefinedCapacity else {
             return .builtin("Int")
         }
         switch info.format {
@@ -232,7 +232,7 @@ extension Generator {
     private func getStringType(for info: JSONSchema.CoreContext<JSONTypeFormat.StringFormat>) -> TypeIdentifier {
         switch info.format {
         case .dateTime: return .builtin("Date")
-        case .date: if options.isNaiveDateEnabled {
+        case .date: if options.useNaiveDate {
             setNaiveDateNeeded()
             return .builtin("NaiveDate")
         }
@@ -264,7 +264,7 @@ extension Generator {
         // Note: while dereferencing, it does it recursively.
         // So if you have `typealias Pets = [Pet]`, it'll dereference
         // `Pet` to an `.object`, not a `.reference`.
-        if options.isInliningTypealiases, let name = ref.name {
+        if options.inlineTypealiases, let name = ref.name {
             // Check if the schema can be expanded into a type identifier
             let type = makeTypeName(name)
             if let key = OpenAPI.ComponentKey(rawValue: name),
@@ -323,12 +323,12 @@ extension Generator {
 
     private func getProtocols(for entity: EntityDeclaration, context: Context) -> Protocols {
         var protocols = Protocols(options.entities.protocols)
-        let isDecodable = protocols.isDecodable && (context.isDecodableNeeded || !options.entities.isSkippingRedundantProtocols)
-        let isEncodable = protocols.isEncodable && (context.isEncodableNeeded || !options.entities.isSkippingRedundantProtocols)
+        let isDecodable = protocols.isDecodable && (context.isDecodableNeeded || !options.entities.skipRedundantProtocols)
+        let isEncodable = protocols.isEncodable && (context.isEncodableNeeded || !options.entities.skipRedundantProtocols)
         if !isDecodable { protocols.removeDecodable() }
         if !isEncodable { protocols.removeEncodable() }
 
-        if options.entities.isGeneratingIdentifiableConformance {
+        if options.entities.identifiableConformance {
             let isIdentifiable = entity.properties.contains { $0.name.rawValue == "id" && $0.type.isBuiltin }
             if isIdentifiable { protocols.insert("Identifiable") }
         }
@@ -338,7 +338,7 @@ extension Generator {
 
     private func makeInlineProperties(for type: TypeName, object: JSONSchema.ObjectContext, context: Context) throws -> [Property] {
         var keys = object.properties.keys
-        if options.entities.isSortingPropertiesAlphabetically { keys.sort() }
+        if options.entities.sortPropertiesAlphabetically { keys.sort() }
         return try keys.compactMap { key in
             let schema = object.properties[key]!
             let isRequired = object.requiredProperties.contains(key)
@@ -524,7 +524,7 @@ extension Generator {
                 // Inline properties for nested objects (different from other OpenAPI constructs)
                 return try makeInlineProperties(for: name, object: details, context: context)
             case .reference(let info, _ ):
-                if options.entities.isInliningPropertiesFromReferencedSchemas,
+                if options.entities.inlineReferencedSchemas,
                    let schema = getSchema(for: info),
                    case .object(_, let details) = schema.value {
                     return try makeInlineProperties(for: name, object: details, context: context)
@@ -605,7 +605,7 @@ extension Generator {
             } else {
                 name = makePropertyName(type.components(separatedBy: ".").last ?? "").rawValue
             }
-            guard options.isPluralizationEnabled else { return name }
+            guard options.pluralizeProperties else { return name }
             let isArray = type.starts(with: "[") && !type.contains( ":") // TODO: Refactor
             return isArray ? name.pluralized() : name
         }
@@ -661,7 +661,7 @@ extension Generator {
     }
 
     private func isEnum(_ info: JSONSchemaContext) -> Bool {
-        options.isGeneratingEnums && info.allowedValues != nil
+        options.generateEnums && info.allowedValues != nil
     }
 
     // MARK: - Property
@@ -700,7 +700,7 @@ extension Generator {
         ``` 
 
         */
-        if options.entities.isStrippingParentNameInNestedObjects,
+        if options.entities.stripParentNameInNestedObjects,
             case .reference(let ref, _) = schema.value,
             let parentName = context.parents.first?.name.rawValue,
             let ownName = ref.name {
@@ -720,7 +720,7 @@ extension Generator {
                     }
                 }
             }
-            if let type = type, options.isGeneratingSwiftyBooleanPropertyNames && type.isBool {
+            if let type = type, options.useSwiftyPropertyNames && type.isBool {
                 return name.asBoolean(options)
             }
             return name
@@ -731,11 +731,11 @@ extension Generator {
             let name = makeName(for: propertyName, type: type)
             let isOptional = !isRequired || nullable
             var type = type
-            if context.isPatch && isOptional && options.paths.isMakingOptionalPatchParametersDoubleOptional {
+            if context.isPatch && isOptional && options.paths.makeOptionalPatchParametersDoubleOptional {
                 type = type.asPatchParameter()
             }
             var defaultValue: String?
-            if options.entities.isAddingDefaultValues {
+            if options.entities.defaultValues {
                 if type.isBool {
                     defaultValue = (info?.defaultValue?.value as? Bool).map { $0 ? "true" : "false" }
                 }

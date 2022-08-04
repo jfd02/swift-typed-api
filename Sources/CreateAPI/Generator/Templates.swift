@@ -23,7 +23,7 @@ final class Templates {
     ///         <contents>
     ///     }
     func entity(name: TypeName, contents: [String], protocols: Protocols) -> String {
-        let isStruct = (options.entities.isGeneratingStructs && !options.entities.entitiesGeneratedAsClasses.contains(name.rawValue)) || (options.entities.entitiesGeneratedAsStructs.contains(name.rawValue))
+        let isStruct = (options.entities.generateStructs && !options.entities.entitiesGeneratedAsClasses.contains(name.rawValue)) || (options.entities.entitiesGeneratedAsStructs.contains(name.rawValue))
         return isStruct ? self.struct(name: name, contents: contents, protocols: protocols) : self.class(name: name, contents: contents, protocols: protocols)
     }
 
@@ -34,7 +34,7 @@ final class Templates {
     }
 
     func `class`(name: TypeName, contents: [String], protocols: Protocols) -> String {
-        let type = options.entities.isMakingClassesFinal ? "final class" : "class"
+        let type = options.entities.finalClasses ? "final class" : "class"
         let lhs = [options.access, type, name.rawValue].filter { !$0.isEmpty }
         let rhs = ([options.entities.baseClass] + protocols.sorted()).compactMap { $0 }
         return declaration(lhs: lhs, rhs: rhs, contents: contents)
@@ -485,7 +485,7 @@ final class Templates {
             // I tried to use `seealso`, but Xcode doesn't render it
             output += "/// [\(metadata.externalDocsDescription ?? "External Documentation")](\(docsURL.absoluteString))\n"
         }
-        if self.options.isAddingDeprecations, metadata.isDeprecated {
+        if self.options.annotateDeprecations, metadata.isDeprecated {
             // We can't mark properties deprecated because then initialier and
             // encoder will start throwing warnings.
             if isProperty {
@@ -549,7 +549,7 @@ final class Templates {
                 output += "/// \(line)\n"
             }
         }
-        if options.isAddingDeprecations, header.deprecated {
+        if options.annotateDeprecations, header.deprecated {
             output += deprecated
         }
         output += """

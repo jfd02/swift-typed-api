@@ -6,18 +6,18 @@
 extension ConfigOptions: Decodable {
     enum KnownKeys: String {
         case access
-        case isAddingDeprecations
-        case isGeneratingEnums
-        case isGeneratingSwiftyBooleanPropertyNames
-        case isInliningTypealiases
+        case annotateDeprecations
+        case generateEnums
+        case useSwiftyPropertyNames
+        case inlineTypealiases
         case isReplacingCommonAcronyms
         case addedAcronyms
         case ignoredAcronyms
         case indentation
         case spaceWidth
-        case isPluralizationEnabled
-        case isNaiveDateEnabled
-        case isUsingIntegersWithPredefinedCapacity
+        case pluralizeProperties
+        case useNaiveDate
+        case useIntegersWithPredefinedCapacity
         case isSwiftLintDisabled
         case fileHeaderComment
         case comments
@@ -34,23 +34,23 @@ extension ConfigOptions: Decodable {
             defaultValue: "public"
         )
 
-        isAddingDeprecations = try container.decode(Bool.self,
-            forKey: .isAddingDeprecations,
+        annotateDeprecations = try container.decode(Bool.self,
+            forKey: .annotateDeprecations,
             defaultValue: true
         )
 
-        isGeneratingEnums = try container.decode(Bool.self,
-            forKey: .isGeneratingEnums,
+        generateEnums = try container.decode(Bool.self,
+            forKey: .generateEnums,
             defaultValue: true
         )
 
-        isGeneratingSwiftyBooleanPropertyNames = try container.decode(Bool.self,
-            forKey: .isGeneratingSwiftyBooleanPropertyNames,
+        useSwiftyPropertyNames = try container.decode(Bool.self,
+            forKey: .useSwiftyPropertyNames,
             defaultValue: true
         )
 
-        isInliningTypealiases = try container.decode(Bool.self,
-            forKey: .isInliningTypealiases,
+        inlineTypealiases = try container.decode(Bool.self,
+            forKey: .inlineTypealiases,
             defaultValue: true
         )
 
@@ -79,18 +79,18 @@ extension ConfigOptions: Decodable {
             defaultValue: 4
         )
 
-        isPluralizationEnabled = try container.decode(Bool.self,
-            forKey: .isPluralizationEnabled,
+        pluralizeProperties = try container.decode(Bool.self,
+            forKey: .pluralizeProperties,
             defaultValue: true
         )
 
-        isNaiveDateEnabled = try container.decode(Bool.self,
-            forKey: .isNaiveDateEnabled,
+        useNaiveDate = try container.decode(Bool.self,
+            forKey: .useNaiveDate,
             defaultValue: true
         )
 
-        isUsingIntegersWithPredefinedCapacity = try container.decode(Bool.self,
-            forKey: .isUsingIntegersWithPredefinedCapacity,
+        useIntegersWithPredefinedCapacity = try container.decode(Bool.self,
+            forKey: .useIntegersWithPredefinedCapacity,
             defaultValue: false
         )
 
@@ -128,6 +128,13 @@ extension ConfigOptions: Decodable {
             deprecations: [
             ],
             replacements: [
+                ("isAddingDeprecations", "Use 'annotateDeprecations' instead."),
+                ("isGeneratingEnums", "Use 'generateEnums' instead."),
+                ("isGeneratingSwiftyBooleanPropertyNames", "Use 'useSwiftyPropertyNames' instead."),
+                ("isInliningTypealiases", "Use 'inlineTypealiases' instead."),
+                ("isPluralizationEnabled", "Use 'pluralizeProperties' instead."),
+                ("isNaiveDateEnabled", "Use 'useNaiveDate' instead."),
+                ("isUsingIntegersWithPredefinedCapacity", "Use 'useIntegersWithPredefinedCapacity' instead."),
             ]
         )
     }
@@ -187,26 +194,26 @@ extension ConfigOptions.Comments: Decodable {
 
 extension ConfigOptions.Entities: Decodable {
     enum KnownKeys: String {
-        case isGeneratingStructs
+        case generateStructs
         case entitiesGeneratedAsClasses
         case entitiesGeneratedAsStructs
         case imports
-        case isMakingClassesFinal
-        case isGeneratingMutableClassProperties
-        case isGeneratingMutableStructProperties
+        case finalClasses
+        case mutableClassProperties
+        case mutableStructProperties
         case baseClass
         case protocols
-        case isGeneratingIdentifiableConformance
-        case isSkippingRedundantProtocols
-        case isGeneratingInitializers
-        case isGeneratingInitWithDecoder
-        case isGeneratingEncodeWithEncoder
-        case isSortingPropertiesAlphabetically
-        case isGeneratingCustomCodingKeys
-        case isAddingDefaultValues
-        case isInliningPropertiesFromReferencedSchemas
+        case identifiableConformance
+        case skipRedundantProtocols
+        case includeInitializer
+        case alwaysIncludeDecodableImplementation
+        case alwaysIncludeEncodableImplementation
+        case sortPropertiesAlphabetically
+        case optimizeCodingKeys
+        case defaultValues
+        case inlineReferencedSchemas
         case isAdditionalPropertiesOnByDefault
-        case isStrippingParentNameInNestedObjects
+        case stripParentNameInNestedObjects
         case exclude
         case include
     }
@@ -214,8 +221,8 @@ extension ConfigOptions.Entities: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try StringCodingContainer<KnownKeys>(decoder: decoder)
 
-        isGeneratingStructs = try container.decode(Bool.self,
-            forKey: .isGeneratingStructs,
+        generateStructs = try container.decode(Bool.self,
+            forKey: .generateStructs,
             defaultValue: true
         )
 
@@ -234,18 +241,18 @@ extension ConfigOptions.Entities: Decodable {
             defaultValue: []
         )
 
-        isMakingClassesFinal = try container.decode(Bool.self,
-            forKey: .isMakingClassesFinal,
+        finalClasses = try container.decode(Bool.self,
+            forKey: .finalClasses,
             defaultValue: true
         )
 
-        isGeneratingMutableClassProperties = try container.decode(Bool.self,
-            forKey: .isGeneratingMutableClassProperties,
+        mutableClassProperties = try container.decode(Bool.self,
+            forKey: .mutableClassProperties,
             defaultValue: false
         )
 
-        isGeneratingMutableStructProperties = try container.decode(Bool.self,
-            forKey: .isGeneratingMutableStructProperties,
+        mutableStructProperties = try container.decode(Bool.self,
+            forKey: .mutableStructProperties,
             defaultValue: true
         )
 
@@ -259,48 +266,48 @@ extension ConfigOptions.Entities: Decodable {
             defaultValue: ["Codable"]
         )
 
-        isGeneratingIdentifiableConformance = try container.decode(Bool.self,
-            forKey: .isGeneratingIdentifiableConformance,
+        identifiableConformance = try container.decode(Bool.self,
+            forKey: .identifiableConformance,
             defaultValue: false
         )
 
-        isSkippingRedundantProtocols = try container.decode(Bool.self,
-            forKey: .isSkippingRedundantProtocols,
+        skipRedundantProtocols = try container.decode(Bool.self,
+            forKey: .skipRedundantProtocols,
             defaultValue: true
         )
 
-        isGeneratingInitializers = try container.decode(Bool.self,
-            forKey: .isGeneratingInitializers,
+        includeInitializer = try container.decode(Bool.self,
+            forKey: .includeInitializer,
             defaultValue: true
         )
 
-        isGeneratingInitWithDecoder = try container.decode(Bool.self,
-            forKey: .isGeneratingInitWithDecoder,
+        alwaysIncludeDecodableImplementation = try container.decode(Bool.self,
+            forKey: .alwaysIncludeDecodableImplementation,
             defaultValue: true
         )
 
-        isGeneratingEncodeWithEncoder = try container.decode(Bool.self,
-            forKey: .isGeneratingEncodeWithEncoder,
+        alwaysIncludeEncodableImplementation = try container.decode(Bool.self,
+            forKey: .alwaysIncludeEncodableImplementation,
             defaultValue: true
         )
 
-        isSortingPropertiesAlphabetically = try container.decode(Bool.self,
-            forKey: .isSortingPropertiesAlphabetically,
+        sortPropertiesAlphabetically = try container.decode(Bool.self,
+            forKey: .sortPropertiesAlphabetically,
             defaultValue: false
         )
 
-        isGeneratingCustomCodingKeys = try container.decode(Bool.self,
-            forKey: .isGeneratingCustomCodingKeys,
+        optimizeCodingKeys = try container.decode(Bool.self,
+            forKey: .optimizeCodingKeys,
+            defaultValue: false
+        )
+
+        defaultValues = try container.decode(Bool.self,
+            forKey: .defaultValues,
             defaultValue: true
         )
 
-        isAddingDefaultValues = try container.decode(Bool.self,
-            forKey: .isAddingDefaultValues,
-            defaultValue: true
-        )
-
-        isInliningPropertiesFromReferencedSchemas = try container.decode(Bool.self,
-            forKey: .isInliningPropertiesFromReferencedSchemas,
+        inlineReferencedSchemas = try container.decode(Bool.self,
+            forKey: .inlineReferencedSchemas,
             defaultValue: false
         )
 
@@ -309,8 +316,8 @@ extension ConfigOptions.Entities: Decodable {
             defaultValue: true
         )
 
-        isStrippingParentNameInNestedObjects = try container.decode(Bool.self,
-            forKey: .isStrippingParentNameInNestedObjects,
+        stripParentNameInNestedObjects = try container.decode(Bool.self,
+            forKey: .stripParentNameInNestedObjects,
             defaultValue: false
         )
 
@@ -328,6 +335,20 @@ extension ConfigOptions.Entities: Decodable {
             deprecations: [
             ],
             replacements: [
+                ("isGeneratingStructs", "Use 'generateStructs' instead."),
+                ("isMakingClassesFinal", "Use 'finalClasses' instead."),
+                ("isGeneratingMutableClassProperties", "Use 'mutableClassProperties' instead."),
+                ("isGeneratingMutableStructProperties", "Use 'mutableStructProperties' instead."),
+                ("isGeneratingIdentifiableConformance", "Use 'identifiableConformance' instead."),
+                ("isSkippingRedundantProtocols", "Use 'skipRedundantProtocols' instead."),
+                ("isGeneratingInitializers", "Use 'includeInitializer' instead."),
+                ("isGeneratingInitWithDecoder", "Use 'alwaysIncludeDecodableImplementation' instead."),
+                ("isGeneratingEncodeWithEncoder", "Use 'alwaysIncludeEncodableImplementation' instead."),
+                ("isSortingPropertiesAlphabetically", "Use 'sortPropertiesAlphabetically' instead."),
+                ("isGeneratingCustomCodingKeys", "Use 'optimizeCodingKeys' instead."),
+                ("isAddingDefaultValues", "Use 'defaultValues' instead."),
+                ("isInliningPropertiesFromReferencedSchemas", "Use 'inlineReferencedSchemas' instead."),
+                ("isStrippingParentNameInNestedObjects", "Use 'stripParentNameInNestedObjects' instead."),
             ]
         )
     }
@@ -337,16 +358,16 @@ extension ConfigOptions.Paths: Decodable {
     enum KnownKeys: String {
         case style
         case namespace
-        case isGeneratingResponseHeaders
+        case generateResponseHeaders
         case isAddingOperationIds
         case imports
         case overriddenResponses
         case overriddenBodyTypes
-        case isInliningSimpleRequests
-        case isInliningSimpleQueryParameters
+        case inlineSimpleRequests
+        case inlineSimpleQueryParameters
         case simpleQueryParametersThreshold
-        case isMakingOptionalPatchParametersDoubleOptional
-        case isRemovingRedundantPaths
+        case makeOptionalPatchParametersDoubleOptional
+        case removeRedundantPaths
         case exclude
         case include
     }
@@ -364,8 +385,8 @@ extension ConfigOptions.Paths: Decodable {
             defaultValue: "Paths"
         )
 
-        isGeneratingResponseHeaders = try container.decode(Bool.self,
-            forKey: .isGeneratingResponseHeaders,
+        generateResponseHeaders = try container.decode(Bool.self,
+            forKey: .generateResponseHeaders,
             defaultValue: true
         )
 
@@ -389,13 +410,13 @@ extension ConfigOptions.Paths: Decodable {
             defaultValue: [:]
         )
 
-        isInliningSimpleRequests = try container.decode(Bool.self,
-            forKey: .isInliningSimpleRequests,
+        inlineSimpleRequests = try container.decode(Bool.self,
+            forKey: .inlineSimpleRequests,
             defaultValue: true
         )
 
-        isInliningSimpleQueryParameters = try container.decode(Bool.self,
-            forKey: .isInliningSimpleQueryParameters,
+        inlineSimpleQueryParameters = try container.decode(Bool.self,
+            forKey: .inlineSimpleQueryParameters,
             defaultValue: true
         )
 
@@ -404,13 +425,13 @@ extension ConfigOptions.Paths: Decodable {
             defaultValue: 2
         )
 
-        isMakingOptionalPatchParametersDoubleOptional = try container.decode(Bool.self,
-            forKey: .isMakingOptionalPatchParametersDoubleOptional,
+        makeOptionalPatchParametersDoubleOptional = try container.decode(Bool.self,
+            forKey: .makeOptionalPatchParametersDoubleOptional,
             defaultValue: false
         )
 
-        isRemovingRedundantPaths = try container.decode(Bool.self,
-            forKey: .isRemovingRedundantPaths,
+        removeRedundantPaths = try container.decode(Bool.self,
+            forKey: .removeRedundantPaths,
             defaultValue: true
         )
 
@@ -428,8 +449,13 @@ extension ConfigOptions.Paths: Decodable {
             deprecations: [
             ],
             replacements: [
+                ("isGeneratingResponseHeaders", "Use 'generateResponseHeaders' instead."),
                 ("overridenResponses", "Use 'overriddenResponses' instead."),
                 ("overridenBodyTypes", "Use 'overriddenBodyTypes' instead."),
+                ("isInliningSimpleRequests", "Use 'inlineSimpleRequests' instead."),
+                ("isInliningSimpleQueryParameters", "Use 'inlineSimpleQueryParameters' instead."),
+                ("isMakingOptionalPatchParametersDoubleOptional", "Use 'makeOptionalPatchParametersDoubleOptional' instead."),
+                ("isRemovingRedundantPaths", "Use 'removeRedundantPaths' instead."),
             ]
         )
     }

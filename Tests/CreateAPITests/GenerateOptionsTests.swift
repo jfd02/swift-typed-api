@@ -153,7 +153,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--config", config("""
             {
                 "entities": {
-                    "isGeneratingStructs": false
+                    "generateStructs": false
                 }
             }
             """)
@@ -197,7 +197,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--config", config("""
             {
                 "entities": {
-                    "isGeneratingStructs": false,
+                    "generateStructs": false,
                     "entitiesGeneratedAsStructs": ["Error"]
                 }
             }
@@ -220,7 +220,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--config", config("""
             {
                 "entities": {
-                    "isGeneratingStructs": false,
+                    "generateStructs": false,
                     "baseClass": "NSObject"
                 }
             }
@@ -265,7 +265,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--config", config("""
             {
                 "entities": {
-                    "isGeneratingInitWithDecoder": false
+                    "alwaysIncludeDecodableImplementation": false
                 }
             }
             """)
@@ -286,7 +286,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "petstore-disable-inlining",
             "--config", config("""
             {
-                "isInliningTypealiases": false
+                "inlineTypealiases": false
             }
             """)
         ])
@@ -309,8 +309,8 @@ final class GenerateOptionsTests: GenerateBaseTests {
             {
                 "entities": {
                     "entitiesGeneratedAsClasses": ["Store"],
-                    "isGeneratingMutableClassProperties": false,
-                    "isGeneratingMutableStructProperties": false
+                    "mutableClassProperties": false,
+                    "mutableStructProperties": false
                 }
             }
             """)
@@ -334,8 +334,8 @@ final class GenerateOptionsTests: GenerateBaseTests {
             {
                 "entities": {
                     "entitiesGeneratedAsClasses": ["Store"],
-                    "isGeneratingMutableClassProperties": true,
-                    "isGeneratingMutableStructProperties": true
+                    "mutableClassProperties": true,
+                    "mutableStructProperties": true
                 }
             }
             """)
@@ -503,7 +503,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "edgecases-disable-enums",
             "--config", config("""
             {
-                "isGeneratingEnums": false
+                "generateEnums": false
             }
             """)
         ])
@@ -592,7 +592,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "edgecases-int32-int64",
             "--config", config("""
             {
-                "isUsingIntegersWithPredefinedCapacity": true
+                "useIntegersWithPredefinedCapacity": true
             }
             """)
         ])
@@ -612,7 +612,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "edgecases-coding-keys",
             "--config", config("""
             entities:
-                isGeneratingCustomCodingKeys: false
+                optimizeCodingKeys: true
             """, ext: "yaml")
         ])
                 
@@ -631,7 +631,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "strip-parent-name-nested-objects-enabled",
             "--config", config("""
             entities:
-                isStrippingParentNameInNestedObjects: true
+                stripParentNameInNestedObjects: true
             """, ext: "yaml")
         ])
                 
@@ -666,7 +666,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--generate", "entities",
             "--config", config("""
             entities:
-                isGeneratingIdentifiableConformance: true
+                identifiableConformance: true
             rename:
                 properties:
                     Error.code: id

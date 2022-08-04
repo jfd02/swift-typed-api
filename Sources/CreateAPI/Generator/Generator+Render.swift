@@ -26,14 +26,14 @@ extension Generator {
         addNamespacesForConflictsWithBuiltinTypes(properties: &properties, decl: decl)
 
         let isStruct = shouldGenerateStruct(for: decl)
-        let isReadOnly = isStruct ? !options.entities.isGeneratingMutableStructProperties : !options.entities.isGeneratingMutableClassProperties
+        let isReadOnly = isStruct ? !options.entities.mutableStructProperties : !options.entities.mutableClassProperties
 
         var contents: [String] = []
         switch decl.type {
         case .object, .allOf, .anyOf:
             contents.append(templates.properties(properties, isReadonly: isReadOnly))
             contents += decl.nested.map(render)
-            if options.entities.isGeneratingInitializers {
+            if options.entities.includeInitializer {
                 contents.append(templates.initializer(properties: properties))
             }
         case .oneOf:
@@ -51,7 +51,7 @@ extension Generator {
         } else {
             switch decl.type {
             case .object:
-                if options.entities.isGeneratingCustomCodingKeys {
+                if !options.entities.optimizeCodingKeys {
                     if let keys = templates.codingKeys(for: properties) {
                         contents.append(keys)
                     }
@@ -59,10 +59,10 @@ extension Generator {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: true))
                     }
                 } else {
-                    if decl.protocols.isDecodable, !properties.isEmpty, options.entities.isGeneratingInitWithDecoder {
+                    if decl.protocols.isDecodable, !properties.isEmpty, options.entities.alwaysIncludeDecodableImplementation {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: false))
                     }
-                    if decl.protocols.isEncodable, !properties.isEmpty, options.entities.isGeneratingEncodeWithEncoder {
+                    if decl.protocols.isEncodable, !properties.isEmpty, options.entities.alwaysIncludeEncodableImplementation {
                         contents.append(templates.encode(properties: properties))
                     }
                 }
@@ -136,10 +136,10 @@ extension Generator {
             return false
         } else if decl.isRenderedAsStruct || options.entities.entitiesGeneratedAsStructs.contains(decl.name.rawValue) {
             return true
-        } else if options.entities.isGeneratingStructs && hasRefeferencesToItself(decl) {
+        } else if options.entities.generateStructs && hasRefeferencesToItself(decl) {
             return false
         } else {
-            return options.entities.isGeneratingStructs
+            return options.entities.generateStructs
         }
     }
 

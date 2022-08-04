@@ -161,7 +161,7 @@ extension Generator {
 
     // TODO: Make it smarter: skip intermediate path components too
     private func findCommonIndiciesCount() -> Int {
-        guard options.paths.isRemovingRedundantPaths else {
+        guard options.paths.removeRedundantPaths else {
             return 0
         }
         var commonIndices = 0
@@ -408,7 +408,7 @@ extension Generator {
         }.removingDuplicates(by: \.name)
         if query.isEmpty {
             // Do nothing
-        } else if options.paths.isInliningSimpleQueryParameters && query.count <= options.paths.simpleQueryParametersThreshold && (style == .rest || query.allSatisfy { $0.nested == nil }) {
+        } else if options.paths.inlineSimpleQueryParameters && query.count <= options.paths.simpleQueryParametersThreshold && (style == .rest || query.allSatisfy { $0.nested == nil }) {
             for item in query {
                 parameters.append("\(item.name): \(item.type)\(item.isOptional ? "? = nil" : "")")
             }
@@ -445,7 +445,7 @@ extension Generator {
             let requestBody = try makeRequestBodyType(for: requestBody, method: task.method, nestedTypeName: task.makeNestedTypeName("Request"), context: context)
             if requestBody.type.rawValue == "Void" {
                 // Do nothing
-            } else if options.paths.isInliningSimpleRequests,
+            } else if options.paths.inlineSimpleRequests,
                       let entity = (requestBody.nested as? EntityDeclaration),
                       entity.properties.count == 1,
                       !entity.isForm,
@@ -532,7 +532,7 @@ extension Generator {
             case .boolean: return QueryItemType("Bool")
             case .number: return QueryItemType("Double")
             case .integer(let info, _):
-                guard options.isUsingIntegersWithPredefinedCapacity else {
+                guard options.useIntegersWithPredefinedCapacity else {
                     return QueryItemType("Int")
                 }
                 switch info.format {
@@ -543,7 +543,7 @@ extension Generator {
             case .string(let info, _):
                 switch info.format {
                 case .dateTime: return QueryItemType("Date")
-                case .date: if options.isNaiveDateEnabled {
+                case .date: if options.useNaiveDate {
                     setNaiveDateNeeded()
                     return QueryItemType("NaiveDate")
                 }
@@ -594,7 +594,7 @@ extension Generator {
             if let name = options.rename.parameters[name.rawValue] {
                 return PropertyName(name)
             }
-            if options.isGeneratingSwiftyBooleanPropertyNames && type.isBool {
+            if options.useSwiftyPropertyNames && type.isBool {
                 return name.asBoolean(options)
             }
             return name
@@ -754,7 +754,7 @@ extension Generator {
     // MARK: - Response Headers
 
     private func makeResponseHeaders(for task: GenerateOperationTask) throws -> Declaration? {
-        guard options.paths.isGeneratingResponseHeaders,
+        guard options.paths.generateResponseHeaders,
               let response = task.operation.firstSuccessfulResponse,
               let headers = response.responseValue?.headers else {
             return nil
