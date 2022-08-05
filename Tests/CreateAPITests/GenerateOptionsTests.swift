@@ -443,7 +443,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "edgecases-disable-acronyms",
             "--config", config("""
             {
-                "isReplacingCommonAcronyms": false
+                "acronyms": []
             }
             """)
         ])

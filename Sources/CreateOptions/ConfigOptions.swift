@@ -22,6 +22,9 @@ import Foundation
 
 // sourcery: document, root, decodableWithDefault
 // sourcery: removed: isSwiftLintDisabled = "Add to 'fileHeaderComment' instead."
+// sourcery: removed: isReplacingCommonAcronyms = "Replaced by 'acronyms'."
+// sourcery: removed: addedAcronyms = "Replaced by 'acronyms'."
+// sourcery: removed: ignoredAcronyms = "Replaced by 'acronyms'."
 /// CreateAPI supports a massive number of customization options to generate the most appropriate source code for your api.
 ///
 /// To use these options, you must define a configuration file that includes these properties. This can be done using either YAML or JSON, for example:
@@ -79,14 +82,54 @@ public struct ConfigOptions: Encodable {
     /// For example, `typealias Pets = [Pet]` is inlined as `[Pet]`.
     public var inlineTypealiases: Bool = true // sourcery: replacementFor = isInliningTypealiases
 
-    /// For example, `var sourceUrl` becomes `var sourceURL`.
-    public var isReplacingCommonAcronyms: Bool = true
-
-    /// Acronyms to add to the default list
-    public var addedAcronyms: [String] = []
-
-    /// Acronyms to remove from the default list
-    public var ignoredAcronyms: [String] = []
+    /// A list of acronyms that should be uppercased when present in property names.
+    ///
+    /// To disable uppercasing of acronyms, set this property to an empty array.
+    ///
+    /// <details>
+    /// <summary>Examples</summary>
+    ///
+    /// With the given schema:
+    ///
+    /// ```yaml
+    /// type: object
+    /// properties:
+    ///   user_id:
+    ///     type: integer
+    ///   image_url:
+    ///     type: string
+    ///     format: uri
+    ///   acme_corporation:
+    ///     type: boolean
+    /// ```
+    ///
+    /// **No Acronyms**
+    /// ```yaml
+    /// acronyms: []
+    /// ```
+    ///
+    /// ```swift
+    /// var userId: Int
+    /// var imageUrl: URL
+    /// var isAcmeCorporation: Bool
+    /// ```
+    ///
+    /// **Custom Acronyms**
+    /// ```yaml
+    /// acronyms:
+    /// - id
+    /// - url
+    /// - acme
+    /// ```
+    ///
+    /// ```swift
+    /// var userID: Int
+    /// var imageURL: URL
+    /// var isACMECorporation: Bool
+    /// ```
+    ///
+    /// </details>
+    public var acronyms: [String] = ["url", "id", "html", "ssl", "tls", "https", "http", "dns", "ftp", "api", "uuid", "json"]
 
     /// Available levels of indentation
     public enum Indentation: String, Codable {

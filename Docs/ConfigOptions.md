@@ -48,9 +48,7 @@ Below you can find the complete documentation for all available options.
 - [generateEnums](#generateenums)
 - [useSwiftyPropertyNames](#useswiftypropertynames)
 - [inlineTypealiases](#inlinetypealiases)
-- [isReplacingCommonAcronyms](#isreplacingcommonacronyms)
-- [addedAcronyms](#addedacronyms)
-- [ignoredAcronyms](#ignoredacronyms)
+- [acronyms](#acronyms)
 - [indentation](#indentation)
 - [spaceWidth](#spacewidth)
 - [pluralizeProperties](#pluralizeproperties)
@@ -151,30 +149,58 @@ For example, `typealias Pets = [Pet]` is inlined as `[Pet]`.
 
 <br/>
 
-## isReplacingCommonAcronyms
-
-**Type:** Bool<br />
-**Default:** `true`
-
-For example, `var sourceUrl` becomes `var sourceURL`.
-
-<br/>
-
-## addedAcronyms
+## acronyms
 
 **Type:** [String]<br />
-**Default:** `[]`
+**Default:** `["url", "id", "html", "ssl", "tls", "https", "http", "dns", "ftp", "api", "uuid", "json"]`
 
-Acronyms to add to the default list
+A list of acronyms that should be uppercased when present in property names.
 
-<br/>
+To disable uppercasing of acronyms, set this property to an empty array.
 
-## ignoredAcronyms
+<details>
+<summary>Examples</summary>
 
-**Type:** [String]<br />
-**Default:** `[]`
+With the given schema:
 
-Acronyms to remove from the default list
+```yaml
+type: object
+properties:
+  user_id:
+    type: integer
+  image_url:
+    type: string
+    format: uri
+  acme_corporation:
+    type: boolean
+```
+
+**No Acronyms**
+```yaml
+acronyms: []
+```
+
+```swift
+var userId: Int
+var imageUrl: URL
+var isAcmeCorporation: Bool
+```
+
+**Custom Acronyms**
+```yaml
+acronyms:
+- id
+- url
+- acme
+```
+
+```swift
+var userID: Int
+var imageURL: URL
+var isACMECorporation: Bool
+```
+
+</details>
 
 <br/>
 

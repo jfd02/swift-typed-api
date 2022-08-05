@@ -10,9 +10,7 @@ extension ConfigOptions: Decodable {
         case generateEnums
         case useSwiftyPropertyNames
         case inlineTypealiases
-        case isReplacingCommonAcronyms
-        case addedAcronyms
-        case ignoredAcronyms
+        case acronyms
         case indentation
         case spaceWidth
         case pluralizeProperties
@@ -53,19 +51,9 @@ extension ConfigOptions: Decodable {
             defaultValue: true
         )
 
-        isReplacingCommonAcronyms = try container.decode(Bool.self,
-            forKey: .isReplacingCommonAcronyms,
-            defaultValue: true
-        )
-
-        addedAcronyms = try container.decode([String].self,
-            forKey: .addedAcronyms,
-            defaultValue: []
-        )
-
-        ignoredAcronyms = try container.decode([String].self,
-            forKey: .ignoredAcronyms,
-            defaultValue: []
+        acronyms = try container.decode([String].self,
+            forKey: .acronyms,
+            defaultValue: ["url", "id", "html", "ssl", "tls", "https", "http", "dns", "ftp", "api", "uuid", "json"]
         )
 
         indentation = try container.decode(ConfigOptions.Indentation.self,
@@ -130,6 +118,9 @@ extension ConfigOptions: Decodable {
                 ("isNaiveDateEnabled", "Use 'useNaiveDate' instead."),
                 ("isUsingIntegersWithPredefinedCapacity", "Use 'useIntegersWithPredefinedCapacity' instead."),
                 ("comments", "Use 'commentOptions' instead."),
+                ("addedAcronyms", "Replaced by 'acronyms'."),
+                ("ignoredAcronyms", "Replaced by 'acronyms'."),
+                ("isReplacingCommonAcronyms", "Replaced by 'acronyms'."),
                 ("isSwiftLintDisabled", "Add to 'fileHeaderComment' instead."),
             ]
         )
