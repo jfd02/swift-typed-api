@@ -57,13 +57,7 @@ Below you can find the complete documentation for all available options.
 - [useNaiveDate](#usenaivedate)
 - [useIntegersWithPredefinedCapacity](#useintegerswithpredefinedcapacity)
 - [fileHeaderComment](#fileheadercomment)
-- [comments](#comments)
-  - [isEnabled](#commentsisenabled)
-  - [isAddingTitles](#commentsisaddingtitles)
-  - [isAddingDescription](#commentsisaddingdescription)
-  - [isAddingExamples](#commentsisaddingexamples)
-  - [isAddingExternalDocumentation](#commentsisaddingexternaldocumentation)
-  - [isCapitalizationEnabled](#commentsiscapitalizationenabled)
+- [commentOptions](#commentoptions)
 - [entities](#entities)
   - [generateStructs](#entitiesgeneratestructs)
   - [entitiesGeneratedAsClasses](#entitiesentitiesgeneratedasclasses)
@@ -238,63 +232,46 @@ Overrides file header comment
 
 <br/>
 
+## commentOptions
 
-# Comments
+**Type:** Set<CommentOption><br />
+**Default:** `[.title, .description, .example, .externalDocumentation, .capitalized]`
 
-Customize specific behaviors when generating comments on entities/paths/properties.
+Options used when generating comments.
 
+**Available options:**
+- `title` - Include the schema title (if available)
+- `description` - Include the schema description (if available)
+- `example` - Include the schema example value (if available)
+- `externalDocumentation` - Include a markdown formatted link to the schema's external documentation (if available)
+- `capitalized` - Automatically capitalize the comments
 
-## comments.isEnabled
+To disable comments completely, set this property to an empty array.
 
-**Type:** Bool<br />
-**Default:** `true`
+<details>
+<summary>Examples</summary>
 
-Set to false to disable the generation of comments
+**No Comments**
+```yaml
+commentOptions: []
+```
 
-<br/>
+**Simple Comment**
+```yaml
+commentOptions: [description, capitalized]
+```
 
-## comments.isAddingTitles
+**Detailed Comment** (default)
+```yaml
+commentOptions:
+- title
+- description
+- example
+- externalDocumentation
+- capitalized
+```
 
-**Type:** Bool<br />
-**Default:** `true`
-
-Include the schema title when generating comments
-
-<br/>
-
-## comments.isAddingDescription
-
-**Type:** Bool<br />
-**Default:** `true`
-
-Include the schema description when generating comments
-
-<br/>
-
-## comments.isAddingExamples
-
-**Type:** Bool<br />
-**Default:** `true`
-
-Include the schema example when generating comments
-
-<br/>
-
-## comments.isAddingExternalDocumentation
-
-**Type:** Bool<br />
-**Default:** `true`
-
-Include a link to external documentation when generating comments
-
-<br/>
-
-## comments.isCapitalizationEnabled
-
-**Type:** Bool<br />
-**Default:** `true`
-
-Auto-capitalize comments
+</details>
 
 <br/>
 
