@@ -552,7 +552,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--package", "edgecases-int32-int64",
             "--config", config("""
             {
-                "useIntegersWithPredefinedCapacity": true
+                "useFixWidthIntegers": true
             }
             """)
         ])
@@ -626,7 +626,7 @@ final class GenerateOptionsTests: GenerateBaseTests {
             "--generate", "entities",
             "--config", config("""
             entities:
-                identifiableConformance: true
+                includeIdentifiableConformance: true
             rename:
                 properties:
                     Error.code: id

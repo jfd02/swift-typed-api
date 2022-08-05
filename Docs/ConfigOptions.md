@@ -53,7 +53,7 @@ Below you can find the complete documentation for all available options.
 - [spaceWidth](#spacewidth)
 - [pluralizeProperties](#pluralizeproperties)
 - [useNaiveDate](#usenaivedate)
-- [useIntegersWithPredefinedCapacity](#useintegerswithpredefinedcapacity)
+- [useFixWidthIntegers](#usefixwidthintegers)
 - [fileHeaderComment](#fileheadercomment)
 - [commentOptions](#commentoptions)
 - [entities](#entities)
@@ -66,14 +66,14 @@ Below you can find the complete documentation for all available options.
   - [mutableStructProperties](#entitiesmutablestructproperties)
   - [baseClass](#entitiesbaseclass)
   - [protocols](#entitiesprotocols)
-  - [identifiableConformance](#entitiesidentifiableconformance)
+  - [includeIdentifiableConformance](#entitiesincludeidentifiableconformance)
   - [skipRedundantProtocols](#entitiesskipredundantprotocols)
   - [includeInitializer](#entitiesincludeinitializer)
   - [alwaysIncludeDecodableImplementation](#entitiesalwaysincludedecodableimplementation)
   - [alwaysIncludeEncodableImplementation](#entitiesalwaysincludeencodableimplementation)
   - [sortPropertiesAlphabetically](#entitiessortpropertiesalphabetically)
   - [optimizeCodingKeys](#entitiesoptimizecodingkeys)
-  - [defaultValues](#entitiesdefaultvalues)
+  - [includeDefaultValues](#entitiesincludedefaultvalues)
   - [inlineReferencedSchemas](#entitiesinlinereferencedschemas)
   - [stripParentNameInNestedObjects](#entitiesstripparentnameinnestedobjects)
   - [exclude](#entitiesexclude)
@@ -82,7 +82,7 @@ Below you can find the complete documentation for all available options.
 - [paths](#paths)
   - [style](#pathsstyle)
   - [namespace](#pathsnamespace)
-  - [generateResponseHeaders](#pathsgenerateresponseheaders)
+  - [includeResponseHeaders](#pathsincluderesponseheaders)
   - [imports](#pathsimports)
   - [overriddenResponses](#pathsoverriddenresponses)
   - [overriddenBodyTypes](#pathsoverriddenbodytypes)
@@ -242,7 +242,7 @@ Parses dates (e.g. `"2021-09-29"`) using [NaiveDate](https://github.com/CreateAP
 
 <br/>
 
-## useIntegersWithPredefinedCapacity
+## useFixWidthIntegers
 
 **Type:** Bool<br />
 **Default:** `false`
@@ -390,7 +390,7 @@ Protocols to be adopted by each generated entity
 
 <br/>
 
-## entities.identifiableConformance
+## entities.includeIdentifiableConformance
 
 **Type:** Bool<br />
 **Default:** `false`
@@ -455,7 +455,7 @@ For schemas with a large number of entities, this approach significantly reduces
 
 <br/>
 
-## entities.defaultValues
+## entities.includeDefaultValues
 
 **Type:** Bool<br />
 **Default:** `true`
@@ -567,7 +567,7 @@ The namespace type for all generated paths
 
 <br/>
 
-## paths.generateResponseHeaders
+## paths.includeResponseHeaders
 
 **Type:** Bool<br />
 **Default:** `true`

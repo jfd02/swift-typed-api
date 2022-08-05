@@ -219,7 +219,7 @@ extension Generator {
     }
 
     private func getIntegerType(for info: JSONSchema.CoreContext<JSONTypeFormat.IntegerFormat>) -> TypeIdentifier {
-        guard options.useIntegersWithPredefinedCapacity else {
+        guard options.useFixWidthIntegers else {
             return .builtin("Int")
         }
         switch info.format {
@@ -328,7 +328,7 @@ extension Generator {
         if !isDecodable { protocols.removeDecodable() }
         if !isEncodable { protocols.removeEncodable() }
 
-        if options.entities.identifiableConformance {
+        if options.entities.includeIdentifiableConformance {
             let isIdentifiable = entity.properties.contains { $0.name.rawValue == "id" && $0.type.isBuiltin }
             if isIdentifiable { protocols.insert("Identifiable") }
         }
@@ -729,7 +729,7 @@ extension Generator {
                 type = type.asPatchParameter()
             }
             var defaultValue: String?
-            if options.entities.defaultValues {
+            if options.entities.includeDefaultValues {
                 if type.isBool {
                     defaultValue = (info?.defaultValue?.value as? Bool).map { $0 ? "true" : "false" }
                 }

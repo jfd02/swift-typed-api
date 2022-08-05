@@ -15,7 +15,7 @@ extension ConfigOptions: Decodable {
         case spaceWidth
         case pluralizeProperties
         case useNaiveDate
-        case useIntegersWithPredefinedCapacity
+        case useFixWidthIntegers
         case fileHeaderComment
         case commentOptions
         case entities
@@ -76,8 +76,8 @@ extension ConfigOptions: Decodable {
             defaultValue: true
         )
 
-        useIntegersWithPredefinedCapacity = try container.decode(Bool.self,
-            forKey: .useIntegersWithPredefinedCapacity,
+        useFixWidthIntegers = try container.decode(Bool.self,
+            forKey: .useFixWidthIntegers,
             defaultValue: false
         )
 
@@ -116,7 +116,7 @@ extension ConfigOptions: Decodable {
                 ("isInliningTypealiases", "Use 'inlineTypealiases' instead."),
                 ("isPluralizationEnabled", "Use 'pluralizeProperties' instead."),
                 ("isNaiveDateEnabled", "Use 'useNaiveDate' instead."),
-                ("isUsingIntegersWithPredefinedCapacity", "Use 'useIntegersWithPredefinedCapacity' instead."),
+                ("isUsingIntegersWithPredefinedCapacity", "Use 'useFixWidthIntegers' instead."),
                 ("comments", "Use 'commentOptions' instead."),
                 ("addedAcronyms", "Replaced by 'acronyms'."),
                 ("ignoredAcronyms", "Replaced by 'acronyms'."),
@@ -138,14 +138,14 @@ extension ConfigOptions.Entities: Decodable {
         case mutableStructProperties
         case baseClass
         case protocols
-        case identifiableConformance
+        case includeIdentifiableConformance
         case skipRedundantProtocols
         case includeInitializer
         case alwaysIncludeDecodableImplementation
         case alwaysIncludeEncodableImplementation
         case sortPropertiesAlphabetically
         case optimizeCodingKeys
-        case defaultValues
+        case includeDefaultValues
         case inlineReferencedSchemas
         case stripParentNameInNestedObjects
         case exclude
@@ -201,8 +201,8 @@ extension ConfigOptions.Entities: Decodable {
             defaultValue: ["Codable"]
         )
 
-        identifiableConformance = try container.decode(Bool.self,
-            forKey: .identifiableConformance,
+        includeIdentifiableConformance = try container.decode(Bool.self,
+            forKey: .includeIdentifiableConformance,
             defaultValue: false
         )
 
@@ -236,8 +236,8 @@ extension ConfigOptions.Entities: Decodable {
             defaultValue: false
         )
 
-        defaultValues = try container.decode(Bool.self,
-            forKey: .defaultValues,
+        includeDefaultValues = try container.decode(Bool.self,
+            forKey: .includeDefaultValues,
             defaultValue: true
         )
 
@@ -274,14 +274,14 @@ extension ConfigOptions.Entities: Decodable {
                 ("isMakingClassesFinal", "Use 'finalClasses' instead."),
                 ("isGeneratingMutableClassProperties", "Use 'mutableClassProperties' instead."),
                 ("isGeneratingMutableStructProperties", "Use 'mutableStructProperties' instead."),
-                ("isGeneratingIdentifiableConformance", "Use 'identifiableConformance' instead."),
+                ("isGeneratingIdentifiableConformance", "Use 'includeIdentifiableConformance' instead."),
                 ("isSkippingRedundantProtocols", "Use 'skipRedundantProtocols' instead."),
                 ("isGeneratingInitializers", "Use 'includeInitializer' instead."),
                 ("isGeneratingInitWithDecoder", "Use 'alwaysIncludeDecodableImplementation' instead."),
                 ("isGeneratingEncodeWithEncoder", "Use 'alwaysIncludeEncodableImplementation' instead."),
                 ("isSortingPropertiesAlphabetically", "Use 'sortPropertiesAlphabetically' instead."),
                 ("isGeneratingCustomCodingKeys", "Use 'optimizeCodingKeys' instead."),
-                ("isAddingDefaultValues", "Use 'defaultValues' instead."),
+                ("isAddingDefaultValues", "Use 'includeDefaultValues' instead."),
                 ("isInliningPropertiesFromReferencedSchemas", "Use 'inlineReferencedSchemas' instead."),
                 ("isStrippingParentNameInNestedObjects", "Use 'stripParentNameInNestedObjects' instead."),
                 ("isAdditionalPropertiesOnByDefault", "Enabled by default."),
@@ -294,7 +294,7 @@ extension ConfigOptions.Paths: Decodable {
     enum KnownKeys: String {
         case style
         case namespace
-        case generateResponseHeaders
+        case includeResponseHeaders
         case imports
         case overriddenResponses
         case overriddenBodyTypes
@@ -321,8 +321,8 @@ extension ConfigOptions.Paths: Decodable {
             defaultValue: "Paths"
         )
 
-        generateResponseHeaders = try container.decode(Bool.self,
-            forKey: .generateResponseHeaders,
+        includeResponseHeaders = try container.decode(Bool.self,
+            forKey: .includeResponseHeaders,
             defaultValue: true
         )
 
@@ -385,7 +385,7 @@ extension ConfigOptions.Paths: Decodable {
             deprecations: [
             ],
             replacements: [
-                ("isGeneratingResponseHeaders", "Use 'generateResponseHeaders' instead."),
+                ("isGeneratingResponseHeaders", "Use 'includeResponseHeaders' instead."),
                 ("overridenResponses", "Use 'overriddenResponses' instead."),
                 ("overridenBodyTypes", "Use 'overriddenBodyTypes' instead."),
                 ("isInliningSimpleRequests", "Use 'inlineSimpleRequests' instead."),
