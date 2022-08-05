@@ -1,12 +1,13 @@
 import OpenAPIKit30
 import Foundation
+import CreateOptions
 
 extension Generator {
-    func render(_ decl: Declaration) -> String {
+    func render(_ decl: Declaration) throws -> String {
         switch decl {
         case let decl as EnumOfStringsDeclaration: return render(decl)
-        case let decl as EntityDeclaration: return render(decl)
-        case let decl as TypealiasDeclaration: return render(decl)
+        case let decl as EntityDeclaration: return try render(decl)
+        case let decl as TypealiasDeclaration: return try render(decl)
         case let decl as AnyDeclaration: return decl.rawValue
         default: fatalError()
         }
@@ -20,25 +21,25 @@ extension Generator {
         return comments + templates.enumOfStrings(name: decl.name, contents: cases)
     }
 
-    private func render(_ decl: EntityDeclaration) -> String {
+    private func render(_ decl: EntityDeclaration) throws -> String {
         var properties = decl.properties
         addNamespacesForConflictsWithNestedTypes(properties: &properties, decl: decl)
         addNamespacesForConflictsWithBuiltinTypes(properties: &properties, decl: decl)
 
-        let isStruct = shouldGenerateStruct(for: decl)
-        let isReadOnly = isStruct ? !options.entities.mutableStructProperties : !options.entities.mutableClassProperties
+        let type = try resolveGeneratedType(for: decl)
+        let isReadOnly = !options.entities.mutableProperties.contains(type.isStruct ? .structs : .classes)
 
         var contents: [String] = []
         switch decl.type {
         case .object, .allOf, .anyOf:
             contents.append(templates.properties(properties, isReadonly: isReadOnly))
-            contents += decl.nested.map(render)
+            contents += try decl.nested.map(render)
             if options.entities.includeInitializer {
                 contents.append(templates.initializer(properties: properties))
             }
         case .oneOf:
             contents.append(properties.map(templates.case).joined(separator: "\n"))
-            contents += decl.nested.map(render)
+            contents += try decl.nested.map(render)
         }
 
         if decl.isForm {
@@ -110,41 +111,57 @@ extension Generator {
         }
 
         let entity: String
-        if decl.type == .oneOf {
+        switch type {
+        case .enumOneOf:
             entity = templates.enumOneOf(name: decl.name, contents: contents, protocols: decl.protocols)
-        } else {
-            if isStruct {
-                entity = templates.struct(name: decl.name, contents: contents, protocols: decl.protocols)
-            } else {
-                entity = templates.class(name: decl.name, contents: contents, protocols: decl.protocols)
-            }
+        case .struct:
+            entity = templates.struct(name: decl.name, contents: contents, protocols: decl.protocols)
+        case .class(let isFinal):
+            entity = templates.class(name: decl.name, isFinal: isFinal, contents: contents, protocols: decl.protocols)
         }
+
         return templates.comments(for: decl.metadata, name: decl.name.rawValue) + entity
     }
 
-    private func render(_ value: TypealiasDeclaration) -> String {
+    private func render(_ value: TypealiasDeclaration) throws -> String {
         [templates.typealias(name: value.name, type: value.type.name),
-         value.nested.map(render)]
+         try value.nested.map(render)]
             .compactMap { $0 }
             .joined(separator: "\n\n")
     }
 
-    private func shouldGenerateStruct(for decl: EntityDeclaration) -> Bool {
-        if decl.type == .oneOf {
-            return false
-        } else if options.entities.entitiesGeneratedAsClasses.contains(decl.name.rawValue) {
-            return false
-        } else if decl.isRenderedAsStruct || options.entities.entitiesGeneratedAsStructs.contains(decl.name.rawValue) {
+    enum ResolvedType {
+        case enumOneOf, `struct`, `class`(isFinal: Bool)
+
+        var isStruct: Bool {
+            guard case .struct = self else { return false }
             return true
-        } else if options.entities.generateStructs && hasRefeferencesToItself(decl) {
-            return false
-        } else {
-            return options.entities.generateStructs
         }
     }
 
-    private func hasRefeferencesToItself(_ entity: EntityDeclaration) -> Bool {
-        hasReferences(to: entity.name, entity)
+    private func resolveGeneratedType(for decl: EntityDeclaration) throws -> ResolvedType {
+        if decl.type == .oneOf {
+            return .enumOneOf
+        } else if decl.isRenderedAsStruct {
+            return .struct
+        }
+
+        switch options.entities.preferredType(of: decl.name.rawValue) {
+        case .struct where hasReferences(to: decl.name, decl):
+            try handle(warning: """
+                Entity '\(decl.name.rawValue)' cannot be generated as a struct because \
+                it has a stored property that recursively contains itself. Explicitly \
+                define an override using 'entities.typeOverrides' or ignore the \
+                entity/property using 'entities.ignore' to fix this issue.
+                """)
+            return .class(isFinal: true)
+        case .struct:
+            return .struct
+        case .class:
+            return .class(isFinal: false)
+        case .finalClass:
+            return .class(isFinal: true)
+        }
     }
 
     // TODO: This doesn't handle a scenario where a reference is detected in an

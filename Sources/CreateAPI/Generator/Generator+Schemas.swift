@@ -12,7 +12,7 @@ import GrammaticalNumber
 // TODO: Generate IDs with phantom types
 // TODO: Add `byte` and `binary` string formats support
 // TODO: Clarify intentions behind `properties` mixed with `anyOf` https://github.com/github/rest-api-description/discussions/805
-// TODO: `entitiesGeneratedAsClasses` - add support for nesting
+// TODO: `typeOverrides` - add support for nesting
 // TODO: Remove StringCodingKeys when they are not needed
 
 extension Generator {
@@ -52,7 +52,7 @@ extension Generator {
         // Render entities as a final phase
         let files: [GeneratedFile] = try zip(jobs, declarations).map { job, result in
             guard let entity = try result?.get() else { return nil }
-            return GeneratedFile(name: job.name.rawValue, contents: render(entity))
+            return GeneratedFile(name: job.name.rawValue, contents: try render(entity))
         }.compactMap { $0 }
 
         return GeneratorOutput(
