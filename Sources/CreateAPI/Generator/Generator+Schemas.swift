@@ -99,7 +99,7 @@ extension Generator {
             return options.entities.include.contains(name)
         }
         if !options.entities.exclude.isEmpty {
-            return !options.entities.exclude.contains(name)
+            return !options.entities.exclude.contains { $0.name == name && $0.property == nil }
         }
         return true
     }
@@ -337,7 +337,16 @@ extension Generator {
     }
 
     private func makeInlineProperties(for type: TypeName, object: JSONSchema.ObjectContext, context: Context) throws -> [Property] {
-        var keys = object.properties.keys
+        let excludedProperties = options.entities.exclude
+            .filter { $0.name == type.rawValue }
+            .compactMap { $0.property }
+        let unknownProperties = Set(excludedProperties).subtracting(object.properties.keys)
+        
+        for diff in unknownProperties {
+            try handle(warning: "Invalid entity exclude '\(type.rawValue).\(diff)'. Property '\(diff) does not exist on schema '\(type.rawValue)'")
+        }
+        
+        var keys = object.properties.keys.filter { !excludedProperties.contains($0) }
         if options.entities.sortPropertiesAlphabetically { keys.sort() }
         return try keys.compactMap { key in
             let schema = object.properties[key]!

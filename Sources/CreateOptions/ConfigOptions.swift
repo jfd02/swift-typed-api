@@ -347,9 +347,21 @@ public struct ConfigOptions: Encodable {
         /// Strips the parent name of enum cases within objects that are `oneOf` / `allOf` / `anyOf` of nested references
         public var stripParentNameInNestedObjects: Bool = false // sourcery: replacementFor = isStrippingParentNameInNestedObjects
 
-        /// When set to a non-empty value, entities with the given names will be ignored during generation.
+        /// When set to a non-empty value, entities and entity properties with the given names will be ignored during generation.
         /// Cannot be used in conjunction with [`include`](#entitiesinclude).
-        public var exclude: Set<String> = []
+        ///
+        /// <details>
+        /// <summary>Examples</summary>
+        ///
+        /// ```yaml
+        /// entities:
+        ///   exclude:
+        ///   - Pet
+        ///   - Store.id
+        /// ```
+        ///
+        /// </details>
+        public var exclude: Set<EntityExclude> = []
 
         /// When set to a non-empty value, only entities matching the given names will be generated.
         /// This cannot be used in conjunction with [`exclude`](#entitiesexclude).

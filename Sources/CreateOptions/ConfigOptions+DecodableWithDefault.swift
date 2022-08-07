@@ -233,7 +233,7 @@ extension ConfigOptions.Entities: Decodable {
             defaultValue: false
         )
 
-        exclude = try container.decode(Set<String>.self,
+        exclude = try container.decode(Set<EntityExclude>.self,
             forKey: .exclude,
             defaultValue: []
         )
