@@ -11,6 +11,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.1"),
+        .package(url: "https://github.com/liamnichols/swift-configuration-parser", from: "0.0.3"),
         .package(url: "https://github.com/CreateAPI/OpenAPIKit", branch: "create-api"),
         .package(url: "https://github.com/CreateAPI/Yams", revision: "d2ebc53afeb2001474dacf81c4480fef114045a1"),
         .package(url: "https://github.com/Cosmo/GrammaticalNumber", from: "0.0.3"),
@@ -21,6 +22,7 @@ let package = Package(
             name: "create-api",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "ConfigurationParser", package: "swift-configuration-parser"),
                 .product(name: "OpenAPIKit30", package: "OpenAPIKit"),
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "GrammaticalNumber", package: "GrammaticalNumber"),
@@ -32,7 +34,8 @@ let package = Package(
         .target(
             name: "CreateOptions",
             dependencies: [
-                .product(name: "Yams", package: "Yams")
+                .product(name: "Yams", package: "Yams"),
+                .product(name: "ConfigurationParser", package: "swift-configuration-parser")
             ]
         ),
         .testTarget(
