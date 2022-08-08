@@ -1,17 +1,4 @@
-import XCTest
-
-func file(named name: String, ext: String) -> Data {
-    let url = Bundle.module.url(forResource: name, withExtension: ext)
-    return try! Data(contentsOf: url!)
-}
-
-func fileExists(named name: String, ext: String) -> Bool {
-    Bundle.module.url(forResource: name, withExtension: ext) != nil
-}
-
-func pathForSpec(named name: String, ext: String) -> String {
-    Bundle.module.url(forResource: name, withExtension: ext, subdirectory: "Specs")!.path
-}
+import Foundation
 
 struct TemporaryDirectory {
     let url: URL
