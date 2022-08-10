@@ -341,7 +341,7 @@ final class GenerateOptionsTests: GenerateTestCase {
                     id: identifier
                     Category.name: title
                     Pet.status: state
-                    complete: isDone
+                    complete: done
             """
         )
     }
@@ -387,7 +387,7 @@ final class GenerateOptionsTests: GenerateTestCase {
             {
                 "rename": {
                     "properties": {
-                        "ContainerA.Child.Child.renameMe": "onlyItRenamed"
+                        "ContainerA.Child.Child.rename-me": "onlyItRenamed"
                     },
                     "entities": {
                         "ApiResponse": "APIResponse",
@@ -532,7 +532,7 @@ final class GenerateOptionsTests: GenerateTestCase {
                 - Store.pets
             rename:
                 properties:
-                    Pet.id: notID
+                    Pet.id: not_id
                     Pet.name: id
             """
         )
