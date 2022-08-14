@@ -232,6 +232,65 @@ public struct ConfigOptions: ParsableConfiguration {
     public var commentsEnabled: Bool {
         !commentOptions.isEmpty
     }
+    
+    @Option public var package: Package
+    
+    // sourcery: document,
+    /// Options specifically related generated a Swift Package.
+    public struct Package: ParsableConfiguration {
+        public init() { }
+        
+        /// Additional remote Swift Package imports.
+        ///
+        /// <details>
+        /// <summary>Examples</summary>
+        ///
+        /// ```yaml
+        /// package:
+        ///   dependencies:
+        ///   - url: https://github.com/apple/swift-argument-parser
+        ///     products:
+        ///     - ArgumentParser
+        ///     requirement:
+        ///       exact:
+        ///         version: 1.1.1
+        ///   - url: https://github.com/apple/swift-algorithms
+        ///     products:
+        ///     - Algorithms
+        ///     requirement:
+        ///       range:
+        ///         from: 1.0.0
+        ///         to: 2.0.0
+        ///   - url: https://github.com/apple/swift-metrics.git
+        ///     products:
+        ///     - Metrics
+        ///     requirement:
+        ///       closedRange:
+        ///         from: 2.0.0
+        ///         to: 2.9.1
+        ///   - url: https://github.com/apple/swift-log
+        ///     products:
+        ///     - Logging
+        ///     requirement:
+        ///       branch:
+        ///         name: main
+        ///   - url: https://github.com/apple/swift-numerics
+        ///     products:
+        ///     - RealModule
+        ///     - ComplexModule
+        ///     requirement:
+        ///       commit:
+        ///         hash: 7f2d022d3d9b55bf812814f5d01896cbfa0fd4da
+        ///   - url: https://github.com/apple/swift-system
+        ///     products:
+        ///     - SystemPackage
+        ///     requirement:
+        ///       from:
+        ///         version: 1.2.1
+        /// ```
+        /// </details>
+        @Option public var dependencies: [PackageDeclaration] = []
+    }
 
     @Option public var entities: Entities
 

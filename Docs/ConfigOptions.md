@@ -59,6 +59,8 @@ Below you can find the complete documentation for all available options.
 - [useFixWidthIntegers](#usefixwidthintegers)
 - [fileHeaderComment](#fileheadercomment)
 - [commentOptions](#commentoptions)
+- [package](#package)
+  - [dependencies](#packagedependencies)
 - [entities](#entities)
   - [enabled](#entitiesenabled)
   - [defaultType](#entitiesdefaulttype)
@@ -694,6 +696,69 @@ entities:
   filenameTemplate: "%0Model.swift"
 ```
 
+</details>
+
+<br/>
+
+
+# Package
+
+Options specifically related generated a Swift Package.
+
+
+## package.dependencies
+
+**Type:** [PackageDeclaration]<br />
+**Default:** `[]`
+
+Additional remote Swift Package imports.
+
+<details>
+<summary>Examples</summary>
+
+```yaml
+package:
+  dependencies:
+  - url: https://github.com/apple/swift-argument-parser
+    products:
+    - ArgumentParser
+    requirement:
+      exact:
+        version: 1.1.1
+  - url: https://github.com/apple/swift-algorithms
+    products:
+    - Algorithms
+    requirement:
+      range:
+        from: 1.0.0
+        to: 2.0.0
+  - url: https://github.com/apple/swift-metrics.git
+    products:
+    - Metrics
+    requirement:
+      closedRange:
+        from: 2.0.0
+        to: 2.9.1
+  - url: https://github.com/apple/swift-log
+    products:
+    - Logging
+    requirement:
+      branch:
+        name: main
+  - url: https://github.com/apple/swift-numerics
+    products:
+    - RealModule
+    - ComplexModule
+    requirement:
+      commit:
+        hash: 7f2d022d3d9b55bf812814f5d01896cbfa0fd4da
+  - url: https://github.com/apple/swift-system
+    products:
+    - SystemPackage
+    requirement:
+      from:
+        version: 1.2.1
+```
 </details>
 
 <br/>
