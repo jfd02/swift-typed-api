@@ -16,84 +16,95 @@ Delightful code generation for OpenAPI specs for Swift written in Swift.
 ### [Mint](https://github.com/yonaskolb/Mint)
 
 ```bash
-mint install CreateAPI/CreateAPI
+$ mint install CreateAPI/CreateAPI
 ```
 
-Usage:
+### [Homebrew](https://formulae.brew.sh/formula/create-api)
 
 ```bash
-mint run CreateAPI create-api generate -h
+$ brew install create-api
 ```
+
+### Swift Package Plugins
+
+- [Creating a Swift Package Plugin](./Docs/SwiftPackagePlugins.md)
 
 ### Make
 
 ```bash
-git clone https://github.com/CreateAPI/CreateAPI.git
-cd CreateAPI
-make install
+$ git clone https://github.com/CreateAPI/CreateAPI.git
+$ cd CreateAPI
+$ make install
 ```
 
-Usage:
+## Getting Started
 
-```bash
-create-api generate -h
+You'll need an [OpenAPI schema](https://swagger.io/specification/) (using 3.0.x) for your API. If your schema has external references, you might also need to bundle it beforehand.
+
+If you have never used CreateAPI before, be sure to check out our tutorial: [Generating an API with CreateAPI](./Docs/Tutorial.md)
+
+CreateAPI can generate complete Swift Package bundles but can also generate individual components to integrate into an existing project. Either way, you'll want to use the `generate` command:
+
+<details>
+<summary><b><code>$ create-api generate --help</code></b></summary>
+
 ```
-
-## Usage
-
-```
-USAGE: create-api generate [<options>] <input>
+USAGE: create-api generate <input> [--output <output>] [--config <config>] [--config-option <config-option> ...] [--verbose] [--strict] [--clean] [--allow-errors] [--watch] [--single-threaded] [--measure]
 
 ARGUMENTS:
   <input>                 The OpenAPI spec input file in either JSON or YAML format
 
 OPTIONS:
-  --output <output>       The output folder (default: ./.create-api/)
-  --config <config>       The path to generator configuration. If not present, the command
-                          will look for .create-api.yaml in the current directory.
-                          (default: ./.create-api.yaml)
-  -s, --split             Split output into separate files
+  --output <output>       The directory where generated outputs are written (default: CreateAPI)
+  --config <config>       The path to generator configuration. (default: .create-api.yaml)
+        If not provided, the command will automatically try using .create-api.yaml in the current
+        directory if it exists.
+  --config-option <config-option>
+                          Options to be applied when generating.
+        In scenarios where you need to customize behaviour when invoking the generator, use this option to
+        specify individual overrides. For example:
+
+        --config-option "entities.filenameTemplate=%0DTO.swift"
+
+        You can specify multiple --config-option arguments and the value of each one must match the
+        'keyPath=value' format above where keyPath is a dot separated path to the option and value is the
+        yaml/json representation of the option.
   -v, --verbose           Print additional logging information
   --strict                Turns all warnings into errors
   -c, --clean             Removes the output folder before continuing
   --allow-errors          Ignore any errors that happen during code generation
-  --watch                 Monitor changes to both the spec and the configuration file and
-                          automatically re-generated input
-  --package <package>     Generates a complete package with a given name
-  --module <module>       Use the following name as a module name
-  --vendor <vendor>       Enabled vendor-specific logic (supported values: "github")
-  --generate <generate>   Specifies what to generate (default: paths, entities)
-  --filename-template <filename-template>
-                          Example: "%0.generated.swift" will produce files with the
-                          following names: "Paths.generated.swift". (default: %0.swift)
-  --entityname-template <entityname-template>
-                          Example: "%0Generated" will produce entities with the following
-                          names: "EntityGenerated". (default: %0)
-  --single-threaded       By default, saturates all available threads. Pass this option to
-                          turn all parallelization off.
+  --watch                 Monitor changes to both the spec and the configuration file and automatically
+                          re-generated input
+  --single-threaded       By default, saturates all available threads. Pass this option to turn all
+                          parallelization off.
   --measure               Measure performance of individual operations
+  --version               Show the version.
   -h, --help              Show help information.
 ```
 
-## Documentation
+</details>
 
-- [Configuration](./Docs/ConfigOptions.md)
+To try CreateAPI out, run the following commands:
 
-## OpenAPI Support
+```bash
+$ curl "https://petstore3.swagger.io/api/v3/openapi.json" > schema.json
+$ create-api generate schema.json --config-option module=PetstoreKit --output PetstoreKit
+$ cd PetstoreKit
+$ swift build
+```
 
-The goal is to completely cover OpenAPI 3.x spec.
+There you have it, a comping Swift Package ready to be integrated with your other Swift projects!
 
-Currently, the following features are **not** supported:
+For more information about using CreateAPI, check out the [Documentation](./Docs/).
 
-- External References
+## Projects using CreateAPI
 
-Some discrepancies with the OpenAPI spec are by design:
+Need some inspiration? Check out the list of projects below that are already using CreateAPI:
 
-- `allowReserved` keyword in parameters is ignored and all parameter values are percent-encoded
-- `allowEmptyValue` keyword in parameters is ignored as it's not recommended to be used
+- [appstoreconnect-swift-sdk](https://github.com/AvdLee/appstoreconnect-swift-sdk)
 
-Upcoming:
+Are you using CreateAPI in your own open-source project? Let us know by [adding it](https://github.com/CreateAPI/CreateAPI/edit/main/README.md) to the list above!
 
-- An improved way to generate patch parameters. Support for [JSON Patch](http://jsonpatch.com).
-- OpenAPI 3.1 support.
+## Contributing
 
+We always welcome contributions from the community via Issues and Pull Requests. Please be sure to read over the [contributing guidelines](./CONTRIBUTING.md) for more information.
