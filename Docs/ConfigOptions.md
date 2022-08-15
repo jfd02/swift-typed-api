@@ -62,7 +62,6 @@ Below you can find the complete documentation for all available options.
 - [package](#package)
   - [dependencies](#packagedependencies)
 - [entities](#entities)
-  - [enabled](#entitiesenabled)
   - [defaultType](#entitiesdefaulttype)
   - [typeOverrides](#entitiestypeoverrides)
   - [imports](#entitiesimports)
@@ -374,15 +373,6 @@ datatypes:
 
 Options specifically related to generating entities
 
-
-## entities.enabled
-
-**Type:** Bool<br />
-**Default:** `true`
-
-Disables the generation of entities when set to `false`.
-
-<br/>
 
 ## entities.defaultType
 

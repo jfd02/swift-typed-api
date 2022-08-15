@@ -329,9 +329,6 @@ public struct ConfigOptions: ParsableConfiguration {
             case `struct`, `class`, finalClass
         }
 
-        /// Disables the generation of entities when set to `false`.
-        @Option public var enabled: Bool = true
-
         /// The default type used when generating entities. Available options are `struct`, `class` or `finalClass`
         ///
         /// To override the default value for individual entities, use the [`typeOverrides`](#entitiestypeoverrides) option.
