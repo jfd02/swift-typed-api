@@ -385,7 +385,7 @@ public struct ConfigOptions: ParsableConfiguration {
         ///   var bar: String
         /// }
         ///
-        /// class Foo1: {
+        /// class Foo {
         ///   let bar: String
         /// }
         /// ```
@@ -401,7 +401,7 @@ public struct ConfigOptions: ParsableConfiguration {
         ///   var bar: String
         /// }
         ///
-        /// class Foo1: {
+        /// class Foo1 {
         ///   var bar: String
         /// }
         /// ```
