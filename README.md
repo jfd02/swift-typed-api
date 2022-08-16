@@ -49,35 +49,35 @@ CreateAPI can generate complete Swift Package bundles but can also generate indi
 <summary><b><code>$ create-api generate --help</code></b></summary>
 
 ```
-USAGE: create-api generate <input> [--output <output>] [--config <config>] [--config-option <config-option> ...] [--verbose] [--strict] [--clean] [--allow-errors] [--watch] [--single-threaded] [--measure]
+USAGE: create-api generate <input> [--output <output>] [--config <config>] [--config-option <config-option> ...] [--verbose] [--strict] [--allow-errors] [--clean] [--watch] [--single-threaded] [--measure]
 
 ARGUMENTS:
-  <input>                 The OpenAPI spec input file in either JSON or YAML format
+  <input>                 The path to the OpenAPI spec in either JSON or YAML format
 
 OPTIONS:
   --output <output>       The directory where generated outputs are written (default: CreateAPI)
-  --config <config>       The path to generator configuration. (default: .create-api.yaml)
-        If not provided, the command will automatically try using .create-api.yaml in the current
-        directory if it exists.
+  --config <config>       The path to the generator configuration. (default: .create-api.yaml)
   --config-option <config-option>
-                          Options to be applied when generating.
+                          Option overrides to be applied when generating.
+
         In scenarios where you need to customize behaviour when invoking the generator, use this option to
         specify individual overrides. For example:
 
+        --config-option "module=MyAPIKit"
         --config-option "entities.filenameTemplate=%0DTO.swift"
 
         You can specify multiple --config-option arguments and the value of each one must match the
         'keyPath=value' format above where keyPath is a dot separated path to the option and value is the
         yaml/json representation of the option.
-  -v, --verbose           Print additional logging information
-  --strict                Turns all warnings into errors
-  -c, --clean             Removes the output folder before continuing
-  --allow-errors          Ignore any errors that happen during code generation
+
+  -v, --verbose           Enables verbose log messages
+  --strict                Treats warnings as errors and fails generation
+  --allow-errors          Ignore errors that occur during generation and continue if possible
+  -c, --clean             Removes the output directory before writing generated outputs
   --watch                 Monitor changes to both the spec and the configuration file and automatically
-                          re-generated input
-  --single-threaded       By default, saturates all available threads. Pass this option to turn all
-                          parallelization off.
-  --measure               Measure performance of individual operations
+                          regenerate outputs
+  --single-threaded       Disables parallelization
+  --measure               Measure performance of individual operations and log timings
   --version               Show the version.
   -h, --help              Show help information.
 ```
