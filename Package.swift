@@ -10,7 +10,7 @@ let package = Package(
         .executable(name: "create-api", targets: ["create-api"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.1"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.3"),
         .package(url: "https://github.com/liamnichols/swift-configuration-parser", from: "0.0.4"),
         .package(url: "https://github.com/CreateAPI/OpenAPIKit", branch: "create-api"),
         .package(url: "https://github.com/CreateAPI/Yams", revision: "d2ebc53afeb2001474dacf81c4480fef114045a1"),
