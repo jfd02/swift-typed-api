@@ -1,5 +1,16 @@
 # CreateAPI 0.x
 
+## 0.1.1
+
+### October 5, 2022
+
+- [#148](https://github.com/CreateAPI/CreateAPI/pull/148) List `jellyfin-sdk-swift` as a project using CreateAPI by @LePips
+- [#156](https://github.com/CreateAPI/CreateAPI/pull/156) Add Xcode 14 and Swift 5.7 to CI by @liamnichols
+- [#158](https://github.com/CreateAPI/CreateAPI/pull/158) Fix issue with Discriminator type resolution that impacted the decoding of `oneOf` types in some conditions by @liamnichols
+- [#159](https://github.com/CreateAPI/CreateAPI/pull/159) Improve error messages that are used when `oneOf` object decoding fails by @liamnichols
+
+**Full Changelog**: https://github.com/CreateAPI/CreateAPI/compare/0.1.0...0.1.1
+
 ## 0.1.0
 
 ### August 16, 2022
