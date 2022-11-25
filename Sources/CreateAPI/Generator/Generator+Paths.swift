@@ -683,7 +683,7 @@ extension Generator {
             return nil
         }
 
-        if let (content, contentType) = firstContent(for: [.json, .jsonapi, .other("application/scim+json"), .other("application/json"), .form]) {
+        if let (content, contentType) = firstContent(for: [.json, .jsonapi, .other("application/scim+json"), .other("application/json"), .form, .multipartForm]) {
             let schema: JSONSchema
             switch content.schema {
             case .a(let reference):
@@ -707,9 +707,6 @@ extension Generator {
                 setNeedsEncodable(for: property.type)
             }
             return BodyType(type: property.type.name, nested: property.nested)
-        }
-        if firstContent(for: [.multipartForm]) != nil {
-            return BodyType("Data") // Currently isn't supported
         }
         if firstContent(for: [.css, .csv, .form, .html, .javascript, .txt, .xml, .yaml, .anyText, .other("application/jwt"), .other("image/svg+xml"), .other("text/xml"), .other("plain/text")]) != nil {
             return BodyType("String")
