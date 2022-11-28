@@ -388,6 +388,18 @@ final class GenerateOptionsTests: GenerateTestCase {
             """
         )
     }
+
+    func testEdgecasesMultipartFormdata() throws {
+        try snapshot(
+            spec: .edgecases,
+            name: "edgecases-multipart-formdata",
+            configuration: """
+            generate: ["paths"]
+            useStructuredMultipartFormDataRequest: true
+            """
+        )
+    }
+
     
     func testEdgecasesGenerateCodingKeys() throws {
         try snapshot(
