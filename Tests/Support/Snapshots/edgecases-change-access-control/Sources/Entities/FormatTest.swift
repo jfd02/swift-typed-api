@@ -13,13 +13,13 @@ struct FormatTest: Codable {
     var double: Double?
     var string: String?
     var byte: Data
-    var binary: String?
+    var binary: Data?
     var date: NaiveDate
     var dateTime: Date?
     var uuid: UUID?
     var password: String
 
-    init(integer: Int? = nil, int32: Int32? = nil, int64: Int64? = nil, number: Double, float: Float? = nil, double: Double? = nil, string: String? = nil, byte: Data, binary: String? = nil, date: NaiveDate, dateTime: Date? = nil, uuid: UUID? = nil, password: String) {
+    init(integer: Int? = nil, int32: Int32? = nil, int64: Int64? = nil, number: Double, float: Float? = nil, double: Double? = nil, string: String? = nil, byte: Data, binary: Data? = nil, date: NaiveDate, dateTime: Date? = nil, uuid: UUID? = nil, password: String) {
         self.integer = integer
         self.int32 = int32
         self.int64 = int64
@@ -45,7 +45,7 @@ struct FormatTest: Codable {
         self.double = try values.decodeIfPresent(Double.self, forKey: "double")
         self.string = try values.decodeIfPresent(String.self, forKey: "string")
         self.byte = try values.decode(Data.self, forKey: "byte")
-        self.binary = try values.decodeIfPresent(String.self, forKey: "binary")
+        self.binary = try values.decodeIfPresent(Data.self, forKey: "binary")
         self.date = try values.decode(NaiveDate.self, forKey: "date")
         self.dateTime = try values.decodeIfPresent(Date.self, forKey: "dateTime")
         self.uuid = try values.decodeIfPresent(UUID.self, forKey: "uuid")
