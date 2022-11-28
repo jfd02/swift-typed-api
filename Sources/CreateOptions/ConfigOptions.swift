@@ -712,6 +712,10 @@ public struct ConfigOptions: ParsableConfiguration {
         /// Rename anonymous collection elements. By default, use a singularized form of the property name
         @Option public var collectionElements: [String: String] = [:]
     }
+
+    /// If `true`, CreateAPI generates request body structures for "multipart/form-data" format.
+    /// Otherwise such request body fallbacks to `Data` type. The default value is `false`.
+    @Option public var useStructuredMultipartFormDataRequest: Bool = false
 }
 
 // MARK: - Utilities

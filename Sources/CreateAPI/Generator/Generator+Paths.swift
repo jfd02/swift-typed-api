@@ -683,7 +683,17 @@ extension Generator {
             return nil
         }
 
-        if let (content, contentType) = firstContent(for: [.json, .jsonapi, .other("application/scim+json"), .other("application/json"), .form, .multipartForm]) {
+        var structuredRequestBodySupportedTypes: [OpenAPI.ContentType] = [
+            .json,
+            .jsonapi,
+            .other("application/scim+json"),
+            .other("application/json"),
+            .form
+        ]
+        if options.useStructuredMultipartFormDataRequest {
+            structuredRequestBodySupportedTypes.append(.multipartForm)
+        }
+        if let (content, contentType) = firstContent(for: structuredRequestBodySupportedTypes) {
             let schema: JSONSchema
             switch content.schema {
             case .a(let reference):
