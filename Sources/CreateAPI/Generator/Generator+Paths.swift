@@ -690,7 +690,7 @@ extension Generator {
             .other("application/json"),
             .form
         ]
-        if options.useStructuredMultipartFormDataRequest {
+        if !options.useDataForMultipartFormDataRequestBody {
             structuredRequestBodySupportedTypes.append(.multipartForm)
         }
         if let (content, contentType) = firstContent(for: structuredRequestBodySupportedTypes) {

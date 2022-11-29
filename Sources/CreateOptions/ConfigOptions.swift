@@ -713,9 +713,9 @@ public struct ConfigOptions: ParsableConfiguration {
         @Option public var collectionElements: [String: String] = [:]
     }
 
-    /// If `true`, CreateAPI generates request body structures for "multipart/form-data" format.
-    /// Otherwise such request body fallbacks to `Data` type. The default value is `false`.
-    @Option public var useStructuredMultipartFormDataRequest: Bool = false
+    /// If `true`, CreateAPI generates request body for "multipart/form-data" format with `Data` type.
+    /// Otherwise such request body will be structured data based on the schema definition. The default value is `true`.
+    @Option public var useDataForMultipartFormDataRequestBody: Bool = true
 }
 
 // MARK: - Utilities

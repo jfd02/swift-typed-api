@@ -395,7 +395,7 @@ final class GenerateOptionsTests: GenerateTestCase {
             name: "edgecases-multipart-formdata",
             configuration: """
             generate: ["paths"]
-            useStructuredMultipartFormDataRequest: true
+            useDataForMultipartFormDataRequestBody: false
             """
         )
     }
