@@ -672,6 +672,14 @@ public struct ConfigOptions: ParsableConfiguration {
         ///
         /// </details>
         @Option public var filenameTemplate: String = "%0.swift"
+
+        /// If `false`, CreateAPI generates request body structures for "multipart/form-data" format just like it would for "application/json".
+        /// Otherwise the `body` of the generated `Request` will use `Data`. The default value is `true`.
+        ///
+        /// When using Get and it's `APIClient`, because Multipart Form Data isn't supported from the `Request` `body` property, it is best to leave this option set to `true`.
+        /// If however you have implemented your API Client, and you prefer to use structured `Codable` types to encode a Multipart Form Data request body, setting this value to `false` can be more convenient.
+        /// You might also need to use the [`dataTypes`](#datatypes) option to customise the type used to represent `binary` data.
+        @Option public var useDataForMultipartFormDataRequestBody: Bool = true
     }
 
     @Option public var rename: Rename
@@ -712,14 +720,6 @@ public struct ConfigOptions: ParsableConfiguration {
         /// Rename anonymous collection elements. By default, use a singularized form of the property name
         @Option public var collectionElements: [String: String] = [:]
     }
-
-    /// If `false`, CreateAPI generates request body structures for "multipart/form-data" format just like it would for "application/json".
-    /// Otherwise the `body` of the generated `Request` will use `Data`. The default value is `true`.
-    ///
-    /// When using Get and it's `APIClient`, because Multipart Form Data isn't supported from the `Request` `body` property, it is best to leave this option set to `true`.
-    /// If however you have implemented your API Client, and you prefer to use structured `Codable` types to encode a Multipart Form Data request body, setting this value to `false` can be more convenient.
-    /// You might also need to use the [`dataTypes`](#datatypes) option to customise the type used to represent `binary` data.
-    @Option public var useDataForMultipartFormDataRequestBody: Bool = true
 }
 
 // MARK: - Utilities
