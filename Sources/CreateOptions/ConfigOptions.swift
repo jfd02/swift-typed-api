@@ -713,8 +713,12 @@ public struct ConfigOptions: ParsableConfiguration {
         @Option public var collectionElements: [String: String] = [:]
     }
 
-    /// If `true`, CreateAPI generates request body for "multipart/form-data" format with `Data` type.
-    /// Otherwise such request body will be structured data based on the schema definition. The default value is `true`.
+    /// If `false`, CreateAPI generates request body structures for "multipart/form-data" format just like it would for "application/json".
+    /// Otherwise the `body` of the generated `Request` will use `Data`. The default value is `true`.
+    ///
+    /// When using Get and it's `APIClient`, because Multipart Form Data isn't supported from the `Request` `body` property, it is best to leave this option set to `true`.
+    /// If however you have implemented your API Client, and you prefer to use structured `Codable` types to encode a Multipart Form Data request body, setting this value to `false` can be more convenient.
+    /// You might also need to use the [`dataTypes`](#datatypes) option to customise the type used to represent `binary` data.
     @Option public var useDataForMultipartFormDataRequestBody: Bool = true
 }
 
