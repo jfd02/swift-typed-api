@@ -7,6 +7,8 @@ extension Generator {
         switch format {
         case .byte:
             return builtInType("Data", format: "byte", overrides: options.dataTypes.string)
+        case .binary:
+            return builtInType("Data", format: "binary", overrides: options.dataTypes.string)
         case .date where options.useNaiveDate:
             setNaiveDateNeeded()
             return .builtin("NaiveDate")
@@ -20,7 +22,7 @@ extension Generator {
             return builtInType("UUID", format: "uuid", overrides: options.dataTypes.string)
         case .other(let format):
             return builtInType("String", format: format, overrides: options.dataTypes.string)
-        case .generic, .binary, .password:
+        case .generic, .password:
             return .builtin("String")
         }
     }

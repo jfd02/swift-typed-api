@@ -125,7 +125,7 @@ extension Paths {
         }
 
         /// To test "client" model
-        public func patch(_ body: edgecases_default.Client) -> Request<edgecases_default.Client> {
+        public func patch(_ body: edgecases_multipart_formdata.Client) -> Request<edgecases_multipart_formdata.Client> {
             Request(path: path, method: "PATCH", body: body, id: "testClientModel")
         }
     }

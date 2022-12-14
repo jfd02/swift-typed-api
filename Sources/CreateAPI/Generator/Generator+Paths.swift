@@ -683,7 +683,17 @@ extension Generator {
             return nil
         }
 
-        if let (content, contentType) = firstContent(for: [.json, .jsonapi, .other("application/scim+json"), .other("application/json"), .form]) {
+        var structuredRequestBodySupportedTypes: [OpenAPI.ContentType] = [
+            .json,
+            .jsonapi,
+            .other("application/scim+json"),
+            .other("application/json"),
+            .form
+        ]
+        if !options.paths.useDataForMultipartFormDataRequestBody {
+            structuredRequestBodySupportedTypes.append(.multipartForm)
+        }
+        if let (content, contentType) = firstContent(for: structuredRequestBodySupportedTypes) {
             let schema: JSONSchema
             switch content.schema {
             case .a(let reference):
@@ -707,9 +717,6 @@ extension Generator {
                 setNeedsEncodable(for: property.type)
             }
             return BodyType(type: property.type.name, nested: property.nested)
-        }
-        if firstContent(for: [.multipartForm]) != nil {
-            return BodyType("Data") // Currently isn't supported
         }
         if firstContent(for: [.css, .csv, .form, .html, .javascript, .txt, .xml, .yaml, .anyText, .other("application/jwt"), .other("image/svg+xml"), .other("text/xml"), .other("plain/text")]) != nil {
             return BodyType("String")
