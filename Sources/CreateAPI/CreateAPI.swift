@@ -5,7 +5,7 @@ struct CreateAPI: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "create-api",
         abstract: "A Swift command-line tool to auto-generate code for OpenAPI specs",
-        version: "0.1.1",
+        version: "0.2.0",
         subcommands: [Generate.self]
     )
 }
