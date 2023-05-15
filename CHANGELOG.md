@@ -1,5 +1,15 @@
 # CreateAPI 0.x
 
+## 0.2.0
+
+### May 54, 2023
+
+- [#160](https://github.com/CreateAPI/CreateAPI/pull/160) Update Get dependency to require 2.1.x or later by @mgrider
+- [#172](https://github.com/CreateAPI/CreateAPI/pull/172) Support multipart/form-data as opt-in feature by @ainame
+- [#181](https://github.com/CreateAPI/CreateAPI/pull/181) Fix bug where object schemas representing an `allOf` type with more than one schema but only one property were inferred as the wrong type by @liamnichols
+
+**Full Changelog**: https://github.com/CreateAPI/CreateAPI/compare/0.1.1...0.2.0
+
 ## 0.1.1
 
 ### October 5, 2022
