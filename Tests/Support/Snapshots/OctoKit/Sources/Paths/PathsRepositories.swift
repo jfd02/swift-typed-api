@@ -24,8 +24,13 @@ extension Paths {
         /// - Pagination is powered exclusively by the `since` parameter. Use the [Link header](https://docs.github.com/rest/overview/resources-in-the-rest-api#link-header) to get the URL for the next page of repositories.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-public-repositories)
-        public func get(since: Int? = nil) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(since: Int? = nil) throws(GetError) -> Request<[OctoKit.MinimalRepository]> {
             Request(path: path, method: "GET", query: makeGetQuery(since), id: "repos/list-public")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
         }
 
         public enum GetResponseHeaders {

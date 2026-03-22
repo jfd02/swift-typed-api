@@ -22,8 +22,15 @@ extension Paths.App.Hook.Deliveries.WithDeliveryID {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#redeliver-a-delivery-for-an-app-webhook)
-        public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "apps/redeliver-webhook-delivery")
+        public var post: Request<[String: AnyJSON]> {
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "apps/redeliver-webhook-delivery")
+            }
+        }
+
+        public enum PostError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

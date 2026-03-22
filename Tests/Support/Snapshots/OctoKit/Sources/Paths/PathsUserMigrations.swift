@@ -20,8 +20,14 @@ extension Paths.User {
         /// Lists all migrations a user has started.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#list-user-migrations)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Migration]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Migration]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "migrations/list-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -40,8 +46,15 @@ extension Paths.User {
         /// Initiates the generation of a user migration archive.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#start-a-user-migration)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Migration> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Migration> {
             Request(path: path, method: "POST", body: body, id: "migrations/start-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

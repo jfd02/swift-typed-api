@@ -59,8 +59,13 @@ extension Paths.Repos.WithOwner.WithRepo.Compare {
         /// | `valid` | None of the above errors applied, so the signature is considered to be verified. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#compare-two-commits)
-        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<OctoKit.CommitComparison> {
+        public func get(page: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<OctoKit.CommitComparison> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "repos/compare-commits")
+        }
+
+        public enum GetError: Error {
+            case internalServerError(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ page: Int?, _ perPage: Int?) -> [(String, String?)] {

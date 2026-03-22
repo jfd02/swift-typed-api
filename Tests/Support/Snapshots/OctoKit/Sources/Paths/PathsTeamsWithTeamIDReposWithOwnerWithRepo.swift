@@ -26,7 +26,13 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#check-team-permissions-for-a-repository-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.TeamRepository> {
-            Request(path: path, method: "GET", id: "teams/check-permissions-for-repo-legacy")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/check-permissions-for-repo-legacy")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Add or update team repository permissions (Legacy)
@@ -39,8 +45,13 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#add-or-update-team-repository-permissions-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func put(permission: PutRequest.Permission? = nil) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "teams/add-or-update-repo-permissions-legacy")
+        }
+
+        public enum PutError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PutRequest: Encodable {

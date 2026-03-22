@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List forks
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-forks)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.MinimalRepository]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-forks")
+        }
+
+        public enum GetError: Error {
+            case badRequest(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -60,8 +64,15 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// **Note**: Forking a Repository happens asynchronously. You may have to wait a short period of time before you can access the git objects. If this takes longer than 5 minutes, be sure to contact [GitHub Support](https://support.github.com/contact?tags=dotcom-rest-api).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-fork)
-        public func post(organization: String? = nil) -> Request<OctoKit.FullRepository> {
+        public func post(organization: String? = nil) throws(PostError) -> Request<OctoKit.FullRepository> {
             Request(path: path, method: "POST", body: ["organization": organization], id: "repos/create-fork")
+        }
+
+        public enum PostError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

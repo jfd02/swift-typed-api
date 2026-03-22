@@ -18,7 +18,13 @@ extension Paths.User {
 
         /// Logs out current logged in user session
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "logoutUser")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "logoutUser")
+            }
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int)
         }
     }
 }

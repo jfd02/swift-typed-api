@@ -26,8 +26,14 @@ extension Paths.User.Installations.WithInstallationID {
         /// The access the user has to each repository is included in the hash under the `permissions` key.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-repositories-accessible-to-the-user-access-token)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "apps/list-installation-repos-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notModified
         }
 
         public struct GetResponse: Decodable {

@@ -23,7 +23,14 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#approve-a-workflow-run-for-a-fork-pull-request)
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "actions/approve-workflow-run")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "actions/approve-workflow-run")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

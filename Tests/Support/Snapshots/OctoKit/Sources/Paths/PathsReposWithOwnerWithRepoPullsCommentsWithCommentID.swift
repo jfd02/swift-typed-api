@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#get-a-review-comment-for-a-pull-request)
         public var get: Request<OctoKit.PullRequestReviewComment> {
-            Request(path: path, method: "GET", id: "pulls/get-review-comment")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "pulls/get-review-comment")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a review comment for a pull request
@@ -39,7 +45,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#delete-a-review-comment-for-a-pull-request)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "pulls/delete-review-comment")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "pulls/delete-review-comment")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

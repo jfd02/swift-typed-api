@@ -36,7 +36,15 @@ extension Paths.User.Packages.WithPackageType {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#delete-a-package-for-the-authenticated-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "packages/delete-package-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "packages/delete-package-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

@@ -26,7 +26,13 @@ extension Paths.Teams.WithTeamID.Members {
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-team-member-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "teams/get-member-legacy")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/get-member-legacy")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Add team member (Legacy)
@@ -46,7 +52,15 @@ extension Paths.Teams.WithTeamID.Members {
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-team-member-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "teams/add-member-legacy")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "teams/add-member-legacy")
+            }
+        }
+
+        public enum PutError: Error {
+            case notFound
+            case unprocessableEntity
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Remove team member (Legacy)
@@ -64,7 +78,13 @@ extension Paths.Teams.WithTeamID.Members {
         /// [API method documentation](https://docs.github.com/rest/reference/teams#remove-team-member-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "teams/remove-member-legacy")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "teams/remove-member-legacy")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound
         }
     }
 }

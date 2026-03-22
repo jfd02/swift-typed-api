@@ -20,8 +20,12 @@ extension Paths.Markdown {
         /// You must send Markdown as plain text (using a `Content-Type` header of `text/plain` or `text/x-markdown`) to this endpoint, rather than using JSON format. In raw mode, [GitHub Flavored Markdown](https://github.github.com/gfm/) is not supported and Markdown will be rendered in plain format like a README.md file. Markdown content must be 400 KB or less.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/markdown#render-a-markdown-document-in-raw-mode)
-        public func post(_ body: String? = nil) -> Request<String> {
+        public func post(_ body: String? = nil) throws(PostError) -> Request<String> {
             Request(path: path, method: "POST", body: body, id: "markdown/render-raw")
+        }
+
+        public enum PostError: Error {
+            case notModified
         }
 
         public enum PostResponseHeaders {

@@ -17,7 +17,13 @@ extension Paths.Pets {
 
         /// Info for a specific pet
         public var get: Request<petstore_SPM_imports_linux.Pet> {
-            Request(path: path, method: "GET", id: "showPetById")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "showPetById")
+            }
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_SPM_imports_linux.Error)
         }
     }
 }

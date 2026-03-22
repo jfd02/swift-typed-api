@@ -23,7 +23,13 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/meta#get-github-meta-information)
         public var get: Request<OctoKit.APIOverview> {
-            Request(path: path, method: "GET", id: "meta/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "meta/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
     }
 }

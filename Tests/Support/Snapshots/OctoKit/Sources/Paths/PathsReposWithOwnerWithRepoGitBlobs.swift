@@ -18,8 +18,15 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// Create a blob
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-blob)
-        public func post(_ body: PostRequest) -> Request<OctoKit.ShortBlob> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.ShortBlob> {
             Request(path: path, method: "POST", body: body, id: "git/create-blob")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case conflict(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

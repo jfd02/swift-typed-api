@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Refs {
         /// Update a reference
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#update-a-reference)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.GitRef> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.GitRef> {
             Request(path: path, method: "PATCH", body: body, id: "git/update-ref")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {
@@ -44,7 +48,13 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Refs {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#delete-a-reference)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "git/delete-ref")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "git/delete-ref")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

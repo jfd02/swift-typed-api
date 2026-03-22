@@ -21,7 +21,16 @@ extension Paths.User.Migrations.WithMigrationID.Repos.WithRepoName {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#unlock-a-user-repository)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "migrations/unlock-repo-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "migrations/unlock-repo-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

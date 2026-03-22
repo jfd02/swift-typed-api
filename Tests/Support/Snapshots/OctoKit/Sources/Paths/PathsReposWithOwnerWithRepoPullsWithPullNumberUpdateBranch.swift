@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Updates the pull request branch with the latest upstream changes by merging HEAD from the base branch into the pull request branch.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#update-a-pull-request-branch)
-        public func put(expectedHeadSha: String? = nil) -> Request<PutResponse> {
+        public func put(expectedHeadSha: String? = nil) throws(PutError) -> Request<PutResponse> {
             Request(path: path, method: "PUT", body: ["expected_head_sha": expectedHeadSha], id: "pulls/update-branch")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PutResponse: Decodable {

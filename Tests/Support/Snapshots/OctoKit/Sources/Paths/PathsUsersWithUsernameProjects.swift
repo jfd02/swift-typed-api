@@ -18,8 +18,12 @@ extension Paths.Users.WithUsername {
         /// List user projects
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-user-projects)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Project]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Project]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "projects/list-for-user")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum GetResponseHeaders {

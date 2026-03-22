@@ -22,8 +22,16 @@ extension Paths.User {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#list-codespaces-for-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<GetResponse> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "codespaces/list-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {
@@ -71,8 +79,14 @@ extension Paths.User {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#create-a-codespace-for-the-authenticated-user)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Codespace> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Codespace> {
             Request(path: path, method: "POST", body: body, id: "codespaces/create-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostRequest: Encodable {

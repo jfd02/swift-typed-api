@@ -29,8 +29,34 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
         /// (if you used `ref` in the request).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#list-code-scanning-alerts-for-a-repository)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.CodeScanningAlertItems]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.CodeScanningAlertItems]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "code-scanning/list-alerts-for-repo")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case serviceUnavailable(GetServiceUnavailableBody)
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct GetParameters {

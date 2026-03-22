@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-release)
         public var get: Request<OctoKit.Release> {
-            Request(path: path, method: "GET", id: "repos/get-release")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-release")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a release
@@ -29,8 +35,12 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// Users with push access to the repository can edit a release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-release)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Release> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Release> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-release")
+        }
+
+        public enum PatchError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {

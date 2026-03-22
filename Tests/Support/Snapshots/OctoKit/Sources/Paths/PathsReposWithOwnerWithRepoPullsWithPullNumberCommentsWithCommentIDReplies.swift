@@ -22,8 +22,12 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Comments.WithComme
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#create-a-reply-for-a-review-comment)
-        public func post(body: String) -> Request<OctoKit.PullRequestReviewComment> {
+        public func post(body: String) throws(PostError) -> Request<OctoKit.PullRequestReviewComment> {
             Request(path: path, method: "POST", body: ["body": body], id: "pulls/create-reply-for-review-comment")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

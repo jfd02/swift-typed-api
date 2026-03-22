@@ -18,21 +18,40 @@ extension Paths.User {
 
         /// Get user by user name
         var get: Request<edgecases_change_access_control.User> {
-            Request(path: path, method: "GET", id: "getUserByName")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "getUserByName")
+            }
+        }
+
+        enum GetError: Error {
+            case badRequest
+            case notFound
         }
 
         /// Updated user
         ///
         /// This can only be done by the logged in user.
-        func put(_ body: edgecases_change_access_control.User) -> Request<Void> {
+        func put(_ body: edgecases_change_access_control.User) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: body, id: "updateUser")
+        }
+
+        enum PutError: Error {
+            case badRequest
+            case notFound
         }
 
         /// Delete user
         ///
         /// This can only be done by the logged in user.
         var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "deleteUser")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "deleteUser")
+            }
+        }
+
+        enum DeleteError: Error {
+            case badRequest
+            case notFound
         }
     }
 }

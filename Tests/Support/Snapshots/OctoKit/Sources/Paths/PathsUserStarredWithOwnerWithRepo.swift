@@ -19,7 +19,16 @@ extension Paths.User.Starred.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#check-if-a-repository-is-starred-by-the-authenticated-user)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "activity/check-repo-is-starred-by-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "activity/check-repo-is-starred-by-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Star a repository for the authenticated user
@@ -28,14 +37,32 @@ extension Paths.User.Starred.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#star-a-repository-for-the-authenticated-user)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "activity/star-repo-for-authenticated-user")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "activity/star-repo-for-authenticated-user")
+            }
+        }
+
+        public enum PutError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notModified
         }
 
         /// Unstar a repository for the authenticated user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#unstar-a-repository-for-the-authenticated-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "activity/unstar-repo-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "activity/unstar-repo-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

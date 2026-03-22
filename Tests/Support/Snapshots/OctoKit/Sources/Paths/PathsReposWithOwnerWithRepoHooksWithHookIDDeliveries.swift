@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID {
         /// Returns a list of webhook deliveries for a webhook configured in a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-deliveries-for-a-repository-webhook)
-        public func get(perPage: Int? = nil, cursor: String? = nil) -> Request<[OctoKit.HookDeliveryItem]> {
+        public func get(perPage: Int? = nil, cursor: String? = nil) throws(GetError) -> Request<[OctoKit.HookDeliveryItem]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, cursor), id: "repos/list-webhook-deliveries")
+        }
+
+        public enum GetError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         private func makeGetQuery(_ perPage: Int?, _ cursor: String?) -> [(String, String?)] {

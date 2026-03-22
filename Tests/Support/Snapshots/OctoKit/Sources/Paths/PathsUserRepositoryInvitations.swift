@@ -20,8 +20,15 @@ extension Paths.User {
         /// When authenticating as a user, this endpoint will list all currently open repository invitations for that user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-invitations-for-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.RepositoryInvitation]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.RepositoryInvitation]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-invitations-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

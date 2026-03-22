@@ -38,8 +38,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// You can create a read-only deploy key.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-deploy-key)
-        public func post(_ body: PostRequest) -> Request<OctoKit.DeployKey> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.DeployKey> {
             Request(path: path, method: "POST", body: body, id: "repos/create-deploy-key")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

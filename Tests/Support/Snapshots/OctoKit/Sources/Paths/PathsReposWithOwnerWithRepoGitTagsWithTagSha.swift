@@ -48,7 +48,13 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Tags {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#get-a-tag)
         public var get: Request<OctoKit.GitTag> {
-            Request(path: path, method: "GET", id: "git/get-tag")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "git/get-tag")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

@@ -17,8 +17,12 @@ extension Paths.User {
         let path: String
 
         /// Creates list of users with given input array
-        func post(_ body: [edgecases_change_access_control.User]) -> Request<Void> {
+        func post(_ body: [edgecases_change_access_control.User]) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", body: body, id: "createUsersWithListInput")
+        }
+
+        enum PostError: Error {
+            case `default`(statusCode: Int)
         }
     }
 }

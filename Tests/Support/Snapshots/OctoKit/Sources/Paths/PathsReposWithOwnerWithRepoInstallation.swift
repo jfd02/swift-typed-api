@@ -23,7 +23,14 @@ extension Paths.Repos.WithOwner.WithRepo {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-a-repository-installation-for-the-authenticated-app)
         public var get: Request<OctoKit.Installation> {
-            Request(path: path, method: "GET", id: "apps/get-repo-installation")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "apps/get-repo-installation")
+            }
+        }
+
+        public enum GetError: Error {
+            case movedPermanently(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

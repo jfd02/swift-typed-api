@@ -21,7 +21,13 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/emojis#get-emojis)
         public var get: Request<[String: String]> {
-            Request(path: path, method: "GET", id: "emojis/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "emojis/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
     }
 }

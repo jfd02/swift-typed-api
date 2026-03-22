@@ -23,7 +23,30 @@ extension Paths.App.Installations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-an-installation-for-the-authenticated-app)
         public var get: Request<OctoKit.Installation> {
-            Request(path: path, method: "GET", id: "apps/get-installation")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "apps/get-installation")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unsupportedMediaType(GetUnsupportedMediaTypeBody)
+        }
+
+        public struct GetUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
 
         /// Delete an installation for the authenticated app
@@ -34,7 +57,13 @@ extension Paths.App.Installations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#delete-an-installation-for-the-authenticated-app)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "apps/delete-installation")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "apps/delete-installation")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

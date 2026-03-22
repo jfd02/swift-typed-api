@@ -19,21 +19,44 @@ extension Paths.Projects.Columns {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#get-a-project-column)
         public var get: Request<OctoKit.ProjectColumn> {
-            Request(path: path, method: "GET", id: "projects/get-column")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "projects/get-column")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Update an existing project column
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#update-a-project-column)
-        public func patch(name: String) -> Request<OctoKit.ProjectColumn> {
+        public func patch(name: String) throws(PatchError) -> Request<OctoKit.ProjectColumn> {
             Request(path: path, method: "PATCH", body: ["name": name], id: "projects/update-column")
+        }
+
+        public enum PatchError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Delete a project column
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#delete-a-project-column)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "projects/delete-column")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "projects/delete-column")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

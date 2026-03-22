@@ -23,7 +23,15 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-the-authenticated-user)
         public var get: Request<GetResponse> {
-            Request(path: path, method: "GET", id: "users/get-authenticated")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/get-authenticated")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponse: Decodable {
@@ -50,8 +58,16 @@ extension Paths {
         /// **Note:** If your email is set to private and you send an `email` parameter as part of this request to update your profile, your privacy settings are still enforced: the email address will not be displayed on your public profile or via the API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users/#update-the-authenticated-user)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.PrivateUser> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.PrivateUser> {
             Request(path: path, method: "PATCH", body: body, id: "users/update-authenticated")
+        }
+
+        public enum PatchError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {

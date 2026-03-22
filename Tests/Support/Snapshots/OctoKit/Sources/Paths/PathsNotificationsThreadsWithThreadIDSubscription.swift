@@ -23,7 +23,15 @@ extension Paths.Notifications.Threads.WithThreadID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#get-a-thread-subscription-for-the-authenticated-user)
         public var get: Request<OctoKit.ThreadSubscription> {
-            Request(path: path, method: "GET", id: "activity/get-thread-subscription-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "activity/get-thread-subscription-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Set a thread subscription
@@ -35,8 +43,14 @@ extension Paths.Notifications.Threads.WithThreadID {
         /// Unsubscribing from a conversation in a repository that you are not watching is functionally equivalent to the [Delete a thread subscription](https://docs.github.com/rest/reference/activity#delete-a-thread-subscription) endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#set-a-thread-subscription)
-        public func put(isIgnored: Bool? = nil) -> Request<OctoKit.ThreadSubscription> {
+        public func put(isIgnored: Bool? = nil) throws(PutError) -> Request<OctoKit.ThreadSubscription> {
             Request(path: path, method: "PUT", body: ["ignored": isIgnored], id: "activity/set-thread-subscription")
+        }
+
+        public enum PutError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Delete a thread subscription
@@ -45,7 +59,15 @@ extension Paths.Notifications.Threads.WithThreadID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#delete-a-thread-subscription)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "activity/delete-thread-subscription")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "activity/delete-thread-subscription")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

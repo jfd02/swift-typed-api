@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List branches
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-branches)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.ShortBranch]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.ShortBranch]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-branches")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

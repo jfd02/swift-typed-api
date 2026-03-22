@@ -1,5 +1,5 @@
 import Foundation
-import OpenAPIKit30
+import OpenAPIKit
 
 // Experimental. This only seems to work with YAML and crashes with JSONDecoder.
 // But for YAML, you get a solid x2 speed boost.

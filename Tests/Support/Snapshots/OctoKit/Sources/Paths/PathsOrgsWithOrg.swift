@@ -23,7 +23,13 @@ extension Paths.Orgs {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-an-organization)
         public var get: Request<OctoKit.OrganizationFull> {
-            Request(path: path, method: "GET", id: "orgs/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update an organization
@@ -33,8 +39,32 @@ extension Paths.Orgs {
         /// Enables an authenticated organization owner with the `admin:org` scope to update the organization's profile and member privileges.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs/#update-an-organization)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.OrganizationFull> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.OrganizationFull> {
             Request(path: path, method: "PATCH", body: body, id: "orgs/update")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(PatchUnprocessableEntityBody)
+            case conflict(OctoKit.BasicError)
+        }
+
+        public enum PatchUnprocessableEntityBody: Decodable {
+            case validationError(OctoKit.ValidationError)
+            case validationErrorSimple(OctoKit.ValidationErrorSimple)
+
+            public init(from decoder: Decoder) throws {
+                let container = try decoder.singleValueContainer()
+                if let value = try? container.decode(OctoKit.ValidationError.self) {
+                    self = .validationError(value)
+                } else if let value = try? container.decode(OctoKit.ValidationErrorSimple.self) {
+                    self = .validationErrorSimple(value)
+                } else {
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Data could not be decoded as any of the expected types (OctoKit.ValidationError, OctoKit.ValidationErrorSimple)."
+                    )
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {

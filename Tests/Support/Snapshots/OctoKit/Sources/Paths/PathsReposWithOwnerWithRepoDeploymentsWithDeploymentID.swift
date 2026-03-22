@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-deployment)
         public var get: Request<OctoKit.Deployment> {
-            Request(path: path, method: "GET", id: "repos/get-deployment")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-deployment")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete a deployment
@@ -35,7 +41,14 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-deployment)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-deployment")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-deployment")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
     }
 }

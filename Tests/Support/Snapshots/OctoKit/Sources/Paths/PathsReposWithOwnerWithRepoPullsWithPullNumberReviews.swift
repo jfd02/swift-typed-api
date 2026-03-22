@@ -46,8 +46,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// The `position` value equals the number of lines down from the first "@@" hunk header in the file you want to add a comment. The line just below the "@@" line is position 1, the next line is position 2, and so on. The position in the diff continues to increase through lines of whitespace and additional hunks until the beginning of a new file.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#create-a-review-for-a-pull-request)
-        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.PullRequestReview> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.PullRequestReview> {
             Request(path: path, method: "POST", body: body, id: "pulls/create-review")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

@@ -24,7 +24,13 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#download-workflow-run-logs)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "actions/download-workflow-run-logs")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "actions/download-workflow-run-logs")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
         }
 
         /// Delete workflow run logs

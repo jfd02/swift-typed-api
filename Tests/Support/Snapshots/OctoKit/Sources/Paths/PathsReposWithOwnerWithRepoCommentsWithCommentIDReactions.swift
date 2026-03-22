@@ -20,8 +20,12 @@ extension Paths.Repos.WithOwner.WithRepo.Comments.WithCommentID {
         /// List the reactions to a [commit comment](https://docs.github.com/rest/reference/repos#comments).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#list-reactions-for-a-commit-comment)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Reaction]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Reaction]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "reactions/list-for-commit-comment")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -64,8 +68,29 @@ extension Paths.Repos.WithOwner.WithRepo.Comments.WithCommentID {
         /// Create a reaction to a [commit comment](https://docs.github.com/rest/reference/repos#comments). A response with an HTTP `200` status means that you already added the reaction type to this commit comment.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#create-reaction-for-a-commit-comment)
-        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction> {
+        public func post(content: PostRequest.Content) throws(PostError) -> Request<OctoKit.Reaction> {
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-commit-comment")
+        }
+
+        public enum PostError: Error {
+            case unsupportedMediaType(PostUnsupportedMediaTypeBody)
+            case unprocessableEntity(OctoKit.ValidationError)
+        }
+
+        public struct PostUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PostRequest: Encodable {

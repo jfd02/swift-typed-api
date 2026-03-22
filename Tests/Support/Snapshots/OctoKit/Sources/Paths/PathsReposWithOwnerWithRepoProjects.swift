@@ -20,8 +20,16 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Lists the projects in a repository. Returns a `404 Not Found` status if projects are disabled in the repository. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-repository-projects)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Project]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Project]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "projects/list-for-repo")
+        }
+
+        public enum GetError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public enum GetResponseHeaders {
@@ -59,8 +67,16 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Creates a repository project board. Returns a `404 Not Found` status if projects are disabled in the repository. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#create-a-repository-project)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Project> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Project> {
             Request(path: path, method: "POST", body: body, id: "projects/create-for-repo")
+        }
+
+        public enum PostError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PostRequest: Encodable {

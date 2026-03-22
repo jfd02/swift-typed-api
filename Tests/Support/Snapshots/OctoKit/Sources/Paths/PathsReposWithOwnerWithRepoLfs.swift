@@ -18,8 +18,14 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Enable Git LFS for a repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#enable-git-lfs-for-a-repository)
-        public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "repos/enable-lfs-for-repo")
+        public var put: Request<[String: AnyJSON]> {
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "repos/enable-lfs-for-repo")
+            }
+        }
+
+        public enum PutError: Error {
+            case forbidden
         }
 
         /// Disable Git LFS for a repository

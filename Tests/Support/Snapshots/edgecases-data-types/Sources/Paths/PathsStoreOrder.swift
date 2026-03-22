@@ -16,8 +16,12 @@ extension Paths.Store {
         public let path: String
 
         /// Place an order for a pet
-        public func post(_ body: edgecases_data_types.Order) -> Request<edgecases_data_types.Order> {
+        public func post(_ body: edgecases_data_types.Order) throws(PostError) -> Request<edgecases_data_types.Order> {
             Request(path: path, method: "POST", body: body, id: "placeOrder")
+        }
+
+        public enum PostError: Error {
+            case badRequest
         }
     }
 }

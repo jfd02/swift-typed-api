@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List labels for a repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-labels-for-a-repository)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Label]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Label]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-labels-for-repo")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -36,8 +40,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Create a label
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#create-a-label)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Label> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Label> {
             Request(path: path, method: "POST", body: body, id: "issues/create-label")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

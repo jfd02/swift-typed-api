@@ -19,14 +19,27 @@ extension Paths.User.Memberships.Orgs {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-an-organization-membership-for-the-authenticated-user)
         public var get: Request<OctoKit.OrgMembership> {
-            Request(path: path, method: "GET", id: "orgs/get-membership-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/get-membership-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update an organization membership for the authenticated user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#update-an-organization-membership-for-the-authenticated-user)
-        public func patch(state: PatchRequest.State) -> Request<OctoKit.OrgMembership> {
+        public func patch(state: PatchRequest.State) throws(PatchError) -> Request<OctoKit.OrgMembership> {
             Request(path: path, method: "PATCH", body: PatchRequest(state: state), id: "orgs/update-membership-for-authenticated-user")
+        }
+
+        public enum PatchError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {

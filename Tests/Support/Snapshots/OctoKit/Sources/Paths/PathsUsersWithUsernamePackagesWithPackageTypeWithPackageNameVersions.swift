@@ -24,7 +24,15 @@ extension Paths.Users.WithUsername.Packages.WithPackageType.WithPackageName {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#get-all-package-versions-for-a-package-owned-by-a-user)
         public var get: Request<[OctoKit.PackageVersion]> {
-            Request(path: path, method: "GET", id: "packages/get-all-package-versions-for-package-owned-by-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "packages/get-all-package-versions-for-package-owned-by-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

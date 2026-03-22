@@ -22,8 +22,15 @@ extension Paths.User {
         /// The authenticated user has explicit permission to access repositories they own, repositories where they are a collaborator, and repositories that they can access through an organization membership.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repositories-for-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Repository]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Repository]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct GetParameters {
@@ -102,8 +109,17 @@ extension Paths.User {
         /// *   `repo` scope to create a private repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-repository-for-the-authenticated-user)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Repository> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Repository> {
             Request(path: path, method: "POST", body: body, id: "repos/create-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case badRequest(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

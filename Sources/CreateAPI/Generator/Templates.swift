@@ -1,5 +1,5 @@
 import CreateOptions
-import OpenAPIKit30
+import OpenAPIKit
 import Foundation
 
 // TODO: When parsing additionalProperties remove known keys
@@ -621,6 +621,64 @@ final class Templates {
         """
         extension \(type) {
         \(contents.indented)
+        }
+        """
+    }
+
+    // MARK: Typed Errors
+
+    /// Generates a typed error enum for an operation.
+    ///
+    ///     public enum ListPetsError: Error {
+    ///         case notFound(ErrorResponse)
+    ///         case internalServerError(ErrorResponse)
+    ///         case `default`(statusCode: Int, ErrorResponse)
+    ///     }
+    func errorEnum(name: String, cases: [ErrorEnumCase]) -> String {
+        let caseDecls = cases.map { errorCase($0) }.joined(separator: "\n")
+        return """
+        \(access)enum \(name): Error {
+        \(caseDecls.indented)
+        }
+        """
+    }
+
+    private func errorCase(_ c: ErrorEnumCase) -> String {
+        let bodyParam = c.bodyType.map { "(\($0))" } ?? ""
+        if c.isDefault || c.isRange {
+            let bodyPart = c.bodyType.map { ", \($0)" } ?? ""
+            return "case \(c.name)(statusCode: Int\(bodyPart))"
+        }
+        return "case \(c.name)\(bodyParam)"
+    }
+
+    /// Generates a method with typed throws.
+    ///
+    ///     public func get() throws(ListPetsError) -> [Pet] {
+    ///         ...
+    ///     }
+    func methodOrPropertyWithTypedThrows(name: String, parameters: [String] = [], returning type: String, errorType: String, contents: String, isStatic: Bool) -> String {
+        if parameters.isEmpty {
+            return propertyWithTypedThrows(name: name, returning: type, errorType: errorType, contents: contents, isStatic: isStatic)
+        } else {
+            return methodWithTypedThrows(name: name, parameters: parameters, returning: type, errorType: errorType, contents: contents, isStatic: isStatic)
+        }
+    }
+
+    func methodWithTypedThrows(name: String, parameters: [String] = [], returning type: String, errorType: String, contents: String, isStatic: Bool) -> String {
+        """
+        \(isStatic ? "static " : "")\(access)func \(name)(\(parameters.joined(separator: ", "))) throws(\(errorType)) -> \(type) {
+        \(contents.indented)
+        }
+        """
+    }
+
+    func propertyWithTypedThrows(name: String, returning type: String, errorType: String, contents: String, isStatic: Bool) -> String {
+        """
+        \(isStatic ? "static " : "")\(access)var \(name): \(type) {
+            get throws(\(errorType)) {
+        \(contents.indented(count: 2))
+            }
         }
         """
     }

@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews.WithReview
         /// **Note:** To dismiss a pull request review on a [protected branch](https://docs.github.com/rest/reference/repos#branches), you must be a repository administrator or be included in the list of people or teams who can dismiss pull request reviews.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#dismiss-a-review-for-a-pull-request)
-        public func put(_ body: PutRequest) -> Request<OctoKit.PullRequestReview> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.PullRequestReview> {
             Request(path: path, method: "PUT", body: body, id: "pulls/dismiss-review")
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PutRequest: Encodable {

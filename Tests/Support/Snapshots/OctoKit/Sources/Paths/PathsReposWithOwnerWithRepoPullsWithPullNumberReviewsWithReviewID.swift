@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#get-a-review-for-a-pull-request)
         public var get: Request<OctoKit.PullRequestReview> {
-            Request(path: path, method: "GET", id: "pulls/get-review")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "pulls/get-review")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a review for a pull request
@@ -27,15 +33,26 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews {
         /// Update the review summary comment with new text.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#update-a-review-for-a-pull-request)
-        public func put(body: String) -> Request<OctoKit.PullRequestReview> {
+        public func put(body: String) throws(PutError) -> Request<OctoKit.PullRequestReview> {
             Request(path: path, method: "PUT", body: ["body": body], id: "pulls/update-review")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         /// Delete a pending review for a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#delete-a-pending-review-for-a-pull-request)
         public var delete: Request<OctoKit.PullRequestReview> {
-            Request(path: path, method: "DELETE", id: "pulls/delete-pending-review")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "pulls/delete-pending-review")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

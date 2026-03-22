@@ -29,8 +29,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// This input example shows how you can use the `client_payload` as a test to debug your workflow.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-repository-dispatch-event)
-        public func post(_ body: PostRequest) -> Request<Void> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", body: body, id: "repos/create-dispatch-event")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

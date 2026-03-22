@@ -21,7 +21,14 @@ extension Paths.AppManifests.WithCode {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#create-a-github-app-from-a-manifest)
         public var post: Request<PostResponse> {
-            Request(path: path, method: "POST", id: "apps/create-from-manifest")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "apps/create-from-manifest")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PostResponse: Decodable {

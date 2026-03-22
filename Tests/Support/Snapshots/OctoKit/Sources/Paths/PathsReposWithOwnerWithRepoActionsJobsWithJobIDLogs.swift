@@ -24,7 +24,13 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Jobs.WithJobID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#download-job-logs-for-a-workflow-run)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "actions/download-job-logs-for-workflow-run")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "actions/download-job-logs-for-workflow-run")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
         }
     }
 }

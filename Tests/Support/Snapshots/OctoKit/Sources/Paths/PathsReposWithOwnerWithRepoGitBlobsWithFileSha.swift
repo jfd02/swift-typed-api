@@ -23,7 +23,15 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Blobs {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#get-a-blob)
         public var get: Request<OctoKit.Blob> {
-            Request(path: path, method: "GET", id: "git/get-blob")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "git/get-blob")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

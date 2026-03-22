@@ -28,8 +28,15 @@ extension Paths.Search {
         /// The labels that best match the query appear first in the search results.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-labels)
-        public func get(parameters: GetParameters) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/labels")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct GetResponse: Decodable {

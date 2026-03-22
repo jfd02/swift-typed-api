@@ -24,7 +24,13 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID.Attempts.WithAtt
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#download-workflow-run-attempt-logs)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "actions/download-workflow-run-attempt-logs")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "actions/download-workflow-run-attempt-logs")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
         }
     }
 }

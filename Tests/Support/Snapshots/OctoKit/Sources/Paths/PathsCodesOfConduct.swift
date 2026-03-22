@@ -19,7 +19,13 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codes-of-conduct#get-all-codes-of-conduct)
         public var get: Request<[OctoKit.CodeOfConduct]> {
-            Request(path: path, method: "GET", id: "codes-of-conduct/get-all-codes-of-conduct")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "codes-of-conduct/get-all-codes-of-conduct")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
     }
 }

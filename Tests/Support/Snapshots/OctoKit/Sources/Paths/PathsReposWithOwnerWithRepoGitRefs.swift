@@ -20,8 +20,12 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// Creates a reference for your repository. You are unable to create new references for empty repositories, even if the commit SHA-1 hash used exists. Empty repositories are repositories without branches.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-reference)
-        public func post(_ body: PostRequest) -> Request<OctoKit.GitRef> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GitRef> {
             Request(path: path, method: "POST", body: body, id: "git/create-ref")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

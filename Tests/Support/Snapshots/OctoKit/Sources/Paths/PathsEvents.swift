@@ -20,8 +20,33 @@ extension Paths {
         /// We delay the public events feed by five minutes, which means the most recent event returned by the public events API actually occurred at least five minutes ago.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-public-events)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Event]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "activity/list-public-events")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case serviceUnavailable(GetServiceUnavailableBody)
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         private func makeGetQuery(_ perPage: Int?, _ page: Int?) -> [(String, String?)] {

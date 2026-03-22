@@ -35,8 +35,12 @@ extension Paths.Repos.WithOwner.WithRepo.Environments {
         /// You must authenticate using an access token with the repo scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-or-update-an-environment)
-        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.Environment> {
+        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<OctoKit.Environment> {
             Request(path: path, method: "PUT", body: body, id: "repos/create-or-update-environment")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {

@@ -23,7 +23,31 @@ extension Paths.Apps {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps/#get-an-app)
         public var get: Request<OctoKit.Integration> {
-            Request(path: path, method: "GET", id: "apps/get-by-slug")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "apps/get-by-slug")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unsupportedMediaType(GetUnsupportedMediaTypeBody)
+        }
+
+        public struct GetUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
     }
 }

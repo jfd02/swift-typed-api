@@ -19,8 +19,12 @@ extension Paths {
         /// Create user
         ///
         /// This can only be done by the logged in user.
-        public func post(_ body: edgecases_disable_acronyms.User) -> Request<Void> {
+        public func post(_ body: edgecases_disable_acronyms.User) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", body: body, id: "createUser")
+        }
+
+        public enum PostError: Error {
+            case `default`(statusCode: Int)
         }
     }
 }

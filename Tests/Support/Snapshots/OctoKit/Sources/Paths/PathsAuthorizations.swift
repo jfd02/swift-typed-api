@@ -21,8 +21,15 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#list-your-authorizations)
         @available(*, deprecated, message: "Deprecated")
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Authorization]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Authorization]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "oauth-authorizations/list-authorizations")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -65,8 +72,16 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#create-a-new-authorization)
         @available(*, deprecated, message: "Deprecated")
-        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.Authorization> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.Authorization> {
             Request(path: path, method: "POST", body: body, id: "oauth-authorizations/create-authorization")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case gone(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

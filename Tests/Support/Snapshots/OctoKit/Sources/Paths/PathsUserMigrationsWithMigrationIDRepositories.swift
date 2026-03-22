@@ -20,8 +20,12 @@ extension Paths.User.Migrations.WithMigrationID {
         /// Lists all the repositories for this user migration.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#list-repositories-for-a-user-migration)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.MinimalRepository]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "migrations/list-repos-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

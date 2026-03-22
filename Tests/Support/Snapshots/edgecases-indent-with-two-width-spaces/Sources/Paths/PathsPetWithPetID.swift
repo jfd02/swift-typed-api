@@ -20,12 +20,23 @@ extension Paths.Pet {
     ///
     /// Returns a single pet
     public var get: Request<edgecases_indent_with_two_width_spaces.Pet> {
-      Request(path: path, method: "GET", id: "getPetById")
+      get throws(GetError) {
+        Request(path: path, method: "GET", id: "getPetById")
+      }
+    }
+
+    public enum GetError: Error {
+      case badRequest
+      case notFound
     }
 
     /// Updates a pet in the store with form data
-    public func post(_ body: PostRequest? = nil) -> Request<Void> {
+    public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<Void> {
       Request(path: path, method: "POST", body: body.map(URLQueryEncoder.encode)?.percentEncodedQuery, id: "updatePetWithForm")
+    }
+
+    public enum PostError: Error {
+      case methodNotAllowed
     }
 
     public struct PostRequest: Encodable {
@@ -49,7 +60,13 @@ extension Paths.Pet {
 
     /// Deletes a pet
     public var delete: Request<Void> {
-      Request(path: path, method: "DELETE", id: "deletePet")
+      get throws(DeleteError) {
+        Request(path: path, method: "DELETE", id: "deletePet")
+      }
+    }
+
+    public enum DeleteError: Error {
+      case badRequest
     }
   }
 }

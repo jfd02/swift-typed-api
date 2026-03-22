@@ -18,8 +18,12 @@ extension Paths {
         public let path: String
 
         /// List all pets
-        public func get(limit: Int32? = nil) -> Request<[petstore_merge_sources.Pet]> {
+        public func get(limit: Int32? = nil) throws(GetError) -> Request<[petstore_merge_sources.Pet]> {
             Request(path: path, method: "GET", query: makeGetQuery(limit), id: "listPets")
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_merge_sources.Error)
         }
 
         public enum GetResponseHeaders {
@@ -35,7 +39,13 @@ extension Paths {
 
         /// Create a pet
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "createPets")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "createPets")
+            }
+        }
+
+        public enum PostError: Error {
+            case `default`(statusCode: Int, petstore_merge_sources.Error)
         }
     }
 }
@@ -51,7 +61,13 @@ extension Paths.Pets {
 
         /// Info for a specific pet
         public var get: Request<petstore_merge_sources.Pet> {
-            Request(path: path, method: "GET", id: "showPetById")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "showPetById")
+            }
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_merge_sources.Error)
         }
     }
 }

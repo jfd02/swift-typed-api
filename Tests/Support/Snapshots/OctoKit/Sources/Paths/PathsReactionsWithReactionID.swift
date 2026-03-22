@@ -24,7 +24,16 @@ extension Paths.Reactions {
         /// [API method documentation](https://docs.github.com/rest/reference/reactions/#delete-a-reaction-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "reactions/delete-legacy")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "reactions/delete-legacy")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
         }
     }
 }

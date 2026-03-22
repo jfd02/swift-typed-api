@@ -20,8 +20,15 @@ extension Paths {
         /// List all notifications for the current user, sorted by most recently updated.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-notifications-for-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Thread]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Thread]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "activity/list-notifications-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum GetResponseHeaders {
@@ -62,8 +69,14 @@ extension Paths {
         /// Marks all notifications as "read" removes it from the [default view on GitHub](https://github.com/notifications). If the number of notifications is too large to complete in one request, you will receive a `202 Accepted` status and GitHub will run an asynchronous process to mark notifications as "read." To check whether any "unread" notifications remain, you can use the [List notifications for the authenticated user](https://docs.github.com/rest/reference/activity#list-notifications-for-the-authenticated-user) endpoint and pass the query parameter `all=false`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#mark-notifications-as-read)
-        public func put(_ body: PutRequest? = nil) -> Request<PutResponse> {
+        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<PutResponse> {
             Request(path: path, method: "PUT", body: body, id: "activity/mark-notifications-as-read")
+        }
+
+        public enum PutError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct PutResponse: Decodable {

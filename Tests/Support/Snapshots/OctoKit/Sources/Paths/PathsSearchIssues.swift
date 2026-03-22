@@ -31,8 +31,15 @@ extension Paths.Search {
         /// **Note:** For [user-to-server](https://docs.github.com/developers/apps/identifying-and-authorizing-users-for-github-apps#user-to-server-requests) GitHub App requests, you can't retrieve a combination of issues and pull requests in a single query. Requests that don't include the `is:issue` or `is:pull-request` qualifier will receive an HTTP `422 Unprocessable Entity` response. To get results for both issues and pull requests, you must send separate queries for issues and pull requests. For more information about the `is` qualifier, see "[Searching only issues or pull requests](https://docs.github.com/github/searching-for-information-on-github/searching-issues-and-pull-requests#search-only-issues-or-pull-requests)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-issues-and-pull-requests)
-        public func get(parameters: GetParameters) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/issues-and-pull-requests")
+        }
+
+        public enum GetError: Error {
+            case serviceUnavailable(GetServiceUnavailableBody)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {
@@ -51,6 +58,25 @@ extension Paths.Search {
                 self.totalCount = try values.decode(Int.self, forKey: "total_count")
                 self.isIncompleteResults = try values.decode(Bool.self, forKey: "incomplete_results")
                 self.items = try values.decode([OctoKit.IssueSearchResultItem].self, forKey: "items")
+            }
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
             }
         }
 

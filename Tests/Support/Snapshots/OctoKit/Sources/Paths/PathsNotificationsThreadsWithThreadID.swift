@@ -19,14 +19,29 @@ extension Paths.Notifications.Threads {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#get-a-thread)
         public var get: Request<OctoKit.Thread> {
-            Request(path: path, method: "GET", id: "activity/get-thread")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "activity/get-thread")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Mark a thread as read
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#mark-a-thread-as-read)
         public var patch: Request<Void> {
-            Request(path: path, method: "PATCH", id: "activity/mark-thread-as-read")
+            get throws(PatchError) {
+                Request(path: path, method: "PATCH", id: "activity/mark-thread-as-read")
+            }
+        }
+
+        public enum PatchError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

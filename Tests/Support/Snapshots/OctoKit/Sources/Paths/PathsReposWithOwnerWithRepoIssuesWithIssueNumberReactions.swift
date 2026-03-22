@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// List the reactions to an [issue](https://docs.github.com/rest/reference/issues).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#list-reactions-for-an-issue)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Reaction]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Reaction]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "reactions/list-for-issue")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -64,8 +69,12 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Create a reaction to an [issue](https://docs.github.com/rest/reference/issues/). A response with an HTTP `200` status means that you already added the reaction type to this issue.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#create-reaction-for-an-issue)
-        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction> {
+        public func post(content: PostRequest.Content) throws(PostError) -> Request<OctoKit.Reaction> {
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-issue")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

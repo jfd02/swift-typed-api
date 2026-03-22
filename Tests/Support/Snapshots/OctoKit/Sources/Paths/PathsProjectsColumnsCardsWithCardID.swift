@@ -19,14 +19,31 @@ extension Paths.Projects.Columns.Cards {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#get-a-project-card)
         public var get: Request<OctoKit.ProjectCard> {
-            Request(path: path, method: "GET", id: "projects/get-card")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "projects/get-card")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update an existing project card
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#update-a-project-card)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.ProjectCard> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.ProjectCard> {
             Request(path: path, method: "PATCH", body: body, id: "projects/update-card")
+        }
+
+        public enum PatchError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PatchRequest: Encodable {
@@ -55,7 +72,35 @@ extension Paths.Projects.Columns.Cards {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#delete-a-project-card)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "projects/delete-card")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "projects/delete-card")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(DeleteForbiddenBody)
+            case unauthorized(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+        }
+
+        public struct DeleteForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+            public var errors: [String]?
+
+            public init(message: String? = nil, documentationURL: String? = nil, errors: [String]? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+                self.errors = errors
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.errors = try values.decodeIfPresent([String].self, forKey: "errors")
+            }
         }
     }
 }

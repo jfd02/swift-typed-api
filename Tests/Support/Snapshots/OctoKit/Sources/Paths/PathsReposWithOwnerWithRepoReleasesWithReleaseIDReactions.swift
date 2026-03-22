@@ -20,8 +20,12 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
         /// Create a reaction to a [release](https://docs.github.com/rest/reference/repos#releases). A response with a `Status: 200 OK` means that you already added the reaction type to this release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions/#create-reaction-for-a-release)
-        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction> {
+        public func post(content: PostRequest.Content) throws(PostError) -> Request<OctoKit.Reaction> {
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-release")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

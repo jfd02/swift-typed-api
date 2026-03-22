@@ -23,7 +23,15 @@ extension Paths.User.Installations.WithInstallationID.Repositories {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#add-a-repository-to-an-app-installation)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "apps/add-repo-to-installation-for-authenticated-user")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "apps/add-repo-to-installation-for-authenticated-user")
+            }
+        }
+
+        public enum PutError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notModified
+            case notFound(OctoKit.BasicError)
         }
 
         /// Remove a repository from an app installation
@@ -34,7 +42,15 @@ extension Paths.User.Installations.WithInstallationID.Repositories {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#remove-a-repository-from-an-app-installation)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "apps/remove-repo-from-installation-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "apps/remove-repo-from-installation-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notModified
+            case notFound(OctoKit.BasicError)
         }
     }
 }

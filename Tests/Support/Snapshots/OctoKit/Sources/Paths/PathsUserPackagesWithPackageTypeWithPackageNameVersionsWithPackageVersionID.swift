@@ -36,7 +36,15 @@ extension Paths.User.Packages.WithPackageType.WithPackageName.Versions {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#delete-a-package-version-for-the-authenticated-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "packages/delete-package-version-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "packages/delete-package-version-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

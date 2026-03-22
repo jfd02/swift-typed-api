@@ -17,7 +17,13 @@ extension Paths.Recipes {
         ///
         /// Returns a specific Recipe model with the given identifier.
         public var get: Request<cookpad.Recipe> {
-            Request(path: path, method: "GET", id: "getRecipe")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "getRecipe")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
     }
 }

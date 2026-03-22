@@ -22,8 +22,12 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
         /// This resource is also available via a legacy route: `GET /repos/:owner/:repo/statuses/:ref`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-commit-statuses-for-a-reference)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Status]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Status]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-commit-statuses-for-ref")
+        }
+
+        public enum GetError: Error {
+            case movedPermanently(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

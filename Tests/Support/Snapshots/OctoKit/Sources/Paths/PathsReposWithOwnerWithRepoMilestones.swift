@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List milestones
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-milestones)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Milestone]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Milestone]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-milestones")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -71,8 +75,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Create a milestone
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#create-a-milestone)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Milestone> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Milestone> {
             Request(path: path, method: "POST", body: body, id: "issues/create-milestone")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

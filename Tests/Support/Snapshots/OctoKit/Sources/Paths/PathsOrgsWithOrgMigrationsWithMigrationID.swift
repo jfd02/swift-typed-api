@@ -27,8 +27,12 @@ extension Paths.Orgs.WithOrg.Migrations {
         /// *   `failed`, which means the migration failed.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-an-organization-migration-status)
-        public func get(exclude: [Exclude]? = nil) -> Request<OctoKit.Migration> {
+        public func get(exclude: [Exclude]? = nil) throws(GetError) -> Request<OctoKit.Migration> {
             Request(path: path, method: "GET", query: makeGetQuery(exclude), id: "migrations/get-status-for-org")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ exclude: [Exclude]?) -> [(String, String?)] {

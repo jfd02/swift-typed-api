@@ -19,21 +19,37 @@ extension Paths.Repos.WithOwner.WithRepo.Comments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-commit-comment)
         public var get: Request<OctoKit.CommitComment> {
-            Request(path: path, method: "GET", id: "repos/get-commit-comment")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-commit-comment")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a commit comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-commit-comment)
-        public func patch(body: String) -> Request<OctoKit.CommitComment> {
+        public func patch(body: String) throws(PatchError) -> Request<OctoKit.CommitComment> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "repos/update-commit-comment")
+        }
+
+        public enum PatchError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete a commit comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-commit-comment)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-commit-comment")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-commit-comment")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

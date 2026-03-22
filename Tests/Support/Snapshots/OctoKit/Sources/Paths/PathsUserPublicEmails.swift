@@ -20,8 +20,15 @@ extension Paths.User {
         /// Lists your publicly visible email address, which you can set with the [Set primary email visibility for the authenticated user](https://docs.github.com/rest/reference/users#set-primary-email-visibility-for-the-authenticated-user) endpoint. This endpoint is accessible with the `user:email` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-public-email-addresses-for-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Email]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Email]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "users/list-public-emails-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

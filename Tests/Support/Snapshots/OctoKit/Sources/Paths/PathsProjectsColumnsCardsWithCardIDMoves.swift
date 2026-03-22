@@ -18,8 +18,95 @@ extension Paths.Projects.Columns.Cards.WithCardID {
         /// Move a project card
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#move-a-project-card)
-        public func post(_ body: PostRequest) -> Request<Void> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", body: body, id: "projects/move-card")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case forbidden(PostForbiddenBody)
+            case unauthorized(OctoKit.BasicError)
+            case serviceUnavailable(PostServiceUnavailableBody)
+            case unprocessableEntity(OctoKit.ValidationError)
+        }
+
+        public struct PostForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+            public var errors: [Error]?
+
+            public struct Error: Decodable {
+                public var code: String?
+                public var message: String?
+                public var resource: String?
+                public var field: String?
+
+                public init(code: String? = nil, message: String? = nil, resource: String? = nil, field: String? = nil) {
+                    self.code = code
+                    self.message = message
+                    self.resource = resource
+                    self.field = field
+                }
+
+                public init(from decoder: Decoder) throws {
+                    let values = try decoder.container(keyedBy: StringCodingKey.self)
+                    self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                    self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                    self.resource = try values.decodeIfPresent(String.self, forKey: "resource")
+                    self.field = try values.decodeIfPresent(String.self, forKey: "field")
+                }
+            }
+
+            public init(message: String? = nil, documentationURL: String? = nil, errors: [Error]? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+                self.errors = errors
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.errors = try values.decodeIfPresent([Error].self, forKey: "errors")
+            }
+        }
+
+        public struct PostServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+            public var errors: [Error]?
+
+            public struct Error: Decodable {
+                public var code: String?
+                public var message: String?
+
+                public init(code: String? = nil, message: String? = nil) {
+                    self.code = code
+                    self.message = message
+                }
+
+                public init(from decoder: Decoder) throws {
+                    let values = try decoder.container(keyedBy: StringCodingKey.self)
+                    self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                    self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                }
+            }
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil, errors: [Error]? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+                self.errors = errors
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.errors = try values.decodeIfPresent([Error].self, forKey: "errors")
+            }
         }
 
         public struct PostRequest: Encodable {

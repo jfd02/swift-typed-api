@@ -18,8 +18,14 @@ extension Paths.Gists.WithGistID {
         /// List gist forks
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gist-forks)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.GistSimple]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.GistSimple]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "gists/list-forks")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -39,7 +45,16 @@ extension Paths.Gists.WithGistID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#fork-a-gist)
         public var post: Request<OctoKit.BaseGist> {
-            Request(path: path, method: "POST", id: "gists/fork")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "gists/fork")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

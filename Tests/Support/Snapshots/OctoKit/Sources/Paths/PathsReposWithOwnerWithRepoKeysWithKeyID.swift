@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo.Keys {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-deploy-key)
         public var get: Request<OctoKit.DeployKey> {
-            Request(path: path, method: "GET", id: "repos/get-deploy-key")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-deploy-key")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete a deploy key

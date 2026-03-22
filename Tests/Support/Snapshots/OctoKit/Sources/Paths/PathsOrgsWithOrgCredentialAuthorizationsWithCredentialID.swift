@@ -23,7 +23,13 @@ extension Paths.Orgs.WithOrg.CredentialAuthorizations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-a-saml-sso-authorization-for-an-organization)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "orgs/remove-saml-sso-authorization")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "orgs/remove-saml-sso-authorization")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

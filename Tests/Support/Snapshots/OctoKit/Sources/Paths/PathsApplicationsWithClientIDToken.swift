@@ -20,8 +20,13 @@ extension Paths.Applications.WithClientID {
         /// OAuth applications can use a special API method for checking OAuth token validity without exceeding the normal rate limits for failed login attempts. Authentication works differently with this particular endpoint. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) to use this endpoint, where the username is the OAuth application `client_id` and the password is its `client_secret`. Invalid tokens will return `404 NOT FOUND`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#check-a-token)
-        public func post(accessToken: String) -> Request<OctoKit.Authorization> {
+        public func post(accessToken: String) throws(PostError) -> Request<OctoKit.Authorization> {
             Request(path: path, method: "POST", body: ["access_token": accessToken], id: "apps/check-token")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Reset a token
@@ -29,8 +34,12 @@ extension Paths.Applications.WithClientID {
         /// OAuth applications can use this API method to reset a valid OAuth token without end-user involvement. Applications must save the "token" property in the response because changes take effect immediately. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) when accessing this endpoint, using the OAuth application's `client_id` and `client_secret` as the username and password. Invalid tokens will return `404 NOT FOUND`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#reset-a-token)
-        public func patch(accessToken: String) -> Request<OctoKit.Authorization> {
+        public func patch(accessToken: String) throws(PatchError) -> Request<OctoKit.Authorization> {
             Request(path: path, method: "PATCH", body: ["access_token": accessToken], id: "apps/reset-token")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         /// Delete an app token
@@ -38,8 +47,12 @@ extension Paths.Applications.WithClientID {
         /// OAuth application owners can revoke a single token for an OAuth application. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) when accessing this endpoint, using the OAuth application's `client_id` and `client_secret` as the username and password.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#delete-an-app-token)
-        public func delete(accessToken: String) -> Request<Void> {
+        public func delete(accessToken: String) throws(DeleteError) -> Request<Void> {
             Request(path: path, method: "DELETE", body: ["access_token": accessToken], id: "apps/delete-token")
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

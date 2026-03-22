@@ -23,7 +23,13 @@ extension Paths.App.Installations.WithInstallationID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#suspend-an-app-installation)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "apps/suspend-installation")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "apps/suspend-installation")
+            }
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Unsuspend an app installation
@@ -34,7 +40,13 @@ extension Paths.App.Installations.WithInstallationID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#unsuspend-an-app-installation)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "apps/unsuspend-installation")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "apps/unsuspend-installation")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

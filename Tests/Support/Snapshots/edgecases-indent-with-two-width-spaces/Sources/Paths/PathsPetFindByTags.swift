@@ -19,8 +19,12 @@ extension Paths.Pet {
     /// Finds Pets by tags
     ///
     /// Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-    public func get(tags: [String]) -> Request<[edgecases_indent_with_two_width_spaces.Pet]> {
+    public func get(tags: [String]) throws(GetError) -> Request<[edgecases_indent_with_two_width_spaces.Pet]> {
       Request(path: path, method: "GET", query: makeGetQuery(tags), id: "findPetsByTags")
+    }
+
+    public enum GetError: Error {
+      case badRequest
     }
 
     private func makeGetQuery(_ tags: [String]) -> [(String, String?)] {

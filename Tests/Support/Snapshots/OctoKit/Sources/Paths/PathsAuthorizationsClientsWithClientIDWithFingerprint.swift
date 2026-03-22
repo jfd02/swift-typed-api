@@ -27,8 +27,12 @@ extension Paths.Authorizations.Clients.WithClientID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#get-or-create-an-authorization-for-a-specific-app-and-fingerprint)
         @available(*, deprecated, message: "Deprecated")
-        public func put(_ body: PutRequest) -> Request<OctoKit.Authorization> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.Authorization> {
             Request(path: path, method: "PUT", body: body, id: "oauth-authorizations/get-or-create-authorization-for-app-and-fingerprint")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PutResponseHeaders {

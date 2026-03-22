@@ -22,8 +22,12 @@ extension Paths {
         /// **Note:** Pagination is powered exclusively by the `since` parameter. Use the [Link header](https://docs.github.com/rest/overview/resources-in-the-rest-api#link-header) to get the URL for the next page of organizations.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organizations)
-        public func get(since: Int? = nil, perPage: Int? = nil) -> Request<[OctoKit.OrganizationSimple]> {
+        public func get(since: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<[OctoKit.OrganizationSimple]> {
             Request(path: path, method: "GET", query: makeGetQuery(since, perPage), id: "orgs/list")
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
 
         public enum GetResponseHeaders {

@@ -21,7 +21,17 @@ extension Paths.Projects.WithProjectID.Collaborators.WithUsername {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#get-project-permission-for-a-user)
         public var get: Request<OctoKit.ProjectCollaboratorPermission> {
-            Request(path: path, method: "GET", id: "projects/get-permission-for-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "projects/get-permission-for-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

@@ -55,8 +55,14 @@ extension Paths.Repos.WithOwner.WithRepo.Commits {
         /// | `valid` | None of the above errors applied, so the signature is considered to be verified. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-commit)
-        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<OctoKit.Commit> {
+        public func get(page: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<OctoKit.Commit> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "repos/get-commit")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
+            case internalServerError(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ page: Int?, _ perPage: Int?) -> [(String, String?)] {

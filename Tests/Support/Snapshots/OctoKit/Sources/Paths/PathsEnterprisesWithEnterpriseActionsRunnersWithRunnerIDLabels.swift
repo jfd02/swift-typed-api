@@ -23,7 +23,13 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-labels-for-a-self-hosted-runner-for-an-enterprise)
         public var get: Request<GetResponse> {
-            Request(path: path, method: "GET", id: "enterprise-admin/list-labels-for-self-hosted-runner-for-enterprise")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "enterprise-admin/list-labels-for-self-hosted-runner-for-enterprise")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {
@@ -49,8 +55,13 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#add-custom-labels-to-a-self-hosted-runner-for-an-enterprise)
-        public func post(labels: [String]) -> Request<PostResponse> {
+        public func post(labels: [String]) throws(PostError) -> Request<PostResponse> {
             Request(path: path, method: "POST", body: ["labels": labels], id: "enterprise-admin/add-custom-labels-to-self-hosted-runner-for-enterprise")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PostResponse: Decodable {
@@ -77,8 +88,13 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#set-custom-labels-for-a-self-hosted-runner-for-an-enterprise)
-        public func put(labels: [String]) -> Request<PutResponse> {
+        public func put(labels: [String]) throws(PutError) -> Request<PutResponse> {
             Request(path: path, method: "PUT", body: ["labels": labels], id: "enterprise-admin/set-custom-labels-for-self-hosted-runner-for-enterprise")
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PutResponse: Decodable {
@@ -106,7 +122,14 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#remove-all-custom-labels-from-a-self-hosted-runner-for-an-enterprise)
         public var delete: Request<DeleteResponse> {
-            Request(path: path, method: "DELETE", id: "enterprise-admin/remove-all-custom-labels-from-self-hosted-runner-for-enterprise")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "enterprise-admin/remove-all-custom-labels-from-self-hosted-runner-for-enterprise")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct DeleteResponse: Decodable {

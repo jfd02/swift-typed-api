@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#ping-a-repository-webhook)
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "repos/ping-webhook")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "repos/ping-webhook")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

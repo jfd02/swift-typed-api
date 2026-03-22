@@ -1,14 +1,10 @@
 import Foundation
-import OpenAPIKit30
+import OpenAPIKit
 
 extension Generator {
     
     func stringType(for format: JSONTypeFormat.StringFormat) -> TypeIdentifier {
         switch format {
-        case .byte:
-            return builtInType("Data", format: "byte", overrides: options.dataTypes.string)
-        case .binary:
-            return builtInType("Data", format: "binary", overrides: options.dataTypes.string)
         case .date where options.useNaiveDate:
             setNaiveDateNeeded()
             return .builtin("NaiveDate")
@@ -16,13 +12,21 @@ extension Generator {
             return builtInType("String", format: "date", overrides: options.dataTypes.string)
         case .dateTime:
             return builtInType("Date", format: "date-time", overrides: options.dataTypes.string)
-        case .other("uri"):
+        case .uri:
             return builtInType("URL", format: "uri", overrides: options.dataTypes.string)
-        case .other("uuid"):
+        case .uuid:
             return builtInType("UUID", format: "uuid", overrides: options.dataTypes.string)
+        case .password:
+            return .builtin("String")
+        case .other("byte"):
+            return builtInType("Data", format: "byte", overrides: options.dataTypes.string)
+        case .other("binary"):
+            return builtInType("Data", format: "binary", overrides: options.dataTypes.string)
         case .other(let format):
             return builtInType("String", format: format, overrides: options.dataTypes.string)
-        case .generic, .password:
+        case .generic, .duration, .email, .hostname, .idnEmail, .idnHostname,
+             .ipv4, .ipv6, .iri, .iriReference, .jsonPointer, .regex,
+             .relativeJsonPointer, .time, .uriReference, .uriTemplate:
             return .builtin("String")
         }
     }

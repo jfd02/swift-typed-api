@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-branch-protection)
         public var get: Request<OctoKit.BranchProtection> {
-            Request(path: path, method: "GET", id: "repos/get-branch-protection")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-branch-protection")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update branch protection
@@ -35,8 +41,14 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         /// **Note**: The list of users, apps, and teams in total is limited to 100 items.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-branch-protection)
-        public func put(_ body: PutRequest) -> Request<OctoKit.ProtectedBranch> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.ProtectedBranch> {
             Request(path: path, method: "PUT", body: body, id: "repos/update-branch-protection")
+        }
+
+        public enum PutError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {
@@ -199,7 +211,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-branch-protection)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-branch-protection")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-branch-protection")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

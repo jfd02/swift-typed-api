@@ -19,7 +19,15 @@ extension Paths.Licenses {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/licenses#get-a-license)
         public var get: Request<OctoKit.License> {
-            Request(path: path, method: "GET", id: "licenses/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "licenses/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case notModified
         }
     }
 }

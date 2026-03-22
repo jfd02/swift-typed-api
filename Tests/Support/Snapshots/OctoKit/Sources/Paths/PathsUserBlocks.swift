@@ -21,7 +21,33 @@ extension Paths.User {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-users-blocked-by-the-authenticated-user)
         public var get: Request<[OctoKit.SimpleUser]> {
-            Request(path: path, method: "GET", id: "users/list-blocked-by-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/list-blocked-by-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unsupportedMediaType(GetUnsupportedMediaTypeBody)
+        }
+
+        public struct GetUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
     }
 }

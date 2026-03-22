@@ -18,8 +18,14 @@ extension Paths.Projects.WithProjectID {
         /// List project columns
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-project-columns)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.ProjectColumn]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.ProjectColumn]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "projects/list-columns")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -36,8 +42,15 @@ extension Paths.Projects.WithProjectID {
         /// Create a project column
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#create-a-project-column)
-        public func post(name: String) -> Request<OctoKit.ProjectColumn> {
+        public func post(name: String) throws(PostError) -> Request<OctoKit.ProjectColumn> {
             Request(path: path, method: "POST", body: ["name": name], id: "projects/create-column")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

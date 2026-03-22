@@ -22,8 +22,13 @@ extension Paths.App.Hook {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-deliveries-for-an-app-webhook)
-        public func get(perPage: Int? = nil, cursor: String? = nil) -> Request<[OctoKit.HookDeliveryItem]> {
+        public func get(perPage: Int? = nil, cursor: String? = nil) throws(GetError) -> Request<[OctoKit.HookDeliveryItem]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, cursor), id: "apps/list-webhook-deliveries")
+        }
+
+        public enum GetError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         private func makeGetQuery(_ perPage: Int?, _ cursor: String?) -> [(String, String?)] {

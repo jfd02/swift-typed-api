@@ -19,14 +19,24 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.Comments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-an-issue-comment)
         public var get: Request<OctoKit.IssueComment> {
-            Request(path: path, method: "GET", id: "issues/get-comment")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "issues/get-comment")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update an issue comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#update-an-issue-comment)
-        public func patch(body: String) -> Request<OctoKit.IssueComment> {
+        public func patch(body: String) throws(PatchError) -> Request<OctoKit.IssueComment> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "issues/update-comment")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         /// Delete an issue comment

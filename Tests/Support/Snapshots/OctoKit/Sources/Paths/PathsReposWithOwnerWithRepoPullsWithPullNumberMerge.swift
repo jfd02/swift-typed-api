@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#check-if-a-pull-request-has-been-merged)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "pulls/check-if-merged")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "pulls/check-if-merged")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Merge a pull request
@@ -27,8 +33,48 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// This endpoint triggers [notifications](https://docs.github.com/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#merge-a-pull-request)
-        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.PullRequestMergeResult> {
+        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<OctoKit.PullRequestMergeResult> {
             Request(path: path, method: "PUT", body: body, id: "pulls/merge")
+        }
+
+        public enum PutError: Error {
+            case methodNotAllowed(PutMethodNotAllowedBody)
+            case conflict(PutConflictBody)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+        }
+
+        public struct PutMethodNotAllowedBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(message: String? = nil, documentationURL: String? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
+        }
+
+        public struct PutConflictBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(message: String? = nil, documentationURL: String? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PutRequest: Encodable {

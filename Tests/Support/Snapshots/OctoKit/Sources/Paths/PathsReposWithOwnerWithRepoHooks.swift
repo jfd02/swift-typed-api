@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List repository webhooks
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-webhooks)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Hook]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Hook]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-webhooks")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -39,8 +43,14 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// share the same `config` as long as those webhooks do not have any `events` that overlap.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-repository-webhook)
-        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.Hook> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.Hook> {
             Request(path: path, method: "POST", body: body, id: "repos/create-webhook")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

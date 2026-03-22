@@ -23,8 +23,14 @@ extension Paths.Orgs.WithOrg.Packages.WithPackageType.WithPackageName {
         /// If `package_type` is not `container`, your token must also include the `repo` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#get-all-package-versions-for-a-package-owned-by-an-organization)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.PackageVersion]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.PackageVersion]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "packages/get-all-package-versions-for-package-owned-by-org")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct GetParameters {

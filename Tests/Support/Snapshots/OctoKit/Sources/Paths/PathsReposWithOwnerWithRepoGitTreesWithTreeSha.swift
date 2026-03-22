@@ -22,8 +22,13 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Trees {
         /// If `truncated` is `true` in the response then the number of items in the `tree` array exceeded our maximum limit. If you need to fetch more items, use the non-recursive method of fetching trees, and fetch one sub-tree at a time.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#get-a-tree)
-        public func get(recursive: String? = nil) -> Request<OctoKit.GitTree> {
+        public func get(recursive: String? = nil) throws(GetError) -> Request<OctoKit.GitTree> {
             Request(path: path, method: "GET", query: makeGetQuery(recursive), id: "git/get-tree")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ recursive: String?) -> [(String, String?)] {

@@ -17,7 +17,13 @@ extension Paths.Collections.WithID {
         ///
         /// Returns an ordered array of Recipe models in the given Collection.
         public var get: Request<[cookpad.Recipe]> {
-            Request(path: path, method: "GET", id: "getCollectionRecipes")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "getCollectionRecipes")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
     }
 }

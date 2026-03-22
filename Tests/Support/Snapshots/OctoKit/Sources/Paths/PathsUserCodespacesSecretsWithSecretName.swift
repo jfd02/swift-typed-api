@@ -102,8 +102,13 @@ extension Paths.User.Codespaces.Secrets {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#create-or-update-a-secret-for-the-authenticated-user)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: body, id: "codespaces/create-or-update-secret-for-authenticated-user")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {

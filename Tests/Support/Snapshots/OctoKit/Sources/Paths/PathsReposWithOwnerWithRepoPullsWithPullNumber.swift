@@ -35,7 +35,15 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#get-a-pull-request)
         public var get: Request<OctoKit.PullRequest> {
-            Request(path: path, method: "GET", id: "pulls/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "pulls/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a pull request
@@ -45,8 +53,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
         /// To open or update a pull request in a public repository, you must have write access to the head or the source branch. For organization-owned repositories, you must be a member of the organization that owns the repository to open or update a pull request.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls/#update-a-pull-request)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.PullRequest> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.PullRequest> {
             Request(path: path, method: "PATCH", body: body, id: "pulls/update")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {

@@ -20,8 +20,16 @@ extension Paths.Projects.WithProjectID.Collaborators {
         /// Adds a collaborator to an organization project and sets their permission level. You must be an organization owner or a project `admin` to add a collaborator.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#add-project-collaborator)
-        public func put(permission: PutRequest.Permission? = nil) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "projects/add-collaborator")
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {
@@ -55,7 +63,17 @@ extension Paths.Projects.WithProjectID.Collaborators {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#remove-project-collaborator)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "projects/remove-collaborator")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "projects/remove-collaborator")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

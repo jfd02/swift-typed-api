@@ -23,7 +23,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-users-with-access-to-the-protected-branch)
         public var get: Request<[OctoKit.SimpleUser]> {
-            Request(path: path, method: "GET", id: "repos/get-users-with-access-to-protected-branch")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-users-with-access-to-protected-branch")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Add user access restrictions
@@ -37,8 +43,12 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// | `array` | Usernames for people who can have push access. **Note**: The list of users, apps, and teams in total is limited to 100 items. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#add-user-access-restrictions)
-        public func post(_ body: PostRequest? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<[OctoKit.SimpleUser]> {
             Request(path: path, method: "POST", body: body, id: "repos/add-user-access-restrictions")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostRequest: Encodable {
@@ -86,8 +96,12 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// | `array` | Usernames for people who can have push access. **Note**: The list of users, apps, and teams in total is limited to 100 items. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#set-user-access-restrictions)
-        public func put(_ body: PutRequest? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<[OctoKit.SimpleUser]> {
             Request(path: path, method: "PUT", body: body, id: "repos/set-user-access-restrictions")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PutRequest: Encodable {
@@ -135,8 +149,12 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// | `array` | Usernames of the people who should no longer have push access. **Note**: The list of users, apps, and teams in total is limited to 100 items. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#remove-user-access-restrictions)
-        public func delete(_ body: DeleteRequest? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func delete(_ body: DeleteRequest? = nil) throws(DeleteError) -> Request<[OctoKit.SimpleUser]> {
             Request(path: path, method: "DELETE", body: body, id: "repos/remove-user-access-restrictions")
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum DeleteRequest: Encodable {

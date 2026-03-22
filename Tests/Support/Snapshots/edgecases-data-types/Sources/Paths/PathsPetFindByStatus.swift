@@ -18,8 +18,12 @@ extension Paths.Pet {
         /// Finds Pets by status
         ///
         /// Multiple status values can be provided with comma separated strings
-        public func get(status: [Status]) -> Request<[edgecases_data_types.Pet]> {
+        public func get(status: [Status]) throws(GetError) -> Request<[edgecases_data_types.Pet]> {
             Request(path: path, method: "GET", query: makeGetQuery(status), id: "findPetsByStatus")
+        }
+
+        public enum GetError: Error {
+            case badRequest
         }
 
         private func makeGetQuery(_ status: [Status]) -> [(String, String?)] {

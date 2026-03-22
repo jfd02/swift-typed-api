@@ -19,7 +19,15 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.Events {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-an-issue-event)
         public var get: Request<OctoKit.IssueEvent> {
-            Request(path: path, method: "GET", id: "issues/get-event")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "issues/get-event")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

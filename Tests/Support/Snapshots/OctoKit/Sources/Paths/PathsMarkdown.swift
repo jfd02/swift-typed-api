@@ -18,8 +18,12 @@ extension Paths {
         /// Render a Markdown document
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/markdown#render-a-markdown-document)
-        public func post(_ body: PostRequest) -> Request<String> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<String> {
             Request(path: path, method: "POST", body: body, id: "markdown/render")
+        }
+
+        public enum PostError: Error {
+            case notModified
         }
 
         public enum PostResponseHeaders {

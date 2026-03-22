@@ -19,21 +19,49 @@ extension Paths.User.Blocks {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#check-if-a-user-is-blocked-by-the-authenticated-user)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "users/check-blocked")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/check-blocked")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Block a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#block-a-user)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "users/block")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "users/block")
+            }
+        }
+
+        public enum PutError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         /// Unblock a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#unblock-a-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "users/unblock")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "users/unblock")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

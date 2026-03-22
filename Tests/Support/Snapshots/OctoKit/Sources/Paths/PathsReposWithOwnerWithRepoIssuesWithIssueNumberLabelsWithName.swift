@@ -21,7 +21,14 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber.Labels {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#remove-a-label-from-an-issue)
         public var delete: Request<[OctoKit.Label]> {
-            Request(path: path, method: "DELETE", id: "issues/remove-label")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "issues/remove-label")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
         }
     }
 }

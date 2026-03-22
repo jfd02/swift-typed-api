@@ -9,6 +9,12 @@ import URLQueryEncoder
 extension Namespace {
     /// Create a pet
     static public var createPets: Request<Void> {
-        Request(path: "/pets", method: "POST", id: "createPets")
+        get throws(CreatePetsError) {
+            Request(path: "/pets", method: "POST", id: "createPets")
+        }
+    }
+
+    public enum CreatePetsError: Error {
+        case `default`(statusCode: Int, petstore_change_namespace_when_operations_style.Error)
     }
 }

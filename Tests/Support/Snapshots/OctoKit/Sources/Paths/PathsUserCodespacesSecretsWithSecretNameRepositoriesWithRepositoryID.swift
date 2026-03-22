@@ -22,7 +22,16 @@ extension Paths.User.Codespaces.Secrets.WithSecretName.Repositories {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#add-a-selected-repository-to-a-user-secret)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "codespaces/add-repository-for-secret-for-authenticated-user")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "codespaces/add-repository-for-secret-for-authenticated-user")
+            }
+        }
+
+        public enum PutError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case internalServerError(OctoKit.BasicError)
         }
 
         /// Remove a selected repository from a user secret
@@ -32,7 +41,16 @@ extension Paths.User.Codespaces.Secrets.WithSecretName.Repositories {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#remove-a-selected-repository-from-a-user-secret)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "codespaces/remove-repository-for-secret-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "codespaces/remove-repository-for-secret-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case internalServerError(OctoKit.BasicError)
         }
     }
 }

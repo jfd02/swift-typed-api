@@ -18,8 +18,15 @@ extension Paths.User.Memberships {
         /// List organization memberships for the authenticated user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organization-memberships-for-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.OrgMembership]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.OrgMembership]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "orgs/list-memberships-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum GetResponseHeaders {

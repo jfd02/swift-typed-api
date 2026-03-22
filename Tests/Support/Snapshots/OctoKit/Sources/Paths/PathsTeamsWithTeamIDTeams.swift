@@ -21,8 +21,14 @@ extension Paths.Teams.WithTeamID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#list-child-teams-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Team]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list-child-legacy")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum GetResponseHeaders {

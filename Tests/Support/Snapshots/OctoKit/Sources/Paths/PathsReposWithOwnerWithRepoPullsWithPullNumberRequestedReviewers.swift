@@ -38,8 +38,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// This endpoint triggers [notifications](https://docs.github.com/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#request-reviewers-for-a-pull-request)
-        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.PullRequestSimple> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.PullRequestSimple> {
             Request(path: path, method: "POST", body: body, id: "pulls/request-reviewers")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {
@@ -63,8 +68,12 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Remove requested reviewers from a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#remove-requested-reviewers-from-a-pull-request)
-        public func delete(_ body: DeleteRequest) -> Request<OctoKit.PullRequestSimple> {
+        public func delete(_ body: DeleteRequest) throws(DeleteError) -> Request<OctoKit.PullRequestSimple> {
             Request(path: path, method: "DELETE", body: body, id: "pulls/remove-requested-reviewers")
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct DeleteRequest: Encodable {

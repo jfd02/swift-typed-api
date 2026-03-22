@@ -20,8 +20,13 @@ extension Paths.Orgs.WithOrg {
         /// List all users who are members of an organization. If the authenticated user is also a member of this organization then both concealed and public members will be returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organization-members)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.SimpleUser]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "orgs/list-members")
+        }
+
+        public enum GetError: Error {
+            case status302
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum GetResponseHeaders {

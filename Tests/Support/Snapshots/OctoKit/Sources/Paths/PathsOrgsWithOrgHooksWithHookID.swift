@@ -21,7 +21,13 @@ extension Paths.Orgs.WithOrg.Hooks {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-an-organization-webhook)
         public var get: Request<OctoKit.OrgHook> {
-            Request(path: path, method: "GET", id: "orgs/get-webhook")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/get-webhook")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update an organization webhook
@@ -29,8 +35,13 @@ extension Paths.Orgs.WithOrg.Hooks {
         /// Updates a webhook configured in an organization. When you update a webhook, the `secret` will be overwritten. If you previously had a `secret` set, you must provide the same `secret` or set a new `secret` or the secret will be removed. If you are only updating individual webhook `config` properties, use "[Update a webhook configuration for an organization](/rest/reference/orgs#update-a-webhook-configuration-for-an-organization)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#update-an-organization-webhook)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.OrgHook> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.OrgHook> {
             Request(path: path, method: "PATCH", body: body, id: "orgs/update-webhook")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {
@@ -95,7 +106,13 @@ extension Paths.Orgs.WithOrg.Hooks {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#delete-an-organization-webhook)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "orgs/delete-webhook")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "orgs/delete-webhook")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

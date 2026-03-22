@@ -60,8 +60,13 @@ extension Paths.Orgs.WithOrg {
         /// Initiates the generation of a migration archive.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#start-an-organization-migration)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Migration> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Migration> {
             Request(path: path, method: "POST", body: body, id: "migrations/start-for-org")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

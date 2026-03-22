@@ -18,8 +18,14 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews.WithReview
         /// Submit a review for a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#submit-a-review-for-a-pull-request)
-        public func post(_ body: PostRequest) -> Request<OctoKit.PullRequestReview> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.PullRequestReview> {
             Request(path: path, method: "POST", body: body, id: "pulls/submit-review")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

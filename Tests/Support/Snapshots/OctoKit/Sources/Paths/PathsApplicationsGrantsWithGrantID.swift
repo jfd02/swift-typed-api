@@ -22,7 +22,15 @@ extension Paths.Applications.Grants {
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#get-a-single-grant)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.ApplicationGrant> {
-            Request(path: path, method: "GET", id: "oauth-authorizations/get-grant")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "oauth-authorizations/get-grant")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Delete a grant
@@ -34,7 +42,15 @@ extension Paths.Applications.Grants {
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#delete-a-grant)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-grant")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-grant")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

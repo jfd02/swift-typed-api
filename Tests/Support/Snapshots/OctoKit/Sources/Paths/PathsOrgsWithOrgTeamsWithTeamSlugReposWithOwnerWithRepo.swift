@@ -27,7 +27,13 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#check-team-permissions-for-a-repository)
         public var get: Request<OctoKit.TeamRepository> {
-            Request(path: path, method: "GET", id: "teams/check-permissions-for-repo-in-org")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/check-permissions-for-repo-in-org")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Add or update team repository permissions

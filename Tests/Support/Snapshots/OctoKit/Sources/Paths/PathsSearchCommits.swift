@@ -27,8 +27,12 @@ extension Paths.Search {
         /// `q=repo:octocat/Spoon-Knife+css`
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-commits)
-        public func get(parameters: GetParameters) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/commits")
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
 
         public struct GetResponse: Decodable {

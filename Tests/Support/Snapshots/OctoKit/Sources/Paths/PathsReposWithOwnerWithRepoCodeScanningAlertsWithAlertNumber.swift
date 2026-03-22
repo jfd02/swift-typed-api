@@ -24,7 +24,35 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#get-a-code-scanning-alert)
         public var get: Request<OctoKit.CodeScanningAlert> {
-            Request(path: path, method: "GET", id: "code-scanning/get-alert")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "code-scanning/get-alert")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case serviceUnavailable(GetServiceUnavailableBody)
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         /// Update a code scanning alert
@@ -32,8 +60,33 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
         /// Updates the status of a single code scanning alert. You must use an access token with the `security_events` scope to use this endpoint with private repositories. You can also use tokens with the `public_repo` scope for public repositories only. GitHub Apps must have the `security_events` write permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#update-a-code-scanning-alert)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.CodeScanningAlert> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.CodeScanningAlert> {
             Request(path: path, method: "PATCH", body: body, id: "code-scanning/update-alert")
+        }
+
+        public enum PatchError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case serviceUnavailable(PatchServiceUnavailableBody)
+        }
+
+        public struct PatchServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PatchRequest: Encodable {

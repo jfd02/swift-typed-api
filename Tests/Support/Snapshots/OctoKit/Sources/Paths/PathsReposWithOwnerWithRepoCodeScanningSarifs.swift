@@ -36,8 +36,35 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
         /// For more information, see "[Get information about a SARIF upload](/rest/reference/code-scanning#get-information-about-a-sarif-upload)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#upload-a-sarif-file)
-        public func post(_ body: PostRequest) -> Request<OctoKit.CodeScanningSarifsReceipt> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.CodeScanningSarifsReceipt> {
             Request(path: path, method: "POST", body: body, id: "code-scanning/upload-sarif")
+        }
+
+        public enum PostError: Error {
+            case badRequest
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case status413
+            case serviceUnavailable(PostServiceUnavailableBody)
+        }
+
+        public struct PostServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PostRequest: Encodable {

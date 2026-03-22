@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo.Labels {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-a-label)
         public var get: Request<OctoKit.Label> {
-            Request(path: path, method: "GET", id: "issues/get-label")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "issues/get-label")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a label

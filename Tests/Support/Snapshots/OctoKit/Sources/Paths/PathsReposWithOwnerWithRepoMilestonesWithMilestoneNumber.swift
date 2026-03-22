@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo.Milestones {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-a-milestone)
         public var get: Request<OctoKit.Milestone> {
-            Request(path: path, method: "GET", id: "issues/get-milestone")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "issues/get-milestone")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a milestone
@@ -65,7 +71,13 @@ extension Paths.Repos.WithOwner.WithRepo.Milestones {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#delete-a-milestone)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "issues/delete-milestone")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "issues/delete-milestone")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

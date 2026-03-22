@@ -20,8 +20,12 @@ extension Paths.Orgs.WithOrg {
         /// Lists all teams in an organization that are visible to the authenticated user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-teams)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Team]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -42,8 +46,13 @@ extension Paths.Orgs.WithOrg {
         /// When you create a new team, you automatically become a team maintainer without explicitly adding yourself to the optional array of `maintainers`. For more information, see "[About teams](https://help.github.com/en/github/setting-up-and-managing-organizations-and-teams/about-teams)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-a-team)
-        public func post(_ body: PostRequest) -> Request<OctoKit.TeamFull> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.TeamFull> {
             Request(path: path, method: "POST", body: body, id: "teams/create")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

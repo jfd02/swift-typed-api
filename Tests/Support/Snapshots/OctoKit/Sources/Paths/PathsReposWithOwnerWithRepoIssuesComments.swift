@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         /// By default, Issue Comments are ordered by ascending ID.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-issue-comments-for-a-repository)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.IssueComment]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.IssueComment]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-comments-for-repo")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

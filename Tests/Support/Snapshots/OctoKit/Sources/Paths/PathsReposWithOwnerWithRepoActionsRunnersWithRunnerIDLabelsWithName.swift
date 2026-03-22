@@ -28,7 +28,14 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runners.WithRunnerID.Labels {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#remove-a-custom-label-from-a-self-hosted-runner-for-a-repository)
         public var delete: Request<DeleteResponse> {
-            Request(path: path, method: "DELETE", id: "actions/remove-custom-label-from-self-hosted-runner-for-repo")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "actions/remove-custom-label-from-self-hosted-runner-for-repo")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct DeleteResponse: Decodable {

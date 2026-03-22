@@ -1,4 +1,4 @@
-import OpenAPIKit30
+import OpenAPIKit
 import Foundation
 import GrammaticalNumber
 
@@ -197,6 +197,10 @@ extension Generator {
             return try makeOneOf(name: name, schemas: schemas, info: info, context: context)
         case .any(let schemas, let info):
             return try makeAnyOf(name: name, schemas: schemas, info: info, context: context)
+        case .null:
+            // OpenAPI 3.1: explicit null type
+            setNeedsAnyJson()
+            return TypealiasDeclaration(name: name, type: .anyJSON)
         case .not:
             throw GeneratorError("`not` is not supported: \(name)")
         case .reference(let info, _):
@@ -401,9 +405,11 @@ extension Generator {
 
     private func makeDiscriminator(info: JSONSchemaContext, context: Context) throws -> Discriminator? {
         try info.discriminator.flatMap { discriminator in
-            Discriminator(
+            let orderedMapping = try discriminator.schemaMapping?.mapValues({ try getReferenceType($0, context: context) })
+            let mapping = orderedMapping.map { Dictionary(uniqueKeysWithValues: $0.map { ($0.key, $0.value) }) } ?? [:]
+            return Discriminator(
                 propertyName: discriminator.propertyName,
-                mapping: try discriminator.schemaMapping?.mapValues({ try getReferenceType($0, context: context) }) ?? [:]
+                mapping: mapping
             )
         }
     }
@@ -710,7 +716,7 @@ extension Generator {
             }
         }
 
-        func makeReference(reference: JSONReference<JSONSchema>, details: JSONSchema.ReferenceContext) throws -> Property {
+        func makeReference(reference: JSONReference<JSONSchema>, details: JSONSchema.CoreContext<JSONTypeFormat.AnyFormat>) throws -> Property {
             // TODO: Refactor (changed it to `null` to avoid issue with cycles)
             // Maybe remove dereferencing entirely?
             let info = getSchema(for: reference)?.coreContext
@@ -734,9 +740,9 @@ extension Generator {
 }
 
 private extension OpenAPI.Discriminator {
-    var schemaMapping: [String: JSONReference<JSONSchema>]? {
+    var schemaMapping: OrderedDictionary<String, JSONReference<JSONSchema>>? {
         get throws {
-            try mapping?.mapValues { value in
+            try mapping?.mapValues { value -> JSONReference<JSONSchema> in
                 if value.hasPrefix("#") {
                     return .internal(.path(.init(rawValue: value)))
                 } else if let url = URL(string: value) {

@@ -23,7 +23,17 @@ extension Paths.User.Codespaces {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#get-a-codespace-for-the-authenticated-user)
         public var get: Request<OctoKit.Codespace> {
-            Request(path: path, method: "GET", id: "codespaces/get-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "codespaces/get-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a codespace for the authenticated user
@@ -35,8 +45,14 @@ extension Paths.User.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#update-a-codespace-for-the-authenticated-user)
-        public func patch(machine: String? = nil) -> Request<OctoKit.Codespace> {
+        public func patch(machine: String? = nil) throws(PatchError) -> Request<OctoKit.Codespace> {
             Request(path: path, method: "PATCH", body: ["machine": machine], id: "codespaces/update-for-authenticated-user")
+        }
+
+        public enum PatchError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete a codespace for the authenticated user
@@ -46,8 +62,18 @@ extension Paths.User.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#delete-a-codespace-for-the-authenticated-user)
-        public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "codespaces/delete-for-authenticated-user")
+        public var delete: Request<[String: AnyJSON]> {
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "codespaces/delete-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

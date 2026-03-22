@@ -17,8 +17,13 @@ extension Paths {
 		public let path: String
 
 		/// To test enum parameters
-		public func get(parameters: GetParameters? = nil) -> Request<Void> {
+		public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<Void> {
 			Request(path: path, method: "GET", query: parameters?.asQuery, id: "testEnumParameters")
+		}
+
+		public enum GetError: Error {
+			case badRequest
+			case notFound
 		}
 
 		public struct GetParameters {
@@ -53,8 +58,13 @@ extension Paths {
 		}
 
 		/// Fake endpoint for testing various parameters
-		public func post(_ body: PostRequest? = nil) -> Request<Void> {
+		public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<Void> {
 			Request(path: path, method: "POST", body: body.map(URLQueryEncoder.encode)?.percentEncodedQuery, id: "testEndpointParameters")
+		}
+
+		public enum PostError: Error {
+			case badRequest
+			case notFound
 		}
 
 		public struct PostRequest: Encodable {

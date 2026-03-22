@@ -17,7 +17,13 @@ extension Paths.Pets {
 
         /// Info for a specific pet
         public var get: Request<petstore_disable_inlining.Pet> {
-            Request(path: path, method: "GET", id: "showPetById")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "showPetById")
+            }
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_disable_inlining.Error)
         }
     }
 }

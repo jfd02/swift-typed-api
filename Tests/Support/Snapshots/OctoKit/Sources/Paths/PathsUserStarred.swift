@@ -22,8 +22,14 @@ extension Paths.User {
         /// You can also find out _when_ stars were created by passing the following custom [media type](https://docs.github.com/rest/overview/media-types/) via the `Accept` header:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-repositories-starred-by-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Repository]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Repository]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "activity/list-repos-starred-by-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

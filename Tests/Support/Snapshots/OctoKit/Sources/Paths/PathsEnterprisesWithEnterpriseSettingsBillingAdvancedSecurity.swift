@@ -21,8 +21,12 @@ extension Paths.Enterprises.WithEnterprise.Settings.Billing {
         /// Each distinct user login across all repositories is counted as a single Advanced Security seat, so the total_advanced_security_committers is not the sum of active_users for each repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/billing#export-advanced-security-active-committers-data-for-enterprise)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.AdvancedSecurityActiveCommitters> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<OctoKit.AdvancedSecurityActiveCommitters> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "billing/get-github-advanced-security-billing-ghe")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ perPage: Int?, _ page: Int?) -> [(String, String?)] {

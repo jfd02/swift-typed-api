@@ -88,8 +88,13 @@ extension Paths.Orgs.WithOrg {
         /// *   `repo` scope to create a private repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-an-organization-repository)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Repository> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Repository> {
             Request(path: path, method: "POST", body: body, id: "repos/create-in-org")
+        }
+
+        public enum PostError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

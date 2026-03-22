@@ -20,8 +20,13 @@ extension Paths {
         /// Lists the authenticated user's gists or if called anonymously, this endpoint returns all public gists:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gists-for-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.BaseGist]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.BaseGist]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "gists/list")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -55,8 +60,15 @@ extension Paths {
         /// **Note:** Don't name your files "gistfile" with a numerical suffix. This is the format of the automatic naming scheme that Gist uses internally.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#create-a-gist)
-        public func post(_ body: PostRequest) -> Request<OctoKit.GistSimple> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GistSimple> {
             Request(path: path, method: "POST", body: body, id: "gists/create")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {
@@ -98,7 +110,7 @@ extension Paths {
                 case bool(Bool)
                 case object(Object)
 
-                /// Example: true
+                /// Example: "true"
                 public enum Object: String, Codable, CaseIterable {
                     case `true`
                     case `false`

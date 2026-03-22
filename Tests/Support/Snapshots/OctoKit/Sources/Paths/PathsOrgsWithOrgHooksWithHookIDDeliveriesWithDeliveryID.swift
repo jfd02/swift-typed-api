@@ -21,7 +21,14 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID.Deliveries {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-a-webhook-delivery-for-an-organization-webhook)
         public var get: Request<OctoKit.HookDelivery> {
-            Request(path: path, method: "GET", id: "orgs/get-webhook-delivery")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/get-webhook-delivery")
+            }
+        }
+
+        public enum GetError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

@@ -22,8 +22,12 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
         /// This endpoint and the [Map a commit author](https://docs.github.com/rest/reference/migrations#map-a-commit-author) endpoint allow you to provide correct Git author information.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-commit-authors)
-        public func get(since: Int? = nil) -> Request<[OctoKit.PorterAuthor]> {
+        public func get(since: Int? = nil) throws(GetError) -> Request<[OctoKit.PorterAuthor]> {
             Request(path: path, method: "GET", query: makeGetQuery(since), id: "migrations/get-commit-authors")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ since: Int?) -> [(String, String?)] {

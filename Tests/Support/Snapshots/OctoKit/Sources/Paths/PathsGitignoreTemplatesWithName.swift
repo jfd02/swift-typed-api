@@ -22,7 +22,13 @@ extension Paths.Gitignore.Templates {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gitignore#get-a-gitignore-template)
         public var get: Request<OctoKit.GitignoreTemplate> {
-            Request(path: path, method: "GET", id: "gitignore/get-template")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "gitignore/get-template")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
     }
 }

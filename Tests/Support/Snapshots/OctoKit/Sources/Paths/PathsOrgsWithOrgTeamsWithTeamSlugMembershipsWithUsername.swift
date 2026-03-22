@@ -30,7 +30,13 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-team-membership-for-a-user)
         public var get: Request<OctoKit.TeamMembership> {
-            Request(path: path, method: "GET", id: "teams/get-membership-for-user-in-org")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/get-membership-for-user-in-org")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Add or update team membership for a user
@@ -48,8 +54,13 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Memberships {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PUT /organizations/{org_id}/team/{team_id}/memberships/{username}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-or-update-team-membership-for-a-user)
-        public func put(role: PutRequest.Role? = nil) -> Request<OctoKit.TeamMembership> {
+        public func put(role: PutRequest.Role? = nil) throws(PutError) -> Request<OctoKit.TeamMembership> {
             Request(path: path, method: "PUT", body: PutRequest(role: role), id: "teams/add-or-update-membership-for-user-in-org")
+        }
+
+        public enum PutError: Error {
+            case forbidden
+            case unprocessableEntity
         }
 
         public struct PutRequest: Encodable {
@@ -88,7 +99,13 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#remove-team-membership-for-a-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "teams/remove-membership-for-user-in-org")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "teams/remove-membership-for-user-in-org")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden
         }
     }
 }

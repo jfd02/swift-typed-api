@@ -8,8 +8,12 @@ import URLQueryEncoder
 
 extension Namespace {
     /// List all pets
-    static public func listPets(limit: Int32? = nil) -> Request<[petstore_change_namespace_when_operations_style.Pet]> {
+    static public func listPets(limit: Int32? = nil) throws(ListPetsError) -> Request<[petstore_change_namespace_when_operations_style.Pet]> {
         Request(path: "/pets", method: "GET", query: makeListPetsQuery(limit), id: "listPets")
+    }
+
+    public enum ListPetsError: Error {
+        case `default`(statusCode: Int, petstore_change_namespace_when_operations_style.Error)
     }
 
     public enum ListPetsResponseHeaders {

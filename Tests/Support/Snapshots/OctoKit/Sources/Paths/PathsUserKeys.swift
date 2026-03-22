@@ -20,8 +20,15 @@ extension Paths.User {
         /// Lists the public SSH keys for the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth or via OAuth with at least `read:public_key` [scope](https://docs.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-public-ssh-keys-for-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Key]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Key]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "users/list-public-ssh-keys-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -40,8 +47,16 @@ extension Paths.User {
         /// Adds a public SSH key to the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth, or OAuth with at least `write:public_key` [scope](https://docs.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#create-a-public-ssh-key-for-the-authenticated-user)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Key> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Key> {
             Request(path: path, method: "POST", body: body, id: "users/create-public-ssh-key-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

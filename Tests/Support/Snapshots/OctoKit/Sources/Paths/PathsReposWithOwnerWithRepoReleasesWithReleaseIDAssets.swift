@@ -55,8 +55,12 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
         /// *   If you upload an asset with the same filename as another uploaded asset, you'll receive an error and must delete the old file before you can re-upload the new asset.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#upload-a-release-asset)
-        public func post(name: String, label: String? = nil, _ body: String? = nil) -> Request<OctoKit.ReleaseAsset> {
+        public func post(name: String, label: String? = nil, _ body: String? = nil) throws(PostError) -> Request<OctoKit.ReleaseAsset> {
             Request(path: path, method: "POST", query: makePostQuery(name, label), body: body, id: "repos/upload-release-asset")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity
         }
 
         private func makePostQuery(_ name: String, _ label: String?) -> [(String, String?)] {

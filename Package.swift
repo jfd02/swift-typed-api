@@ -12,8 +12,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.3"),
         .package(url: "https://github.com/liamnichols/swift-configuration-parser", from: "0.0.4"),
-        .package(url: "https://github.com/CreateAPI/OpenAPIKit", branch: "create-api"),
-        .package(url: "https://github.com/CreateAPI/Yams", revision: "d2ebc53afeb2001474dacf81c4480fef114045a1"),
+        .package(url: "https://github.com/mattpolzin/OpenAPIKit", from: "3.9.0"),
+        .package(url: "https://github.com/jpsim/Yams", from: "5.0.0"),
         .package(url: "https://github.com/Cosmo/GrammaticalNumber", from: "0.0.3"),
         .package(url: "https://github.com/eonist/FileWatcher", from: "0.2.0")
     ],
@@ -23,7 +23,7 @@ let package = Package(
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "ConfigurationParser", package: "swift-configuration-parser"),
-                .product(name: "OpenAPIKit30", package: "OpenAPIKit"),
+                .product(name: "OpenAPIKit", package: "OpenAPIKit"),
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "GrammaticalNumber", package: "GrammaticalNumber"),
                 .product(name: "FileWatcher", package: "FileWatcher", condition: .when(platforms: [.macOS])),
@@ -40,7 +40,12 @@ let package = Package(
         ),
         .testTarget(
             name: "create-api-tests",
-            dependencies: ["create-api"],
+            dependencies: [
+                "create-api",
+                "CreateOptions",
+                .product(name: "OpenAPIKit", package: "OpenAPIKit"),
+                .product(name: "Yams", package: "Yams")
+            ],
             path: "Tests/CreateAPITests"
         ),
         .testTarget(

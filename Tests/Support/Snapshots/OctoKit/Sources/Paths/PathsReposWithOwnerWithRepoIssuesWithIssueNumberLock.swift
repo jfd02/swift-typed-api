@@ -22,8 +22,15 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Note that, if you choose not to pass any parameters, you'll need to set `Content-Length` to zero when calling out to this endpoint. For more information, see "[HTTP verbs](https://docs.github.com/rest/overview/resources-in-the-rest-api#http-verbs)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#lock-an-issue)
-        public func put(lockReason: PutRequest.LockReason? = nil) -> Request<Void> {
+        public func put(lockReason: PutRequest.LockReason? = nil) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: PutRequest(lockReason: lockReason), id: "issues/lock")
+        }
+
+        public enum PutError: Error {
+            case forbidden(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PutRequest: Encodable {
@@ -62,7 +69,14 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#unlock-an-issue)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "issues/unlock")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "issues/unlock")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

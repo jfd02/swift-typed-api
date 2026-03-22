@@ -20,8 +20,12 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// Generate a name and body describing a [release](https://docs.github.com/rest/reference/repos#releases). The body content will be markdown formatted and contain information like the changes since last release and users who contributed. The generated release notes are not saved anywhere. They are intended to be generated and used when creating a new release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#generate-release-notes)
-        public func post(_ body: PostRequest) -> Request<OctoKit.ReleaseNotesContent> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.ReleaseNotesContent> {
             Request(path: path, method: "POST", body: body, id: "repos/generate-release-notes")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

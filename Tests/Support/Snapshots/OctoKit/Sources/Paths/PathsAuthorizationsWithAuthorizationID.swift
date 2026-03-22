@@ -22,7 +22,15 @@ extension Paths.Authorizations {
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#get-a-single-authorization)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.Authorization> {
-            Request(path: path, method: "GET", id: "oauth-authorizations/get-authorization")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "oauth-authorizations/get-authorization")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Update an existing authorization
@@ -35,8 +43,12 @@ extension Paths.Authorizations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#update-an-existing-authorization)
         @available(*, deprecated, message: "Deprecated")
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Authorization> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Authorization> {
             Request(path: path, method: "PATCH", body: body, id: "oauth-authorizations/update-authorization")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {
@@ -84,7 +96,15 @@ extension Paths.Authorizations {
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#delete-an-authorization)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-authorization")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-authorization")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

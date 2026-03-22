@@ -25,8 +25,13 @@ extension Paths.User {
         /// request id, use the "[List pull requests](https://docs.github.com/rest/reference/pulls#list-pull-requests)" endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-user-account-issues-assigned-to-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Issue]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Issue]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
         }
 
         public enum GetResponseHeaders {

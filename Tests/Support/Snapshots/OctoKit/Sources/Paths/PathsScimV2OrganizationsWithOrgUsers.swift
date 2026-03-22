@@ -35,8 +35,15 @@ extension Paths.Scim.V2.Organizations.WithOrg {
         ///    - If the user does not sign in (or does not create a new account when prompted), they are not added to the GitHub organization, and the external identity `null` entry remains in place.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#list-scim-provisioned-identities)
-        public func get(parameters: GetParameters? = nil) -> Request<OctoKit.ScimUserList> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<OctoKit.ScimUserList> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "scim/list-provisioned-identities")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.ScimError)
+            case forbidden(OctoKit.ScimError)
+            case badRequest(OctoKit.ScimError)
         }
 
         public struct GetParameters {
@@ -64,8 +71,17 @@ extension Paths.Scim.V2.Organizations.WithOrg {
         /// Provision organization membership for a user, and send an activation email to the email address.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#provision-and-invite-a-scim-user)
-        public func post(_ body: PostRequest) -> Request<OctoKit.ScimUser> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.ScimUser> {
             Request(path: path, method: "POST", body: body, id: "scim/provision-and-invite-user")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case notFound(OctoKit.ScimError)
+            case forbidden(OctoKit.ScimError)
+            case internalServerError(OctoKit.ScimError)
+            case conflict(OctoKit.ScimError)
+            case badRequest(OctoKit.ScimError)
         }
 
         public struct PostRequest: Encodable {

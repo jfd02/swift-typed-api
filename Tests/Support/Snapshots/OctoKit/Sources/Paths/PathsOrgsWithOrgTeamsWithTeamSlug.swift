@@ -23,7 +23,13 @@ extension Paths.Orgs.WithOrg.Teams {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-a-team-by-name)
         public var get: Request<OctoKit.TeamFull> {
-            Request(path: path, method: "GET", id: "teams/get-by-name")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/get-by-name")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a team

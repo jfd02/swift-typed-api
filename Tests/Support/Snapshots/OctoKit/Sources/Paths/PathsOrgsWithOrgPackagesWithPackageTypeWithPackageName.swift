@@ -37,7 +37,15 @@ extension Paths.Orgs.WithOrg.Packages.WithPackageType {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#delete-a-package-for-an-organization)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "packages/delete-package-for-org")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "packages/delete-package-for-org")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

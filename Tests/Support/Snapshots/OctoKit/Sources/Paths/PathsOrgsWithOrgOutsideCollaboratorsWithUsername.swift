@@ -21,7 +21,14 @@ extension Paths.Orgs.WithOrg.OutsideCollaborators {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#convert-an-organization-member-to-outside-collaborator)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "orgs/convert-member-to-outside-collaborator")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "orgs/convert-member-to-outside-collaborator")
+            }
+        }
+
+        public enum PutError: Error {
+            case forbidden
+            case notFound(OctoKit.BasicError)
         }
 
         /// Remove outside collaborator from an organization
@@ -30,7 +37,29 @@ extension Paths.Orgs.WithOrg.OutsideCollaborators {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-outside-collaborator-from-an-organization)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "orgs/remove-outside-collaborator")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "orgs/remove-outside-collaborator")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(DeleteUnprocessableEntityBody)
+        }
+
+        public struct DeleteUnprocessableEntityBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(message: String? = nil, documentationURL: String? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
     }
 }

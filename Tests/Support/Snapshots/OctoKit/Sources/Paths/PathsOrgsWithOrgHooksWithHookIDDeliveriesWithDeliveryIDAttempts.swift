@@ -20,8 +20,15 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID.Deliveries.WithDeliveryID {
         /// Redeliver a delivery for a webhook configured in an organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#redeliver-a-delivery-for-an-organization-webhook)
-        public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "orgs/redeliver-webhook-delivery")
+        public var post: Request<[String: AnyJSON]> {
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "orgs/redeliver-webhook-delivery")
+            }
+        }
+
+        public enum PostError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

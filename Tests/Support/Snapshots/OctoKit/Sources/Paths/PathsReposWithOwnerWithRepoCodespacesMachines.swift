@@ -24,8 +24,16 @@ extension Paths.Repos.WithOwner.WithRepo.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#list-available-machine-types-for-a-repository)
-        public func get(location: String) -> Request<GetResponse> {
+        public func get(location: String) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: [("location", location)], id: "codespaces/repo-machines-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {

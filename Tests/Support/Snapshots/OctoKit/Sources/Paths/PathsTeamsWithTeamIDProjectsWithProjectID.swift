@@ -24,7 +24,13 @@ extension Paths.Teams.WithTeamID.Projects {
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#check-team-permissions-for-a-project-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.TeamProject> {
-            Request(path: path, method: "GET", id: "teams/check-permissions-for-project-legacy")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/check-permissions-for-project-legacy")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Add or update team project permissions (Legacy)
@@ -35,8 +41,30 @@ extension Paths.Teams.WithTeamID.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#add-or-update-team-project-permissions-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func put(permission: PutRequest.Permission? = nil) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "teams/add-or-update-project-permissions-legacy")
+        }
+
+        public enum PutError: Error {
+            case forbidden(PutForbiddenBody)
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+        }
+
+        public struct PutForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(message: String? = nil, documentationURL: String? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -77,7 +105,31 @@ extension Paths.Teams.WithTeamID.Projects {
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#remove-a-project-from-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "teams/remove-project-legacy")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "teams/remove-project-legacy")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unsupportedMediaType(DeleteUnsupportedMediaTypeBody)
+            case unprocessableEntity(OctoKit.ValidationError)
+        }
+
+        public struct DeleteUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
     }
 }

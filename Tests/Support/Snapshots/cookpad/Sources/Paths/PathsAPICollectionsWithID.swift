@@ -17,7 +17,13 @@ extension Paths.Collections {
         ///
         /// Returns a single Collection model associated with the given identifier.
         public var get: Request<cookpad.Collection> {
-            Request(path: path, method: "GET", id: "getCollection")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "getCollection")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
     }
 }

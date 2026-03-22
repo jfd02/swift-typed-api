@@ -25,7 +25,13 @@ extension Paths.Repos.WithOwner.WithRepo.Assignees {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#check-if-a-user-can-be-assigned)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "issues/check-user-can-be-assigned")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "issues/check-user-can-be-assigned")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

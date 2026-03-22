@@ -22,8 +22,14 @@ extension Paths.Installation {
         /// You must use an [installation access token](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-repositories-accessible-to-the-app-installation)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "apps/list-repos-accessible-to-installation")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notModified
+            case unauthorized(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {

@@ -23,7 +23,34 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/secret-scanning#get-a-secret-scanning-alert)
         public var get: Request<OctoKit.SecretScanningAlert> {
-            Request(path: path, method: "GET", id: "secret-scanning/get-alert")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "secret-scanning/get-alert")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound
+            case serviceUnavailable(GetServiceUnavailableBody)
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         /// Update a secret scanning alert
@@ -33,8 +60,33 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
         /// GitHub Apps must have the `secret_scanning_alerts` write permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/secret-scanning#update-a-secret-scanning-alert)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.SecretScanningAlert> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.SecretScanningAlert> {
             Request(path: path, method: "PATCH", body: body, id: "secret-scanning/update-alert")
+        }
+
+        public enum PatchError: Error {
+            case notFound
+            case unprocessableEntity
+            case serviceUnavailable(PatchServiceUnavailableBody)
+        }
+
+        public struct PatchServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PatchRequest: Encodable {

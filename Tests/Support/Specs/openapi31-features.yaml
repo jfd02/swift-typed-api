@@ -1,0 +1,369 @@
+openapi: "3.1.0"
+info:
+  version: 1.0.0
+  title: OpenAPI 3.1 Features Test
+  description: Tests OpenAPI 3.1 specific features
+  summary: Comprehensive 3.1 feature testing
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /users:
+    get:
+      summary: List users
+      operationId: listUsers
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - suspended
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /documents:
+    get:
+      summary: List documents
+      operationId: listDocuments
+      responses:
+        '200':
+          description: Documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+components:
+  schemas:
+    # OpenAPI 3.1: nullable via type arrays instead of nullable: true
+    NullableString:
+      type:
+        - string
+        - "null"
+
+    # OpenAPI 3.1: nullable integer with type array
+    NullableInteger:
+      type:
+        - integer
+        - "null"
+      format: int64
+
+    # OpenAPI 3.1: nullable object reference (type array with null)
+    NullableObject:
+      type:
+        - object
+        - "null"
+      properties:
+        name:
+          type: string
+        value:
+          type: number
+
+    # Object with nullable properties using 3.1 type arrays
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          description: The user's login name
+        email:
+          type: string
+          format: email
+        displayName:
+          type:
+            - string
+            - "null"
+          description: Optional display name, can be null
+        bio:
+          type:
+            - string
+            - "null"
+        age:
+          type:
+            - integer
+            - "null"
+          format: int32
+          exclusiveMinimum: 0
+          exclusiveMaximum: 200
+        website:
+          type:
+            - string
+            - "null"
+          format: uri
+        role:
+          $ref: "#/components/schemas/UserRole"
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        tags:
+          type: array
+          items:
+            type: string
+        scores:
+          type: array
+          items:
+            type:
+              - number
+              - "null"
+            description: Nullable items in array
+
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - email
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        displayName:
+          type:
+            - string
+            - "null"
+
+    # Enum schema
+    UserRole:
+      type: string
+      enum:
+        - admin
+        - editor
+        - viewer
+        - guest
+
+    # Free-form metadata with additionalProperties
+    Metadata:
+      type: object
+      additionalProperties: true
+
+    # OpenAPI 3.1: const keyword support
+    FixedValue:
+      type: object
+      properties:
+        version:
+          type: string
+          const: "1.0"
+        active:
+          type: boolean
+          const: true
+
+    # allOf with description override ($ref with siblings)
+    AdminUser:
+      allOf:
+        - $ref: "#/components/schemas/User"
+        - type: object
+          properties:
+            permissions:
+              type: array
+              items:
+                type: string
+            adminSince:
+              type: string
+              format: date-time
+
+    # oneOf discriminator
+    Document:
+      oneOf:
+        - $ref: "#/components/schemas/TextDocument"
+        - $ref: "#/components/schemas/ImageDocument"
+      discriminator:
+        propertyName: type
+        mapping:
+          text: "#/components/schemas/TextDocument"
+          image: "#/components/schemas/ImageDocument"
+
+    TextDocument:
+      type: object
+      required:
+        - type
+        - content
+      properties:
+        type:
+          type: string
+        content:
+          type: string
+        wordCount:
+          type:
+            - integer
+            - "null"
+
+    ImageDocument:
+      type: object
+      required:
+        - type
+        - url
+      properties:
+        type:
+          type: string
+        url:
+          type: string
+          format: uri
+        width:
+          type:
+            - integer
+            - "null"
+        height:
+          type:
+            - integer
+            - "null"
+
+    # anyOf example
+    SearchResult:
+      anyOf:
+        - $ref: "#/components/schemas/User"
+        - $ref: "#/components/schemas/TextDocument"
+
+    # OpenAPI 3.1: exclusive min/max as numeric values
+    BoundedNumber:
+      type: number
+      exclusiveMinimum: 0
+      exclusiveMaximum: 100
+
+    # OpenAPI 3.1: exclusive integer bounds
+    BoundedInteger:
+      type: integer
+      exclusiveMinimum: 0
+      exclusiveMaximum: 1000
+
+    # Error response
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        details:
+          type:
+            - string
+            - "null"
+
+    # OpenAPI 3.1: JSON Schema string formats
+    StringFormats:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        hostname:
+          type: string
+          format: hostname
+        ipv4:
+          type: string
+          format: ipv4
+        ipv6:
+          type: string
+          format: ipv6
+        uri:
+          type: string
+          format: uri
+        uriReference:
+          type: string
+          format: uri-reference
+        uuid:
+          type: string
+          format: uuid
+        dateTime:
+          type: string
+          format: date-time
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+          format: time
+        duration:
+          type: string
+          format: duration
+        password:
+          type: string
+          format: password
+        regex:
+          type: string
+          format: regex
+
+    # Nested nullable arrays
+    NullableArrays:
+      type: object
+      properties:
+        nullableArray:
+          type:
+            - array
+            - "null"
+          items:
+            type: string
+        arrayOfNullable:
+          type: array
+          items:
+            type:
+              - string
+              - "null"
+        nullableArrayOfNullable:
+          type:
+            - array
+            - "null"
+          items:
+            type:
+              - string
+              - "null"

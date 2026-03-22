@@ -23,7 +23,20 @@ extension Paths.User.Codespaces.WithCodespaceName {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#start-a-codespace-for-the-authenticated-user)
         public var post: Request<OctoKit.Codespace> {
-            Request(path: path, method: "POST", id: "codespaces/start-for-authenticated-user")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "codespaces/start-for-authenticated-user")
+            }
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case badRequest(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case status402(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case conflict(OctoKit.BasicError)
         }
     }
 }

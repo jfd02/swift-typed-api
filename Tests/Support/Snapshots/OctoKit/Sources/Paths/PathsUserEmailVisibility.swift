@@ -20,8 +20,16 @@ extension Paths.User.Email {
         /// Sets the visibility for your primary email addresses.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#set-primary-email-visibility-for-the-authenticated-user)
-        public func patch(visibility: PatchRequest.Visibility) -> Request<[OctoKit.Email]> {
+        public func patch(visibility: PatchRequest.Visibility) throws(PatchError) -> Request<[OctoKit.Email]> {
             Request(path: path, method: "PATCH", body: PatchRequest(visibility: visibility), id: "users/set-primary-email-visibility-for-authenticated-user")
+        }
+
+        public enum PatchError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {

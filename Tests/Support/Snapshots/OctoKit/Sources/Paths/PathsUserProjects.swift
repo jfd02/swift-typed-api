@@ -18,8 +18,32 @@ extension Paths.User {
         /// Create a user project
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#create-a-user-project)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Project> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Project> {
             Request(path: path, method: "POST", body: body, id: "projects/create-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unsupportedMediaType(PostUnsupportedMediaTypeBody)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+        }
+
+        public struct PostUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PostRequest: Encodable {

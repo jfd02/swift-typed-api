@@ -22,8 +22,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// READMEs support [custom media types](https://docs.github.com/rest/reference/repos#custom-media-types) for retrieving the raw content or rendered HTML.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-repository-readme)
-        public func get(ref: String? = nil) -> Request<OctoKit.ContentFile> {
+        public func get(ref: String? = nil) throws(GetError) -> Request<OctoKit.ContentFile> {
             Request(path: path, method: "GET", query: makeGetQuery(ref), id: "repos/get-readme")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         private func makeGetQuery(_ ref: String?) -> [(String, String?)] {

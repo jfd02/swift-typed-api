@@ -22,8 +22,12 @@ extension Paths.Orgs.WithOrg.Settings.Billing {
         /// If this organization defers to an enterprise for billing, the total_advanced_security_committers returned from the organization API may include some users that are in more than one organization, so they will only consume a single Advanced Security seat at the enterprise level.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/billing#get-github-advanced-security-active-committers-for-an-organization)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.AdvancedSecurityActiveCommitters> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<OctoKit.AdvancedSecurityActiveCommitters> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "billing/get-github-advanced-security-billing-org")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ perPage: Int?, _ page: Int?) -> [(String, String?)] {

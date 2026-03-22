@@ -23,8 +23,32 @@ extension Paths.Orgs.WithOrg.SecretScanning {
         /// GitHub Apps must have the `secret_scanning_alerts` read permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/secret-scanning#list-secret-scanning-alerts-for-an-organization)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.OrganizationSecretScanningAlert]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.OrganizationSecretScanningAlert]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "secret-scanning/list-alerts-for-org")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case serviceUnavailable(GetServiceUnavailableBody)
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public enum GetResponseHeaders {

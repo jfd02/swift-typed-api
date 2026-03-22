@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Get all repository topics
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-all-repository-topics)
-        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<OctoKit.Topic> {
+        public func get(page: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<OctoKit.Topic> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "repos/get-all-topics")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ page: Int?, _ perPage: Int?) -> [(String, String?)] {
@@ -32,8 +36,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Replace all repository topics
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#replace-all-repository-topics)
-        public func put(names: [String]) -> Request<OctoKit.Topic> {
+        public func put(names: [String]) throws(PutError) -> Request<OctoKit.Topic> {
             Request(path: path, method: "PUT", body: ["names": names], id: "repos/replace-all-topics")
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
     }
 }

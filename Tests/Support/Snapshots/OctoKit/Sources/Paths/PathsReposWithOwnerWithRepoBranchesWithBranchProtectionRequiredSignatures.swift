@@ -25,7 +25,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-commit-signature-protection)
         public var get: Request<OctoKit.ProtectedBranchAdminEnforced> {
-            Request(path: path, method: "GET", id: "repos/get-commit-signature-protection")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-commit-signature-protection")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Create commit signature protection
@@ -36,7 +42,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-commit-signature-protection)
         public var post: Request<OctoKit.ProtectedBranchAdminEnforced> {
-            Request(path: path, method: "POST", id: "repos/create-commit-signature-protection")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "repos/create-commit-signature-protection")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete commit signature protection
@@ -47,7 +59,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-commit-signature-protection)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-commit-signature-protection")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-commit-signature-protection")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

@@ -18,8 +18,12 @@ extension Paths.Orgs.WithOrg {
         /// List organization webhooks
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organization-webhooks)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrgHook]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.OrgHook]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-webhooks")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -38,8 +42,13 @@ extension Paths.Orgs.WithOrg {
         /// Here's how you can create a hook that posts payloads in JSON format:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#create-an-organization-webhook)
-        public func post(_ body: PostRequest) -> Request<OctoKit.OrgHook> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.OrgHook> {
             Request(path: path, method: "POST", body: body, id: "orgs/create-webhook")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

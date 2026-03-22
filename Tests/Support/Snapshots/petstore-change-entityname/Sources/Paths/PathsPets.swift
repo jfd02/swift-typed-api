@@ -16,8 +16,12 @@ extension Paths {
         public let path: String
 
         /// List all pets
-        public func get(limit: Int32? = nil) -> Request<[petstore_change_entityname.PetGenerated]> {
+        public func get(limit: Int32? = nil) throws(GetError) -> Request<[petstore_change_entityname.PetGenerated]> {
             Request(path: path, method: "GET", query: makeGetQuery(limit), id: "listPets")
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_change_entityname.ErrorGenerated)
         }
 
         public enum GetResponseHeaders {
@@ -33,7 +37,13 @@ extension Paths {
 
         /// Create a pet
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "createPets")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "createPets")
+            }
+        }
+
+        public enum PostError: Error {
+            case `default`(statusCode: Int, petstore_change_entityname.ErrorGenerated)
         }
     }
 }

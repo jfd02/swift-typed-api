@@ -17,13 +17,23 @@ extension Paths {
         public let path: String
 
         /// Add a new pet to the store
-        public func post(_ body: edgecases_disable_enums.Pet) -> Request<Void> {
+        public func post(_ body: edgecases_disable_enums.Pet) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", body: body, id: "addPet")
         }
 
+        public enum PostError: Error {
+            case methodNotAllowed
+        }
+
         /// Update an existing pet
-        public func put(_ body: edgecases_disable_enums.Pet) -> Request<Void> {
+        public func put(_ body: edgecases_disable_enums.Pet) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: body, id: "updatePet")
+        }
+
+        public enum PutError: Error {
+            case badRequest
+            case notFound
+            case methodNotAllowed
         }
     }
 }

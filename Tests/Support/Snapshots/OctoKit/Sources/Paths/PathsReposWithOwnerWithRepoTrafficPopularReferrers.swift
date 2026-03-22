@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Traffic.Popular {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-top-referral-sources)
         public var get: Request<[OctoKit.ReferrerTraffic]> {
-            Request(path: path, method: "GET", id: "repos/get-top-referrers")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-top-referrers")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

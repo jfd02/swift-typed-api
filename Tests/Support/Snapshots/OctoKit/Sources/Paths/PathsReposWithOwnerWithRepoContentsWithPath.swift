@@ -51,8 +51,14 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
         /// github.com URLs (`html_url` and `_links["html"]`) will have null values.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-repository-content)
-        public func get(ref: String? = nil) -> Request<GetResponse> {
+        public func get(ref: String? = nil) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: makeGetQuery(ref), id: "repos/get-content")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case status302
         }
 
         public enum GetResponse: Decodable {
@@ -91,8 +97,14 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
         /// Creates a new file or replaces an existing file in a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-or-update-file-contents)
-        public func put(_ body: PutRequest) -> Request<OctoKit.FileCommit> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.FileCommit> {
             Request(path: path, method: "PUT", body: body, id: "repos/create-or-update-file-contents")
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case conflict(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {
@@ -186,8 +198,34 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
         /// You must provide values for both `name` and `email`, whether you choose to use `author` or `committer`. Otherwise, you'll receive a `422` status code.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-file)
-        public func delete(_ body: DeleteRequest) -> Request<OctoKit.FileCommit> {
+        public func delete(_ body: DeleteRequest) throws(DeleteError) -> Request<OctoKit.FileCommit> {
             Request(path: path, method: "DELETE", body: body, id: "repos/delete-file")
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
+            case conflict(OctoKit.BasicError)
+            case serviceUnavailable(DeleteServiceUnavailableBody)
+        }
+
+        public struct DeleteServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct DeleteRequest: Encodable {

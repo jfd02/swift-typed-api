@@ -23,7 +23,14 @@ extension Paths.MarketplaceListing.Accounts {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-a-subscription-plan-for-an-account)
         public var get: Request<OctoKit.MarketplacePurchase> {
-            Request(path: path, method: "GET", id: "apps/get-subscription-plan-for-account")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "apps/get-subscription-plan-for-account")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

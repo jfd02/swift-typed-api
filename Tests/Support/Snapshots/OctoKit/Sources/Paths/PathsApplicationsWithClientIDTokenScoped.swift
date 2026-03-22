@@ -20,8 +20,15 @@ extension Paths.Applications.WithClientID.Token {
         /// Use a non-scoped user-to-server OAuth access token to create a repository scoped and/or permission scoped user-to-server OAuth access token. You can specify which repositories the token can access and which permissions are granted to the token. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) when accessing this endpoint, using the OAuth application's `client_id` and `client_secret` as the username and password. Invalid tokens will return `404 NOT FOUND`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#create-a-scoped-access-token)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Authorization> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Authorization> {
             Request(path: path, method: "POST", body: body, id: "apps/scope-token")
+        }
+
+        public enum PostError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

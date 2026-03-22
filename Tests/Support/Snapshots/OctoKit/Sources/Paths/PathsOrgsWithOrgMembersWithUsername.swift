@@ -21,7 +21,14 @@ extension Paths.Orgs.WithOrg.Members {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#check-organization-membership-for-a-user)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "orgs/check-membership-for-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/check-membership-for-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
+            case notFound
         }
 
         /// Remove an organization member
@@ -30,7 +37,13 @@ extension Paths.Orgs.WithOrg.Members {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-an-organization-member)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "orgs/remove-member")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "orgs/remove-member")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

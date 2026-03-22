@@ -21,7 +21,15 @@ extension Paths.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-repository)
         public var get: Request<OctoKit.FullRepository> {
-            Request(path: path, method: "GET", id: "repos/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case movedPermanently(OctoKit.BasicError)
         }
 
         /// Update a repository
@@ -29,8 +37,15 @@ extension Paths.Repos.WithOwner {
         /// **Note**: To edit a repository's topics, use the [Replace all repository topics](https://docs.github.com/rest/reference/repos#replace-all-repository-topics) endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos/#update-a-repository)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.FullRepository> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.FullRepository> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update")
+        }
+
+        public enum PatchError: Error {
+            case status307(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {
@@ -181,7 +196,31 @@ extension Paths.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-repository)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden(DeleteForbiddenBody)
+            case status307(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+        }
+
+        public struct DeleteForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(message: String? = nil, documentationURL: String? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
     }
 }

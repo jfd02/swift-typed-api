@@ -20,8 +20,12 @@ extension Paths.Repos.WithOwner.WithRepo.Traffic {
         /// Get the total number of views and breakdown per day or week for the last 14 days. Timestamps are aligned to UTC midnight of the beginning of the day or week. Week begins on Monday.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-page-views)
-        public func get(per: Per? = nil) -> Request<OctoKit.ViewTraffic> {
+        public func get(per: Per? = nil) throws(GetError) -> Request<OctoKit.ViewTraffic> {
             Request(path: path, method: "GET", query: makeGetQuery(per), id: "repos/get-views")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ per: Per?) -> [(String, String?)] {

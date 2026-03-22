@@ -1,33 +1,33 @@
 import Foundation
-import OpenAPIKit30
+import OpenAPIKit
 
-extension Either where A == JSONReference<JSONSchema>, B == JSONSchema {
+extension Either where A == OpenAPI.Reference<JSONSchema>, B == JSONSchema {
     func unwrapped(in spec: OpenAPI.Document) throws -> JSONSchema {
         switch self {
         case .a(let reference):
-            return try reference.dereferenced(in: spec.components).jsonSchema
+            return try reference.jsonReference.dereferenced(in: spec.components).jsonSchema
         case .b(let schema):
             return schema
         }
     }
 }
 
-extension Either where A == JSONReference<OpenAPI.Parameter>, B == OpenAPI.Parameter {
+extension Either where A == OpenAPI.Reference<OpenAPI.Parameter>, B == OpenAPI.Parameter {
     func unwrapped(in spec: OpenAPI.Document) throws -> OpenAPI.Parameter {
         switch self {
         case .a(let reference):
-            return try reference.dereferenced(in: spec.components).underlyingParameter
+            return try reference.jsonReference.dereferenced(in: spec.components).underlyingParameter
         case .b(let value):
             return value
         }
     }
 }
 
-extension Either where A == JSONReference<OpenAPI.Request>, B == OpenAPI.Request {
+extension Either where A == OpenAPI.Reference<OpenAPI.Request>, B == OpenAPI.Request {
     func unwrapped(in spec: OpenAPI.Document) throws -> OpenAPI.Request {
         switch self {
         case .a(let reference):
-            guard let name = reference.name else {
+            guard let name = reference.jsonReference.name else {
                 throw GeneratorError("Inalid reference")
             }
             guard let key = OpenAPI.ComponentKey(rawValue: name), let request = spec.components.requestBodies[key] else {
@@ -40,11 +40,11 @@ extension Either where A == JSONReference<OpenAPI.Request>, B == OpenAPI.Request
     }
 }
 
-extension Either where A == JSONReference<OpenAPI.Header>, B == OpenAPI.Header {
+extension Either where A == OpenAPI.Reference<OpenAPI.Header>, B == OpenAPI.Header {
     func unwrapped(in spec: OpenAPI.Document) throws -> OpenAPI.Header {
         switch self {
         case .a(let reference):
-            return try reference.dereferenced(in: spec.components).underlyingHeader
+            return try reference.jsonReference.dereferenced(in: spec.components).underlyingHeader
         case .b(let value):
             return value
         }
@@ -63,7 +63,7 @@ extension OpenAPI.Parameter {
 }
 
 extension OpenAPI.Operation {
-    var firstSuccessfulResponse: Either<JSONReference<OpenAPI.Response>, OpenAPI.Response>? {
+    var firstSuccessfulResponse: Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>? {
         guard responses.count > 1 else {
             return responses.first { $0.key == .default || $0.key.isSuccess }?.value
         }
@@ -89,5 +89,17 @@ extension OpenAPI.PathItem {
 extension JSONSchema {
     var isOptional: Bool {
         !self.required || self.nullable
+    }
+}
+
+// Helper to resolve Either<OpenAPI.Reference<PathItem>, PathItem> to PathItem
+extension Either where A == OpenAPI.Reference<OpenAPI.PathItem>, B == OpenAPI.PathItem {
+    func resolvedPathItem(in spec: OpenAPI.Document) throws -> OpenAPI.PathItem {
+        switch self {
+        case .a(let reference):
+            return try reference.jsonReference.dereferenced(in: spec.components).underlyingPathItem
+        case .b(let pathItem):
+            return pathItem
+        }
     }
 }

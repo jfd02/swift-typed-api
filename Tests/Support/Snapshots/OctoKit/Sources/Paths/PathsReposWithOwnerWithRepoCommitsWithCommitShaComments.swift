@@ -42,8 +42,13 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithCommitSha {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-commit-comment)
-        public func post(_ body: PostRequest) -> Request<OctoKit.CommitComment> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.CommitComment> {
             Request(path: path, method: "POST", body: body, id: "repos/create-commit-comment")
+        }
+
+        public enum PostError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

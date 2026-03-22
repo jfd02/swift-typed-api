@@ -12,6 +12,8 @@ struct SpecFixture {
     static let petstore = SpecFixture(name: "petstore", ext: "yaml")
     static let stripParentNameNestedObjects = SpecFixture(name: "strip-parent-name-nested-objects", ext: "yaml")
     static let testQueryParameters = SpecFixture(name: "test-query-parameters", ext: "yaml")
+    static let petstore31 = SpecFixture(name: "petstore-3.1", ext: "yaml")
+    static let openapi31Features = SpecFixture(name: "openapi31-features", ext: "yaml")
 
     var path: String {
         URL(fileURLWithPath: #filePath)

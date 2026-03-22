@@ -22,8 +22,14 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#create-a-codespace-from-a-pull-request)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Codespace> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Codespace> {
             Request(path: path, method: "POST", body: body, id: "codespaces/create-with-pr-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PostRequest: Encodable {

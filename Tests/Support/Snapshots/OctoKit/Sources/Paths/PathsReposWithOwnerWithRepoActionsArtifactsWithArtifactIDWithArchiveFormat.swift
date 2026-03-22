@@ -24,7 +24,13 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Artifacts.WithArtifactID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#download-an-artifact)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "actions/download-artifact")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "actions/download-artifact")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
         }
     }
 }

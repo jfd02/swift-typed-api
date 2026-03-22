@@ -18,8 +18,15 @@ extension Paths.Projects.Columns.WithColumnID {
         /// Move a project column
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#move-a-project-column)
-        public func post(position: String) -> Request<Void> {
+        public func post(position: String) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", body: ["position": position], id: "projects/move-column")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

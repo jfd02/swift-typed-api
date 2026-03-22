@@ -25,7 +25,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-access-restrictions)
         public var get: Request<OctoKit.BranchRestrictionPolicy> {
-            Request(path: path, method: "GET", id: "repos/get-access-restrictions")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-access-restrictions")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete access restrictions

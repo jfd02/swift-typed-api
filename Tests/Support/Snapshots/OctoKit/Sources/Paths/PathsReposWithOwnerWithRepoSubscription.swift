@@ -19,7 +19,14 @@ extension Paths.Repos.WithOwner.WithRepo {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#get-a-repository-subscription)
         public var get: Request<OctoKit.RepositorySubscription> {
-            Request(path: path, method: "GET", id: "activity/get-repo-subscription")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "activity/get-repo-subscription")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Set a repository subscription

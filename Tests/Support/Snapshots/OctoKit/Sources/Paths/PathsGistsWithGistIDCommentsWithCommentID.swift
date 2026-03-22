@@ -19,21 +19,79 @@ extension Paths.Gists.WithGistID.Comments {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#get-a-gist-comment)
         public var get: Request<OctoKit.GistComment> {
-            Request(path: path, method: "GET", id: "gists/get-comment")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "gists/get-comment")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(GetForbiddenBody)
+        }
+
+        public struct GetForbiddenBody: Decodable {
+            public var block: Block?
+            public var message: String?
+            public var documentationURL: String?
+
+            public struct Block: Decodable {
+                public var reason: String?
+                public var createdAt: String?
+                public var htmlURL: String?
+
+                public init(reason: String? = nil, createdAt: String? = nil, htmlURL: String? = nil) {
+                    self.reason = reason
+                    self.createdAt = createdAt
+                    self.htmlURL = htmlURL
+                }
+
+                public init(from decoder: Decoder) throws {
+                    let values = try decoder.container(keyedBy: StringCodingKey.self)
+                    self.reason = try values.decodeIfPresent(String.self, forKey: "reason")
+                    self.createdAt = try values.decodeIfPresent(String.self, forKey: "created_at")
+                    self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
+                }
+            }
+
+            public init(block: Block? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.block = block
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.block = try values.decodeIfPresent(Block.self, forKey: "block")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         /// Update a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#update-a-gist-comment)
-        public func patch(body: String) -> Request<OctoKit.GistComment> {
+        public func patch(body: String) throws(PatchError) -> Request<OctoKit.GistComment> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "gists/update-comment")
+        }
+
+        public enum PatchError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#delete-a-gist-comment)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "gists/delete-comment")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "gists/delete-comment")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

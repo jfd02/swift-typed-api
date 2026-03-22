@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Import.Authors {
         /// Update an author's identity for the import. Your application can continue updating authors any time before you push new commits to the repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#map-a-commit-author)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.PorterAuthor> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.PorterAuthor> {
             Request(path: path, method: "PATCH", body: body, id: "migrations/map-commit-author")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {

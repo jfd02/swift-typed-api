@@ -28,8 +28,14 @@ extension Paths {
         /// request id, use the "[List pull requests](https://docs.github.com/rest/reference/pulls#list-pull-requests)" endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-issues-assigned-to-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Issue]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Issue]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

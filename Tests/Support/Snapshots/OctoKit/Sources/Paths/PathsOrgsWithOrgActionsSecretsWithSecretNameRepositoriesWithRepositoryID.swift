@@ -21,7 +21,13 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName.Repositories {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#add-selected-repository-to-an-organization-secret)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "actions/add-selected-repo-to-org-secret")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "actions/add-selected-repo-to-org-secret")
+            }
+        }
+
+        public enum PutError: Error {
+            case conflict
         }
 
         /// Remove selected repository from an organization secret
@@ -30,7 +36,13 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName.Repositories {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#remove-selected-repository-from-an-organization-secret)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "actions/remove-selected-repo-from-org-secret")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "actions/remove-selected-repo-from-org-secret")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case conflict
         }
     }
 }

@@ -19,7 +19,15 @@ extension Paths.Gists.WithGistID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#check-if-a-gist-is-starred)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "gists/check-is-starred")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "gists/check-is-starred")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Star a gist
@@ -28,14 +36,30 @@ extension Paths.Gists.WithGistID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#star-a-gist)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "gists/star")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "gists/star")
+            }
+        }
+
+        public enum PutError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Unstar a gist
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#unstar-a-gist)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "gists/unstar")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "gists/unstar")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

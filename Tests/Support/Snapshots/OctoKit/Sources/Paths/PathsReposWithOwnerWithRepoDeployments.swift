@@ -106,8 +106,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// status for the commit to be deployed, but one or more of the required contexts do not have a state of `success`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-deployment)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Deployment> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Deployment> {
             Request(path: path, method: "POST", body: body, id: "repos/create-deployment")
+        }
+
+        public enum PostError: Error {
+            case conflict
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

@@ -45,8 +45,12 @@ extension Paths.User {
         /// Temporarily restricts which type of GitHub user can interact with your public repositories. Setting the interaction limit at the user level will overwrite any interaction limits that are set for individual repositories owned by the user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#set-interaction-restrictions-for-your-public-repositories)
-        public func put(_ body: OctoKit.InteractionLimit) -> Request<OctoKit.InteractionLimitResponse> {
+        public func put(_ body: OctoKit.InteractionLimit) throws(PutError) -> Request<OctoKit.InteractionLimitResponse> {
             Request(path: path, method: "PUT", body: body, id: "interactions/set-restrictions-for-authenticated-user")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         /// Remove interaction restrictions from your public repositories

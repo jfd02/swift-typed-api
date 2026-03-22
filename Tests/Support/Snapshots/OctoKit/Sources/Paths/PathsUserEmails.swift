@@ -20,8 +20,15 @@ extension Paths.User {
         /// Lists all of your email addresses, and specifies which one is visible to the public. This endpoint is accessible with the `user:email` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-email-addresses-for-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Email]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Email]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "users/list-emails-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -40,8 +47,16 @@ extension Paths.User {
         /// This endpoint is accessible with the `user` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#add-an-email-address-for-the-authenticated-user)
-        public func post(_ body: PostRequest? = nil) -> Request<[OctoKit.Email]> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<[OctoKit.Email]> {
             Request(path: path, method: "POST", body: body, id: "users/add-email-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum PostRequest: Encodable {
@@ -88,8 +103,16 @@ extension Paths.User {
         /// This endpoint is accessible with the `user` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#delete-an-email-address-for-the-authenticated-user)
-        public func delete(_ body: DeleteRequest? = nil) -> Request<Void> {
+        public func delete(_ body: DeleteRequest? = nil) throws(DeleteError) -> Request<Void> {
             Request(path: path, method: "DELETE", body: body, id: "users/delete-email-for-authenticated-user")
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum DeleteRequest: Encodable {

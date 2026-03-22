@@ -31,7 +31,13 @@ extension Paths.Teams.WithTeamID.Memberships {
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-team-membership-for-a-user-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.TeamMembership> {
-            Request(path: path, method: "GET", id: "teams/get-membership-for-user-legacy")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/get-membership-for-user-legacy")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Add or update team membership for a user (Legacy)
@@ -50,8 +56,14 @@ extension Paths.Teams.WithTeamID.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-or-update-team-membership-for-a-user-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func put(role: PutRequest.Role? = nil) -> Request<OctoKit.TeamMembership> {
+        public func put(role: PutRequest.Role? = nil) throws(PutError) -> Request<OctoKit.TeamMembership> {
             Request(path: path, method: "PUT", body: PutRequest(role: role), id: "teams/add-or-update-membership-for-user-legacy")
+        }
+
+        public enum PutError: Error {
+            case forbidden
+            case unprocessableEntity
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {
@@ -91,7 +103,13 @@ extension Paths.Teams.WithTeamID.Memberships {
         /// [API method documentation](https://docs.github.com/rest/reference/teams#remove-team-membership-for-a-user-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "teams/remove-membership-for-user-legacy")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "teams/remove-membership-for-user-legacy")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden
         }
     }
 }

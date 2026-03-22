@@ -20,8 +20,16 @@ extension Paths.Projects.WithProjectID {
         /// Lists the collaborators for an organization project. For a project, the list of collaborators includes outside collaborators, organization members that are direct collaborators, organization members with access through team memberships, organization members with access through default organization permissions, and organization owners. You must be an organization owner or a project `admin` to list collaborators.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-project-collaborators)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.SimpleUser]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "projects/list-collaborators")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

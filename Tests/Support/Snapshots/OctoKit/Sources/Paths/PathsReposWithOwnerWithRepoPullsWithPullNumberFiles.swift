@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// **Note:** Responses include a maximum of 3000 files. The paginated response returns 30 files per page by default.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-pull-requests-files)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.DiffEntry]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.DiffEntry]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "pulls/list-files")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case internalServerError(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

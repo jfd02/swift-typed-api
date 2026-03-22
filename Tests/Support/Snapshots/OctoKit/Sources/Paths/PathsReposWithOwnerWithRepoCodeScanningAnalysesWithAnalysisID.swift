@@ -39,7 +39,34 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Analyses {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#get-a-code-scanning-analysis-for-a-repository)
         public var get: Request<OctoKit.CodeScanningAnalysis> {
-            Request(path: path, method: "GET", id: "code-scanning/get-analysis")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "code-scanning/get-analysis")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case serviceUnavailable(GetServiceUnavailableBody)
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         /// Delete a code scanning analysis from a repository
@@ -112,8 +139,34 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Analyses {
         /// The above process assumes that you want to remove all trace of the tool's analyses from the GitHub user interface, for the specified repository, and it therefore uses the `confirm_delete_url` value. Alternatively, you could use the `next_analysis_url` value, which would leave the last analysis in each set undeleted to avoid removing a tool's analysis entirely.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#delete-a-code-scanning-analysis-from-a-repository)
-        public func delete(confirmDelete: String? = nil) -> Request<OctoKit.CodeScanningAnalysisDeletion> {
+        public func delete(confirmDelete: String? = nil) throws(DeleteError) -> Request<OctoKit.CodeScanningAnalysisDeletion> {
             Request(path: path, method: "DELETE", query: makeDeleteQuery(confirmDelete), id: "code-scanning/delete-analysis")
+        }
+
+        public enum DeleteError: Error {
+            case badRequest(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case serviceUnavailable(DeleteServiceUnavailableBody)
+        }
+
+        public struct DeleteServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         private func makeDeleteQuery(_ confirmDelete: String?) -> [(String, String?)] {

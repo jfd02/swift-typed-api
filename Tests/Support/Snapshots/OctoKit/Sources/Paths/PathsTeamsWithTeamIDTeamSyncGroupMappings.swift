@@ -26,7 +26,14 @@ extension Paths.Teams.WithTeamID.TeamSync {
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-idp-groups-for-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.GroupMapping> {
-            Request(path: path, method: "GET", id: "teams/list-idp-groups-for-legacy")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/list-idp-groups-for-legacy")
+            }
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         /// Create or update IdP group connections (Legacy)
@@ -39,8 +46,13 @@ extension Paths.Teams.WithTeamID.TeamSync {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-or-update-idp-group-connections-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.GroupMapping> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.GroupMapping> {
             Request(path: path, method: "PATCH", body: body, id: "teams/create-or-update-idp-group-connections-legacy")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {

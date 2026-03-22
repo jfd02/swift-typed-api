@@ -18,8 +18,14 @@ extension Paths.Gists.WithGistID {
         /// List gist commits
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gist-commits)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.GistCommit]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.GistCommit]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "gists/list-commits")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

@@ -19,7 +19,16 @@ extension Paths.User.Following {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#check-if-a-person-is-followed-by-the-authenticated-user)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "users/check-person-is-followed-by-authenticated")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/check-person-is-followed-by-authenticated")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Follow a user
@@ -30,7 +39,16 @@ extension Paths.User.Following {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#follow-a-user)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "users/follow")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "users/follow")
+            }
+        }
+
+        public enum PutError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Unfollow a user
@@ -39,7 +57,16 @@ extension Paths.User.Following {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#unfollow-a-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "users/unfollow")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "users/unfollow")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

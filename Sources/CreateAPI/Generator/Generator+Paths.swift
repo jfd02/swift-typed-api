@@ -1,5 +1,5 @@
 import CreateOptions
-import OpenAPIKit30
+import OpenAPIKit
 import Foundation
 import GrammaticalNumber
 
@@ -123,7 +123,14 @@ extension Generator {
                     generatedNames[typesKey] = 1
                 }
 
-                let job = JobGenerateRest(types: types, component: components[index], path: subpath, components: Array(components[commonIndices...index]), isSubpath: isSubpath, item: path.value, commonIndices: commonIndices)
+                let resolvedItem: OpenAPI.PathItem
+                do {
+                    resolvedItem = try path.value.resolvedPathItem(in: spec)
+                } catch {
+                    print("WARNING: Failed to resolve path item for \(path.key): \(error)")
+                    continue
+                }
+                let job = JobGenerateRest(types: types, component: components[index], path: subpath, components: Array(components[commonIndices...index]), isSubpath: isSubpath, item: resolvedItem, commonIndices: commonIndices)
                 jobs.append(job)
             }
         }
@@ -176,7 +183,8 @@ extension Generator {
                    key.components[(index + 1)].contains("{") {
                     return commonIndices
                 }
-                if let item = spec.paths[OpenAPI.Path(rawValue: key.components[...index].joined(separator: "/"))],
+                if let eitherItem = spec.paths[OpenAPI.Path(rawValue: key.components[...index].joined(separator: "/"))],
+                   let item = eitherItem.pathItemValue,
                    !item.allOperations.isEmpty {
                     return commonIndices
                 }
@@ -204,15 +212,18 @@ extension Generator {
     }
 
     private func makeJobsOperations() -> [JobGenerateOperation] {
-        spec.paths.flatMap { path, item -> [JobGenerateOperation] in
+        spec.paths.compactMap { path, eitherItem -> [JobGenerateOperation]? in
             guard shouldGenerate(path: path.rawValue) else {
                 verbose("Skipping path: \(path.rawValue)")
-                return []
+                return nil
+            }
+            guard let item = eitherItem.pathItemValue else {
+                return nil
             }
             return item.allOperations.map { method, operation in
                 JobGenerateOperation(path: path, item: item, method: method, operation: operation, filename: getOperationId(for: operation))
             }
-        }
+        }.flatMap { $0 }
     }
 
     // MARK: - Misc
@@ -393,9 +404,13 @@ extension Generator {
         // Add the `method` parameter to the call
         call.append("method: \"\(task.method.uppercased())\"")
 
-        // Response type
-        let response = try makeResponse(for: task, context: context)
+        // Response type + error enum
+        let typedResponse = try makeTypedResponse(for: task, context: context)
+        let response = typedResponse.successType
         if let value = response.nested { nested.append(value) }
+        for errorCase in typedResponse.errorCases {
+            if let nestedDecl = errorCase.nested { nested.append(nestedDecl) }
+        }
 
         // Response headers
         if let headers = try makeResponseHeaders(for: task) {
@@ -481,7 +496,23 @@ extension Generator {
         var output = templates.comments(for: .init(task.operation), name: "")
         let methodName = style == .operations ? makePropertyName(task.operationId).rawValue : task.method
         let prefix = needsGetPrefix(for: task.path) ? "Get." : ""
-        output += templates.methodOrProperty(name: methodName, parameters: parameters, returning: "\(prefix)Request<\(response.type)>", contents: contents, isStatic: style == .operations)
+
+        if !typedResponse.errorCases.isEmpty {
+            output += templates.methodOrPropertyWithTypedThrows(name: methodName, parameters: parameters, returning: "\(prefix)Request<\(response.type)>", errorType: typedResponse.errorEnumName, contents: contents, isStatic: style == .operations)
+        } else {
+            output += templates.methodOrProperty(name: methodName, parameters: parameters, returning: "\(prefix)Request<\(response.type)>", contents: contents, isStatic: style == .operations)
+        }
+
+        // Generate the error enum if there are error cases
+        if !typedResponse.errorCases.isEmpty {
+            let errorEnumName = typedResponse.errorEnumName
+            if !nestedTypeNames.contains(TypeName(errorEnumName)) {
+                nestedTypeNames.insert(TypeName(errorEnumName))
+                output += "\n\n"
+                output += templates.errorEnum(name: errorEnumName, cases: typedResponse.errorCases)
+            }
+        }
+
         for value in nested where !nestedTypeNames.contains(value.name) {
             nestedTypeNames.insert(value.name)
             output += "\n\n"
@@ -492,7 +523,7 @@ extension Generator {
 
     // MARK: - Query Parameters
 
-    private func makeQueryParameter(for input: Either<JSONReference<OpenAPI.Parameter>, OpenAPI.Parameter>, context: Context) throws -> Property? {
+    private func makeQueryParameter(for input: Either<OpenAPI.Reference<OpenAPI.Parameter>, OpenAPI.Parameter>, context: Context) throws -> Property? {
         do {
             var context = context
             context.isFormEncoding = true
@@ -505,7 +536,7 @@ extension Generator {
         }
     }
 
-    private func _makeQueryParameter(for input: Either<JSONReference<OpenAPI.Parameter>, OpenAPI.Parameter>, context: Context) throws -> Property? {
+    private func _makeQueryParameter(for input: Either<OpenAPI.Reference<OpenAPI.Parameter>, OpenAPI.Parameter>, context: Context) throws -> Property? {
         let parameter = try input.unwrapped(in: spec)
         guard parameter.context.inQuery else {
             return nil
@@ -567,6 +598,8 @@ extension Generator {
                 return QueryItemType(type: .userDefined(name: name))
             case .fragment:
                 return QueryItemType("String")
+            case .null:
+                return nil
             case .not:
                 throw GeneratorError("Unsupported query parameter type: \(parameter)")
             }
@@ -592,7 +625,7 @@ extension Generator {
 
     // MARK: - Request Body
 
-    private typealias RequestBody = Either<JSONReference<OpenAPI.Request>, OpenAPI.Request>
+    private typealias RequestBody = Either<OpenAPI.Reference<OpenAPI.Request>, OpenAPI.Request>
 
     private func makeRequestBodyType(for requestBody: RequestBody, method: String, nestedTypeName: TypeName, context: Context) throws -> BodyType {
         var context = context
@@ -608,7 +641,7 @@ extension Generator {
 
     // MARK: - Response Body
 
-    private typealias Response = Either<JSONReference<OpenAPI.Response>, OpenAPI.Response>
+    private typealias Response = Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>
 
     private func makeResponse(for task: GenerateOperationTask, context: Context) throws -> BodyType {
         guard let response = task.operation.firstSuccessfulResponse else {
@@ -621,9 +654,9 @@ extension Generator {
         let schema: OpenAPI.Response
         switch response {
         case .a(let reference):
-            switch reference {
-            case .internal(let reference):
-                guard let name = reference.name else {
+            switch reference.jsonReference {
+            case .internal(let internalRef):
+                guard let name = internalRef.name else {
                     throw GeneratorError("Response reference name is missing")
                 }
                 if let rename = options.paths.overriddenResponses[name] {
@@ -642,6 +675,145 @@ extension Generator {
 
         let type = task.makeNestedTypeName("Response")
         return try makeBodyType(for: schema.content, nestedTypeName: type, context: context)
+    }
+
+    // MARK: - Typed Response with Error Enum
+
+    private struct TypedResponse {
+        var successType: BodyType
+        var errorEnumName: String
+        var errorCases: [ErrorEnumCase]
+    }
+
+    private func makeTypedResponse(for task: GenerateOperationTask, context: Context) throws -> TypedResponse {
+        var context = context
+        context.isEncodableNeeded = false
+
+        var successType = BodyType("Void")
+        var errorCases: [ErrorEnumCase] = []
+
+        for (statusCode, responseRef) in task.operation.responses {
+            let response = try resolveResponse(responseRef)
+            let isSuccess = statusCode.isSuccess
+
+            if isSuccess {
+                // Use the first successful response as the return type
+                if successType.type.rawValue == "Void" {
+                    let typeName = task.makeNestedTypeName("Response")
+                    successType = try makeBodyType(for: response.content, nestedTypeName: typeName, context: context)
+                }
+            } else {
+                // Build an error enum case for this status code
+                let errorCase = try makeErrorCase(statusCode: statusCode, response: response, task: task, context: context)
+                errorCases.append(errorCase)
+            }
+        }
+
+        let errorEnumName = task.makeNestedTypeName("Error").rawValue
+        return TypedResponse(successType: successType, errorEnumName: errorEnumName, errorCases: errorCases)
+    }
+
+    private func makeErrorCase(statusCode: OpenAPI.Response.StatusCode, response: OpenAPI.Response, task: GenerateOperationTask, context: Context) throws -> ErrorEnumCase {
+        let caseName: String
+        let caseStatusCode: Int?
+        let isDefault: Bool
+        let isRange: Bool
+
+        switch statusCode.value {
+        case .status(code: let code):
+            caseName = httpStatusCaseName(for: code)
+            caseStatusCode = code
+            isDefault = false
+            isRange = false
+        case .default:
+            caseName = "`default`"
+            caseStatusCode = nil
+            isDefault = true
+            isRange = false
+        case .range(let range):
+            caseName = rangeCaseName(for: range)
+            caseStatusCode = nil
+            isDefault = false
+            isRange = true
+        }
+
+        // Resolve the body type for this error response
+        var bodyType: String? = nil
+        var nested: Declaration? = nil
+        if !response.content.isEmpty {
+            let typeName = task.makeNestedTypeName("\(caseName.trimmingCharacters(in: CharacterSet(charactersIn: "`")).capitalizingFirstLetter())Body")
+            let body = try makeBodyType(for: response.content, nestedTypeName: typeName, context: context)
+            if body.type.rawValue != "Void" {
+                bodyType = body.type.rawValue
+                nested = body.nested
+            }
+        }
+
+        return ErrorEnumCase(
+            name: caseName,
+            statusCode: caseStatusCode,
+            bodyType: bodyType,
+            isDefault: isDefault,
+            isRange: isRange,
+            nested: nested
+        )
+    }
+
+    private func resolveResponse(_ responseRef: Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>) throws -> OpenAPI.Response {
+        switch responseRef {
+        case .a(let reference):
+            switch reference.jsonReference {
+            case .internal(let internalRef):
+                guard let name = internalRef.name else {
+                    throw GeneratorError("Response reference name is missing")
+                }
+                guard let key = OpenAPI.ComponentKey(rawValue: name), let value = spec.components.responses[key] else {
+                    throw GeneratorError("Failed to find response named \(name)")
+                }
+                return value
+            case .external:
+                throw GeneratorError("External references are not supported")
+            }
+        case .b(let value):
+            return value
+        }
+    }
+
+    private func httpStatusCaseName(for code: Int) -> String {
+        switch code {
+        case 200: return "ok"
+        case 201: return "created"
+        case 202: return "accepted"
+        case 204: return "noContent"
+        case 301: return "movedPermanently"
+        case 304: return "notModified"
+        case 400: return "badRequest"
+        case 401: return "unauthorized"
+        case 403: return "forbidden"
+        case 404: return "notFound"
+        case 405: return "methodNotAllowed"
+        case 409: return "conflict"
+        case 410: return "gone"
+        case 415: return "unsupportedMediaType"
+        case 422: return "unprocessableEntity"
+        case 429: return "tooManyRequests"
+        case 500: return "internalServerError"
+        case 502: return "badGateway"
+        case 503: return "serviceUnavailable"
+        case 504: return "gatewayTimeout"
+        default: return "status\(code)"
+        }
+    }
+
+    private func rangeCaseName(for range: OpenAPI.Response.StatusCode.Range) -> String {
+        switch range {
+        case .information: return "informational"
+        case .success: return "success"
+        case .redirect: return "redirect"
+        case .clientError: return "clientError"
+        case .serverError: return "serverError"
+        default: return "statusRange"
+        }
     }
 
     // MARK: - (Any) Body
@@ -697,7 +869,7 @@ extension Generator {
             let schema: JSONSchema
             switch content.schema {
             case .a(let reference):
-                schema = JSONSchema.reference(reference)
+                schema = JSONSchema.reference(reference.jsonReference)
             case .b(let value):
                 switch value {
                 case .string: return BodyType("String")
@@ -762,7 +934,7 @@ extension Generator {
         return AnyDeclaration(name: name, rawValue: raw)
     }
 
-    private func makeHeader(key: String, header: Either<JSONReference<OpenAPI.Header>, OpenAPI.Header>) throws -> String {
+    private func makeHeader(key: String, header: Either<OpenAPI.Reference<OpenAPI.Header>, OpenAPI.Header>) throws -> String {
         let header = try header.unwrapped(in: spec)
         switch header.schemaOrContent {
         case .a(let value):

@@ -18,8 +18,15 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Merge a branch
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#merge-a-branch)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Commit> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Commit> {
             Request(path: path, method: "POST", body: body, id: "repos/merge")
+        }
+
+        public enum PostError: Error {
+            case notFound
+            case conflict
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PostRequest: Encodable {

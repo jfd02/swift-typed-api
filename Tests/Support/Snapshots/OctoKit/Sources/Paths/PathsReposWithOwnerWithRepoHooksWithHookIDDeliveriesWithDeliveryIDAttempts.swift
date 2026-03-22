@@ -20,8 +20,15 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID.Deliveries.WithDeliver
         /// Redeliver a webhook delivery for a webhook configured in a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#redeliver-a-delivery-for-a-repository-webhook)
-        public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "repos/redeliver-webhook-delivery")
+        public var post: Request<[String: AnyJSON]> {
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "repos/redeliver-webhook-delivery")
+            }
+        }
+
+        public enum PostError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

@@ -19,14 +19,26 @@ extension Paths.Orgs.WithOrg.Blocks {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#check-if-a-user-is-blocked-by-an-organization)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "orgs/check-blocked-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/check-blocked-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Block a user from an organization
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#block-a-user-from-an-organization)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "orgs/block-user")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "orgs/block-user")
+            }
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         /// Unblock a user from an organization

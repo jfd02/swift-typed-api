@@ -19,7 +19,13 @@ extension Paths.Users.WithUsername.Following {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#check-if-a-user-follows-another-user)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "users/check-following-for-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/check-following-for-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
     }
 }

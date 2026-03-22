@@ -28,8 +28,14 @@ extension Paths.Orgs.WithOrg.Packages.WithPackageType.WithPackageName {
         /// - If `package_type` is `container`, you must also have admin permissions to the container that you want to restore.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#restore-a-package-for-an-organization)
-        public func post(token: String? = nil) -> Request<Void> {
+        public func post(token: String? = nil) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", query: makePostQuery(token), id: "packages/restore-package-for-org")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         private func makePostQuery(_ token: String?) -> [(String, String?)] {

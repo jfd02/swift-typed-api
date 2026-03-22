@@ -21,7 +21,15 @@ extension Paths.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#get-a-project)
         public var get: Request<OctoKit.Project> {
-            Request(path: path, method: "GET", id: "projects/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "projects/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Update a project
@@ -29,8 +37,36 @@ extension Paths.Projects {
         /// Updates a project board's information. Returns a `404 Not Found` status if projects are disabled. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#update-a-project)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Project> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Project> {
             Request(path: path, method: "PATCH", body: body, id: "projects/update")
+        }
+
+        public enum PatchError: Error {
+            case notFound
+            case notModified
+            case forbidden(PatchForbiddenBody)
+            case unauthorized(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
+        }
+
+        public struct PatchForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+            public var errors: [String]?
+
+            public init(message: String? = nil, documentationURL: String? = nil, errors: [String]? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+                self.errors = errors
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.errors = try values.decodeIfPresent([String].self, forKey: "errors")
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -83,7 +119,36 @@ extension Paths.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#delete-a-project)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "projects/delete")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "projects/delete")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case forbidden(DeleteForbiddenBody)
+            case unauthorized(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+        }
+
+        public struct DeleteForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+            public var errors: [String]?
+
+            public init(message: String? = nil, documentationURL: String? = nil, errors: [String]? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+                self.errors = errors
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.errors = try values.decodeIfPresent([String].self, forKey: "errors")
+            }
         }
     }
 }

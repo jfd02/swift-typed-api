@@ -31,7 +31,16 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-an-issue)
         public var get: Request<OctoKit.Issue> {
-            Request(path: path, method: "GET", id: "issues/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "issues/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case movedPermanently(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case notModified
         }
 
         /// Update an issue
@@ -39,8 +48,36 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         /// Issue owners and users with push access can edit an issue.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues/#update-an-issue)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Issue> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Issue> {
             Request(path: path, method: "PATCH", body: body, id: "issues/update")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case serviceUnavailable(PatchServiceUnavailableBody)
+            case forbidden(OctoKit.BasicError)
+            case movedPermanently(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+        }
+
+        public struct PatchServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PatchRequest: Encodable {

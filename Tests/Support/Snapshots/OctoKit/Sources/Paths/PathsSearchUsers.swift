@@ -28,8 +28,14 @@ extension Paths.Search {
         /// This query searches for users with the name `tom`. The results are restricted to users with more than 42 repositories and over 1,000 followers.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-users)
-        public func get(parameters: GetParameters) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/users")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case serviceUnavailable(GetServiceUnavailableBody)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct GetResponse: Decodable {
@@ -48,6 +54,25 @@ extension Paths.Search {
                 self.totalCount = try values.decode(Int.self, forKey: "total_count")
                 self.isIncompleteResults = try values.decode(Bool.self, forKey: "incomplete_results")
                 self.items = try values.decode([OctoKit.UserSearchResultItem].self, forKey: "items")
+            }
+        }
+
+        public struct GetServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
             }
         }
 

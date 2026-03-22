@@ -45,8 +45,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Temporarily restricts interactions to a certain type of GitHub user within the given repository. You must have owner or admin access to set these restrictions. If an interaction limit is set for the user or organization that owns this repository, you will receive a `409 Conflict` response and will not be able to use this endpoint to change the interaction limit for a single repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#set-interaction-restrictions-for-a-repository)
-        public func put(_ body: OctoKit.InteractionLimit) -> Request<OctoKit.InteractionLimitResponse> {
+        public func put(_ body: OctoKit.InteractionLimit) throws(PutError) -> Request<OctoKit.InteractionLimitResponse> {
             Request(path: path, method: "PUT", body: body, id: "interactions/set-restrictions-for-repo")
+        }
+
+        public enum PutError: Error {
+            case conflict
         }
 
         /// Remove interaction restrictions for a repository
@@ -55,7 +59,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#remove-interaction-restrictions-for-a-repository)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "interactions/remove-restrictions-for-repo")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "interactions/remove-restrictions-for-repo")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case conflict
         }
     }
 }

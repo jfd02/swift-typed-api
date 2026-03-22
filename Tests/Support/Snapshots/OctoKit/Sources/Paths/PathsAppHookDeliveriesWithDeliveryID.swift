@@ -23,7 +23,14 @@ extension Paths.App.Hook.Deliveries {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-a-delivery-for-an-app-webhook)
         public var get: Request<OctoKit.HookDelivery> {
-            Request(path: path, method: "GET", id: "apps/get-webhook-delivery")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "apps/get-webhook-delivery")
+            }
+        }
+
+        public enum GetError: Error {
+            case badRequest(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

@@ -37,8 +37,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Users with admin access to the repository can create an autolink.
         ///
         /// [API method documentation](https://docs.github.com/v3/repos#create-an-autolink)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Autolink> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Autolink> {
             Request(path: path, method: "POST", body: body, id: "repos/create-autolink")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

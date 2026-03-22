@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Draft pull requests are available in public repositories with GitHub Free and GitHub Free for organizations, GitHub Pro, and legacy per-repository billing plans, and in public and private repositories with GitHub Team and GitHub Enterprise Cloud. For more information, see [GitHub's products](https://help.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-pull-requests)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.PullRequestSimple]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.PullRequestSimple]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "pulls/list")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum GetResponseHeaders {
@@ -89,8 +94,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#create-a-pull-request)
-        public func post(_ body: PostRequest) -> Request<OctoKit.PullRequest> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.PullRequest> {
             Request(path: path, method: "POST", body: body, id: "pulls/create")
+        }
+
+        public enum PostError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

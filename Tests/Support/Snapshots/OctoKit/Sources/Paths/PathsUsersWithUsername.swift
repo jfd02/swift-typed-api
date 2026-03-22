@@ -27,7 +27,13 @@ extension Paths.Users {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-a-user)
         public var get: Request<GetResponse> {
-            Request(path: path, method: "GET", id: "users/get-by-username")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/get-by-username")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponse: Decodable {

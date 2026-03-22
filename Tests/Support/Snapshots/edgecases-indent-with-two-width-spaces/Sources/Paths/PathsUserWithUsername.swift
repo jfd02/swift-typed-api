@@ -18,21 +18,40 @@ extension Paths.User {
 
     /// Get user by user name
     public var get: Request<edgecases_indent_with_two_width_spaces.User> {
-      Request(path: path, method: "GET", id: "getUserByName")
+      get throws(GetError) {
+        Request(path: path, method: "GET", id: "getUserByName")
+      }
+    }
+
+    public enum GetError: Error {
+      case badRequest
+      case notFound
     }
 
     /// Updated user
     ///
     /// This can only be done by the logged in user.
-    public func put(_ body: edgecases_indent_with_two_width_spaces.User) -> Request<Void> {
+    public func put(_ body: edgecases_indent_with_two_width_spaces.User) throws(PutError) -> Request<Void> {
       Request(path: path, method: "PUT", body: body, id: "updateUser")
+    }
+
+    public enum PutError: Error {
+      case badRequest
+      case notFound
     }
 
     /// Delete user
     ///
     /// This can only be done by the logged in user.
     public var delete: Request<Void> {
-      Request(path: path, method: "DELETE", id: "deleteUser")
+      get throws(DeleteError) {
+        Request(path: path, method: "DELETE", id: "deleteUser")
+      }
+    }
+
+    public enum DeleteError: Error {
+      case badRequest
+      case notFound
     }
   }
 }

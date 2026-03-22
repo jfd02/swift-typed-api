@@ -8,7 +8,11 @@ import URLQueryEncoder
 
 extension Namespace {
     /// Info for a specific pet
-    static public func showPetByID(petID: String) -> Request<petstore_change_namespace_when_operations_style.Pet> {
+    static public func showPetByID(petID: String) throws(ShowPetByIDError) -> Request<petstore_change_namespace_when_operations_style.Pet> {
         Request(path: "/pets/\(petID)", method: "GET", id: "showPetById")
+    }
+
+    public enum ShowPetByIDError: Error {
+        case `default`(statusCode: Int, petstore_change_namespace_when_operations_style.Error)
     }
 }

@@ -21,7 +21,13 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#ping-an-organization-webhook)
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "orgs/ping-webhook")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "orgs/ping-webhook")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

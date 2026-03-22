@@ -22,8 +22,14 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// If you use this endpoint to add, delete, or modify the file contents in a tree, you will need to commit the tree and then update a branch to point to the commit. For more information see "[Create a commit](https://docs.github.com/rest/reference/git#create-a-commit)" and "[Update a reference](https://docs.github.com/rest/reference/git#update-a-reference)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-tree)
-        public func post(_ body: PostRequest) -> Request<OctoKit.GitTree> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GitTree> {
             Request(path: path, method: "POST", body: body, id: "git/create-tree")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

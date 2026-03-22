@@ -1,5 +1,5 @@
 import Foundation
-import OpenAPIKit30
+import OpenAPIKit
 
 // - note: Currently doesn't contain namespaces or parents names. These are
 // mananged separately.
@@ -258,7 +258,7 @@ struct DeclarationMetadata {
     init(_ schema: JSONSchemaContext?) {
         self.title = schema?.title
         self.description = schema?.description
-        self.example = schema?.example
+        self.example = schema?.examples.first
         self.externalDocsDescription = schema?.externalDocs?.description
         self.externalDocsURL = schema?.externalDocs?.url
         self.isDeprecated = schema?.deprecated ?? false
@@ -278,4 +278,22 @@ struct PathParameter {
     let key: String // Unprocessed key
     let name: PropertyName
     let type: TypeName
+}
+
+struct ErrorEnumCase {
+    let name: String        // e.g. "notFound", "internalServerError", "default"
+    let statusCode: Int?    // e.g. 404, 500 — nil for default/range
+    let bodyType: String?   // e.g. "ErrorResponse" — nil for no body
+    let isDefault: Bool     // true for the `default` response
+    let isRange: Bool       // true for range responses like 4XX
+    var nested: Declaration?
+
+    init(name: String, statusCode: Int? = nil, bodyType: String? = nil, isDefault: Bool = false, isRange: Bool = false, nested: Declaration? = nil) {
+        self.name = name
+        self.statusCode = statusCode
+        self.bodyType = bodyType
+        self.isDefault = isDefault
+        self.isRange = isRange
+        self.nested = nested
+    }
 }

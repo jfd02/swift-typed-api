@@ -22,7 +22,13 @@ extension Paths.Teams {
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#get-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var get: Request<OctoKit.TeamFull> {
-            Request(path: path, method: "GET", id: "teams/get-legacy")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/get-legacy")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a team (Legacy)
@@ -35,8 +41,14 @@ extension Paths.Teams {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#update-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.TeamFull> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.TeamFull> {
             Request(path: path, method: "PATCH", body: body, id: "teams/update-legacy")
+        }
+
+        public enum PatchError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {
@@ -109,7 +121,14 @@ extension Paths.Teams {
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#delete-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "teams/delete-legacy")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "teams/delete-legacy")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

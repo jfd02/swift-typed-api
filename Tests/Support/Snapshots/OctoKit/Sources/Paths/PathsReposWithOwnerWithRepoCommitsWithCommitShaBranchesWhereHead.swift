@@ -23,7 +23,13 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithCommitSha {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-branches-for-head-commit)
         public var get: Request<[OctoKit.BranchShort]> {
-            Request(path: path, method: "GET", id: "repos/list-branches-for-head-commit")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/list-branches-for-head-commit")
+            }
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
     }
 }

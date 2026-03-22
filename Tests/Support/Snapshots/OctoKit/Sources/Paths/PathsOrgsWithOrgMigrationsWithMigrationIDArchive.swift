@@ -21,7 +21,14 @@ extension Paths.Orgs.WithOrg.Migrations.WithMigrationID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#download-an-organization-migration-archive)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "migrations/download-archive-for-org")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "migrations/download-archive-for-org")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete an organization migration archive
@@ -30,7 +37,13 @@ extension Paths.Orgs.WithOrg.Migrations.WithMigrationID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#delete-an-organization-migration-archive)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "migrations/delete-archive-for-org")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "migrations/delete-archive-for-org")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

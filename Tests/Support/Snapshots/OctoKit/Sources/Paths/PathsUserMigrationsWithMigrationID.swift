@@ -27,8 +27,15 @@ extension Paths.User.Migrations {
         /// Once the migration has been `exported` you can [download the migration archive](https://docs.github.com/rest/reference/migrations#download-a-user-migration-archive).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-a-user-migration-status)
-        public func get(exclude: [String]? = nil) -> Request<OctoKit.Migration> {
+        public func get(exclude: [String]? = nil) throws(GetError) -> Request<OctoKit.Migration> {
             Request(path: path, method: "GET", query: makeGetQuery(exclude), id: "migrations/get-status-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ exclude: [String]?) -> [(String, String?)] {

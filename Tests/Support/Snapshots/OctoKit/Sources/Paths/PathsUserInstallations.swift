@@ -26,8 +26,15 @@ extension Paths.User {
         /// You can find the permissions for the installation under the `permissions` key.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-app-installations-accessible-to-the-user-access-token)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "apps/list-installations-for-authenticated-user")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unsupportedMediaType(GetUnsupportedMediaTypeBody)
         }
 
         public struct GetResponse: Decodable {
@@ -43,6 +50,22 @@ extension Paths.User {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
                 self.totalCount = try values.decode(Int.self, forKey: "total_count")
                 self.installations = try values.decode([OctoKit.Installation].self, forKey: "installations")
+            }
+        }
+
+        public struct GetUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
             }
         }
 

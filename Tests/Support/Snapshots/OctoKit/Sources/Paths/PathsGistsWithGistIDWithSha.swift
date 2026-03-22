@@ -19,7 +19,15 @@ extension Paths.Gists.WithGistID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#get-a-gist-revision)
         public var get: Request<OctoKit.GistSimple> {
-            Request(path: path, method: "GET", id: "gists/get-revision")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "gists/get-revision")
+            }
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

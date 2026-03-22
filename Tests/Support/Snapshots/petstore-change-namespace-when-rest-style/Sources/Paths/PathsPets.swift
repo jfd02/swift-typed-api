@@ -16,8 +16,12 @@ extension Namespace {
         public let path: String
 
         /// List all pets
-        public func get(limit: Int32? = nil) -> Request<[petstore_change_namespace_when_rest_style.Pet]> {
+        public func get(limit: Int32? = nil) throws(GetError) -> Request<[petstore_change_namespace_when_rest_style.Pet]> {
             Request(path: path, method: "GET", query: makeGetQuery(limit), id: "listPets")
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_change_namespace_when_rest_style.Error)
         }
 
         public enum GetResponseHeaders {
@@ -33,7 +37,13 @@ extension Namespace {
 
         /// Create a pet
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "createPets")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "createPets")
+            }
+        }
+
+        public enum PostError: Error {
+            case `default`(statusCode: Int, petstore_change_namespace_when_rest_style.Error)
         }
     }
 }

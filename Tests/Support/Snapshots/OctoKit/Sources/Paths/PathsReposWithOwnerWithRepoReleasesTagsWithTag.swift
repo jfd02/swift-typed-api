@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Tags {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-release-by-tag-name)
         public var get: Request<OctoKit.Release> {
-            Request(path: path, method: "GET", id: "repos/get-release-by-tag")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-release-by-tag")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

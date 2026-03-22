@@ -23,7 +23,13 @@ extension Paths.Repos.WithOwner.WithRepo.Stats {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-weekly-commit-count)
         public var get: Request<OctoKit.ParticipationStats> {
-            Request(path: path, method: "GET", id: "repos/get-participation-stats")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-participation-stats")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

@@ -23,7 +23,14 @@ extension Paths.Orgs.WithOrg.Invitations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#cancel-an-organization-invitation)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "orgs/cancel-invitation")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "orgs/cancel-invitation")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

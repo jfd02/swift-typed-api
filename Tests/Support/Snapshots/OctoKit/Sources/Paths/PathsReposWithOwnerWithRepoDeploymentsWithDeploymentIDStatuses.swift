@@ -20,8 +20,12 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
         /// Users with pull access can view deployment statuses for a deployment:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-deployment-statuses)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.DeploymentStatus]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.DeploymentStatus]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-deployment-statuses")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -42,8 +46,12 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
         /// GitHub Apps require `read & write` access to "Deployments" and `read-only` access to "Repo contents" (for private repos). OAuth Apps require the `repo_deployment` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-deployment-status)
-        public func post(_ body: PostRequest) -> Request<OctoKit.DeploymentStatus> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.DeploymentStatus> {
             Request(path: path, method: "POST", body: body, id: "repos/create-deployment-status")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostResponseHeaders {

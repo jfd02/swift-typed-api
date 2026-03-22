@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-all-status-check-contexts)
         public var get: Request<[String]> {
-            Request(path: path, method: "GET", id: "repos/get-all-status-check-contexts")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-all-status-check-contexts")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Add status check contexts
@@ -29,8 +35,14 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
         /// Protected branches are available in public repositories with GitHub Free and GitHub Free for organizations, and in public and private repositories with GitHub Pro, GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's products](https://help.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#add-status-check-contexts)
-        public func post(_ body: PostRequest? = nil) -> Request<[String]> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<[String]> {
             Request(path: path, method: "POST", body: body, id: "repos/add-status-check-contexts")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostRequest: Encodable {
@@ -72,8 +84,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
         /// Protected branches are available in public repositories with GitHub Free and GitHub Free for organizations, and in public and private repositories with GitHub Pro, GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's products](https://help.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#set-status-check-contexts)
-        public func put(_ body: PutRequest? = nil) -> Request<[String]> {
+        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<[String]> {
             Request(path: path, method: "PUT", body: body, id: "repos/set-status-check-contexts")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PutRequest: Encodable {
@@ -115,8 +132,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
         /// Protected branches are available in public repositories with GitHub Free and GitHub Free for organizations, and in public and private repositories with GitHub Pro, GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's products](https://help.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#remove-status-check-contexts)
-        public func delete(_ body: DeleteRequest? = nil) -> Request<[String]> {
+        public func delete(_ body: DeleteRequest? = nil) throws(DeleteError) -> Request<[String]> {
             Request(path: path, method: "DELETE", body: body, id: "repos/remove-status-check-contexts")
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum DeleteRequest: Encodable {

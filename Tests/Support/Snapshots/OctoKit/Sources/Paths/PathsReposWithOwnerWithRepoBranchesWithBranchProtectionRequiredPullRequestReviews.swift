@@ -33,8 +33,12 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         /// **Note**: Passing new arrays of `users` and `teams` replaces their previous values.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-pull-request-review-protection)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.ProtectedBranchPullRequestReview> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.ProtectedBranchPullRequestReview> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-pull-request-review-protection")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {
@@ -88,7 +92,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-pull-request-review-protection)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-pull-request-review-protection")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-pull-request-review-protection")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

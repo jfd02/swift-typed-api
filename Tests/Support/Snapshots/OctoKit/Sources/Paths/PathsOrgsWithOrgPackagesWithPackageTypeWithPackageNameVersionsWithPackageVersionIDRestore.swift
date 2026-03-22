@@ -29,7 +29,15 @@ extension Paths.Orgs.WithOrg.Packages.WithPackageType.WithPackageName.Versions.W
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#restore-a-package-version-for-an-organization)
         public var post: Request<Void> {
-            Request(path: path, method: "POST", id: "packages/restore-package-version-for-org")
+            get throws(PostError) {
+                Request(path: path, method: "POST", id: "packages/restore-package-version-for-org")
+            }
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

@@ -21,7 +21,16 @@ extension Paths.User.GpgKeys {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-a-gpg-key-for-the-authenticated-user)
         public var get: Request<OctoKit.GpgKey> {
-            Request(path: path, method: "GET", id: "users/get-gpg-key-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/get-gpg-key-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Delete a GPG key for the authenticated user
@@ -30,7 +39,17 @@ extension Paths.User.GpgKeys {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#delete-a-gpg-key-for-the-authenticated-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "users/delete-gpg-key-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "users/delete-gpg-key-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }

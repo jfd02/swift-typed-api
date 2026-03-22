@@ -22,7 +22,16 @@ extension Paths.User.Codespaces.Secrets.WithSecretName {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#list-selected-repositories-for-a-user-secret)
         public var get: Request<GetResponse> {
-            Request(path: path, method: "GET", id: "codespaces/list-repositories-for-secret-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "codespaces/list-repositories-for-secret-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case internalServerError(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {
@@ -47,8 +56,15 @@ extension Paths.User.Codespaces.Secrets.WithSecretName {
         /// You must authenticate using an access token with the `user` or `read:user` scope to use this endpoint. User must have Codespaces access to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#set-selected-repositories-for-a-user-secret)
-        public func put(selectedRepositoryIDs: [Int]) -> Request<Void> {
+        public func put(selectedRepositoryIDs: [Int]) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: ["selected_repository_ids": selectedRepositoryIDs], id: "codespaces/set-repositories-for-secret-for-authenticated-user")
+        }
+
+        public enum PutError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case internalServerError(OctoKit.BasicError)
         }
     }
 }

@@ -20,14 +20,28 @@ extension Paths.Store.Order {
         ///
         /// For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
         var get: Request<edgecases_change_access_control.Order> {
-            Request(path: path, method: "GET", id: "getOrderById")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "getOrderById")
+            }
+        }
+
+        enum GetError: Error {
+            case badRequest
+            case notFound
         }
 
         /// Delete purchase order by ID
         ///
         /// For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
         var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "deleteOrder")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "deleteOrder")
+            }
+        }
+
+        enum DeleteError: Error {
+            case badRequest
+            case notFound
         }
     }
 }

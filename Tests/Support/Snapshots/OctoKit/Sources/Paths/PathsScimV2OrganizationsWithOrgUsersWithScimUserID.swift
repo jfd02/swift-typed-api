@@ -19,7 +19,15 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#get-scim-provisioning-information-for-a-user)
         public var get: Request<OctoKit.ScimUser> {
-            Request(path: path, method: "GET", id: "scim/get-provisioning-information-for-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "scim/get-provisioning-information-for-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.ScimError)
+            case forbidden(OctoKit.ScimError)
+            case notModified
         }
 
         /// Update a provisioned organization membership
@@ -31,8 +39,14 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         /// **Warning:** Setting `active: false` removes the user from the organization, deletes the external identity, and deletes the associated `{scim_user_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#set-scim-information-for-a-provisioned-user)
-        public func put(_ body: PutRequest) -> Request<OctoKit.ScimUser> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.ScimUser> {
             Request(path: path, method: "PUT", body: body, id: "scim/set-information-for-provisioned-user")
+        }
+
+        public enum PutError: Error {
+            case notModified
+            case notFound(OctoKit.ScimError)
+            case forbidden(OctoKit.ScimError)
         }
 
         public struct PutRequest: Encodable {
@@ -159,8 +173,16 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#update-an-attribute-for-a-scim-user)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.ScimUser> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.ScimUser> {
             Request(path: path, method: "PATCH", body: body, id: "scim/update-attribute-for-user")
+        }
+
+        public enum PatchError: Error {
+            case notModified
+            case notFound(OctoKit.ScimError)
+            case forbidden(OctoKit.ScimError)
+            case badRequest(OctoKit.ScimError)
+            case tooManyRequests(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {
@@ -276,7 +298,15 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#delete-a-scim-user-from-an-organization)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "scim/delete-user-from-org")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "scim/delete-user-from-org")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.ScimError)
+            case forbidden(OctoKit.ScimError)
+            case notModified
         }
     }
 }

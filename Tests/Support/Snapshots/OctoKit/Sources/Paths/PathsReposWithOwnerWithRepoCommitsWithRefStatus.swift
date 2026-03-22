@@ -27,8 +27,12 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
         /// *   **success** if the latest status for all contexts is `success`
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-combined-status-for-a-specific-reference)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.CombinedCommitStatus> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<OctoKit.CombinedCommitStatus> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/get-combined-status-for-ref")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ perPage: Int?, _ page: Int?) -> [(String, String?)] {

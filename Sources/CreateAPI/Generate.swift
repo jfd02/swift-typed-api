@@ -1,13 +1,12 @@
 import ArgumentParser
 import struct ConfigurationParser.OptionOverride
 import CreateOptions
-import OpenAPIKit30
+import OpenAPIKit
 import Foundation
 import Yams
 
 // TODO: Generate `README.md` for package (see `info`)
 // TODO: Disable sandbox
-// TODO: Add OpenAPI 3.1 support
 
 struct Generate: ParsableCommand {
     private static let supportedFileFormats: [String] = ["yml", "yaml", "json"]
@@ -180,7 +179,7 @@ struct Generate: ParsableCommand {
                 spec = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
             }
         } catch {
-            throw GeneratorError("ERROR! The spec is missing or invalid. \(OpenAPI.Error(from: error))")
+            throw GeneratorError("ERROR! The spec is missing or invalid. Only OpenAPI 3.1 is supported. \(error)")
         }
         bench.stop()
         return spec

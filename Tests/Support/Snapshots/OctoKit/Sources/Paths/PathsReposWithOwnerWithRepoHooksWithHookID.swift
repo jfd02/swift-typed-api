@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-repository-webhook)
         public var get: Request<OctoKit.Hook> {
-            Request(path: path, method: "GET", id: "repos/get-webhook")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-webhook")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update a repository webhook
@@ -29,8 +35,13 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
         /// Updates a webhook configured in a repository. If you previously had a `secret` set, you must provide the same `secret` or set a new `secret` or the secret will be removed. If you are only updating individual webhook `config` properties, use "[Update a webhook configuration for a repository](/rest/reference/repos#update-a-webhook-configuration-for-a-repository)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-repository-webhook)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.Hook> {
+        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.Hook> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-webhook")
+        }
+
+        public enum PatchError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct PatchRequest: Encodable {
@@ -107,7 +118,13 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-repository-webhook)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-webhook")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-webhook")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

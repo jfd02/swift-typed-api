@@ -20,8 +20,12 @@ extension Paths.Orgs.WithOrg {
         /// Lists the projects in an organization. Returns a `404 Not Found` status if projects are disabled in the organization. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-organization-projects)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Project]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Project]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "projects/list-for-org")
+        }
+
+        public enum GetError: Error {
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public enum GetResponseHeaders {
@@ -59,8 +63,16 @@ extension Paths.Orgs.WithOrg {
         /// Creates an organization project board. Returns a `404 Not Found` status if projects are disabled in the organization. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#create-an-organization-project)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Project> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Project> {
             Request(path: path, method: "POST", body: body, id: "projects/create-for-org")
+        }
+
+        public enum PostError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct PostRequest: Encodable {

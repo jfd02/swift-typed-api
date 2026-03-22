@@ -19,14 +19,32 @@ extension Paths.User.RepositoryInvitations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#accept-a-repository-invitation)
         public var patch: Request<Void> {
-            Request(path: path, method: "PATCH", id: "repos/accept-invitation-for-authenticated-user")
+            get throws(PatchError) {
+                Request(path: path, method: "PATCH", id: "repos/accept-invitation-for-authenticated-user")
+            }
+        }
+
+        public enum PatchError: Error {
+            case forbidden(OctoKit.BasicError)
+            case conflict(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case notModified
         }
 
         /// Decline a repository invitation
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#decline-a-repository-invitation)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/decline-invitation-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/decline-invitation-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case conflict(OctoKit.BasicError)
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
     }
 }

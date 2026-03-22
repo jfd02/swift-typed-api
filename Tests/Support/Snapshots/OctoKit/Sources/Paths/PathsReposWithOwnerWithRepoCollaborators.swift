@@ -24,8 +24,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// You must have push access to the repository in order to list collaborators.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-collaborators)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Collaborator]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Collaborator]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-collaborators")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

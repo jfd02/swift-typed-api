@@ -23,8 +23,13 @@ extension Paths.Users.WithUsername {
         /// If `package_type` is not `container`, your token must also include the `repo` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#list-packages-for-user)
-        public func get(packageType: PackageType, visibility: Visibility? = nil) -> Request<[OctoKit.Package]> {
+        public func get(packageType: PackageType, visibility: Visibility? = nil) throws(GetError) -> Request<[OctoKit.Package]> {
             Request(path: path, method: "GET", query: makeGetQuery(packageType, visibility), id: "packages/list-packages-for-user")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         private func makeGetQuery(_ packageType: PackageType, _ visibility: Visibility?) -> [(String, String?)] {

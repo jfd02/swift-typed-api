@@ -20,8 +20,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Issue Comments are ordered by ascending ID.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-issue-comments)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.IssueComment]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.IssueComment]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-comments")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -53,8 +58,15 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#create-an-issue-comment)
-        public func post(body: String) -> Request<OctoKit.IssueComment> {
+        public func post(body: String) throws(PostError) -> Request<OctoKit.IssueComment> {
             Request(path: path, method: "POST", body: ["body": body], id: "issues/create-comment")
+        }
+
+        public enum PostError: Error {
+            case forbidden(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

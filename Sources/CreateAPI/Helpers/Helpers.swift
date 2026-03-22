@@ -1,6 +1,6 @@
 import CreateOptions
 import Foundation
-import OpenAPIKit30
+import OpenAPIKit
 
 extension String {
     func capitalizingFirstLetter() -> String {

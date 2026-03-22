@@ -19,7 +19,31 @@ extension Paths.Repos.WithOwner.WithRepo.Branches {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-branch)
         public var get: Request<OctoKit.BranchWithProtection> {
-            Request(path: path, method: "GET", id: "repos/get-branch")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-branch")
+            }
+        }
+
+        public enum GetError: Error {
+            case movedPermanently(OctoKit.BasicError)
+            case unsupportedMediaType(GetUnsupportedMediaTypeBody)
+            case notFound(OctoKit.BasicError)
+        }
+
+        public struct GetUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
     }
 }

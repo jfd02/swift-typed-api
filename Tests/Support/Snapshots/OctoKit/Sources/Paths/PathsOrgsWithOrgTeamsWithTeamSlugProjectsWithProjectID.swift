@@ -23,7 +23,13 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#check-team-permissions-for-a-project)
         public var get: Request<OctoKit.TeamProject> {
-            Request(path: path, method: "GET", id: "teams/check-permissions-for-project-in-org")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "teams/check-permissions-for-project-in-org")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Add or update team project permissions
@@ -33,8 +39,28 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PUT /organizations/{org_id}/team/{team_id}/projects/{project_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-or-update-team-project-permissions)
-        public func put(permission: PutRequest.Permission? = nil) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "teams/add-or-update-project-permissions-in-org")
+        }
+
+        public enum PutError: Error {
+            case forbidden(PutForbiddenBody)
+        }
+
+        public struct PutForbiddenBody: Decodable {
+            public var message: String?
+            public var documentationURL: String?
+
+            public init(message: String? = nil, documentationURL: String? = nil) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PutRequest: Encodable {

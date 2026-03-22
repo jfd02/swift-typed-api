@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// List issue events
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-issue-events)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.IssueEventForIssue]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.IssueEventForIssue]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-events")
+        }
+
+        public enum GetError: Error {
+            case gone(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

@@ -24,7 +24,13 @@ extension Paths.Repos.WithOwner.WithRepo.Tarball {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#download-a-repository-archive)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "repos/download-tarball-archive")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/download-tarball-archive")
+            }
+        }
+
+        public enum GetError: Error {
+            case status302
         }
     }
 }

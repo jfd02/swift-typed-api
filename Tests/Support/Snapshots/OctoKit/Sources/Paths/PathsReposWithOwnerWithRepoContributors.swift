@@ -22,8 +22,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// GitHub identifies contributors by author email address. This endpoint groups contribution counts by GitHub user, which includes all associated email addresses. To improve performance, only the first 500 author email addresses in the repository link to GitHub users. The rest will appear as anonymous contributors without associated GitHub user information.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-contributors)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Contributor]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Contributor]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-contributors")
+        }
+
+        public enum GetError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

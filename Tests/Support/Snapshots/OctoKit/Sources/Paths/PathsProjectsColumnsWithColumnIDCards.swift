@@ -18,8 +18,14 @@ extension Paths.Projects.Columns.WithColumnID {
         /// List project cards
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-project-cards)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.ProjectCard]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.ProjectCard]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "projects/list-cards")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -55,8 +61,73 @@ extension Paths.Projects.Columns.WithColumnID {
         /// Create a project card
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#create-a-project-card)
-        public func post(_ body: PostRequest) -> Request<OctoKit.ProjectCard> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.ProjectCard> {
             Request(path: path, method: "POST", body: body, id: "projects/create-card")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case unprocessableEntity(PostUnprocessableEntityBody)
+            case serviceUnavailable(PostServiceUnavailableBody)
+        }
+
+        public enum PostUnprocessableEntityBody: Decodable {
+            case validationError(OctoKit.ValidationError)
+            case validationErrorSimple(OctoKit.ValidationErrorSimple)
+
+            public init(from decoder: Decoder) throws {
+                let container = try decoder.singleValueContainer()
+                if let value = try? container.decode(OctoKit.ValidationError.self) {
+                    self = .validationError(value)
+                } else if let value = try? container.decode(OctoKit.ValidationErrorSimple.self) {
+                    self = .validationErrorSimple(value)
+                } else {
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Data could not be decoded as any of the expected types (OctoKit.ValidationError, OctoKit.ValidationErrorSimple)."
+                    )
+                }
+            }
+        }
+
+        public struct PostServiceUnavailableBody: Decodable {
+            public var code: String?
+            public var message: String?
+            public var documentationURL: String?
+            public var errors: [Error]?
+
+            public struct Error: Decodable {
+                public var code: String?
+                public var message: String?
+
+                public init(code: String? = nil, message: String? = nil) {
+                    self.code = code
+                    self.message = message
+                }
+
+                public init(from decoder: Decoder) throws {
+                    let values = try decoder.container(keyedBy: StringCodingKey.self)
+                    self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                    self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                }
+            }
+
+            public init(code: String? = nil, message: String? = nil, documentationURL: String? = nil, errors: [Error]? = nil) {
+                self.code = code
+                self.message = message
+                self.documentationURL = documentationURL
+                self.errors = errors
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.code = try values.decodeIfPresent(String.self, forKey: "code")
+                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.errors = try values.decodeIfPresent([Error].self, forKey: "errors")
+            }
         }
 
         public enum PostRequest: Encodable {

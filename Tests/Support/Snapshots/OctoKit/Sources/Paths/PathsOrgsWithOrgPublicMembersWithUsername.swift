@@ -19,7 +19,13 @@ extension Paths.Orgs.WithOrg.PublicMembers {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#check-public-organization-membership-for-a-user)
         public var get: Request<Void> {
-            Request(path: path, method: "GET", id: "orgs/check-public-membership-for-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/check-public-membership-for-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound
         }
 
         /// Set public organization membership for the authenticated user
@@ -30,7 +36,13 @@ extension Paths.Orgs.WithOrg.PublicMembers {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#set-public-organization-membership-for-the-authenticated-user)
         public var put: Request<Void> {
-            Request(path: path, method: "PUT", id: "orgs/set-public-membership-for-authenticated-user")
+            get throws(PutError) {
+                Request(path: path, method: "PUT", id: "orgs/set-public-membership-for-authenticated-user")
+            }
+        }
+
+        public enum PutError: Error {
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Remove public organization membership for the authenticated user

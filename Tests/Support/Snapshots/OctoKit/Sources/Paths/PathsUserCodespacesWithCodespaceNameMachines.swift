@@ -23,7 +23,17 @@ extension Paths.User.Codespaces.WithCodespaceName {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#list-machine-types-for-a-codespace)
         public var get: Request<GetResponse> {
-            Request(path: path, method: "GET", id: "codespaces/codespace-machines-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "codespaces/codespace-machines-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case internalServerError(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
 
         public struct GetResponse: Decodable {

@@ -43,7 +43,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-admin-branch-protection)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-admin-branch-protection")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-admin-branch-protection")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

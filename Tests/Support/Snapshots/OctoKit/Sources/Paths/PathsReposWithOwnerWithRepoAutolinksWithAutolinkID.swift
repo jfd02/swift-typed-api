@@ -23,7 +23,13 @@ extension Paths.Repos.WithOwner.WithRepo.Autolinks {
         ///
         /// [API method documentation](https://docs.github.com/v3/repos#get-autolink)
         public var get: Request<OctoKit.Autolink> {
-            Request(path: path, method: "GET", id: "repos/get-autolink")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-autolink")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Delete an autolink reference from a repository
@@ -34,7 +40,13 @@ extension Paths.Repos.WithOwner.WithRepo.Autolinks {
         ///
         /// [API method documentation](https://docs.github.com/v3/repos#delete-autolink)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-autolink")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-autolink")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
         }
     }
 }

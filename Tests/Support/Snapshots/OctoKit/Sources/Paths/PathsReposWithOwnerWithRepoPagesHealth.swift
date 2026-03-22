@@ -25,7 +25,15 @@ extension Paths.Repos.WithOwner.WithRepo.Pages {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-dns-health-check-for-github-pages)
         public var get: Request<OctoKit.PagesHealthCheck> {
-            Request(path: path, method: "GET", id: "repos/get-pages-health-check")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-pages-health-check")
+            }
+        }
+
+        public enum GetError: Error {
+            case badRequest
+            case unprocessableEntity
+            case notFound(OctoKit.BasicError)
         }
     }
 }

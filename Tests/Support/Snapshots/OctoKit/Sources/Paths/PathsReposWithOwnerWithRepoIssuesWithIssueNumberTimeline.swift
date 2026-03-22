@@ -18,8 +18,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// List timeline events for an issue
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-timeline-events-for-an-issue)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.TimelineIssueEvents]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.TimelineIssueEvents]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-events-for-timeline")
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case gone(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

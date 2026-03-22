@@ -27,7 +27,14 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID.Labels {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#remove-a-custom-label-from-a-self-hosted-runner-for-an-enterprise)
         public var delete: Request<DeleteResponse> {
-            Request(path: path, method: "DELETE", id: "enterprise-admin/remove-custom-label-from-self-hosted-runner-for-enterprise")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "enterprise-admin/remove-custom-label-from-self-hosted-runner-for-enterprise")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationErrorSimple)
         }
 
         public struct DeleteResponse: Decodable {

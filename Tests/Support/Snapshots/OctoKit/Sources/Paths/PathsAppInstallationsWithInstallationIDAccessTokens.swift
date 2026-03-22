@@ -22,8 +22,32 @@ extension Paths.App.Installations.WithInstallationID {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps/#create-an-installation-access-token-for-an-app)
-        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.InstallationToken> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.InstallationToken> {
             Request(path: path, method: "POST", body: body, id: "apps/create-installation-access-token")
+        }
+
+        public enum PostError: Error {
+            case forbidden(OctoKit.BasicError)
+            case unsupportedMediaType(PostUnsupportedMediaTypeBody)
+            case unauthorized(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
+        }
+
+        public struct PostUnsupportedMediaTypeBody: Decodable {
+            public var message: String
+            public var documentationURL: String
+
+            public init(message: String, documentationURL: String) {
+                self.message = message
+                self.documentationURL = documentationURL
+            }
+
+            public init(from decoder: Decoder) throws {
+                let values = try decoder.container(keyedBy: StringCodingKey.self)
+                self.message = try values.decode(String.self, forKey: "message")
+                self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
+            }
         }
 
         public struct PostRequest: Encodable {

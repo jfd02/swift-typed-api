@@ -17,8 +17,12 @@ extension Paths.User {
         let path: String
 
         /// Logs user into the system
-        func get(username: String, password: String) -> Request<String> {
+        func get(username: String, password: String) throws(GetError) -> Request<String> {
             Request(path: path, method: "GET", query: [("username", username), ("password", password)], id: "loginUser")
+        }
+
+        enum GetError: Error {
+            case badRequest
         }
 
         enum GetResponseHeaders {

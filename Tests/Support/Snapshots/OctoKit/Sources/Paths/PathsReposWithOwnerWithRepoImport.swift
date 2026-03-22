@@ -54,7 +54,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-an-import-status)
         public var get: Request<OctoKit.Import> {
-            Request(path: path, method: "GET", id: "migrations/get-import-status")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "migrations/get-import-status")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Start an import
@@ -62,8 +68,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Start a source import to a GitHub repository using GitHub Importer.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#start-an-import)
-        public func put(_ body: PutRequest) -> Request<OctoKit.Import> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.Import> {
             Request(path: path, method: "PUT", body: body, id: "migrations/start-import")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PutResponseHeaders {

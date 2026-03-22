@@ -28,8 +28,12 @@ extension Paths.Search {
         /// This query searches for topics with the keyword `ruby` and limits the results to find only topics that are featured. The topics that are the best match for the query appear first in the search results.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-topics)
-        public func get(parameters: GetParameters) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/topics")
+        }
+
+        public enum GetError: Error {
+            case notModified
         }
 
         public struct GetResponse: Decodable {

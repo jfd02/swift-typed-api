@@ -17,7 +17,13 @@ extension Namespace.Pets {
 
         /// Info for a specific pet
         public var get: Request<petstore_change_namespace_when_rest_style.Pet> {
-            Request(path: path, method: "GET", id: "showPetById")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "showPetById")
+            }
+        }
+
+        public enum GetError: Error {
+            case `default`(statusCode: Int, petstore_change_namespace_when_rest_style.Error)
         }
     }
 }

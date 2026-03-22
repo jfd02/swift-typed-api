@@ -19,7 +19,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-github-pages-site)
         public var get: Request<OctoKit.Page> {
-            Request(path: path, method: "GET", id: "repos/get-pages")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-pages")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Create a GitHub Pages site
@@ -27,8 +33,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Configures a GitHub Pages site. For more information, see "[About GitHub Pages](/github/working-with-github-pages/about-github-pages)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-github-pages-site)
-        public func post(source: PostRequest.Source) -> Request<OctoKit.Page> {
+        public func post(source: PostRequest.Source) throws(PostError) -> Request<OctoKit.Page> {
             Request(path: path, method: "POST", body: PostRequest(source: source), id: "repos/create-pages-site")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case conflict(OctoKit.BasicError)
         }
 
         /// The source branch and directory used to publish your Pages site.
@@ -76,8 +87,13 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Updates information for a GitHub Pages site. For more information, see "[About GitHub Pages](/github/working-with-github-pages/about-github-pages).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-information-about-a-github-pages-site)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) throws(PutError) -> Request<Void> {
             Request(path: path, method: "PUT", body: body, id: "repos/update-information-about-pages-site")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case badRequest(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {
@@ -159,7 +175,14 @@ extension Paths.Repos.WithOwner.WithRepo {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-github-pages-site)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "repos/delete-pages-site")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "repos/delete-pages-site")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

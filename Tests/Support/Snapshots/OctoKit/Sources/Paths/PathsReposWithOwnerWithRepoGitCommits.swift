@@ -49,8 +49,13 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// | `valid` | None of the above errors applied, so the signature is considered to be verified. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-commit)
-        public func post(_ body: PostRequest) -> Request<OctoKit.GitCommit> {
+        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GitCommit> {
             Request(path: path, method: "POST", body: body, id: "git/create-commit")
+        }
+
+        public enum PostError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case notFound(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

@@ -23,7 +23,14 @@ extension Paths {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/rate-limit#get-rate-limit-status-for-the-authenticated-user)
         public var get: Request<OctoKit.RateLimitOverview> {
-            Request(path: path, method: "GET", id: "rate-limit/get")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "rate-limit/get")
+            }
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

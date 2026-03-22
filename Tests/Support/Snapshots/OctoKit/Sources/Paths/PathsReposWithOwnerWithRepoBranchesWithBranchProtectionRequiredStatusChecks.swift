@@ -21,7 +21,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-status-checks-protection)
         public var get: Request<OctoKit.StatusCheckPolicy> {
-            Request(path: path, method: "GET", id: "repos/get-status-checks-protection")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "repos/get-status-checks-protection")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
         }
 
         /// Update status check protection
@@ -31,8 +37,13 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         /// Updating required status checks requires admin or owner permissions to the repository and branch protection to be enabled.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-status-check-protection)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.StatusCheckPolicy> {
+        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.StatusCheckPolicy> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-status-check-protection")
+        }
+
+        public enum PatchError: Error {
+            case notFound(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public struct PatchRequest: Encodable {

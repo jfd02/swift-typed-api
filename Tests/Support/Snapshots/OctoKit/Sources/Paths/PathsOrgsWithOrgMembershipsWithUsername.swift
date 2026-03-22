@@ -21,7 +21,14 @@ extension Paths.Orgs.WithOrg.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-organization-membership-for-a-user)
         public var get: Request<OctoKit.OrgMembership> {
-            Request(path: path, method: "GET", id: "orgs/get-membership-for-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "orgs/get-membership-for-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
 
         /// Set organization membership for a user
@@ -37,8 +44,13 @@ extension Paths.Orgs.WithOrg.Memberships {
         /// To prevent abuse, the authenticated user is limited to 50 organization invitations per 24 hour period. If the organization is more than one month old or on a paid plan, the limit is 500 invitations per 24 hour period.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#set-organization-membership-for-a-user)
-        public func put(role: PutRequest.Role? = nil) -> Request<OctoKit.OrgMembership> {
+        public func put(role: PutRequest.Role? = nil) throws(PutError) -> Request<OctoKit.OrgMembership> {
             Request(path: path, method: "PUT", body: PutRequest(role: role), id: "orgs/set-membership-for-user")
+        }
+
+        public enum PutError: Error {
+            case unprocessableEntity(OctoKit.ValidationError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public struct PutRequest: Encodable {
@@ -73,7 +85,14 @@ extension Paths.Orgs.WithOrg.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-organization-membership-for-a-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "orgs/remove-membership-for-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "orgs/remove-membership-for-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case forbidden(OctoKit.BasicError)
+            case notFound(OctoKit.BasicError)
         }
     }
 }

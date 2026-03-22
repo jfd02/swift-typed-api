@@ -18,8 +18,12 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// List labels for an issue
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-labels-for-an-issue)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Label]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Label]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-labels-on-issue")
+        }
+
+        public enum GetError: Error {
+            case gone(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -36,8 +40,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Add labels to an issue
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#add-labels-to-an-issue)
-        public func post(_ body: PostRequest? = nil) -> Request<[OctoKit.Label]> {
+        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<[OctoKit.Label]> {
             Request(path: path, method: "POST", body: body, id: "issues/add-labels")
+        }
+
+        public enum PostError: Error {
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PostRequest: Encodable {
@@ -117,8 +126,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Removes any previous labels and sets the new labels for an issue.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#set-labels-for-an-issue)
-        public func put(_ body: PutRequest? = nil) -> Request<[OctoKit.Label]> {
+        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<[OctoKit.Label]> {
             Request(path: path, method: "PUT", body: body, id: "issues/set-labels")
+        }
+
+        public enum PutError: Error {
+            case gone(OctoKit.BasicError)
+            case unprocessableEntity(OctoKit.ValidationError)
         }
 
         public enum PutRequest: Encodable {
@@ -197,7 +211,13 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#remove-all-labels-from-an-issue)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "issues/remove-all-labels")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "issues/remove-all-labels")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case gone(OctoKit.BasicError)
         }
     }
 }

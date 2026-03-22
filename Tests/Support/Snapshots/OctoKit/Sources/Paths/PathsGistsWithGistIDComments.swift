@@ -18,8 +18,14 @@ extension Paths.Gists.WithGistID {
         /// List gist comments
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gist-comments)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.GistComment]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.GistComment]> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "gists/list-comments")
+        }
+
+        public enum GetError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {
@@ -36,8 +42,14 @@ extension Paths.Gists.WithGistID {
         /// Create a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#create-a-gist-comment)
-        public func post(body: String) -> Request<OctoKit.GistComment> {
+        public func post(body: String) throws(PostError) -> Request<OctoKit.GistComment> {
             Request(path: path, method: "POST", body: ["body": body], id: "gists/create-comment")
+        }
+
+        public enum PostError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum PostResponseHeaders {

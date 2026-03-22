@@ -26,8 +26,14 @@ extension Paths.User.Packages.WithPackageType.WithPackageName {
         /// To use this endpoint, you must authenticate using an access token with the `packages:read` and `packages:write` scopes. If `package_type` is not `container`, your token must also include the `repo` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#restore-a-package-for-the-authenticated-user)
-        public func post(token: String? = nil) -> Request<Void> {
+        public func post(token: String? = nil) throws(PostError) -> Request<Void> {
             Request(path: path, method: "POST", query: makePostQuery(token), id: "packages/restore-package-for-authenticated-user")
+        }
+
+        public enum PostError: Error {
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         private func makePostQuery(_ token: String?) -> [(String, String?)] {

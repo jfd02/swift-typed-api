@@ -20,8 +20,14 @@ extension Paths.Gists {
         /// List the authenticated user's starred gists:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-starred-gists)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.BaseGist]> {
+        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.BaseGist]> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "gists/list-starred")
+        }
+
+        public enum GetError: Error {
+            case unauthorized(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
         }
 
         public enum GetResponseHeaders {

@@ -21,7 +21,16 @@ extension Paths.User.Keys {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-a-public-ssh-key-for-the-authenticated-user)
         public var get: Request<OctoKit.Key> {
-            Request(path: path, method: "GET", id: "users/get-public-ssh-key-for-authenticated-user")
+            get throws(GetError) {
+                Request(path: path, method: "GET", id: "users/get-public-ssh-key-for-authenticated-user")
+            }
+        }
+
+        public enum GetError: Error {
+            case notFound(OctoKit.BasicError)
+            case notModified
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
 
         /// Delete a public SSH key for the authenticated user
@@ -30,7 +39,16 @@ extension Paths.User.Keys {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#delete-a-public-ssh-key-for-the-authenticated-user)
         public var delete: Request<Void> {
-            Request(path: path, method: "DELETE", id: "users/delete-public-ssh-key-for-authenticated-user")
+            get throws(DeleteError) {
+                Request(path: path, method: "DELETE", id: "users/delete-public-ssh-key-for-authenticated-user")
+            }
+        }
+
+        public enum DeleteError: Error {
+            case notModified
+            case notFound(OctoKit.BasicError)
+            case forbidden(OctoKit.BasicError)
+            case unauthorized(OctoKit.BasicError)
         }
     }
 }
