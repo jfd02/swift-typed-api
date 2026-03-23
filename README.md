@@ -39,7 +39,7 @@ $ make install
 
 ## Getting Started
 
-You'll need an [OpenAPI schema](https://swagger.io/specification/) (using 3.0.x) for your API. If your schema has external references, you might also need to bundle it beforehand.
+You'll need an [OpenAPI schema](https://swagger.io/specification/) using OpenAPI 3.1.x for your API. If your schema has external references, you might also need to bundle it beforehand.
 
 If you have never used CreateAPI before, be sure to check out our tutorial: [Generating an API with CreateAPI](./Docs/Tutorial.md)
 
@@ -93,19 +93,95 @@ $ cd PetstoreKit
 $ swift build
 ```
 
-There you have it, a comping Swift Package ready to be integrated with your other Swift projects!
+There you have it, a compiling Swift Package ready to be integrated with your other Swift projects!
+
+Generated packages include a dependency on `TypedAPI`, which provides the runtime `APIClient` and typed `Request<Success, Failure>` support used by the generated paths.
 
 For more information about using CreateAPI, check out the [Documentation](./Docs/).
 
-## Projects using CreateAPI
+## Example
 
-Need some inspiration? Check out the list of projects below that are already using CreateAPI:
+Given a small OpenAPI 3.1 schema like this:
 
-- [App Store Connect API](https://github.com/AvdLee/appstoreconnect-swift-sdk)
-- [Swift SDK for Jellyfin](https://github.com/jellyfin/jellyfin-sdk-swift)
-- [Google Generative AI SDK](https://github.com/google/generative-ai-swift)
+```yaml
+openapi: 3.1.0
+info:
+  title: Petstore
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      operationId: listPets
+      responses:
+        "200":
+          description: A list of pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pet"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    Pet:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+```
 
-Are you using CreateAPI in your own open-source project? Let us know by [adding it](https://github.com/CreateAPI/CreateAPI/edit/main/README.md) to the list above!
+CreateAPI generates Swift like this:
+
+```swift
+import Foundation
+import TypedAPI
+
+public enum Paths {
+    public static var pets: Pets {
+        Pets(path: "/pets")
+    }
+
+    public struct Pets {
+        public let path: String
+
+        public var get: Request<[PetstoreKit.Pet], GetError> {
+            Request(path: path, method: "GET", id: "listPets")
+        }
+
+        public enum GetError: RequestError {
+            case `default`(statusCode: Int, PetstoreKit.ErrorResponse)
+            case unhandled(any Swift.Error)
+        }
+    }
+}
+
+public struct Pet: Codable {
+    public var id: Int
+    public var name: String
+}
+```
+
+## Acknowledgements
+
+This implementation builds on ideas and prior work from:
+
+- [CreateAPI](https://github.com/CreateAPI/CreateAPI) for the OpenAPI-to-Swift generator foundation.
+- [Get](https://github.com/kean/Get) by Alexander Grebenyuk for the API client/runtime design that `TypedAPI` adapts.
 
 ## Contributing
 
