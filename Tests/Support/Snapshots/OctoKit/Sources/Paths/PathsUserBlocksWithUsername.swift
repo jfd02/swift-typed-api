@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Blocks {
@@ -18,50 +18,78 @@ extension Paths.User.Blocks {
         /// Check if a user is blocked by the authenticated user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#check-if-a-user-is-blocked-by-the-authenticated-user)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "users/check-blocked")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "users/check-blocked")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Block a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#block-a-user)
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "users/block")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "users/block")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Unblock a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#unblock-a-user)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "users/unblock")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "users/unblock")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

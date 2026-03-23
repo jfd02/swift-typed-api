@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -22,12 +22,20 @@ extension Paths {
         /// Note: Pagination is powered exclusively by the `since` parameter. Use the [Link header](https://docs.github.com/rest/overview/resources-in-the-rest-api#link-header) to get the URL for the next page of users.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-users)
-        public func get(since: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<[OctoKit.SimpleUser]> {
+        public func get(since: Int? = nil, perPage: Int? = nil) -> Request<[OctoKit.SimpleUser], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(since, perPage), id: "users/list")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

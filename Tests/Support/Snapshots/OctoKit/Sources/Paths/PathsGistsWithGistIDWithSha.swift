@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gists.WithGistID {
@@ -18,16 +18,24 @@ extension Paths.Gists.WithGistID {
         /// Get a gist revision
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#get-a-gist-revision)
-        public var get: Request<OctoKit.GistSimple> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "gists/get-revision")
-            }
+        public var get: Request<OctoKit.GistSimple, GetError> {
+            Request(path: path, method: "GET", id: "gists/get-revision")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

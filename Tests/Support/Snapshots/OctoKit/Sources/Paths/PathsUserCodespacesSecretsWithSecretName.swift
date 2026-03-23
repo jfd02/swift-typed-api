@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Codespaces.Secrets {
@@ -21,7 +21,7 @@ extension Paths.User.Codespaces.Secrets {
         /// You must authenticate using an access token with the `user` or `read:user` scope to use this endpoint. User must have Codespaces access to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#get-a-secret-for-the-authenticated-user)
-        public var get: Request<OctoKit.CodespacesSecret> {
+        public var get: Request<OctoKit.CodespacesSecret, DefaultRequestError> {
             Request(path: path, method: "GET", id: "codespaces/get-secret-for-authenticated-user")
         }
 
@@ -102,13 +102,22 @@ extension Paths.User.Codespaces.Secrets {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#create-or-update-a-secret-for-the-authenticated-user)
-        public func put(_ body: PutRequest) throws(PutError) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: body, id: "codespaces/create-or-update-secret-for-authenticated-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -138,7 +147,7 @@ extension Paths.User.Codespaces.Secrets {
         /// Deletes a secret from a user's codespaces using the secret name. Deleting the secret will remove access from all codespaces that were allowed to access the secret. You must authenticate using an access token with the `user` scope to use this endpoint. User must have Codespaces access to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#delete-a-secret-for-the-authenticated-user)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "codespaces/delete-secret-for-authenticated-user")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions {
@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg.Actions {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-self-hosted-runner-groups-for-an-organization)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-self-hosted-runner-groups-for-org")
         }
 
@@ -60,7 +60,7 @@ extension Paths.Orgs.WithOrg.Actions {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#create-a-self-hosted-runner-group-for-an-organization)
-        public func post(_ body: PostRequest) -> Request<OctoKit.RunnerGroupsOrg> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.RunnerGroupsOrg, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "actions/create-self-hosted-runner-group-for-org")
         }
 

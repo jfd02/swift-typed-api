@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Import.Authors {
@@ -20,13 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo.Import.Authors {
         /// Update an author's identity for the import. Your application can continue updating authors any time before you push new commits to the repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#map-a-commit-author)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.PorterAuthor> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.PorterAuthor, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "migrations/map-commit-author")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {

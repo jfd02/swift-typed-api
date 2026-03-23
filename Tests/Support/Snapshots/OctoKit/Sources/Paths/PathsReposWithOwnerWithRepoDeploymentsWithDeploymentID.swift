@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Deployments {
@@ -18,14 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments {
         /// Get a deployment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-deployment)
-        public var get: Request<OctoKit.Deployment> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-deployment")
-            }
+        public var get: Request<OctoKit.Deployment, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-deployment")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a deployment
@@ -40,15 +46,22 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments {
         /// For more information, see "[Create a deployment](https://docs.github.com/rest/reference/repos/#create-a-deployment)" and "[Create a deployment status](https://docs.github.com/rest/reference/repos#create-a-deployment-status)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-deployment)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete-deployment")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete-deployment")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

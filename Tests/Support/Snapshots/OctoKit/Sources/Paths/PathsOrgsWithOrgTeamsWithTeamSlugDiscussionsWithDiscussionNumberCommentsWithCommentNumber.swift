@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber.Comments {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}/discussions/{discussion_number}/comments/{comment_number}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-a-discussion-comment)
-        public var get: Request<OctoKit.TeamDiscussionComment> {
+        public var get: Request<OctoKit.TeamDiscussionComment, DefaultRequestError> {
             Request(path: path, method: "GET", id: "teams/get-discussion-comment-in-org")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PATCH /organizations/{org_id}/team/{team_id}/discussions/{discussion_number}/comments/{comment_number}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#update-a-discussion-comment)
-        public func patch(body: String) -> Request<OctoKit.TeamDiscussionComment> {
+        public func patch(body: String) -> Request<OctoKit.TeamDiscussionComment, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "teams/update-discussion-comment-in-org")
         }
 
@@ -44,7 +44,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `DELETE /organizations/{org_id}/team/{team_id}/discussions/{discussion_number}/comments/{comment_number}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#delete-a-discussion-comment)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/delete-discussion-comment-in-org")
         }
     }

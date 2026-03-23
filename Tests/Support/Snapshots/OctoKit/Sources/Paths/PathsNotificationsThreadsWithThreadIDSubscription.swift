@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Notifications.Threads.WithThreadID {
@@ -22,16 +22,24 @@ extension Paths.Notifications.Threads.WithThreadID {
         /// Note that subscriptions are only generated if a user is participating in a conversation--for example, they've replied to the thread, were **@mentioned**, or manually subscribe to a thread.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#get-a-thread-subscription-for-the-authenticated-user)
-        public var get: Request<OctoKit.ThreadSubscription> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "activity/get-thread-subscription-for-authenticated-user")
-            }
+        public var get: Request<OctoKit.ThreadSubscription, GetError> {
+            Request(path: path, method: "GET", id: "activity/get-thread-subscription-for-authenticated-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Set a thread subscription
@@ -43,14 +51,24 @@ extension Paths.Notifications.Threads.WithThreadID {
         /// Unsubscribing from a conversation in a repository that you are not watching is functionally equivalent to the [Delete a thread subscription](https://docs.github.com/rest/reference/activity#delete-a-thread-subscription) endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#set-a-thread-subscription)
-        public func put(isIgnored: Bool? = nil) throws(PutError) -> Request<OctoKit.ThreadSubscription> {
+        public func put(isIgnored: Bool? = nil) -> Request<OctoKit.ThreadSubscription, PutError> {
             Request(path: path, method: "PUT", body: ["ignored": isIgnored], id: "activity/set-thread-subscription")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a thread subscription
@@ -58,16 +76,24 @@ extension Paths.Notifications.Threads.WithThreadID {
         /// Mutes all future notifications for a conversation until you comment on the thread or get an **@mention**. If you are watching the repository of the thread, you will still receive notifications. To ignore future notifications for a repository you are watching, use the [Set a thread subscription](https://docs.github.com/rest/reference/activity#set-a-thread-subscription) endpoint and set `ignore` to `true`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#delete-a-thread-subscription)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "activity/delete-thread-subscription")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "activity/delete-thread-subscription")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

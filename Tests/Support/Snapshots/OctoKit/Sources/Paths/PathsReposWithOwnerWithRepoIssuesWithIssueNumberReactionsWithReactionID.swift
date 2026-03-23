@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber.Reactions {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber.Reactions {
         /// Delete a reaction to an [issue](https://docs.github.com/rest/reference/issues/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#delete-an-issue-reaction)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "reactions/delete-for-issue")
         }
     }

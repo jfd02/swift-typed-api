@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -18,12 +18,20 @@ extension Paths.Orgs.WithOrg {
         /// List organization webhooks
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organization-webhooks)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.OrgHook]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrgHook], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-webhooks")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -42,13 +50,22 @@ extension Paths.Orgs.WithOrg {
         /// Here's how you can create a hook that posts payloads in JSON format:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#create-an-organization-webhook)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.OrgHook> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.OrgHook, PostError> {
             Request(path: path, method: "POST", body: body, id: "orgs/create-webhook")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

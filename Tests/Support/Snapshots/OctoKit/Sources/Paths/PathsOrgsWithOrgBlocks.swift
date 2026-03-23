@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,14 +20,20 @@ extension Paths.Orgs.WithOrg {
         /// List the users blocked by an organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-users-blocked-by-an-organization)
-        public var get: Request<[OctoKit.SimpleUser]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/list-blocked-users")
-            }
+        public var get: Request<[OctoKit.SimpleUser], GetError> {
+            Request(path: path, method: "GET", id: "orgs/list-blocked-users")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unsupportedMediaType(GetUnsupportedMediaTypeBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 415: return .unsupportedMediaType(try decoder.decode(GetUnsupportedMediaTypeBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetUnsupportedMediaTypeBody: Decodable {

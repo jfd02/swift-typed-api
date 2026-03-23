@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName.Secrets {
@@ -20,7 +20,7 @@ extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName.S
         /// Gets a single environment secret without revealing its encrypted value. You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `secrets` repository permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-an-environment-secret)
-        public var get: Request<OctoKit.ActionsSecret> {
+        public var get: Request<OctoKit.ActionsSecret, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-environment-secret")
         }
 
@@ -103,7 +103,7 @@ extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName.S
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#create-or-update-an-environment-secret)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "actions/create-or-update-environment-secret")
         }
 
@@ -130,7 +130,7 @@ extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName.S
         /// Deletes a secret in an environment using the secret name. You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `secrets` repository permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-an-environment-secret)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-environment-secret")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Similar to [Get repository content](https://docs.github.com/rest/reference/repos#get-repository-content), this method also supports [custom media types](https://docs.github.com/rest/overview/media-types) for retrieving the raw license content or rendered license HTML.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/licenses/#get-the-license-for-a-repository)
-        public var get: Request<OctoKit.LicenseContent> {
+        public var get: Request<OctoKit.LicenseContent, DefaultRequestError> {
             Request(path: path, method: "GET", id: "licenses/get-for-repo")
         }
     }

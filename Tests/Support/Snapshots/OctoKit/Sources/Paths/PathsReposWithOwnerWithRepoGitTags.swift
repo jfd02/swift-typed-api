@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git {
@@ -49,12 +49,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// | `valid` | None of the above errors applied, so the signature is considered to be verified. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-tag-object)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GitTag> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.GitTag, PostError> {
             Request(path: path, method: "POST", body: body, id: "git/create-tag")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

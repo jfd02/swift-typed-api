@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.TeamSync {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.TeamSync {
         /// List IdP groups available in an organization. You can limit your page results using the `per_page` parameter. GitHub generates a url-encoded `page` token using a cursor value for where the next page begins. For more information on cursor pagination, see "[Offset and Cursor Pagination explained](https://dev.to/jackmarchant/offset-and-cursor-pagination-explained-b89)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-idp-groups-for-an-organization)
-        public func get(perPage: Int? = nil, page: String? = nil) -> Request<OctoKit.GroupMapping> {
+        public func get(perPage: Int? = nil, page: String? = nil) -> Request<OctoKit.GroupMapping, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list-idp-groups-for-org")
         }
 

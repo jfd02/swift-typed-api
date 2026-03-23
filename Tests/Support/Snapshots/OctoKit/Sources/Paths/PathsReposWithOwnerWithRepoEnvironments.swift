@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Anyone with read access to the repository can use this endpoint. If the repository is private, you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-all-environments)
-        public var get: Request<GetResponse> {
+        public var get: Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-all-environments")
         }
 

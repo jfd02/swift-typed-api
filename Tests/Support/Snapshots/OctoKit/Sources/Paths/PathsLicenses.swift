@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -18,12 +18,20 @@ extension Paths {
         /// Get all commonly used licenses
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/licenses#get-all-commonly-used-licenses)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.LicenseSimple]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.LicenseSimple], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "licenses/get-all-commonly-used")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetParameters {

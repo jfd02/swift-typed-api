@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}/discussions/{discussion_number}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-a-discussion)
-        public var get: Request<OctoKit.TeamDiscussion> {
+        public var get: Request<OctoKit.TeamDiscussion, DefaultRequestError> {
             Request(path: path, method: "GET", id: "teams/get-discussion-in-org")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PATCH /organizations/{org_id}/team/{team_id}/discussions/{discussion_number}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#update-a-discussion)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.TeamDiscussion> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.TeamDiscussion, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "teams/update-discussion-in-org")
         }
 
@@ -62,7 +62,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `DELETE /organizations/{org_id}/team/{team_id}/discussions/{discussion_number}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#delete-a-discussion)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/delete-discussion-in-org")
         }
     }

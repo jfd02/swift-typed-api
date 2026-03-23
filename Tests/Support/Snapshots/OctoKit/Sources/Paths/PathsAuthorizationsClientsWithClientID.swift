@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Authorizations.Clients {
@@ -29,15 +29,26 @@ extension Paths.Authorizations.Clients {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#get-or-create-an-authorization-for-a-specific-app)
         @available(*, deprecated, message: "Deprecated")
-        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.Authorization> {
+        public func put(_ body: PutRequest) -> Request<OctoKit.Authorization, PutError> {
             Request(path: path, method: "PUT", body: body, id: "oauth-authorizations/get-or-create-authorization-for-app")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PutResponseHeaders {

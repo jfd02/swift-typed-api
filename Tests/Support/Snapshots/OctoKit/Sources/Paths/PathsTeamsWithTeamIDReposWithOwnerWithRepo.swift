@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID.Repos.WithOwner {
@@ -25,14 +25,20 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#check-team-permissions-for-a-repository-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<OctoKit.TeamRepository> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "teams/check-permissions-for-repo-legacy")
-            }
+        public var get: Request<OctoKit.TeamRepository, GetError> {
+            Request(path: path, method: "GET", id: "teams/check-permissions-for-repo-legacy")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add or update team repository permissions (Legacy)
@@ -45,13 +51,22 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#add-or-update-team-repository-permissions-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "teams/add-or-update-repo-permissions-legacy")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -93,7 +108,7 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#remove-a-repository-from-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/remove-repo-legacy")
         }
     }

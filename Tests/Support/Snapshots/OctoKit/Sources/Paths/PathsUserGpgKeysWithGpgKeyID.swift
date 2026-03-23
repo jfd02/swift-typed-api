@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.GpgKeys {
@@ -20,17 +20,26 @@ extension Paths.User.GpgKeys {
         /// View extended details for a single GPG key. Requires that you are authenticated via Basic Auth or via OAuth with at least `read:gpg_key` [scope](https://docs.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-a-gpg-key-for-the-authenticated-user)
-        public var get: Request<OctoKit.GpgKey> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "users/get-gpg-key-for-authenticated-user")
-            }
+        public var get: Request<OctoKit.GpgKey, GetError> {
+            Request(path: path, method: "GET", id: "users/get-gpg-key-for-authenticated-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a GPG key for the authenticated user
@@ -38,18 +47,28 @@ extension Paths.User.GpgKeys {
         /// Removes a GPG key from the authenticated user's GitHub account. Requires that you are authenticated via Basic Auth or via OAuth with at least `admin:gpg_key` [scope](https://docs.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#delete-a-gpg-key-for-the-authenticated-user)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "users/delete-gpg-key-for-authenticated-user")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "users/delete-gpg-key-for-authenticated-user")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

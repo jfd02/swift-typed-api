@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
         /// Lists all self-hosted runners configured in a repository. You must authenticate using an access token with the `repo` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-self-hosted-runners-for-a-repository)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-self-hosted-runners-for-repo")
         }
 

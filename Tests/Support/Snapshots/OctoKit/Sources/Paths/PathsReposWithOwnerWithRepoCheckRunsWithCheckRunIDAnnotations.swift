@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CheckRuns.WithCheckRunID {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns.WithCheckRunID {
         /// Lists annotations for a check run using the annotation `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get annotations for a check run. OAuth Apps and authenticated users must have the `repo` scope to get annotations for a check run in a private repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#list-check-run-annotations)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.CheckAnnotation]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.CheckAnnotation], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "checks/list-annotations")
         }
 

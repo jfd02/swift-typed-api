@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Analyses {
@@ -38,16 +38,24 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Analyses {
         /// [SARIF version 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/cs01/sarif-v2.1.0-cs01.html).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#get-a-code-scanning-analysis-for-a-repository)
-        public var get: Request<OctoKit.CodeScanningAnalysis> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "code-scanning/get-analysis")
-            }
+        public var get: Request<OctoKit.CodeScanningAnalysis, GetError> {
+            Request(path: path, method: "GET", id: "code-scanning/get-analysis")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case serviceUnavailable(GetServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable {
@@ -139,15 +147,26 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Analyses {
         /// The above process assumes that you want to remove all trace of the tool's analyses from the GitHub user interface, for the specified repository, and it therefore uses the `confirm_delete_url` value. Alternatively, you could use the `next_analysis_url` value, which would leave the last analysis in each set undeleted to avoid removing a tool's analysis entirely.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#delete-a-code-scanning-analysis-from-a-repository)
-        public func delete(confirmDelete: String? = nil) throws(DeleteError) -> Request<OctoKit.CodeScanningAnalysisDeletion> {
+        public func delete(confirmDelete: String? = nil) -> Request<OctoKit.CodeScanningAnalysisDeletion, DeleteError> {
             Request(path: path, method: "DELETE", query: makeDeleteQuery(confirmDelete), id: "code-scanning/delete-analysis")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case badRequest(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case serviceUnavailable(DeleteServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(DeleteServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteServiceUnavailableBody: Decodable {

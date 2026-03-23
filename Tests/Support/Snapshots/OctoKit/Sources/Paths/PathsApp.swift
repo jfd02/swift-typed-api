@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -22,7 +22,7 @@ extension Paths {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-the-authenticated-app)
-        public var get: Request<OctoKit.Integration> {
+        public var get: Request<OctoKit.Integration, DefaultRequestError> {
             Request(path: path, method: "GET", id: "apps/get-authenticated")
         }
     }

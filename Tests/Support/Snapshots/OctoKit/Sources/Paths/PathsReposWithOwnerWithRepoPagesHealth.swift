@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pages {
@@ -24,16 +24,24 @@ extension Paths.Repos.WithOwner.WithRepo.Pages {
         /// Users must have admin or owner permissions. GitHub Apps must have the `pages:write` and `administration:write` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-dns-health-check-for-github-pages)
-        public var get: Request<OctoKit.PagesHealthCheck> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-pages-health-check")
-            }
+        public var get: Request<OctoKit.PagesHealthCheck, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-pages-health-check")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case badRequest
             case unprocessableEntity
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 422: return .unprocessableEntity
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

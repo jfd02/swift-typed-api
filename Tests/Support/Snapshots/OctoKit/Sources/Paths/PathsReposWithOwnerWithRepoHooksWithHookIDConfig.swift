@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID {
         /// Access tokens must have the `read:repo_hook` or `repo` scope, and GitHub Apps must have the `repository_hooks:read` permission.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-webhook-configuration-for-a-repository)
-        public var get: Request<OctoKit.WebhookConfig> {
+        public var get: Request<OctoKit.WebhookConfig, DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-webhook-config-for-repo")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID {
         /// Access tokens must have the `write:repo_hook` or `repo` scope, and GitHub Apps must have the `repository_hooks:write` permission.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-webhook-configuration-for-a-repository)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.WebhookConfig> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.WebhookConfig, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-webhook-config-for-repo")
         }
 

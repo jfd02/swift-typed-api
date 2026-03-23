@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -19,12 +19,19 @@ extension Paths {
     /// Create user
     ///
     /// This can only be done by the logged in user.
-    public func post(_ body: edgecases_indent_with_two_width_spaces.User) throws(PostError) -> Request<Void> {
+    public func post(_ body: edgecases_indent_with_two_width_spaces.User) -> Request<Void, PostError> {
       Request(path: path, method: "POST", body: body, id: "createUser")
     }
 
-    public enum PostError: Error {
+    public enum PostError: RequestError {
       case `default`(statusCode: Int)
+      case unhandled(any Swift.Error)
+
+      public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+        switch statusCode {
+        default: return .`default`(statusCode: statusCode)
+        }
+      }
     }
   }
 }

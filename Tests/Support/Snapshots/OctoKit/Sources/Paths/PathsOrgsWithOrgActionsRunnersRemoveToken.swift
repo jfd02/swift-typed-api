@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Runners {
@@ -31,7 +31,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#create-a-remove-token-for-an-organization)
-        public var post: Request<OctoKit.AuthenticationToken> {
+        public var post: Request<OctoKit.AuthenticationToken, DefaultRequestError> {
             Request(path: path, method: "POST", id: "actions/create-remove-token-for-org")
         }
     }

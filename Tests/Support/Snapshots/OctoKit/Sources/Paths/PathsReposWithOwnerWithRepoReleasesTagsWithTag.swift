@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases.Tags {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Tags {
         /// Get a published release with the specified tag.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-release-by-tag-name)
-        public var get: Request<OctoKit.Release> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-release-by-tag")
-            }
+        public var get: Request<OctoKit.Release, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-release-by-tag")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

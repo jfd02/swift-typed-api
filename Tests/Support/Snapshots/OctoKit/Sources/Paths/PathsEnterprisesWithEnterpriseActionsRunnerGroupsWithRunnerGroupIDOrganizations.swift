@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups.WithRunnerGroupID {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups.WithRunnerGroupI
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-organization-access-to-a-self-hosted-runner-group-in-a-enterprise)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "enterprise-admin/list-org-access-to-self-hosted-runner-group-in-enterprise")
         }
 
@@ -56,7 +56,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups.WithRunnerGroupI
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#set-organization-access-to-a-self-hosted-runner-group-in-an-enterprise)
-        public func put(selectedOrganizationIDs: [Int]) -> Request<Void> {
+        public func put(selectedOrganizationIDs: [Int]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["selected_organization_ids": selectedOrganizationIDs], id: "enterprise-admin/set-org-access-to-self-hosted-runner-group-in-enterprise")
         }
     }

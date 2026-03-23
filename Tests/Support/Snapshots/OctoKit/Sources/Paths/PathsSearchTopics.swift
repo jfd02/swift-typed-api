@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Search {
@@ -28,12 +28,20 @@ extension Paths.Search {
         /// This query searches for topics with the keyword `ruby` and limits the results to find only topics that are featured. The topics that are the best match for the query appear first in the search results.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-topics)
-        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/topics")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {

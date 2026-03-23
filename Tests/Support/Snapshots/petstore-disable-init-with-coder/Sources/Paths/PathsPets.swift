@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -16,12 +16,19 @@ extension Paths {
         public let path: String
 
         /// List all pets
-        public func get(limit: Int32? = nil) throws(GetError) -> Request<[petstore_disable_init_with_coder.Pet]> {
+        public func get(limit: Int32? = nil) -> Request<[petstore_disable_init_with_coder.Pet], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(limit), id: "listPets")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case `default`(statusCode: Int, petstore_disable_init_with_coder.Error)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_disable_init_with_coder.Error.self, from: data))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -36,14 +43,19 @@ extension Paths {
         }
 
         /// Create a pet
-        public var post: Request<Void> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "createPets")
-            }
+        public var post: Request<Void, PostError> {
+            Request(path: path, method: "POST", id: "createPets")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case `default`(statusCode: Int, petstore_disable_init_with_coder.Error)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_disable_init_with_coder.Error.self, from: data))
+                }
+            }
         }
     }
 }

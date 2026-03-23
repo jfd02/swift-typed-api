@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Codespaces.WithCodespaceName {
@@ -22,13 +22,11 @@ extension Paths.User.Codespaces.WithCodespaceName {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#start-a-codespace-for-the-authenticated-user)
-        public var post: Request<OctoKit.Codespace> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "codespaces/start-for-authenticated-user")
-            }
+        public var post: Request<OctoKit.Codespace, PostError> {
+            Request(path: path, method: "POST", id: "codespaces/start-for-authenticated-user")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notModified
             case internalServerError(OctoKit.BasicError)
             case badRequest(OctoKit.BasicError)
@@ -37,6 +35,21 @@ extension Paths.User.Codespaces.WithCodespaceName {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case conflict(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 402: return .status402(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

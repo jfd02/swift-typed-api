@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -22,7 +22,7 @@ extension Paths.Users.WithUsername {
         /// You can also find out _when_ stars were created by passing the following custom [media type](https://docs.github.com/rest/overview/media-types/) via the `Accept` header:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-repositories-starred-by-a-user)
-        public func get(parameters: GetParameters? = nil) -> Request<GetResponse> {
+        public func get(parameters: GetParameters? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "activity/list-repos-starred-by-user")
         }
 

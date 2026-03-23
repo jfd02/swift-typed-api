@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues {
@@ -18,12 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         /// List issue events for a repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-issue-events-for-a-repository)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.IssueEvent]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.IssueEvent], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-events-for-repo")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

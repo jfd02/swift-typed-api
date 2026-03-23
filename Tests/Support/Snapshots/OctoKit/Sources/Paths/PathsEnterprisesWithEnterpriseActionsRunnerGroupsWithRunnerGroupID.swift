@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#get-a-self-hosted-runner-group-for-an-enterprise)
-        public var get: Request<OctoKit.RunnerGroupsEnterprise> {
+        public var get: Request<OctoKit.RunnerGroupsEnterprise, DefaultRequestError> {
             Request(path: path, method: "GET", id: "enterprise-admin/get-self-hosted-runner-group-for-enterprise")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#update-a-self-hosted-runner-group-for-an-enterprise)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.RunnerGroupsEnterprise> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.RunnerGroupsEnterprise, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "enterprise-admin/update-self-hosted-runner-group-for-enterprise")
         }
 
@@ -72,7 +72,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#delete-a-self-hosted-runner-group-from-an-enterprise)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "enterprise-admin/delete-self-hosted-runner-group-from-enterprise")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Blocks {
@@ -18,33 +18,45 @@ extension Paths.Orgs.WithOrg.Blocks {
         /// Check if a user is blocked by an organization
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#check-if-a-user-is-blocked-by-an-organization)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/check-blocked-user")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "orgs/check-blocked-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Block a user from an organization
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#block-a-user-from-an-organization)
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "orgs/block-user")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "orgs/block-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Unblock a user from an organization
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#unblock-a-user-from-an-organization)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "orgs/unblock-user")
         }
     }

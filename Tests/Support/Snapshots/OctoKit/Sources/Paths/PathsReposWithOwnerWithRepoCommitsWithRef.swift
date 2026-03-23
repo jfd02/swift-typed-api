@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Commits {
@@ -55,14 +55,24 @@ extension Paths.Repos.WithOwner.WithRepo.Commits {
         /// | `valid` | None of the above errors applied, so the signature is considered to be verified. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-commit)
-        public func get(page: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<OctoKit.Commit> {
+        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<OctoKit.Commit, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "repos/get-commit")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
             case internalServerError(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ page: Int?, _ perPage: Int?) -> [(String, String?)] {

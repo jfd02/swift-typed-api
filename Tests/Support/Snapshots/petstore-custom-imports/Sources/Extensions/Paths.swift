@@ -3,8 +3,8 @@
 
 import Foundation
 import CoreData
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 public enum Paths {}

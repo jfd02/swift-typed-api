@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -20,14 +20,24 @@ extension Paths.User {
         /// Lists all migrations a user has started.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#list-user-migrations)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Migration]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Migration], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "migrations/list-for-authenticated-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -46,15 +56,26 @@ extension Paths.User {
         /// Initiates the generation of a user migration archive.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#start-a-user-migration)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Migration> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Migration, PostError> {
             Request(path: path, method: "POST", body: body, id: "migrations/start-for-authenticated-user")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,15 +18,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Get a repository subscription
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#get-a-repository-subscription)
-        public var get: Request<OctoKit.RepositorySubscription> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "activity/get-repo-subscription")
-            }
+        public var get: Request<OctoKit.RepositorySubscription, GetError> {
+            Request(path: path, method: "GET", id: "activity/get-repo-subscription")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Set a repository subscription
@@ -34,7 +41,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// If you would like to watch a repository, set `subscribed` to `true`. If you would like to ignore notifications made within a repository, set `ignored` to `true`. If you would like to stop watching a repository, [delete the repository's subscription](https://docs.github.com/rest/reference/activity#delete-a-repository-subscription) completely.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#set-a-repository-subscription)
-        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.RepositorySubscription> {
+        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.RepositorySubscription, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "activity/set-repo-subscription")
         }
 
@@ -61,7 +68,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// This endpoint should only be used to stop watching a repository. To control whether or not you wish to receive notifications from a repository, [set the repository's subscription manually](https://docs.github.com/rest/reference/activity#set-a-repository-subscription).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#delete-a-repository-subscription)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "activity/delete-repo-subscription")
         }
     }

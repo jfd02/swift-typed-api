@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -17,13 +17,22 @@ extension Paths {
         let path: String
 
         /// To test enum parameters
-        func get(parameters: GetParameters? = nil) throws(GetError) -> Request<Void> {
+        func get(parameters: GetParameters? = nil) -> Request<Void, GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "testEnumParameters")
         }
 
-        enum GetError: Error {
+        enum GetError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         struct GetParameters {
@@ -58,13 +67,22 @@ extension Paths {
         }
 
         /// Fake endpoint for testing various parameters
-        func post(_ body: PostRequest? = nil) throws(PostError) -> Request<Void> {
+        func post(_ body: PostRequest? = nil) -> Request<Void, PostError> {
             Request(path: path, method: "POST", body: body.map(URLQueryEncoder.encode)?.percentEncodedQuery, id: "testEndpointParameters")
         }
 
-        enum PostError: Error {
+        enum PostError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         struct PostRequest: Encodable {
@@ -135,7 +153,7 @@ extension Paths {
         }
 
         /// To test "client" model
-        func patch(_ body: edgecases_change_access_control.Client) -> Request<edgecases_change_access_control.Client> {
+        func patch(_ body: edgecases_change_access_control.Client) -> Request<edgecases_change_access_control.Client, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "testClientModel")
         }
     }

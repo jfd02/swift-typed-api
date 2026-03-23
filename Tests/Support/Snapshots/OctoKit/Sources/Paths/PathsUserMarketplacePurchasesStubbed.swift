@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.MarketplacePurchases {
@@ -20,13 +20,22 @@ extension Paths.User.MarketplacePurchases {
         /// Lists the active subscriptions for the authenticated user. You must use a [user-to-server OAuth access token](https://docs.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/#identifying-users-on-your-site), created for a user who has authorized your GitHub App, to access this endpoint. . OAuth Apps must authenticate using an [OAuth token](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-subscriptions-for-the-authenticated-user-stubbed)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.UserMarketplacePurchase]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.UserMarketplacePurchase], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "apps/list-subscriptions-for-authenticated-user-stubbed")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

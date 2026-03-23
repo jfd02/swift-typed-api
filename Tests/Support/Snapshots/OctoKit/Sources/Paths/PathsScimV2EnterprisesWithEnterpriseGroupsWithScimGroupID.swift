@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
@@ -20,7 +20,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
         /// **Note:** The SCIM API endpoints for enterprise accounts are currently in beta and are subject to change.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#get-scim-provisioning-information-for-an-enterprise-group)
-        public func get(excludedAttributes: String? = nil) -> Request<OctoKit.ScimEnterpriseGroup> {
+        public func get(excludedAttributes: String? = nil) -> Request<OctoKit.ScimEnterpriseGroup, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(excludedAttributes), id: "enterprise-admin/get-provisioning-information-for-enterprise-group")
         }
 
@@ -37,7 +37,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
         /// Replaces an existing provisioned group’s information. You must provide all the information required for the group as if you were provisioning it for the first time. Any existing group information that you don't provide will be removed, including group membership. If you want to only update a specific attribute, use the [Update an attribute for a SCIM enterprise group](#update-an-attribute-for-a-scim-enterprise-group) endpoint instead.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#set-scim-information-for-a-provisioned-enterprise-group)
-        public func put(_ body: PutRequest) -> Request<OctoKit.ScimEnterpriseGroup> {
+        public func put(_ body: PutRequest) -> Request<OctoKit.ScimEnterpriseGroup, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "enterprise-admin/set-information-for-provisioned-enterprise-group")
         }
 
@@ -83,7 +83,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
         /// Allows you to change a provisioned group’s individual attributes. To change a group’s values, you must provide a specific Operations JSON format that contains at least one of the add, remove, or replace operations. For examples and more information on the SCIM operations format, see the [SCIM specification](https://tools.ietf.org/html/rfc7644#section-3.5.2).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#update-an-attribute-for-a-scim-enterprise-group)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.ScimEnterpriseGroup> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.ScimEnterpriseGroup, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "enterprise-admin/update-attribute-for-enterprise-group")
         }
 
@@ -139,7 +139,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
         /// **Note:** The SCIM API endpoints for enterprise accounts are currently in beta and are subject to change.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#delete-a-scim-group-from-an-enterprise)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "enterprise-admin/delete-scim-group-from-enterprise")
         }
     }

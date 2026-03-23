@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Applications.WithClientID {
@@ -21,12 +21,20 @@ extension Paths.Applications.WithClientID {
         /// Deleting an OAuth application's grant will also delete all OAuth tokens associated with the application for the user. Once deleted, the application will have no access to the user's account and will no longer be listed on [the application authorizations settings screen within GitHub](https://github.com/settings/applications#authorized).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#delete-an-app-authorization)
-        public func delete(accessToken: String) throws(DeleteError) -> Request<Void> {
+        public func delete(accessToken: String) -> Request<Void, DeleteError> {
             Request(path: path, method: "DELETE", body: ["access_token": accessToken], id: "apps/delete-authorization")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

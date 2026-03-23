@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,12 +20,20 @@ extension Paths.Orgs.WithOrg {
         /// The return hash contains a `role` field which refers to the Organization Invitation role and will be one of the following values: `direct_member`, `admin`, `billing_manager`, `hiring_manager`, or `reinstate`. If the invitee is not a GitHub member, the `login` field in the return hash will be `null`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-pending-organization-invitations)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.OrganizationInvitation]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrganizationInvitation], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-pending-invitations")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -46,13 +54,22 @@ extension Paths.Orgs.WithOrg {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#create-an-organization-invitation)
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.OrganizationInvitation> {
+        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.OrganizationInvitation, PostError> {
             Request(path: path, method: "POST", body: body, id: "orgs/create-invitation")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

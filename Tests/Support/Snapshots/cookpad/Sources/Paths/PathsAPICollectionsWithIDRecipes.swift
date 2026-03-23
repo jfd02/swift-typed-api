@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 extension Paths.Collections.WithID {
     public var recipes: Recipes {
@@ -16,14 +16,20 @@ extension Paths.Collections.WithID {
         /// Find Recipes in a Collection
         ///
         /// Returns an ordered array of Recipe models in the given Collection.
-        public var get: Request<[cookpad.Recipe]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "getCollectionRecipes")
-            }
+        public var get: Request<[cookpad.Recipe], GetError> {
+            Request(path: path, method: "GET", id: "getCollectionRecipes")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

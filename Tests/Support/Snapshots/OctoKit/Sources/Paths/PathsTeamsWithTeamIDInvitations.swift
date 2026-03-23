@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID {
@@ -23,7 +23,7 @@ extension Paths.Teams.WithTeamID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-pending-team-invitations-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrganizationInvitation]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrganizationInvitation], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list-pending-invitations-legacy")
         }
 

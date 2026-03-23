@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.CredentialAuthorizations {
@@ -22,14 +22,20 @@ extension Paths.Orgs.WithOrg.CredentialAuthorizations {
         /// An authenticated organization owner with the `admin:org` scope can remove a credential authorization for an organization that uses SAML SSO. Once you remove someone's credential authorization, they will need to create a new personal access token or SSH key and authorize it for the organization they want to access.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-a-saml-sso-authorization-for-an-organization)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "orgs/remove-saml-sso-authorization")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "orgs/remove-saml-sso-authorization")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

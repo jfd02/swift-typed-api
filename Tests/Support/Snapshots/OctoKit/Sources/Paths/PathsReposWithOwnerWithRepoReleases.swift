@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -22,12 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Information about published releases are available to everyone. Only users with push access will receive listings for draft releases.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-releases)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Release]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Release], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-releases")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -48,13 +56,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-release)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Release> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Release, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-release")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

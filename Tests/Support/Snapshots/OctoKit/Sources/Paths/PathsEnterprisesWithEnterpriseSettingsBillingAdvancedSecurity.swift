@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Settings.Billing {
@@ -21,12 +21,20 @@ extension Paths.Enterprises.WithEnterprise.Settings.Billing {
         /// Each distinct user login across all repositories is counted as a single Advanced Security seat, so the total_advanced_security_committers is not the sum of active_users for each repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/billing#export-advanced-security-active-committers-data-for-enterprise)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<OctoKit.AdvancedSecurityActiveCommitters> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.AdvancedSecurityActiveCommitters, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "billing/get-github-advanced-security-billing-ghe")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ perPage: Int?, _ page: Int?) -> [(String, String?)] {

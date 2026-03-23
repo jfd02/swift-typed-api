@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gists {
@@ -20,14 +20,24 @@ extension Paths.Gists {
         /// List the authenticated user's starred gists:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-starred-gists)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.BaseGist]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.BaseGist], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "gists/list-starred")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unauthorized(OctoKit.BasicError)
             case notModified
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 extension Paths {
     public static var container: Container {
@@ -13,7 +13,7 @@ extension Paths {
         /// Path: `/container`
         public let path: String
 
-        public var get: Request<strip_parent_name_nested_objects_enabled.Container> {
+        public var get: Request<strip_parent_name_nested_objects_enabled.Container, DefaultRequestError> {
             Request(path: path, method: "GET")
         }
     }

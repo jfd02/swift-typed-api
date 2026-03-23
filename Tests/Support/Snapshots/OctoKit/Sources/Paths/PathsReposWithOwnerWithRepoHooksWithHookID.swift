@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Hooks {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
         /// Returns a webhook configured in a repository. To get only the webhook `config` properties, see "[Get a webhook configuration for a repository](/rest/reference/repos#get-a-webhook-configuration-for-a-repository)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-repository-webhook)
-        public var get: Request<OctoKit.Hook> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-webhook")
-            }
+        public var get: Request<OctoKit.Hook, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-webhook")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a repository webhook
@@ -35,13 +41,22 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
         /// Updates a webhook configured in a repository. If you previously had a `secret` set, you must provide the same `secret` or set a new `secret` or the secret will be removed. If you are only updating individual webhook `config` properties, use "[Update a webhook configuration for a repository](/rest/reference/repos#update-a-webhook-configuration-for-a-repository)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-repository-webhook)
-        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.Hook> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.Hook, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-webhook")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -117,14 +132,20 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
         /// Delete a repository webhook
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-repository-webhook)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete-webhook")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete-webhook")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

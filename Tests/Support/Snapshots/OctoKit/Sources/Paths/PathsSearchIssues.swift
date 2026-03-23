@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Search {
@@ -31,15 +31,26 @@ extension Paths.Search {
         /// **Note:** For [user-to-server](https://docs.github.com/developers/apps/identifying-and-authorizing-users-for-github-apps#user-to-server-requests) GitHub App requests, you can't retrieve a combination of issues and pull requests in a single query. Requests that don't include the `is:issue` or `is:pull-request` qualifier will receive an HTTP `422 Unprocessable Entity` response. To get results for both issues and pull requests, you must send separate queries for issues and pull requests. For more information about the `is` qualifier, see "[Searching only issues or pull requests](https://docs.github.com/github/searching-for-information-on-github/searching-issues-and-pull-requests#search-only-issues-or-pull-requests)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-issues-and-pull-requests)
-        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/issues-and-pull-requests")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case serviceUnavailable(GetServiceUnavailableBody)
             case unprocessableEntity(OctoKit.ValidationError)
             case notModified
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {

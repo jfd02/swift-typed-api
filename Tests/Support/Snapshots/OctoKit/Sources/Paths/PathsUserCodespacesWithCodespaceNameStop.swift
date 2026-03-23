@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Codespaces.WithCodespaceName {
@@ -22,17 +22,26 @@ extension Paths.User.Codespaces.WithCodespaceName {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#stop-a-codespace-for-the-authenticated-user)
-        public var post: Request<OctoKit.Codespace> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "codespaces/stop-for-authenticated-user")
-            }
+        public var post: Request<OctoKit.Codespace, PostError> {
+            Request(path: path, method: "POST", id: "codespaces/stop-for-authenticated-user")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case internalServerError(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

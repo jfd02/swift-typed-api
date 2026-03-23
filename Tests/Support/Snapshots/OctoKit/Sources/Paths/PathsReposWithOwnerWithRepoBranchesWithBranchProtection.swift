@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         /// Protected branches are available in public repositories with GitHub Free and GitHub Free for organizations, and in public and private repositories with GitHub Pro, GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's products](https://help.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-branch-protection)
-        public var get: Request<OctoKit.BranchProtection> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-branch-protection")
-            }
+        public var get: Request<OctoKit.BranchProtection, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-branch-protection")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update branch protection
@@ -41,14 +47,24 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         /// **Note**: The list of users, apps, and teams in total is limited to 100 items.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-branch-protection)
-        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.ProtectedBranch> {
+        public func put(_ body: PutRequest) -> Request<OctoKit.ProtectedBranch, PutError> {
             Request(path: path, method: "PUT", body: body, id: "repos/update-branch-protection")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -210,14 +226,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         /// Protected branches are available in public repositories with GitHub Free and GitHub Free for organizations, and in public and private repositories with GitHub Pro, GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see [GitHub's products](https://help.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-branch-protection)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete-branch-protection")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete-branch-protection")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

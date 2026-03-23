@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber.Labels {
@@ -20,15 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber.Labels {
         /// Removes the specified label from the issue, and returns the remaining labels on the issue. This endpoint returns a `404 Not Found` status if the label does not exist.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#remove-a-label-from-an-issue)
-        public var delete: Request<[OctoKit.Label]> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "issues/remove-label")
-            }
+        public var delete: Request<[OctoKit.Label], DeleteError> {
+            Request(path: path, method: "DELETE", id: "issues/remove-label")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

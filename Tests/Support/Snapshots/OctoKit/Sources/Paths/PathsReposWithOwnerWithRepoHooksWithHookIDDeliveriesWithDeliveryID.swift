@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID.Deliveries {
@@ -20,15 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID.Deliveries {
         /// Returns a delivery for a webhook configured in a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-delivery-for-a-repository-webhook)
-        public var get: Request<OctoKit.HookDelivery> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-webhook-delivery")
-            }
+        public var get: Request<OctoKit.HookDelivery, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-webhook-delivery")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case badRequest(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

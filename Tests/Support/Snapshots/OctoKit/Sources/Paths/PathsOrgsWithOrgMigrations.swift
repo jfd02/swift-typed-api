@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg {
         /// Lists the most recent migrations.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#list-organization-migrations)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Migration]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Migration], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "migrations/list-for-org")
         }
 
@@ -60,13 +60,22 @@ extension Paths.Orgs.WithOrg {
         /// Initiates the generation of a migration archive.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#start-an-organization-migration)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Migration> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Migration, PostError> {
             Request(path: path, method: "POST", body: body, id: "migrations/start-for-org")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

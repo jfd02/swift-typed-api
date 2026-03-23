@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Contents {
@@ -51,14 +51,24 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
         /// github.com URLs (`html_url` and `_links["html"]`) will have null values.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-repository-content)
-        public func get(ref: String? = nil) throws(GetError) -> Request<GetResponse> {
+        public func get(ref: String? = nil) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(ref), id: "repos/get-content")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case status302
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 302: return .status302
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponse: Decodable {
@@ -97,14 +107,24 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
         /// Creates a new file or replaces an existing file in a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-or-update-file-contents)
-        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.FileCommit> {
+        public func put(_ body: PutRequest) -> Request<OctoKit.FileCommit, PutError> {
             Request(path: path, method: "PUT", body: body, id: "repos/create-or-update-file-contents")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case conflict(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -198,15 +218,26 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
         /// You must provide values for both `name` and `email`, whether you choose to use `author` or `committer`. Otherwise, you'll receive a `422` status code.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-file)
-        public func delete(_ body: DeleteRequest) throws(DeleteError) -> Request<OctoKit.FileCommit> {
+        public func delete(_ body: DeleteRequest) -> Request<OctoKit.FileCommit, DeleteError> {
             Request(path: path, method: "DELETE", body: body, id: "repos/delete-file")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
             case conflict(OctoKit.BasicError)
             case serviceUnavailable(DeleteServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(DeleteServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteServiceUnavailableBody: Decodable {

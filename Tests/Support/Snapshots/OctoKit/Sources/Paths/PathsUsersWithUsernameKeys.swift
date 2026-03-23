@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -20,7 +20,7 @@ extension Paths.Users.WithUsername {
         /// Lists the _verified_ public SSH keys for a user. This is accessible by anyone.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-public-keys-for-a-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.KeySimple]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.KeySimple], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "users/list-public-keys-for-user")
         }
 

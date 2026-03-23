@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID {
@@ -21,14 +21,24 @@ extension Paths.Teams.WithTeamID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#list-child-teams-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Team]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list-child-legacy")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

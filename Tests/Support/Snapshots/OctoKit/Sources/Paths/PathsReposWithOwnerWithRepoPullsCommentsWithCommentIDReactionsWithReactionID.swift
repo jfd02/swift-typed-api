@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments.WithCommentID.Reactions {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments.WithCommentID.Reactions 
         /// Delete a reaction to a [pull request review comment](https://docs.github.com/rest/reference/pulls#review-comments).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#delete-a-pull-request-comment-reaction)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "reactions/delete-for-pull-request-comment")
         }
     }

@@ -2,19 +2,24 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Namespace {
     /// Create a pet
-    static public var createPets: Request<Void> {
-        get throws(CreatePetsError) {
-            Request(path: "/pets", method: "POST", id: "createPets")
-        }
+    static public var createPets: Request<Void, CreatePetsError> {
+        Request(path: "/pets", method: "POST", id: "createPets")
     }
 
-    public enum CreatePetsError: Error {
+    public enum CreatePetsError: RequestError {
         case `default`(statusCode: Int, petstore_change_namespace_when_operations_style.Error)
+        case unhandled(any Swift.Error)
+
+        public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+            switch statusCode {
+            default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_change_namespace_when_operations_style.Error.self, from: data))
+            }
+        }
     }
 }

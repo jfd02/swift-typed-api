@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git.Blobs {
@@ -22,16 +22,24 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Blobs {
         /// _Note_: This API supports blobs up to 100 megabytes in size.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#get-a-blob)
-        public var get: Request<OctoKit.Blob> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "git/get-blob")
-            }
+        public var get: Request<OctoKit.Blob, GetError> {
+            Request(path: path, method: "GET", id: "git/get-blob")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

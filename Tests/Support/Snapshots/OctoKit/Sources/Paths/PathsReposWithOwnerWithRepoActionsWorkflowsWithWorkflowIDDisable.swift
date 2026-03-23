@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
         /// You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `actions:write` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#disable-a-workflow)
-        public var put: Request<Void> {
+        public var put: Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", id: "actions/disable-workflow")
         }
     }

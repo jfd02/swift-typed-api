@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -18,12 +18,20 @@ extension Paths {
         /// Render a Markdown document
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/markdown#render-a-markdown-document)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<String> {
+        public func post(_ body: PostRequest) -> Request<String, PostError> {
             Request(path: path, method: "POST", body: body, id: "markdown/render")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

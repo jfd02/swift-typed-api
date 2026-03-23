@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Secrets {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets {
         /// Gets a single organization secret without revealing its encrypted value. You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-an-organization-secret)
-        public var get: Request<OctoKit.OrganizationActionsSecret> {
+        public var get: Request<OctoKit.OrganizationActionsSecret, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-org-secret")
         }
 
@@ -103,7 +103,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#create-or-update-an-organization-secret)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "actions/create-or-update-org-secret")
         }
 
@@ -151,7 +151,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets {
         /// Deletes a secret in an organization using the secret name. You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-an-organization-secret)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-org-secret")
         }
     }

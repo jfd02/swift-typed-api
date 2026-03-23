@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Traffic.Popular {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Traffic.Popular {
         /// Get the top 10 popular contents over the last 14 days.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-top-referral-paths)
-        public var get: Request<[OctoKit.ContentTraffic]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-top-paths")
-            }
+        public var get: Request<[OctoKit.ContentTraffic], GetError> {
+            Request(path: path, method: "GET", id: "repos/get-top-paths")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

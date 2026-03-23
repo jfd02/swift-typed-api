@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git {
@@ -18,15 +18,26 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// Create a blob
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-blob)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.ShortBlob> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.ShortBlob, PostError> {
             Request(path: path, method: "POST", body: body, id: "git/create-blob")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case conflict(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

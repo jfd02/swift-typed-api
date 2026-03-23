@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -17,41 +17,64 @@ extension Paths.User {
         let path: String
 
         /// Get user by user name
-        var get: Request<edgecases_change_access_control.User> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "getUserByName")
-            }
+        var get: Request<edgecases_change_access_control.User, GetError> {
+            Request(path: path, method: "GET", id: "getUserByName")
         }
 
-        enum GetError: Error {
+        enum GetError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Updated user
         ///
         /// This can only be done by the logged in user.
-        func put(_ body: edgecases_change_access_control.User) throws(PutError) -> Request<Void> {
+        func put(_ body: edgecases_change_access_control.User) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: body, id: "updateUser")
         }
 
-        enum PutError: Error {
+        enum PutError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete user
         ///
         /// This can only be done by the logged in user.
-        var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "deleteUser")
-            }
+        var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "deleteUser")
         }
 
-        enum DeleteError: Error {
+        enum DeleteError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

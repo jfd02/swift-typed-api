@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Jobs.WithJobID {
@@ -23,14 +23,20 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Jobs.WithJobID {
         /// have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#download-job-logs-for-a-workflow-run)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "actions/download-job-logs-for-workflow-run")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "actions/download-job-logs-for-workflow-run")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case status302
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 302: return .status302
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

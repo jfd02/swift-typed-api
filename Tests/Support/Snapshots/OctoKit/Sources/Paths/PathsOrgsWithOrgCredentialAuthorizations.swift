@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg {
         /// An authenticated organization owner with the `read:org` scope can list all credential authorizations for an organization that uses SAML single sign-on (SSO). The credentials are either personal access tokens or SSH keys that organization members have authorized for the organization. For more information, see [About authentication with SAML single sign-on](https://help.github.com/en/articles/about-authentication-with-saml-single-sign-on).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-saml-sso-authorizations-for-an-organization)
-        public var get: Request<[OctoKit.CredentialAuthorization]> {
+        public var get: Request<[OctoKit.CredentialAuthorization], DefaultRequestError> {
             Request(path: path, method: "GET", id: "orgs/list-saml-sso-authorizations")
         }
     }

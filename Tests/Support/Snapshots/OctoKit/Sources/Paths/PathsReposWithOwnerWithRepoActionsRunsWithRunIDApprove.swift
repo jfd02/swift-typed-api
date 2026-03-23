@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
@@ -22,15 +22,22 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
         /// You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `actions:write` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#approve-a-workflow-run-for-a-fork-pull-request)
-        public var post: Request<Void> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "actions/approve-workflow-run")
-            }
+        public var post: Request<Void, PostError> {
+            Request(path: path, method: "POST", id: "actions/approve-workflow-run")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

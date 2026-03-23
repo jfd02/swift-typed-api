@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Pet.WithPetID {
@@ -17,7 +17,7 @@ extension Paths.Pet.WithPetID {
         public let path: String
 
         /// Uploads an image
-        public func post(_ body: Data? = nil) -> Request<edgecases_rename.APIResponse> {
+        public func post(_ body: Data? = nil) -> Request<edgecases_rename.APIResponse, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "uploadFile")
         }
     }

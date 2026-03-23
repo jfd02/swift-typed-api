@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Information about autolinks are only available to repository administrators.
         ///
         /// [API method documentation](https://docs.github.com/v3/repos#list-autolinks)
-        public func get(page: Int? = nil) -> Request<[OctoKit.Autolink]> {
+        public func get(page: Int? = nil) -> Request<[OctoKit.Autolink], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(page), id: "repos/list-autolinks")
         }
 
@@ -37,12 +37,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Users with admin access to the repository can create an autolink.
         ///
         /// [API method documentation](https://docs.github.com/v3/repos#create-an-autolink)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Autolink> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Autolink, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-autolink")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Applications.Grants {
@@ -21,16 +21,24 @@ extension Paths.Applications.Grants {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#get-a-single-grant)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<OctoKit.ApplicationGrant> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "oauth-authorizations/get-grant")
-            }
+        public var get: Request<OctoKit.ApplicationGrant, GetError> {
+            Request(path: path, method: "GET", id: "oauth-authorizations/get-grant")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a grant
@@ -41,16 +49,24 @@ extension Paths.Applications.Grants {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#delete-a-grant)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-grant")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-grant")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

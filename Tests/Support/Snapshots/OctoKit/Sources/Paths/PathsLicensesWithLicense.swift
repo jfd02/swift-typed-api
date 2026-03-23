@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Licenses {
@@ -18,16 +18,24 @@ extension Paths.Licenses {
         /// Get a license
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/licenses#get-a-license)
-        public var get: Request<OctoKit.License> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "licenses/get")
-            }
+        public var get: Request<OctoKit.License, GetError> {
+            Request(path: path, method: "GET", id: "licenses/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

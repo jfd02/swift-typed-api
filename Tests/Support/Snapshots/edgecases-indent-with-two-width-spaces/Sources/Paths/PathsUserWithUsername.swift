@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -17,41 +17,64 @@ extension Paths.User {
     public let path: String
 
     /// Get user by user name
-    public var get: Request<edgecases_indent_with_two_width_spaces.User> {
-      get throws(GetError) {
-        Request(path: path, method: "GET", id: "getUserByName")
-      }
+    public var get: Request<edgecases_indent_with_two_width_spaces.User, GetError> {
+      Request(path: path, method: "GET", id: "getUserByName")
     }
 
-    public enum GetError: Error {
+    public enum GetError: RequestError {
       case badRequest
       case notFound
+      case unhandled(any Swift.Error)
+
+      public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+        switch statusCode {
+        case 400: return .badRequest
+        case 404: return .notFound
+        default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+        }
+      }
     }
 
     /// Updated user
     ///
     /// This can only be done by the logged in user.
-    public func put(_ body: edgecases_indent_with_two_width_spaces.User) throws(PutError) -> Request<Void> {
+    public func put(_ body: edgecases_indent_with_two_width_spaces.User) -> Request<Void, PutError> {
       Request(path: path, method: "PUT", body: body, id: "updateUser")
     }
 
-    public enum PutError: Error {
+    public enum PutError: RequestError {
       case badRequest
       case notFound
+      case unhandled(any Swift.Error)
+
+      public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+        switch statusCode {
+        case 400: return .badRequest
+        case 404: return .notFound
+        default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+        }
+      }
     }
 
     /// Delete user
     ///
     /// This can only be done by the logged in user.
-    public var delete: Request<Void> {
-      get throws(DeleteError) {
-        Request(path: path, method: "DELETE", id: "deleteUser")
-      }
+    public var delete: Request<Void, DeleteError> {
+      Request(path: path, method: "DELETE", id: "deleteUser")
     }
 
-    public enum DeleteError: Error {
+    public enum DeleteError: RequestError {
       case badRequest
       case notFound
+      case unhandled(any Swift.Error)
+
+      public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+        switch statusCode {
+        case 400: return .badRequest
+        case 404: return .notFound
+        default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+        }
+      }
     }
   }
 }

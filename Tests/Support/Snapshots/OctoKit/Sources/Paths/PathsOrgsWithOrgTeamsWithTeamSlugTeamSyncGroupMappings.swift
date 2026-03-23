@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.TeamSync {
@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.TeamSync {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}/team-sync/group-mappings`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-idp-groups-for-a-team)
-        public var get: Request<OctoKit.GroupMapping> {
+        public var get: Request<OctoKit.GroupMapping, DefaultRequestError> {
             Request(path: path, method: "GET", id: "teams/list-idp-groups-in-org")
         }
 
@@ -37,7 +37,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.TeamSync {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PATCH /organizations/{org_id}/team/{team_id}/team-sync/group-mappings`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-or-update-idp-group-connections)
-        public func patch(groups: [PatchRequest.Group]? = nil) -> Request<OctoKit.GroupMapping> {
+        public func patch(groups: [PatchRequest.Group]? = nil) -> Request<OctoKit.GroupMapping, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: PatchRequest(groups: groups), id: "teams/create-or-update-idp-group-connections-in-org")
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams {
@@ -22,14 +22,20 @@ extension Paths.Orgs.WithOrg.Teams {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-a-team-by-name)
-        public var get: Request<OctoKit.TeamFull> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "teams/get-by-name")
-            }
+        public var get: Request<OctoKit.TeamFull, GetError> {
+            Request(path: path, method: "GET", id: "teams/get-by-name")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a team
@@ -39,7 +45,7 @@ extension Paths.Orgs.WithOrg.Teams {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PATCH /organizations/{org_id}/team/{team_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#update-a-team)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.TeamFull> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.TeamFull, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "teams/update-in-org")
         }
 
@@ -111,7 +117,7 @@ extension Paths.Orgs.WithOrg.Teams {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `DELETE /organizations/{org_id}/team/{team_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#delete-a-team)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/delete-in-org")
         }
     }

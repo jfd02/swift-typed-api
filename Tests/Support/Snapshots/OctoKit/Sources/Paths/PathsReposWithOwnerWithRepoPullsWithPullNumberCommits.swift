@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Lists a maximum of 250 commits for a pull request. To receive a complete commit list for pull requests with more than 250 commits, use the [List commits](https://docs.github.com/rest/reference/repos#list-commits) endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-commits-on-a-pull-request)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Commit]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Commit], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "pulls/list-commits")
         }
 

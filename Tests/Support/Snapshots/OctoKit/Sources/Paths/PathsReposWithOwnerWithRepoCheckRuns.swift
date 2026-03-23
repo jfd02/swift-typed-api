@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// In a check suite, GitHub limits the number of check runs with the same name to 1000. Once these check runs exceed 1000, GitHub will start to automatically delete older check runs.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#create-a-check-run)
-        public func post(_ body: PostRequest) -> Request<OctoKit.CheckRun> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.CheckRun, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "checks/create")
         }
 

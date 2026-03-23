@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Milestones.WithMilestoneNumber {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo.Milestones.WithMilestoneNumber {
         /// List labels for issues in a milestone
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-labels-for-issues-in-a-milestone)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Label]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Label], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-labels-for-milestone")
         }
 

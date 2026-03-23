@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -20,12 +20,20 @@ extension Paths.Users.WithUsername {
         /// Lists public gists for the specified user:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gists-for-a-user)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.BaseGist]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.BaseGist], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "gists/list-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

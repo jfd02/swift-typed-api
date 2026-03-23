@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs {
@@ -22,14 +22,20 @@ extension Paths.Orgs {
         /// GitHub Apps with the `Organization plan` permission can use this endpoint to retrieve information about an organization's GitHub plan. See "[Authenticating with GitHub Apps](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/)" for details. For an example response, see 'Response with GitHub plan information' below."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-an-organization)
-        public var get: Request<OctoKit.OrganizationFull> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/get")
-            }
+        public var get: Request<OctoKit.OrganizationFull, GetError> {
+            Request(path: path, method: "GET", id: "orgs/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an organization
@@ -39,13 +45,22 @@ extension Paths.Orgs {
         /// Enables an authenticated organization owner with the `admin:org` scope to update the organization's profile and member privileges.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs/#update-an-organization)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.OrganizationFull> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.OrganizationFull, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "orgs/update")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(PatchUnprocessableEntityBody)
             case conflict(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(PatchUnprocessableEntityBody.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PatchUnprocessableEntityBody: Decodable {

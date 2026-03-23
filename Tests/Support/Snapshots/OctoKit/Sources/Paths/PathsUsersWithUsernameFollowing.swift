@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -20,7 +20,7 @@ extension Paths.Users.WithUsername {
         /// Lists the people who the specified user follows.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#list-the-people-a-user-follows)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.SimpleUser], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "users/list-following-for-user")
         }
 

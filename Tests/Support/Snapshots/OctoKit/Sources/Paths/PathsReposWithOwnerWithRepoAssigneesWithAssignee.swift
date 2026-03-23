@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Assignees {
@@ -24,14 +24,20 @@ extension Paths.Repos.WithOwner.WithRepo.Assignees {
         /// Otherwise a `404` status code is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#check-if-a-user-can-be-assigned)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "issues/check-user-can-be-assigned")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "issues/check-user-can-be-assigned")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

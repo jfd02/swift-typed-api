@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Hooks.WithHookID {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID {
         /// Access tokens must have the `admin:org_hook` scope, and GitHub Apps must have the `organization_hooks:read` permission.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-a-webhook-configuration-for-an-organization)
-        public var get: Request<OctoKit.WebhookConfig> {
+        public var get: Request<OctoKit.WebhookConfig, DefaultRequestError> {
             Request(path: path, method: "GET", id: "orgs/get-webhook-config-for-org")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID {
         /// Access tokens must have the `admin:org_hook` scope, and GitHub Apps must have the `organization_hooks:write` permission.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#update-a-webhook-configuration-for-an-organization)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.WebhookConfig> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.WebhookConfig, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "orgs/update-webhook-config-for-org")
         }
 

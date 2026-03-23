@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Collaborators.WithUsername {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators.WithUsername {
         /// Checks the repository permission of a collaborator. The possible repository permissions are `admin`, `write`, `read`, and `none`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-repository-permissions-for-a-user)
-        public var get: Request<OctoKit.RepositoryCollaboratorPermission> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-collaborator-permission-level")
-            }
+        public var get: Request<OctoKit.RepositoryCollaboratorPermission, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-collaborator-permission-level")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
         /// List release assets
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-release-assets)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.ReleaseAsset]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.ReleaseAsset], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-release-assets")
         }
 
@@ -55,12 +55,20 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
         /// *   If you upload an asset with the same filename as another uploaded asset, you'll receive an error and must delete the old file before you can re-upload the new asset.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#upload-a-release-asset)
-        public func post(name: String, label: String? = nil, _ body: String? = nil) throws(PostError) -> Request<OctoKit.ReleaseAsset> {
+        public func post(name: String, label: String? = nil, _ body: String? = nil) -> Request<OctoKit.ReleaseAsset, PostError> {
             Request(path: path, method: "POST", query: makePostQuery(name, label), body: body, id: "repos/upload-release-asset")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makePostQuery(_ name: String, _ label: String?) -> [(String, String?)] {

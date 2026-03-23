@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git.Tags {
@@ -47,14 +47,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Tags {
         /// | `valid` | None of the above errors applied, so the signature is considered to be verified. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#get-a-tag)
-        public var get: Request<OctoKit.GitTag> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "git/get-tag")
-            }
+        public var get: Request<OctoKit.GitTag, GetError> {
+            Request(path: path, method: "GET", id: "git/get-tag")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

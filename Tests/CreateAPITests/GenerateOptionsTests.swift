@@ -81,7 +81,7 @@ final class GenerateOptionsTests: GenerateTestCase {
             configuration: """
             {
                 "paths": {
-                    "imports": ["Get", "HTTPHeaders", "CoreData"]
+                    "imports": ["TypedAPI", "HTTPHeaders", "CoreData"]
                 },
                 "entities": {
                     "imports": ["CoreLocation"]
@@ -410,6 +410,45 @@ final class GenerateOptionsTests: GenerateTestCase {
             entities:
                 optimizeCodingKeys: false
             """
+        )
+    }
+
+    // Regression test for https://github.com/CreateAPI/CreateAPI/issues/196
+    // When acronyms transform property names (e.g. "petId" → "petID") and custom
+    // Codable implementations are disabled, CodingKeys must be generated to map
+    // the Swift property names back to the original JSON keys.
+    func testAcronymsCodingKeysFallback() throws {
+        let outputURL = temp.url.appendingPathComponent("Output")
+        var arguments: [String] = []
+        arguments.append(contentsOf: [
+            "--output", outputURL.path,
+            "--config-option", "module=edgecases-acronyms-codingkeys",
+            SpecFixture.edgecases.path
+        ])
+        let configContents = """
+        entities:
+            alwaysIncludeDecodableImplementation: false
+            alwaysIncludeEncodableImplementation: false
+        """
+        let configURL = URL(fileURLWithPath: temp.path(for: "config.yml"))
+        try! configContents.data(using: .utf8)!.write(to: configURL)
+        arguments.append(contentsOf: ["--config", configURL.path])
+
+        let command = try Generate.parse(arguments)
+        try command.run()
+
+        let orderPath = outputURL
+            .appendingPathComponent("Sources")
+            .appendingPathComponent("Entities")
+            .appendingPathComponent("Order.swift")
+            .path
+        let orderContents = try String(contentsOfFile: orderPath, encoding: .utf8)
+
+        // The Order entity has a "petId" JSON key which acronyms transform to "petID".
+        // Without custom init/encode, CodingKeys must be present to preserve the mapping.
+        XCTAssertTrue(
+            orderContents.contains("petID = \"petId\""),
+            "CodingKeys should map petID back to the original JSON key 'petId'. Generated:\n\(orderContents)"
         )
     }
 

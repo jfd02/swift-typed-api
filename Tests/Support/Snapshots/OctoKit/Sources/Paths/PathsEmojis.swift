@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -20,14 +20,20 @@ extension Paths {
         /// Lists all the emojis available to use on GitHub.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/emojis#get-emojis)
-        public var get: Request<[String: String]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "emojis/get")
-            }
+        public var get: Request<[String: String], GetError> {
+            Request(path: path, method: "GET", id: "emojis/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

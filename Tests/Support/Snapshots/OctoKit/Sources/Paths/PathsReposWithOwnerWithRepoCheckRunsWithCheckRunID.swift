@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
         /// Gets a single check run using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check runs. OAuth Apps and authenticated users must have the `repo` scope to get check runs in a private repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#get-a-check-run)
-        public var get: Request<OctoKit.CheckRun> {
+        public var get: Request<OctoKit.CheckRun, DefaultRequestError> {
             Request(path: path, method: "GET", id: "checks/get")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
         /// Updates a check run for a specific commit in a repository. Your GitHub App must have the `checks:write` permission to edit check runs.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#update-a-check-run)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.CheckRun> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.CheckRun, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "checks/update")
         }
 

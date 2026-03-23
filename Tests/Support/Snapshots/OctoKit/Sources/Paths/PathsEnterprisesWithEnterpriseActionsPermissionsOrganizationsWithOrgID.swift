@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.Permissions.Organizations {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Permissions.Organizations {
         /// You must authenticate using an access token with the `admin:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#enable-a-selected-organization-for-github-actions-in-an-enterprise)
-        public var put: Request<Void> {
+        public var put: Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", id: "enterprise-admin/enable-selected-organization-github-actions-enterprise")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Permissions.Organizations {
         /// You must authenticate using an access token with the `admin:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#disable-a-selected-organization-for-github-actions-in-an-enterprise)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "enterprise-admin/disable-selected-organization-github-actions-enterprise")
         }
     }

@@ -497,11 +497,9 @@ extension Generator {
         let methodName = style == .operations ? makePropertyName(task.operationId).rawValue : task.method
         let prefix = needsGetPrefix(for: task.path) ? "Get." : ""
 
-        if !typedResponse.errorCases.isEmpty {
-            output += templates.methodOrPropertyWithTypedThrows(name: methodName, parameters: parameters, returning: "\(prefix)Request<\(response.type)>", errorType: typedResponse.errorEnumName, contents: contents, isStatic: style == .operations)
-        } else {
-            output += templates.methodOrProperty(name: methodName, parameters: parameters, returning: "\(prefix)Request<\(response.type)>", contents: contents, isStatic: style == .operations)
-        }
+        let errorType = typedResponse.errorCases.isEmpty ? "DefaultRequestError" : typedResponse.errorEnumName
+        let returnType = "\(prefix)Request<\(response.type), \(errorType)>"
+        output += templates.methodOrProperty(name: methodName, parameters: parameters, returning: returnType, contents: contents, isStatic: style == .operations)
 
         // Generate the error enum if there are error cases
         if !typedResponse.errorCases.isEmpty {

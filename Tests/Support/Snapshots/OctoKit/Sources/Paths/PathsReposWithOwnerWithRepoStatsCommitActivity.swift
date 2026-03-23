@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Stats {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Stats {
         /// Returns the last year of commit activity grouped by week. The `days` array is a group of commits per day, starting on `Sunday`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-last-year-of-commit-activity)
-        public var get: Request<[OctoKit.CommitActivity]> {
+        public var get: Request<[OctoKit.CommitActivity], DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-commit-activity-stats")
         }
     }

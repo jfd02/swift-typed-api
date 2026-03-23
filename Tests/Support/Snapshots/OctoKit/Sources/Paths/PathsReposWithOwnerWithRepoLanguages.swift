@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Lists languages for the specified repository. The value shown for each language is the number of bytes of code written in that language.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-languages)
-        public var get: Request<[String: Int]> {
+        public var get: Request<[String: Int], DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/list-languages")
         }
     }

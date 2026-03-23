@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.Comments.WithCommentID {
@@ -20,12 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.Comments.WithCommentID {
         /// List the reactions to an [issue comment](https://docs.github.com/rest/reference/issues#comments).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#list-reactions-for-an-issue-comment)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Reaction]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Reaction], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "reactions/list-for-issue-comment")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -68,12 +76,20 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.Comments.WithCommentID {
         /// Create a reaction to an [issue comment](https://docs.github.com/rest/reference/issues#comments). A response with an HTTP `200` status means that you already added the reaction type to this issue comment.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#create-reaction-for-an-issue-comment)
-        public func post(content: PostRequest.Content) throws(PostError) -> Request<OctoKit.Reaction> {
+        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction, PostError> {
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-issue-comment")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

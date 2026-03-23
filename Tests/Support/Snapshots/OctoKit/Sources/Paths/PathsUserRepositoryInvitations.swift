@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -20,15 +20,26 @@ extension Paths.User {
         /// When authenticating as a user, this endpoint will list all currently open repository invitations for that user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-invitations-for-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.RepositoryInvitation]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.RepositoryInvitation], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-invitations-for-authenticated-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Members {
@@ -20,15 +20,22 @@ extension Paths.Orgs.WithOrg.Members {
         /// Check if a user is, publicly or privately, a member of the organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#check-organization-membership-for-a-user)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/check-membership-for-user")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "orgs/check-membership-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case status302
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 302: return .status302
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove an organization member
@@ -36,14 +43,20 @@ extension Paths.Orgs.WithOrg.Members {
         /// Removing a user from this list will remove them from all teams and they will no longer have any access to the organization's repositories.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-an-organization-member)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "orgs/remove-member")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "orgs/remove-member")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

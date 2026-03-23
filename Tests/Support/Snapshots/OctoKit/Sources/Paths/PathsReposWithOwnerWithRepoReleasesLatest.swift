@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// The latest release is the most recent non-prerelease, non-draft release, sorted by the `created_at` attribute. The `created_at` attribute is the date of the commit used for the release, and not the date when the release was drafted or published.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-latest-release)
-        public var get: Request<OctoKit.Release> {
+        public var get: Request<OctoKit.Release, DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-latest-release")
         }
     }

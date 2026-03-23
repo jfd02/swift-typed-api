@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Pets {
@@ -16,14 +16,19 @@ extension Paths.Pets {
         public let path: String
 
         /// Info for a specific pet
-        public var get: Request<petstore_change_entityname.PetGenerated> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "showPetById")
-            }
+        public var get: Request<petstore_change_entityname.PetGenerated, GetError> {
+            Request(path: path, method: "GET", id: "showPetById")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case `default`(statusCode: Int, petstore_change_entityname.ErrorGenerated)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_change_entityname.ErrorGenerated.self, from: data))
+                }
+            }
         }
     }
 }

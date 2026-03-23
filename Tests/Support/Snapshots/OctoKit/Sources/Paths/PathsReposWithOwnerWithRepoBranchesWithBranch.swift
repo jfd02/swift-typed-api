@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Branches {
@@ -18,16 +18,24 @@ extension Paths.Repos.WithOwner.WithRepo.Branches {
         /// Get a branch
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-branch)
-        public var get: Request<OctoKit.BranchWithProtection> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-branch")
-            }
+        public var get: Request<OctoKit.BranchWithProtection, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-branch")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case movedPermanently(OctoKit.BasicError)
             case unsupportedMediaType(GetUnsupportedMediaTypeBody)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 415: return .unsupportedMediaType(try decoder.decode(GetUnsupportedMediaTypeBody.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetUnsupportedMediaTypeBody: Decodable {

@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Store.Order {
@@ -19,29 +19,43 @@ extension Paths.Store.Order {
 		/// Find purchase order by ID
 		///
 		/// For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
-		public var get: Request<edgecases_tabs.Order> {
-			get throws(GetError) {
-				Request(path: path, method: "GET", id: "getOrderById")
-			}
+		public var get: Request<edgecases_tabs.Order, GetError> {
+			Request(path: path, method: "GET", id: "getOrderById")
 		}
 
-		public enum GetError: Error {
+		public enum GetError: RequestError {
 			case badRequest
 			case notFound
+			case unhandled(any Swift.Error)
+
+			public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+				switch statusCode {
+				case 400: return .badRequest
+				case 404: return .notFound
+				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+				}
+			}
 		}
 
 		/// Delete purchase order by ID
 		///
 		/// For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-		public var delete: Request<Void> {
-			get throws(DeleteError) {
-				Request(path: path, method: "DELETE", id: "deleteOrder")
-			}
+		public var delete: Request<Void, DeleteError> {
+			Request(path: path, method: "DELETE", id: "deleteOrder")
 		}
 
-		public enum DeleteError: Error {
+		public enum DeleteError: RequestError {
 			case badRequest
 			case notFound
+			case unhandled(any Swift.Error)
+
+			public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+				switch statusCode {
+				case 400: return .badRequest
+				case 404: return .notFound
+				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+				}
+			}
 		}
 	}
 }

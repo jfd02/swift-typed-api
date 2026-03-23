@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Sarifs {
@@ -20,16 +20,24 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Sarifs {
         /// Gets information about a SARIF upload, including the status and the URL of the analysis that was uploaded so that you can retrieve details of the analysis. For more information, see "[Get a code scanning analysis for a repository](/rest/reference/code-scanning#get-a-code-scanning-analysis-for-a-repository)." You must use an access token with the `security_events` scope to use this endpoint with private repos, the `public_repo` scope also grants permission to read security events on public repos only. GitHub Apps must have the `security_events` read permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#list-recent-code-scanning-analyses-for-a-repository)
-        public var get: Request<OctoKit.CodeScanningSarifsStatus> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "code-scanning/get-sarif")
-            }
+        public var get: Request<OctoKit.CodeScanningSarifsStatus, GetError> {
+            Request(path: path, method: "GET", id: "code-scanning/get-sarif")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound
             case serviceUnavailable(GetServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Stats {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Stats {
         /// Returns a weekly aggregate of the number of additions and deletions pushed to a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-weekly-commit-activity)
-        public var get: Request<[[Int]]> {
+        public var get: Request<[[Int]], DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-code-frequency-stats")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -22,12 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// You can also find out _when_ stars were created by passing the following custom [media type](https://docs.github.com/rest/overview/media-types/) via the `Accept` header:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-stargazers)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "activity/list-stargazers-for-repo")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {

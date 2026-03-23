@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Stats {
@@ -26,7 +26,7 @@ extension Paths.Repos.WithOwner.WithRepo.Stats {
         /// For example, `[2, 14, 25]` indicates that there were 25 total commits, during the 2:00pm hour on Tuesdays. All times are based on the time zone of individual commits.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-hourly-commit-count-for-each-day)
-        public var get: Request<[[Int]]> {
+        public var get: Request<[[Int]], DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-punch-card-stats")
         }
     }

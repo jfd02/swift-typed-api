@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg {
         /// Members of an organization can choose to have their membership publicized or not.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-public-organization-members)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.SimpleUser], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-public-members")
         }
 

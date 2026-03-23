@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.PublicMembers {
@@ -18,14 +18,20 @@ extension Paths.Orgs.WithOrg.PublicMembers {
         /// Check public organization membership for a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#check-public-organization-membership-for-a-user)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/check-public-membership-for-user")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "orgs/check-public-membership-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Set public organization membership for the authenticated user
@@ -35,20 +41,26 @@ extension Paths.Orgs.WithOrg.PublicMembers {
         /// Note that you'll need to set `Content-Length` to zero when calling out to this endpoint. For more information, see "[HTTP verbs](https://docs.github.com/rest/overview/resources-in-the-rest-api#http-verbs)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#set-public-organization-membership-for-the-authenticated-user)
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "orgs/set-public-membership-for-authenticated-user")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "orgs/set-public-membership-for-authenticated-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove public organization membership for the authenticated user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-public-organization-membership-for-the-authenticated-user)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "orgs/remove-public-membership-for-authenticated-user")
         }
     }

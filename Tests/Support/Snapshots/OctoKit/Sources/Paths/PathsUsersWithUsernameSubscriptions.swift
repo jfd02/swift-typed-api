@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -20,7 +20,7 @@ extension Paths.Users.WithUsername {
         /// Lists repositories a user is watching.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-repositories-watched-by-a-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.MinimalRepository], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "activity/list-repos-watched-by-user")
         }
 

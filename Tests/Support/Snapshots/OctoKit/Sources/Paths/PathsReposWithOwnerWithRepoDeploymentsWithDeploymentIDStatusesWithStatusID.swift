@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID.Statuses {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID.Statuses {
         /// Users with pull access can view a deployment status for a deployment:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-deployment-status)
-        public var get: Request<OctoKit.DeploymentStatus> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-deployment-status")
-            }
+        public var get: Request<OctoKit.DeploymentStatus, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-deployment-status")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

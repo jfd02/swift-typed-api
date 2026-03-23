@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Projects.Columns.Cards {
@@ -18,32 +18,53 @@ extension Paths.Projects.Columns.Cards {
         /// Get a project card
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#get-a-project-card)
-        public var get: Request<OctoKit.ProjectCard> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "projects/get-card")
-            }
+        public var get: Request<OctoKit.ProjectCard, GetError> {
+            Request(path: path, method: "GET", id: "projects/get-card")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an existing project card
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#update-a-project-card)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.ProjectCard> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.ProjectCard, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "projects/update-card")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -71,17 +92,26 @@ extension Paths.Projects.Columns.Cards {
         /// Delete a project card
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#delete-a-project-card)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "projects/delete-card")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "projects/delete-card")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case forbidden(DeleteForbiddenBody)
             case unauthorized(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(DeleteForbiddenBody.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteForbiddenBody: Decodable {

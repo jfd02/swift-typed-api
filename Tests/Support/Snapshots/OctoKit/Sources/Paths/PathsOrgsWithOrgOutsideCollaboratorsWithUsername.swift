@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.OutsideCollaborators {
@@ -20,15 +20,22 @@ extension Paths.Orgs.WithOrg.OutsideCollaborators {
         /// When an organization member is converted to an outside collaborator, they'll only have access to the repositories that their current team membership allows. The user will no longer be a member of the organization. For more information, see "[Converting an organization member to an outside collaborator](https://help.github.com/articles/converting-an-organization-member-to-an-outside-collaborator/)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#convert-an-organization-member-to-outside-collaborator)
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "orgs/convert-member-to-outside-collaborator")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "orgs/convert-member-to-outside-collaborator")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove outside collaborator from an organization
@@ -36,14 +43,20 @@ extension Paths.Orgs.WithOrg.OutsideCollaborators {
         /// Removing a user from this list will remove them from all the organization's repositories.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-outside-collaborator-from-an-organization)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "orgs/remove-outside-collaborator")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "orgs/remove-outside-collaborator")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(DeleteUnprocessableEntityBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(DeleteUnprocessableEntityBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteUnprocessableEntityBody: Decodable {

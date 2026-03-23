@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gitignore {
@@ -20,14 +20,20 @@ extension Paths.Gitignore {
         /// List all templates available to pass as an option when [creating a repository](https://docs.github.com/rest/reference/repos#create-a-repository-for-the-authenticated-user).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gitignore#get-all-gitignore-templates)
-        public var get: Request<[String]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "gitignore/get-all-templates")
-            }
+        public var get: Request<[String], GetError> {
+            Request(path: path, method: "GET", id: "gitignore/get-all-templates")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

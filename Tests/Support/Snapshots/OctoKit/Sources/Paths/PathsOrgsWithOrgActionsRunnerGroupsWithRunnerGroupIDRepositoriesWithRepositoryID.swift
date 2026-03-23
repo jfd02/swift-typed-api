@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID.Repositories {
@@ -26,7 +26,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID.Repositories
         /// scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#add-repository-acess-to-a-self-hosted-runner-group-in-an-organization)
-        public var put: Request<Void> {
+        public var put: Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", id: "actions/add-repo-access-to-self-hosted-runner-group-in-org")
         }
 
@@ -40,7 +40,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID.Repositories
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#remove-repository-access-to-a-self-hosted-runner-group-in-an-organization)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/remove-repo-access-to-self-hosted-runner-group-in-org")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Scim.V2.Enterprises.WithEnterprise {
@@ -20,7 +20,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
         /// **Note:** The SCIM API endpoints for enterprise accounts are currently in beta and are subject to change.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-provisioned-scim-groups-for-an-enterprise)
-        public func get(parameters: GetParameters? = nil) -> Request<OctoKit.ScimGroupListEnterprise> {
+        public func get(parameters: GetParameters? = nil) -> Request<OctoKit.ScimGroupListEnterprise, DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "enterprise-admin/list-provisioned-groups-enterprise")
         }
 
@@ -54,7 +54,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
         /// Provision an enterprise group, and invite users to the group. This sends invitation emails to the email address of the invited users to join the GitHub organization that the SCIM group corresponds to.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#provision-a-scim-enterprise-group-and-invite-users)
-        public func post(_ body: PostRequest) -> Request<OctoKit.ScimEnterpriseGroup> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.ScimEnterpriseGroup, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "enterprise-admin/provision-and-invite-enterprise-group")
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
         /// You can replace `workflow_id` with the workflow file name. For example, you could use `main.yaml`. Anyone with read access to the repository can use this endpoint. If the repository is private you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-workflow-usage)
-        public var get: Request<OctoKit.WorkflowUsage> {
+        public var get: Request<OctoKit.WorkflowUsage, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-workflow-usage")
         }
     }

@@ -621,11 +621,11 @@ final class TypedErrorGenerationTests: XCTestCase {
         XCTAssertNotNil(pathFile)
 
         if let contents = pathFile?.contents {
-            // Should have typed throws
-            XCTAssertTrue(contents.contains("throws(GetError)"), "Should use typed throws with GetError")
+            // Should return Request with error type
+            XCTAssertTrue(contents.contains("GetError>"), "Should return Request with GetError type parameter")
 
-            // Should have error enum
-            XCTAssertTrue(contents.contains("enum GetError: Error"), "Should generate GetError enum")
+            // Should have error enum conforming to RequestError
+            XCTAssertTrue(contents.contains("enum GetError: RequestError"), "Should generate GetError enum")
 
             // Should have notFound case (no body)
             XCTAssertTrue(contents.contains("case notFound"), "Should have notFound case")
@@ -633,6 +633,12 @@ final class TypedErrorGenerationTests: XCTestCase {
             // Should have internalServerError case with body type
             XCTAssertTrue(contents.contains("case internalServerError"), "Should have internalServerError case")
             XCTAssertTrue(contents.contains("ErrorBody"), "internalServerError should reference ErrorBody type")
+
+            // Should have decode method
+            XCTAssertTrue(contents.contains("static func decode(statusCode:"), "Should generate decode method")
+
+            // Should have unhandled case
+            XCTAssertTrue(contents.contains("case unhandled(any Swift.Error)"), "Should have unhandled case")
         }
     }
 
@@ -667,9 +673,10 @@ final class TypedErrorGenerationTests: XCTestCase {
         let pathFile = output.files.first
 
         if let contents = pathFile?.contents {
-            // Should NOT have typed throws since only success response
-            XCTAssertFalse(contents.contains("throws("), "Should not have typed throws when no error responses")
-            XCTAssertFalse(contents.contains("enum") && contents.contains("Error"), "Should not generate error enum")
+            // Should use DefaultRequestError since no error responses
+            XCTAssertTrue(contents.contains("DefaultRequestError"), "Should use DefaultRequestError when no error responses")
+            // Should NOT generate an error enum
+            XCTAssertFalse(contents.contains("enum") && contents.contains("RequestError"), "Should not generate error enum")
         }
     }
 
@@ -785,7 +792,7 @@ final class TypedErrorGenerationTests: XCTestCase {
         let pathFile = output.files.first
 
         if let contents = pathFile?.contents {
-            XCTAssertTrue(contents.contains("throws(PostError)"), "Should have typed throws")
+            XCTAssertTrue(contents.contains("PostError>"), "Should return Request with PostError type parameter")
             XCTAssertTrue(contents.contains("case badRequest"), "Should have badRequest case")
             XCTAssertTrue(contents.contains("case unauthorized"), "Should have unauthorized case (no body)")
             XCTAssertTrue(contents.contains("case conflict"), "Should have conflict case")
@@ -827,7 +834,7 @@ final class TypedErrorGenerationTests: XCTestCase {
         XCTAssertNotNil(pathFile, "Should find a file with delete operation")
 
         if let contents = pathFile?.contents {
-            XCTAssertTrue(contents.contains("throws(DeleteError)"), "Should have typed throws")
+            XCTAssertTrue(contents.contains("DeleteError>"), "Should return Request with DeleteError type parameter")
             // notFound has no body, so should be a plain case
             XCTAssertTrue(contents.contains("case notFound"), "Should have notFound case")
             // Make sure it doesn't have parentheses (no associated value)
@@ -877,7 +884,7 @@ final class TypedErrorGenerationTests: XCTestCase {
         if let contents = pathFile?.contents {
             // Should have both body param and typed throws
             XCTAssertTrue(contents.contains("body"), "Should accept request body")
-            XCTAssertTrue(contents.contains("throws(PostError)"), "Should have typed throws")
+            XCTAssertTrue(contents.contains("PostError>"), "Should return Request with PostError type parameter")
             XCTAssertTrue(contents.contains("case badRequest"), "Should have badRequest case")
         }
     }
@@ -926,7 +933,7 @@ final class TypedErrorGenerationTests: XCTestCase {
         let pathFile = output.files.first
 
         if let contents = pathFile?.contents {
-            XCTAssertTrue(contents.contains("throws(GetError)"), "Should have typed throws for $ref response")
+            XCTAssertTrue(contents.contains("GetError>"), "Should return Request with GetError type parameter for $ref response")
             XCTAssertTrue(contents.contains("case unauthorized"), "Should resolve $ref response to unauthorized case")
             XCTAssertTrue(contents.contains("AuthError"), "Should reference the AuthError schema type")
         }
@@ -979,8 +986,8 @@ final class TypedErrorGenerationTests: XCTestCase {
         let pathFile = output.files.first
 
         if let contents = pathFile?.contents {
-            XCTAssertFalse(contents.contains("throws("), "Only success responses should not generate typed throws")
-            XCTAssertFalse(contents.contains("Error: Error"), "Should not generate error enum")
+            XCTAssertTrue(contents.contains("DefaultRequestError"), "Should use DefaultRequestError for success-only responses")
+            XCTAssertFalse(contents.contains("enum") && contents.contains("RequestError"), "Should not generate error enum")
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gists.WithGistID {
@@ -18,14 +18,24 @@ extension Paths.Gists.WithGistID {
         /// List gist comments
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gist-comments)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.GistComment]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.GistComment], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "gists/list-comments")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -42,14 +52,24 @@ extension Paths.Gists.WithGistID {
         /// Create a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#create-a-gist-comment)
-        public func post(body: String) throws(PostError) -> Request<OctoKit.GistComment> {
+        public func post(body: String) -> Request<OctoKit.GistComment, PostError> {
             Request(path: path, method: "POST", body: ["body": body], id: "gists/create-comment")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

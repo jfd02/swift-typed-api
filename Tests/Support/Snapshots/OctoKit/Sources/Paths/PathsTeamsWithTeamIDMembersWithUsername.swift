@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID.Members {
@@ -25,14 +25,20 @@ extension Paths.Teams.WithTeamID.Members {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-team-member-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "teams/get-member-legacy")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "teams/get-member-legacy")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add team member (Legacy)
@@ -51,16 +57,24 @@ extension Paths.Teams.WithTeamID.Members {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-team-member-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "teams/add-member-legacy")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "teams/add-member-legacy")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notFound
             case unprocessableEntity
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                case 422: return .unprocessableEntity
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove team member (Legacy)
@@ -77,14 +91,20 @@ extension Paths.Teams.WithTeamID.Members {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#remove-team-member-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "teams/remove-member-legacy")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "teams/remove-member-legacy")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

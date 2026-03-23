@@ -16,7 +16,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-log", .branch("main")),
         .package(url: "https://github.com/apple/swift-numerics", .revision("7f2d022d3d9b55bf812814f5d01896cbfa0fd4da")),
         .package(url: "https://github.com/apple/swift-system", from: "1.2.1"),
-        .package(url: "https://github.com/kean/Get", from: "2.1.0"),
+        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/HTTPHeaders", from: "0.1.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
     ],
@@ -29,7 +29,7 @@ let package = Package(
             .product(name: "RealModule", package: "swift-numerics"),
             .product(name: "ComplexModule", package: "swift-numerics"),
             .product(name: "SystemPackage", package: "swift-system"),
-            .product(name: "Get", package: "Get"),
+            .product(name: "TypedAPI", package: "swift-typed-api"),
             .product(name: "HTTPHeaders", package: "HTTPHeaders"),
             .product(name: "URLQueryEncoder", package: "URLQueryEncoder")
         ], path: "Sources")

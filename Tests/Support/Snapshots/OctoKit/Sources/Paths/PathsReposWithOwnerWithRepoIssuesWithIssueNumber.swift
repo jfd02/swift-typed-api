@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues {
@@ -30,17 +30,26 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         /// request id, use the "[List pull requests](https://docs.github.com/rest/reference/pulls#list-pull-requests)" endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-an-issue)
-        public var get: Request<OctoKit.Issue> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "issues/get")
-            }
+        public var get: Request<OctoKit.Issue, GetError> {
+            Request(path: path, method: "GET", id: "issues/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case movedPermanently(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an issue
@@ -48,17 +57,30 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         /// Issue owners and users with push access can edit an issue.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues/#update-an-issue)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Issue> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Issue, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "issues/update")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case serviceUnavailable(PatchServiceUnavailableBody)
             case forbidden(OctoKit.BasicError)
             case movedPermanently(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(PatchServiceUnavailableBody.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchServiceUnavailableBody: Decodable {

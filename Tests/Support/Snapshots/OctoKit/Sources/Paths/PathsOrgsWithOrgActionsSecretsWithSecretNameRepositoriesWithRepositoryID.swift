@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName.Repositories {
@@ -20,14 +20,20 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName.Repositories {
         /// Adds a repository to an organization secret when the `visibility` for repository access is set to `selected`. The visibility is set when you [Create or update an organization secret](https://docs.github.com/rest/reference/actions#create-or-update-an-organization-secret). You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#add-selected-repository-to-an-organization-secret)
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "actions/add-selected-repo-to-org-secret")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "actions/add-selected-repo-to-org-secret")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case conflict
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 409: return .conflict
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove selected repository from an organization secret
@@ -35,14 +41,20 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName.Repositories {
         /// Removes a repository from an organization secret when the `visibility` for repository access is set to `selected`. The visibility is set when you [Create or update an organization secret](https://docs.github.com/rest/reference/actions#create-or-update-an-organization-secret). You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#remove-selected-repository-from-an-organization-secret)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "actions/remove-selected-repo-from-org-secret")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "actions/remove-selected-repo-from-org-secret")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case conflict
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 409: return .conflict
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

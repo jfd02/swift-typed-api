@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Codespaces {
@@ -22,18 +22,28 @@ extension Paths.User.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#get-a-codespace-for-the-authenticated-user)
-        public var get: Request<OctoKit.Codespace> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "codespaces/get-for-authenticated-user")
-            }
+        public var get: Request<OctoKit.Codespace, GetError> {
+            Request(path: path, method: "GET", id: "codespaces/get-for-authenticated-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case internalServerError(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a codespace for the authenticated user
@@ -45,14 +55,24 @@ extension Paths.User.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#update-a-codespace-for-the-authenticated-user)
-        public func patch(machine: String? = nil) throws(PatchError) -> Request<OctoKit.Codespace> {
+        public func patch(machine: String? = nil) -> Request<OctoKit.Codespace, PatchError> {
             Request(path: path, method: "PATCH", body: ["machine": machine], id: "codespaces/update-for-authenticated-user")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unauthorized(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a codespace for the authenticated user
@@ -62,18 +82,28 @@ extension Paths.User.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#delete-a-codespace-for-the-authenticated-user)
-        public var delete: Request<[String: AnyJSON]> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "codespaces/delete-for-authenticated-user")
-            }
+        public var delete: Request<[String: AnyJSON], DeleteError> {
+            Request(path: path, method: "DELETE", id: "codespaces/delete-for-authenticated-user")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case internalServerError(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

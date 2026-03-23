@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Import {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
         /// List files larger than 100MB found during the import
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-large-files)
-        public var get: Request<[OctoKit.PorterLargeFile]> {
+        public var get: Request<[OctoKit.PorterLargeFile], DefaultRequestError> {
             Request(path: path, method: "GET", id: "migrations/get-large-files")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Permissions {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Actions.Permissions {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `administration` organization permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-selected-repositories-enabled-for-github-actions-in-an-organization)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-selected-repositories-enabled-github-actions-organization")
         }
 
@@ -56,7 +56,7 @@ extension Paths.Orgs.WithOrg.Actions.Permissions {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `administration` organization permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-selected-repositories-enabled-for-github-actions-in-an-organization)
-        public func put(selectedRepositoryIDs: [Int]) -> Request<Void> {
+        public func put(selectedRepositoryIDs: [Int]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["selected_repository_ids": selectedRepositoryIDs], id: "actions/set-selected-repositories-enabled-github-actions-organization")
         }
     }

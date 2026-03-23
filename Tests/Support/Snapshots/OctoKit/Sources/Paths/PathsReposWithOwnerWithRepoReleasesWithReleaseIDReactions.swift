@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
@@ -20,12 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
         /// Create a reaction to a [release](https://docs.github.com/rest/reference/repos#releases). A response with a `Status: 200 OK` means that you already added the reaction type to this release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions/#create-reaction-for-a-release)
-        public func post(content: PostRequest.Content) throws(PostError) -> Request<OctoKit.Reaction> {
+        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction, PostError> {
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-release")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

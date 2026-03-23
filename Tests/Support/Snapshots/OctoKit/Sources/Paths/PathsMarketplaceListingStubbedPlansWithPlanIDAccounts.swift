@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.MarketplaceListing.Stubbed.Plans.WithPlanID {
@@ -22,12 +22,20 @@ extension Paths.MarketplaceListing.Stubbed.Plans.WithPlanID {
         /// GitHub Apps must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint. OAuth Apps must use [basic authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) with their client ID and client secret to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-accounts-for-a-plan-stubbed)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.MarketplacePurchase]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MarketplacePurchase], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "apps/list-accounts-for-plan-stubbed")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

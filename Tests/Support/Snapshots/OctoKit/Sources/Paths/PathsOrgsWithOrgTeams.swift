@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,12 +20,20 @@ extension Paths.Orgs.WithOrg {
         /// Lists all teams in an organization that are visible to the authenticated user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-teams)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Team]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -46,13 +54,22 @@ extension Paths.Orgs.WithOrg {
         /// When you create a new team, you automatically become a team maintainer without explicitly adding yourself to the optional array of `maintainers`. For more information, see "[About teams](https://help.github.com/en/github/setting-up-and-managing-organizations-and-teams/about-teams)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-a-team)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.TeamFull> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.TeamFull, PostError> {
             Request(path: path, method: "POST", body: body, id: "teams/create")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// List requested reviewers for a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-requested-reviewers-for-a-pull-request)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.PullRequestReviewRequest> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.PullRequestReviewRequest, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "pulls/list-requested-reviewers")
         }
 
@@ -38,13 +38,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// This endpoint triggers [notifications](https://docs.github.com/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#request-reviewers-for-a-pull-request)
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.PullRequestSimple> {
+        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.PullRequestSimple, PostError> {
             Request(path: path, method: "POST", body: body, id: "pulls/request-reviewers")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {
@@ -68,12 +77,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Remove requested reviewers from a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#remove-requested-reviewers-from-a-pull-request)
-        public func delete(_ body: DeleteRequest) throws(DeleteError) -> Request<OctoKit.PullRequestSimple> {
+        public func delete(_ body: DeleteRequest) -> Request<OctoKit.PullRequestSimple, DeleteError> {
             Request(path: path, method: "DELETE", body: body, id: "pulls/remove-requested-reviewers")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteRequest: Encodable {

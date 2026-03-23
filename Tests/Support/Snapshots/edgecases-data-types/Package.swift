@@ -10,13 +10,13 @@ let package = Package(
         .library(name: "edgecases-data-types", targets: ["edgecases-data-types"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kean/Get", from: "2.1.0"),
+        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/NaiveDate", from: "1.0.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
     ],
     targets: [
         .target(name: "edgecases-data-types", dependencies: [
-            .product(name: "Get", package: "Get"),
+            .product(name: "TypedAPI", package: "swift-typed-api"),
             .product(name: "NaiveDate", package: "NaiveDate"),
             .product(name: "URLQueryEncoder", package: "URLQueryEncoder")
         ], path: "Sources")

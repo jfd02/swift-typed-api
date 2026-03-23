@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Artifacts.WithArtifactID {
@@ -23,14 +23,20 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Artifacts.WithArtifactID {
         /// GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#download-an-artifact)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "actions/download-artifact")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "actions/download-artifact")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case status302
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 302: return .status302
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

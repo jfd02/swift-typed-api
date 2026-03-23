@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases {
@@ -20,12 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// Generate a name and body describing a [release](https://docs.github.com/rest/reference/repos#releases). The body content will be markdown formatted and contain information like the changes since last release and users who contributed. The generated release notes are not saved anywhere. They are intended to be generated and used when creating a new release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#generate-release-notes)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.ReleaseNotesContent> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.ReleaseNotesContent, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/generate-release-notes")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

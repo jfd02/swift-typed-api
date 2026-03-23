@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List repository teams
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-teams)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-teams")
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg {
         /// List all users who are outside collaborators of an organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-outside-collaborators-for-an-organization)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SimpleUser], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "orgs/list-outside-collaborators")
         }
 

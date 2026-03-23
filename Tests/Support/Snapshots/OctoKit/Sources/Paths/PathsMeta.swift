@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -22,14 +22,20 @@ extension Paths {
         /// **Note:** The IP addresses shown in the documentation's response are only example values. You must always query the API directly to get the latest list of IP addresses.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/meta#get-github-meta-information)
-        public var get: Request<OctoKit.APIOverview> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "meta/get")
-            }
+        public var get: Request<OctoKit.APIOverview, GetError> {
+            Request(path: path, method: "GET", id: "meta/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

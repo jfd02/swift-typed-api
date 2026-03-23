@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrictions {
@@ -22,14 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// Lists the GitHub Apps that have push access to this branch. Only installed GitHub Apps with `write` access to the `contents` permission can be added as authorized actors on a protected branch.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-apps-with-access-to-the-protected-branch)
-        public var get: Request<[OctoKit.Integration]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-apps-with-access-to-protected-branch")
-            }
+        public var get: Request<[OctoKit.Integration], GetError> {
+            Request(path: path, method: "GET", id: "repos/get-apps-with-access-to-protected-branch")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add app access restrictions
@@ -43,12 +49,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// | `array` | The GitHub Apps that have push access to this branch. Use the app's `slug`. **Note**: The list of users, apps, and teams in total is limited to 100 items. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#add-app-access-restrictions)
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<[OctoKit.Integration]> {
+        public func post(_ body: PostRequest? = nil) -> Request<[OctoKit.Integration], PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/add-app-access-restrictions")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostRequest: Encodable {
@@ -96,12 +110,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// | `array` | The GitHub Apps that have push access to this branch. Use the app's `slug`. **Note**: The list of users, apps, and teams in total is limited to 100 items. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#set-app-access-restrictions)
-        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<[OctoKit.Integration]> {
+        public func put(_ body: PutRequest? = nil) -> Request<[OctoKit.Integration], PutError> {
             Request(path: path, method: "PUT", body: body, id: "repos/set-app-access-restrictions")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PutRequest: Encodable {
@@ -149,12 +171,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
         /// | `array` | The GitHub Apps that have push access to this branch. Use the app's `slug`. **Note**: The list of users, apps, and teams in total is limited to 100 items. |
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#remove-app-access-restrictions)
-        public func delete(_ body: DeleteRequest? = nil) throws(DeleteError) -> Request<[OctoKit.Integration]> {
+        public func delete(_ body: DeleteRequest? = nil) -> Request<[OctoKit.Integration], DeleteError> {
             Request(path: path, method: "DELETE", body: body, id: "repos/remove-app-access-restrictions")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum DeleteRequest: Encodable {

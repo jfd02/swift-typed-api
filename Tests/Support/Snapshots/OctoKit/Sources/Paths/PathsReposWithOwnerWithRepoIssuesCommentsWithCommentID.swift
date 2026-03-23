@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.Comments {
@@ -18,31 +18,45 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.Comments {
         /// Get an issue comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-an-issue-comment)
-        public var get: Request<OctoKit.IssueComment> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "issues/get-comment")
-            }
+        public var get: Request<OctoKit.IssueComment, GetError> {
+            Request(path: path, method: "GET", id: "issues/get-comment")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an issue comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#update-an-issue-comment)
-        public func patch(body: String) throws(PatchError) -> Request<OctoKit.IssueComment> {
+        public func patch(body: String) -> Request<OctoKit.IssueComment, PatchError> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "issues/update-comment")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete an issue comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#delete-an-issue-comment)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "issues/delete-comment")
         }
     }

@@ -2,6 +2,6 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 public enum Paths {}

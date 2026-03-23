@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Runners {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-self-hosted-runner-for-an-organization)
-        public var get: Request<OctoKit.Runner> {
+        public var get: Request<OctoKit.Runner, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-self-hosted-runner-for-org")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-a-self-hosted-runner-from-an-organization)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-self-hosted-runner-from-org")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Labels {
@@ -18,20 +18,26 @@ extension Paths.Repos.WithOwner.WithRepo.Labels {
         /// Get a label
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-a-label)
-        public var get: Request<OctoKit.Label> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "issues/get-label")
-            }
+        public var get: Request<OctoKit.Label, GetError> {
+            Request(path: path, method: "GET", id: "issues/get-label")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a label
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#update-a-label)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Label> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Label, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "issues/update-label")
         }
 
@@ -60,7 +66,7 @@ extension Paths.Repos.WithOwner.WithRepo.Labels {
         /// Delete a label
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#delete-a-label)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "issues/delete-label")
         }
     }

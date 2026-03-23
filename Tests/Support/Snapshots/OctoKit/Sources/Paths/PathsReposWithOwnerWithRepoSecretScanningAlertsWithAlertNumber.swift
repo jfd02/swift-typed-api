@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
@@ -22,16 +22,24 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
         /// GitHub Apps must have the `secret_scanning_alerts` read permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/secret-scanning#get-a-secret-scanning-alert)
-        public var get: Request<OctoKit.SecretScanningAlert> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "secret-scanning/get-alert")
-            }
+        public var get: Request<OctoKit.SecretScanningAlert, GetError> {
+            Request(path: path, method: "GET", id: "secret-scanning/get-alert")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case notFound
             case serviceUnavailable(GetServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable {
@@ -60,14 +68,24 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
         /// GitHub Apps must have the `secret_scanning_alerts` write permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/secret-scanning#update-a-secret-scanning-alert)
-        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.SecretScanningAlert> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.SecretScanningAlert, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "secret-scanning/update-alert")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notFound
             case unprocessableEntity
             case serviceUnavailable(PatchServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                case 422: return .unprocessableEntity
+                case 503: return .serviceUnavailable(try decoder.decode(PatchServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchServiceUnavailableBody: Decodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Jobs {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Jobs {
         /// Gets a specific job in a workflow run. Anyone with read access to the repository can use this endpoint. If the repository is private you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-job-for-a-workflow-run)
-        public var get: Request<OctoKit.Job> {
+        public var get: Request<OctoKit.Job, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-job-for-workflow-run")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Applications.WithClientID {
@@ -20,13 +20,22 @@ extension Paths.Applications.WithClientID {
         /// OAuth applications can use a special API method for checking OAuth token validity without exceeding the normal rate limits for failed login attempts. Authentication works differently with this particular endpoint. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) to use this endpoint, where the username is the OAuth application `client_id` and the password is its `client_secret`. Invalid tokens will return `404 NOT FOUND`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#check-a-token)
-        public func post(accessToken: String) throws(PostError) -> Request<OctoKit.Authorization> {
+        public func post(accessToken: String) -> Request<OctoKit.Authorization, PostError> {
             Request(path: path, method: "POST", body: ["access_token": accessToken], id: "apps/check-token")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Reset a token
@@ -34,12 +43,20 @@ extension Paths.Applications.WithClientID {
         /// OAuth applications can use this API method to reset a valid OAuth token without end-user involvement. Applications must save the "token" property in the response because changes take effect immediately. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) when accessing this endpoint, using the OAuth application's `client_id` and `client_secret` as the username and password. Invalid tokens will return `404 NOT FOUND`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#reset-a-token)
-        public func patch(accessToken: String) throws(PatchError) -> Request<OctoKit.Authorization> {
+        public func patch(accessToken: String) -> Request<OctoKit.Authorization, PatchError> {
             Request(path: path, method: "PATCH", body: ["access_token": accessToken], id: "apps/reset-token")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete an app token
@@ -47,12 +64,20 @@ extension Paths.Applications.WithClientID {
         /// OAuth application owners can revoke a single token for an OAuth application. You must use [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) when accessing this endpoint, using the OAuth application's `client_id` and `client_secret` as the username and password.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#delete-an-app-token)
-        public func delete(accessToken: String) throws(DeleteError) -> Request<Void> {
+        public func delete(accessToken: String) -> Request<Void, DeleteError> {
             Request(path: path, method: "DELETE", body: ["access_token": accessToken], id: "apps/delete-token")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername.Settings.Billing {
@@ -24,7 +24,7 @@ extension Paths.Users.WithUsername.Settings.Billing {
         /// Access tokens must have the `user` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/billing#get-github-packages-billing-for-a-user)
-        public var get: Request<OctoKit.PackagesBillingUsage> {
+        public var get: Request<OctoKit.PackagesBillingUsage, DefaultRequestError> {
             Request(path: path, method: "GET", id: "billing/get-github-packages-billing-user")
         }
     }

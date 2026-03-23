@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runners.WithRunnerID.Labels {
@@ -27,15 +27,22 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runners.WithRunnerID.Labels {
         /// endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#remove-a-custom-label-from-a-self-hosted-runner-for-a-repository)
-        public var delete: Request<DeleteResponse> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "actions/remove-custom-label-from-self-hosted-runner-for-repo")
-            }
+        public var delete: Request<DeleteResponse, DeleteError> {
+            Request(path: path, method: "DELETE", id: "actions/remove-custom-label-from-self-hosted-runner-for-repo")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteResponse: Decodable {

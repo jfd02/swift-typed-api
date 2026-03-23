@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -20,13 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Updates the pull request branch with the latest upstream changes by merging HEAD from the base branch into the pull request branch.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#update-a-pull-request-branch)
-        public func put(expectedHeadSha: String? = nil) throws(PutError) -> Request<PutResponse> {
+        public func put(expectedHeadSha: String? = nil) -> Request<PutResponse, PutError> {
             Request(path: path, method: "PUT", body: ["expected_head_sha": expectedHeadSha], id: "pulls/update-branch")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutResponse: Decodable {

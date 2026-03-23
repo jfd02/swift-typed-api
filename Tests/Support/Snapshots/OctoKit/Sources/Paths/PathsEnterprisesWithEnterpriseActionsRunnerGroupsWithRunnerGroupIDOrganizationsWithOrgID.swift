@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups.WithRunnerGroupID.Organizations {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups.WithRunnerGroupI
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#add-organization-access-to-a-self-hosted-runner-group-in-an-enterprise)
-        public var put: Request<Void> {
+        public var put: Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", id: "enterprise-admin/add-org-access-to-self-hosted-runner-group-in-enterprise")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups.WithRunnerGroupI
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#remove-organization-access-to-a-self-hosted-runner-group-in-an-enterprise)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "enterprise-admin/remove-org-access-to-self-hosted-runner-group-in-enterprise")
         }
     }

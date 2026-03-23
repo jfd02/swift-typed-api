@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Installations.WithInstallationID.Repositories {
@@ -22,16 +22,24 @@ extension Paths.User.Installations.WithInstallationID.Repositories {
         /// You must use a personal access token (which you can create via the [command line](https://docs.github.com/github/authenticating-to-github/creating-a-personal-access-token) or [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication)) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#add-a-repository-to-an-app-installation)
-        public var put: Request<Void> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "apps/add-repo-to-installation-for-authenticated-user")
-            }
+        public var put: Request<Void, PutError> {
+            Request(path: path, method: "PUT", id: "apps/add-repo-to-installation-for-authenticated-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notModified
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove a repository from an app installation
@@ -41,16 +49,24 @@ extension Paths.User.Installations.WithInstallationID.Repositories {
         /// You must use a personal access token (which you can create via the [command line](https://docs.github.com/github/authenticating-to-github/creating-a-personal-access-token) or [Basic Authentication](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication)) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#remove-a-repository-from-an-app-installation)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "apps/remove-repo-from-installation-for-authenticated-user")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "apps/remove-repo-from-installation-for-authenticated-user")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notModified
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

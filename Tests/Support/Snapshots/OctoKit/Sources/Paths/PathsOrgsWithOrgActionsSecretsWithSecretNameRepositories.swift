@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName {
         /// Lists all repositories that have been selected when the `visibility` for repository access to a secret is set to `selected`. You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-selected-repositories-for-an-organization-secret)
-        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<GetResponse> {
+        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "actions/list-selected-repos-for-org-secret")
         }
 
@@ -52,7 +52,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName {
         /// Replaces all repositories for an organization secret when the `visibility` for repository access is set to `selected`. The visibility is set when you [Create or update an organization secret](https://docs.github.com/rest/reference/actions#create-or-update-an-organization-secret). You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-selected-repositories-for-an-organization-secret)
-        public func put(selectedRepositoryIDs: [Int]) -> Request<Void> {
+        public func put(selectedRepositoryIDs: [Int]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["selected_repository_ids": selectedRepositoryIDs], id: "actions/set-selected-repos-for-org-secret")
         }
     }

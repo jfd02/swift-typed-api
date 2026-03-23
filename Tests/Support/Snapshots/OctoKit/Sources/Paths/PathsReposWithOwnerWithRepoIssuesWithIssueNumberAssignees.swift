@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Adds up to 10 assignees to an issue. Users already assigned to an issue are not replaced.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#add-assignees-to-an-issue)
-        public func post(assignees: [String]? = nil) -> Request<OctoKit.Issue> {
+        public func post(assignees: [String]? = nil) -> Request<OctoKit.Issue, DefaultRequestError> {
             Request(path: path, method: "POST", body: ["assignees": assignees], id: "issues/add-assignees")
         }
 
@@ -29,7 +29,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Removes one or more assignees from an issue.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#remove-assignees-from-an-issue)
-        public func delete(assignees: [String]? = nil) -> Request<OctoKit.Issue> {
+        public func delete(assignees: [String]? = nil) -> Request<OctoKit.Issue, DefaultRequestError> {
             Request(path: path, method: "DELETE", body: ["assignees": assignees], id: "issues/remove-assignees")
         }
     }

@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -17,12 +17,19 @@ extension Paths.User {
         let path: String
 
         /// Creates list of users with given input array
-        func post(_ body: [edgecases_change_access_control.User]) throws(PostError) -> Request<Void> {
+        func post(_ body: [edgecases_change_access_control.User]) -> Request<Void, PostError> {
             Request(path: path, method: "POST", body: body, id: "createUsersWithArrayInput")
         }
 
-        enum PostError: Error {
+        enum PostError: RequestError {
             case `default`(statusCode: Int)
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                default: return .`default`(statusCode: statusCode)
+                }
+            }
         }
     }
 }

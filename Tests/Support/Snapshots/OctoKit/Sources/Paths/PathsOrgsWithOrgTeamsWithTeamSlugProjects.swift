@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}/projects`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-team-projects)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.TeamProject]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.TeamProject], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "teams/list-projects-in-org")
         }
 

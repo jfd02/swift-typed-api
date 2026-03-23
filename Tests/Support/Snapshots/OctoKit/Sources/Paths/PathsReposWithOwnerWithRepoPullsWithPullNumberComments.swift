@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Lists all review comments for a pull request. By default, review comments are in ascending order by ID.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-review-comments-on-a-pull-request)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.PullRequestReviewComment]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.PullRequestReviewComment], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "pulls/list-review-comments")
         }
 
@@ -75,13 +75,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#create-a-review-comment-for-a-pull-request)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.PullRequestReviewComment> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.PullRequestReviewComment, PostError> {
             Request(path: path, method: "POST", body: body, id: "pulls/create-review-comment")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

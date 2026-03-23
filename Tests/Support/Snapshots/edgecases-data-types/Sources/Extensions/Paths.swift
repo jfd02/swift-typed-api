@@ -3,7 +3,7 @@
 
 import Foundation
 import NaiveDate
-import Get
+import TypedAPI
 import URLQueryEncoder
 
 public enum Paths {}

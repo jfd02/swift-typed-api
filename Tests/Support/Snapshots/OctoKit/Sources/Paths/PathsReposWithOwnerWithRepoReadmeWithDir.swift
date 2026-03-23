@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Readme {
@@ -22,13 +22,22 @@ extension Paths.Repos.WithOwner.WithRepo.Readme {
         /// READMEs support [custom media types](https://docs.github.com/rest/reference/repos#custom-media-types) for retrieving the raw content or rendered HTML.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-repository-directory-readme)
-        public func get(ref: String? = nil) throws(GetError) -> Request<OctoKit.ContentFile> {
+        public func get(ref: String? = nil) -> Request<OctoKit.ContentFile, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(ref), id: "repos/get-readme-in-directory")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ ref: String?) -> [(String, String?)] {

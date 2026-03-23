@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runners {
@@ -23,7 +23,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runners {
         /// endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-self-hosted-runner-for-a-repository)
-        public var get: Request<OctoKit.Runner> {
+        public var get: Request<OctoKit.Runner, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-self-hosted-runner-for-repo")
         }
 
@@ -35,7 +35,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runners {
         /// scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-a-self-hosted-runner-from-a-repository)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-self-hosted-runner-from-repo")
         }
     }

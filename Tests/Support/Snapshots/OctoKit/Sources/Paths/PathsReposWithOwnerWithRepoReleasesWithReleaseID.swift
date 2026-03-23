@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// **Note:** This returns an `upload_url` key corresponding to the endpoint for uploading release assets. This key is a [hypermedia resource](https://docs.github.com/rest/overview/resources-in-the-rest-api#hypermedia).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-release)
-        public var get: Request<OctoKit.Release> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-release")
-            }
+        public var get: Request<OctoKit.Release, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-release")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a release
@@ -35,12 +41,20 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// Users with push access to the repository can edit a release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-release)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Release> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Release, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-release")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -86,7 +100,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
         /// Users with push access to the repository can delete a release.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-release)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/delete-release")
         }
     }

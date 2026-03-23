@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
@@ -22,15 +22,26 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Note that, if you choose not to pass any parameters, you'll need to set `Content-Length` to zero when calling out to this endpoint. For more information, see "[HTTP verbs](https://docs.github.com/rest/overview/resources-in-the-rest-api#http-verbs)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#lock-an-issue)
-        public func put(lockReason: PutRequest.LockReason? = nil) throws(PutError) -> Request<Void> {
+        public func put(lockReason: PutRequest.LockReason? = nil) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: PutRequest(lockReason: lockReason), id: "issues/lock")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -68,15 +79,22 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Users with push access can unlock an issue's conversation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#unlock-an-issue)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "issues/unlock")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "issues/unlock")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

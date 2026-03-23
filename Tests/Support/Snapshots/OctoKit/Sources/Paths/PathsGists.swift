@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -20,13 +20,22 @@ extension Paths {
         /// Lists the authenticated user's gists or if called anonymously, this endpoint returns all public gists:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#list-gists-for-the-authenticated-user)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.BaseGist]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.BaseGist], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "gists/list")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -60,15 +69,26 @@ extension Paths {
         /// **Note:** Don't name your files "gistfile" with a numerical suffix. This is the format of the automatic naming scheme that Gist uses internally.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#create-a-gist)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GistSimple> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.GistSimple, PostError> {
             Request(path: path, method: "POST", body: body, id: "gists/create")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

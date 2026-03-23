@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CheckSuites.WithCheckSuiteID {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckSuites.WithCheckSuiteID {
         /// To rerequest a check suite, your GitHub App must have the `checks:read` permission on a private repository or pull access to a public repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#rerequest-a-check-suite)
-        public var post: Request<Void> {
+        public var post: Request<Void, DefaultRequestError> {
             Request(path: path, method: "POST", id: "checks/rerequest-suite")
         }
     }

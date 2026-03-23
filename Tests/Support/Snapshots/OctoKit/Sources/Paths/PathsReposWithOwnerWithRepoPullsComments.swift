@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
         /// Lists review comments for all pull requests in a repository. By default, review comments are in ascending order by ID.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-review-comments-in-a-repository)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.PullRequestReviewComment]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.PullRequestReviewComment], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "pulls/list-review-comments-for-repo")
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gists.WithGistID.Comments {
@@ -18,16 +18,24 @@ extension Paths.Gists.WithGistID.Comments {
         /// Get a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#get-a-gist-comment)
-        public var get: Request<OctoKit.GistComment> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "gists/get-comment")
-            }
+        public var get: Request<OctoKit.GistComment, GetError> {
+            Request(path: path, method: "GET", id: "gists/get-comment")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(GetForbiddenBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(GetForbiddenBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetForbiddenBody: Decodable {
@@ -71,27 +79,43 @@ extension Paths.Gists.WithGistID.Comments {
         /// Update a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#update-a-gist-comment)
-        public func patch(body: String) throws(PatchError) -> Request<OctoKit.GistComment> {
+        public func patch(body: String) -> Request<OctoKit.GistComment, PatchError> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "gists/update-comment")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a gist comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#delete-a-gist-comment)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "gists/delete-comment")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "gists/delete-comment")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

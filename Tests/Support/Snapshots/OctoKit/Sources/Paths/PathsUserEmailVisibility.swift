@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.Email {
@@ -20,16 +20,28 @@ extension Paths.User.Email {
         /// Sets the visibility for your primary email addresses.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#set-primary-email-visibility-for-the-authenticated-user)
-        public func patch(visibility: PatchRequest.Visibility) throws(PatchError) -> Request<[OctoKit.Email]> {
+        public func patch(visibility: PatchRequest.Visibility) -> Request<[OctoKit.Email], PatchError> {
             Request(path: path, method: "PATCH", body: PatchRequest(visibility: visibility), id: "users/set-primary-email-visibility-for-authenticated-user")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {

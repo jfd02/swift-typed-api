@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Runners {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-runner-applications-for-an-organization)
-        public var get: Request<[OctoKit.RunnerApplication]> {
+        public var get: Request<[OctoKit.RunnerApplication], DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/list-runner-applications-for-org")
         }
     }

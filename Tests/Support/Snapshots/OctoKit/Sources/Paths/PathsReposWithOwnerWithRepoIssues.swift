@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -25,14 +25,24 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// request id, use the "[List pull requests](https://docs.github.com/rest/reference/pulls#list-pull-requests)" endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-repository-issues)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Issue]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Issue], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-for-repo")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case movedPermanently(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -107,16 +117,28 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// This endpoint triggers [notifications](https://docs.github.com/en/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#create-an-issue)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Issue> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Issue, PostError> {
             Request(path: path, method: "POST", body: body, id: "issues/create")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case serviceUnavailable(PostServiceUnavailableBody)
             case notFound(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(PostServiceUnavailableBody.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostServiceUnavailableBody: Decodable {

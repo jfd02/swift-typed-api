@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
@@ -21,7 +21,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#re-run-a-workflow)
         @available(*, deprecated, message: "Deprecated")
-        public var post: Request<Void> {
+        public var post: Request<Void, DefaultRequestError> {
             Request(path: path, method: "POST", id: "actions/re-run-workflow")
         }
     }

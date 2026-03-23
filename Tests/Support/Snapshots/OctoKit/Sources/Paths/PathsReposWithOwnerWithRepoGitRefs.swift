@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git {
@@ -20,12 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
         /// Creates a reference for your repository. You are unable to create new references for empty repositories, even if the commit SHA-1 hash used exists. Empty repositories are repositories without branches.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#create-a-reference)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.GitRef> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.GitRef, PostError> {
             Request(path: path, method: "POST", body: body, id: "git/create-ref")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

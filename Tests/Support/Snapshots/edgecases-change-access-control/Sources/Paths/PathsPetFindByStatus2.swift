@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Pet {
@@ -19,7 +19,7 @@ extension Paths.Pet {
         /// Finds Pets by status
         ///
         /// Multiple status values can be provided with comma separated strings
-        func get(status: [Status]? = nil) -> Request<[edgecases_change_access_control.Pet]> {
+        func get(status: [Status]? = nil) -> Request<[edgecases_change_access_control.Pet], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(status), id: "findPetsByStatus2")
         }
 

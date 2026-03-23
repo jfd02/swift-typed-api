@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Invitations.WithInvitationID {
@@ -20,12 +20,20 @@ extension Paths.Orgs.WithOrg.Invitations.WithInvitationID {
         /// List all teams associated with an invitation. In order to see invitations in an organization, the authenticated user must be an organization owner.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organization-invitation-teams)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Team]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Team], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-invitation-teams")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

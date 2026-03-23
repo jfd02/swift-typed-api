@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -15,7 +15,7 @@ extension Paths {
         public let path: String
 
         /// Form Object Explode False
-        public func get(type: `Type`) -> Request<Void> {
+        public func get(type: `Type`) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(type))
         }
 

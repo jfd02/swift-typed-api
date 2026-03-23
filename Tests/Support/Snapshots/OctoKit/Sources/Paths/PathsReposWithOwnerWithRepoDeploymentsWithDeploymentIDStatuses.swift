@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
@@ -20,12 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
         /// Users with pull access can view deployment statuses for a deployment:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-deployment-statuses)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.DeploymentStatus]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.DeploymentStatus], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-deployment-statuses")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -46,12 +54,20 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
         /// GitHub Apps require `read & write` access to "Deployments" and `read-only` access to "Repo contents" (for private repos). OAuth Apps require the `repo_deployment` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-deployment-status)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.DeploymentStatus> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.DeploymentStatus, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-deployment-status")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

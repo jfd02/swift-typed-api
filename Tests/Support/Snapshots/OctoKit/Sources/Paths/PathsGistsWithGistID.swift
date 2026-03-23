@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gists {
@@ -18,16 +18,24 @@ extension Paths.Gists {
         /// Get a gist
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#get-a-gist)
-        public var get: Request<OctoKit.GistSimple> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "gists/get")
-            }
+        public var get: Request<OctoKit.GistSimple, GetError> {
+            Request(path: path, method: "GET", id: "gists/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(GetForbiddenBody)
             case notFound(OctoKit.BasicError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(GetForbiddenBody.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetForbiddenBody: Decodable {
@@ -73,13 +81,22 @@ extension Paths.Gists {
         /// Allows you to update or delete a gist file and rename gist files. Files from the previous version of the gist that aren't explicitly changed during an edit are unchanged.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists/#update-a-gist)
-        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.GistSimple> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.GistSimple, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "gists/update")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -132,16 +149,24 @@ extension Paths.Gists {
         /// Delete a gist
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gists#delete-a-gist)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "gists/delete")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "gists/delete")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case notModified
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CheckSuites {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckSuites {
         /// Gets a single check suite using its `id`. GitHub Apps must have the `checks:read` permission on a private repository or pull access to a public repository to get check suites. OAuth Apps and authenticated users must have the `repo` scope to get check suites in a private repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#get-a-check-suite)
-        public var get: Request<OctoKit.CheckSuite> {
+        public var get: Request<OctoKit.CheckSuite, DefaultRequestError> {
             Request(path: path, method: "GET", id: "checks/get-suite")
         }
     }

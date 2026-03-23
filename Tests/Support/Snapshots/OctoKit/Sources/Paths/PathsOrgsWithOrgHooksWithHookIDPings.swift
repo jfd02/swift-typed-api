@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Hooks.WithHookID {
@@ -20,14 +20,20 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID {
         /// This will trigger a [ping event](https://docs.github.com/webhooks/#ping-event) to be sent to the hook.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#ping-an-organization-webhook)
-        public var post: Request<Void> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "orgs/ping-webhook")
-            }
+        public var post: Request<Void, PostError> {
+            Request(path: path, method: "POST", id: "orgs/ping-webhook")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -10,11 +10,11 @@ let package = Package(
         .library(name: "petstore-entity-exclude", targets: ["petstore-entity-exclude"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kean/Get", from: "2.1.0")
+        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0")
     ],
     targets: [
         .target(name: "petstore-entity-exclude", dependencies: [
-            .product(name: "Get", package: "Get")
+            .product(name: "TypedAPI", package: "swift-typed-api")
         ], path: "Sources")
     ]
 )

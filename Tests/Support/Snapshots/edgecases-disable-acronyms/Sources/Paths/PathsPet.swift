@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -17,23 +17,41 @@ extension Paths {
         public let path: String
 
         /// Add a new pet to the store
-        public func post(_ body: edgecases_disable_acronyms.Pet) throws(PostError) -> Request<Void> {
+        public func post(_ body: edgecases_disable_acronyms.Pet) -> Request<Void, PostError> {
             Request(path: path, method: "POST", body: body, id: "addPet")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case methodNotAllowed
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 405: return .methodNotAllowed
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an existing pet
-        public func put(_ body: edgecases_disable_acronyms.Pet) throws(PutError) -> Request<Void> {
+        public func put(_ body: edgecases_disable_acronyms.Pet) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: body, id: "updatePet")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case badRequest
             case notFound
             case methodNotAllowed
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                case 405: return .methodNotAllowed
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

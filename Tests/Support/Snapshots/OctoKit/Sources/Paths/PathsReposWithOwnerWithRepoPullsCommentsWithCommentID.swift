@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments {
@@ -20,14 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments {
         /// Provides details for a review comment.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#get-a-review-comment-for-a-pull-request)
-        public var get: Request<OctoKit.PullRequestReviewComment> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "pulls/get-review-comment")
-            }
+        public var get: Request<OctoKit.PullRequestReviewComment, GetError> {
+            Request(path: path, method: "GET", id: "pulls/get-review-comment")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a review comment for a pull request
@@ -35,7 +41,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments {
         /// Enables you to edit a review comment.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#update-a-review-comment-for-a-pull-request)
-        public func patch(body: String) -> Request<OctoKit.PullRequestReviewComment> {
+        public func patch(body: String) -> Request<OctoKit.PullRequestReviewComment, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "pulls/update-review-comment")
         }
 
@@ -44,14 +50,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.Comments {
         /// Deletes a review comment.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#delete-a-review-comment-for-a-pull-request)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "pulls/delete-review-comment")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "pulls/delete-review-comment")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CheckSuites {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckSuites {
         /// Changes the default automatic flow when creating check suites. By default, a check suite is automatically created each time code is pushed to a repository. When you disable the automatic creation of check suites, you can manually [Create a check suite](https://docs.github.com/rest/reference/checks#create-a-check-suite). You must have admin permissions in the repository to set preferences for check suites.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#update-repository-preferences-for-check-suites)
-        public func patch(autoTriggerChecks: [PatchRequest.AutoTriggerCheck]? = nil) -> Request<OctoKit.CheckSuitePreference> {
+        public func patch(autoTriggerChecks: [PatchRequest.AutoTriggerCheck]? = nil) -> Request<OctoKit.CheckSuitePreference, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: PatchRequest(autoTriggerChecks: autoTriggerChecks), id: "checks/set-suites-preferences")
         }
 

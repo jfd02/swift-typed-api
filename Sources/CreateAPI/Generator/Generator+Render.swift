@@ -60,11 +60,20 @@ extension Generator {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: true))
                     }
                 } else {
-                    if decl.protocols.isDecodable, !properties.isEmpty, options.entities.alwaysIncludeDecodableImplementation {
+                    let hasCustomDecoder = decl.protocols.isDecodable && !properties.isEmpty && options.entities.alwaysIncludeDecodableImplementation
+                    let hasCustomEncoder = decl.protocols.isEncodable && !properties.isEmpty && options.entities.alwaysIncludeEncodableImplementation
+                    if hasCustomDecoder {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: false))
                     }
-                    if decl.protocols.isEncodable, !properties.isEmpty, options.entities.alwaysIncludeEncodableImplementation {
+                    if hasCustomEncoder {
                         contents.append(templates.encode(properties: properties))
+                    }
+                    // When custom implementations aren't generated for all conformances,
+                    // CodingKeys are needed to map property names back to original JSON
+                    // keys (e.g. when acronyms transform "petId" to "petID").
+                    let needsFallback = (decl.protocols.isDecodable && !hasCustomDecoder) || (decl.protocols.isEncodable && !hasCustomEncoder)
+                    if needsFallback, let keys = templates.codingKeys(for: properties) {
+                        contents.append(keys)
                     }
                 }
             case .anyOf:

@@ -612,7 +612,7 @@ public struct ConfigOptions: ParsableConfiguration {
         @Option public var includeResponseHeaders: Bool = true
 
         /// Modules to be imported within the source files for generated requests
-        @Option public var imports: Set<String> = ["Get"]
+        @Option public var imports: Set<String> = ["TypedAPI"]
 
         /// Allows you to override mapping of specific response types to a custom (or generated) type instead.
         ///

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
@@ -29,15 +29,26 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
         /// (if you used `ref` in the request).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#list-code-scanning-alerts-for-a-repository)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.CodeScanningAlertItems]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.CodeScanningAlertItems], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "code-scanning/list-alerts-for-repo")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case serviceUnavailable(GetServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable {

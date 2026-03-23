@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List deploy keys
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-deploy-keys)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.DeployKey]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.DeployKey], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-deploy-keys")
         }
 
@@ -38,12 +38,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// You can create a read-only deploy key.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-deploy-key)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.DeployKey> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.DeployKey, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-deploy-key")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Settings.Billing {
@@ -24,7 +24,7 @@ extension Paths.Enterprises.WithEnterprise.Settings.Billing {
         /// The authenticated user must be an enterprise admin.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/billing#get-shared-storage-billing-for-an-enterprise)
-        public var get: Request<OctoKit.CombinedBillingUsage> {
+        public var get: Request<OctoKit.CombinedBillingUsage, DefaultRequestError> {
             Request(path: path, method: "GET", id: "billing/get-shared-storage-billing-ghe")
         }
     }

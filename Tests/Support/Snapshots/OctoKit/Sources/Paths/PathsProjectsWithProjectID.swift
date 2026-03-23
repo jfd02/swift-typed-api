@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Projects {
@@ -20,16 +20,24 @@ extension Paths.Projects {
         /// Gets a project by its `id`. Returns a `404 Not Found` status if projects are disabled. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#get-a-project)
-        public var get: Request<OctoKit.Project> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "projects/get")
-            }
+        public var get: Request<OctoKit.Project, GetError> {
+            Request(path: path, method: "GET", id: "projects/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a project
@@ -37,17 +45,30 @@ extension Paths.Projects {
         /// Updates a project board's information. Returns a `404 Not Found` status if projects are disabled. If you do not have sufficient privileges to perform this action, a `401 Unauthorized` or `410 Gone` status is returned.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#update-a-project)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Project> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Project, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "projects/update")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notFound
             case notModified
             case forbidden(PatchForbiddenBody)
             case unauthorized(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(PatchForbiddenBody.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchForbiddenBody: Decodable {
@@ -118,18 +139,28 @@ extension Paths.Projects {
         /// Deletes a project board. Returns a `404 Not Found` status if projects are disabled.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#delete-a-project)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "projects/delete")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "projects/delete")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case forbidden(DeleteForbiddenBody)
             case unauthorized(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(DeleteForbiddenBody.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteForbiddenBody: Decodable {

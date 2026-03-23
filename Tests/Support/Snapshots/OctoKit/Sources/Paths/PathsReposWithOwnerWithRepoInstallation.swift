@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -22,15 +22,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-a-repository-installation-for-the-authenticated-app)
-        public var get: Request<OctoKit.Installation> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "apps/get-repo-installation")
-            }
+        public var get: Request<OctoKit.Installation, GetError> {
+            Request(path: path, method: "GET", id: "apps/get-repo-installation")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case movedPermanently(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

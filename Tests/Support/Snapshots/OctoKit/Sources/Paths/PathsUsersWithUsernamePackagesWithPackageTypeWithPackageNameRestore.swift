@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername.Packages.WithPackageType.WithPackageName {
@@ -28,14 +28,24 @@ extension Paths.Users.WithUsername.Packages.WithPackageType.WithPackageName {
         /// - If `package_type` is `container`, you must also have admin permissions to the container that you want to restore.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#restore-a-package-for-a-user)
-        public func post(token: String? = nil) throws(PostError) -> Request<Void> {
+        public func post(token: String? = nil) -> Request<Void, PostError> {
             Request(path: path, method: "POST", query: makePostQuery(token), id: "packages/restore-package-for-user")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makePostQuery(_ token: String?) -> [(String, String?)] {

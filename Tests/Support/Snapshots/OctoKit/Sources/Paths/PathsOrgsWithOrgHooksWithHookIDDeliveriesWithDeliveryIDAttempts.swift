@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Hooks.WithHookID.Deliveries.WithDeliveryID {
@@ -20,15 +20,22 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID.Deliveries.WithDeliveryID {
         /// Redeliver a delivery for a webhook configured in an organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#redeliver-a-delivery-for-an-organization-webhook)
-        public var post: Request<[String: AnyJSON]> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "orgs/redeliver-webhook-delivery")
-            }
+        public var post: Request<[String: AnyJSON], PostError> {
+            Request(path: path, method: "POST", id: "orgs/redeliver-webhook-delivery")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case badRequest(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,20 +18,26 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Enable Git LFS for a repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#enable-git-lfs-for-a-repository)
-        public var put: Request<[String: AnyJSON]> {
-            get throws(PutError) {
-                Request(path: path, method: "PUT", id: "repos/enable-lfs-for-repo")
-            }
+        public var put: Request<[String: AnyJSON], PutError> {
+            Request(path: path, method: "PUT", id: "repos/enable-lfs-for-repo")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Disable Git LFS for a repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#disable-git-lfs-for-a-repository)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/disable-lfs-for-repo")
         }
     }

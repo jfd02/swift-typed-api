@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
         /// Anyone with read access to the repository can use this endpoint. If the repository is private, you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-pending-deployments-for-a-workflow-run)
-        public var get: Request<[OctoKit.PendingDeployment]> {
+        public var get: Request<[OctoKit.PendingDeployment], DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-pending-deployments-for-run")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
         /// Anyone with read access to the repository contents and deployments can use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#review-pending-deployments-for-a-workflow-run)
-        public func post(_ body: PostRequest) -> Request<[OctoKit.Deployment]> {
+        public func post(_ body: PostRequest) -> Request<[OctoKit.Deployment], DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "actions/review-pending-deployments-for-run")
         }
 

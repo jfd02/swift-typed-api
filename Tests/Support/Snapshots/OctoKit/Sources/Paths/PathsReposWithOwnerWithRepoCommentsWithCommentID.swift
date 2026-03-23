@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Comments {
@@ -18,38 +18,58 @@ extension Paths.Repos.WithOwner.WithRepo.Comments {
         /// Get a commit comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-commit-comment)
-        public var get: Request<OctoKit.CommitComment> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-commit-comment")
-            }
+        public var get: Request<OctoKit.CommitComment, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-commit-comment")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a commit comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-commit-comment)
-        public func patch(body: String) throws(PatchError) -> Request<OctoKit.CommitComment> {
+        public func patch(body: String) -> Request<OctoKit.CommitComment, PatchError> {
             Request(path: path, method: "PATCH", body: ["body": body], id: "repos/update-commit-comment")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a commit comment
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-commit-comment)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete-commit-comment")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete-commit-comment")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

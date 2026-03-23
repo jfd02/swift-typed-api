@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-self-hosted-runners-in-a-group-for-an-organization)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-self-hosted-runners-in-group-for-org")
         }
 
@@ -64,7 +64,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-self-hosted-runners-in-a-group-for-an-organization)
-        public func put(runners: [Int]) -> Request<Void> {
+        public func put(runners: [Int]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["runners": runners], id: "actions/set-self-hosted-runners-in-group-for-org")
         }
     }

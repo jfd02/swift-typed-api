@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
@@ -23,17 +23,26 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
         /// The instances field is deprecated and will, in future, not be included in the response for this endpoint. The example response reflects this change. The same information can now be retrieved via a GET request to the URL specified by `instances_url`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#get-a-code-scanning-alert)
-        public var get: Request<OctoKit.CodeScanningAlert> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "code-scanning/get-alert")
-            }
+        public var get: Request<OctoKit.CodeScanningAlert, GetError> {
+            Request(path: path, method: "GET", id: "code-scanning/get-alert")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case serviceUnavailable(GetServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable {
@@ -60,14 +69,24 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
         /// Updates the status of a single code scanning alert. You must use an access token with the `security_events` scope to use this endpoint with private repositories. You can also use tokens with the `public_repo` scope for public repositories only. GitHub Apps must have the `security_events` write permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#update-a-code-scanning-alert)
-        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.CodeScanningAlert> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.CodeScanningAlert, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "code-scanning/update-alert")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case serviceUnavailable(PatchServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 503: return .serviceUnavailable(try decoder.decode(PatchServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchServiceUnavailableBody: Decodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -20,7 +20,7 @@ extension Paths.User {
         /// Shows which type of GitHub user can interact with your public repositories and when the restriction expires.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#get-interaction-restrictions-for-your-public-repositories)
-        public var get: Request<GetResponse> {
+        public var get: Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", id: "interactions/get-restrictions-for-authenticated-user")
         }
 
@@ -45,12 +45,20 @@ extension Paths.User {
         /// Temporarily restricts which type of GitHub user can interact with your public repositories. Setting the interaction limit at the user level will overwrite any interaction limits that are set for individual repositories owned by the user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#set-interaction-restrictions-for-your-public-repositories)
-        public func put(_ body: OctoKit.InteractionLimit) throws(PutError) -> Request<OctoKit.InteractionLimitResponse> {
+        public func put(_ body: OctoKit.InteractionLimit) -> Request<OctoKit.InteractionLimitResponse, PutError> {
             Request(path: path, method: "PUT", body: body, id: "interactions/set-restrictions-for-authenticated-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove interaction restrictions from your public repositories
@@ -58,7 +66,7 @@ extension Paths.User {
         /// Removes any interaction restrictions from your public repositories.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#remove-interaction-restrictions-from-your-public-repositories)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "interactions/remove-restrictions-for-authenticated-user")
         }
     }

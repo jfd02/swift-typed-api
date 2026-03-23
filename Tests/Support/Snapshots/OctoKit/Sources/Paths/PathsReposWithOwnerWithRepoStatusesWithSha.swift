@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Statuses {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Statuses {
         /// Note: there is a limit of 1000 statuses per `sha` and `context` within a repository. Attempts to create more than 1000 statuses will result in a validation error.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-commit-status)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Status> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Status, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-commit-status")
         }
 

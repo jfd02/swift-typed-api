@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Stats {
@@ -25,7 +25,7 @@ extension Paths.Repos.WithOwner.WithRepo.Stats {
         /// *   `c` - Number of commits
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-all-contributor-commit-activity)
-        public var get: Request<[OctoKit.ContributorActivity]> {
+        public var get: Request<[OctoKit.ContributorActivity], DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-contributors-stats")
         }
     }

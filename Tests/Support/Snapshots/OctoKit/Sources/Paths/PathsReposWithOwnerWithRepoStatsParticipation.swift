@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Stats {
@@ -22,14 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Stats {
         /// The array order is oldest week (index 0) to most recent week.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-weekly-commit-count)
-        public var get: Request<OctoKit.ParticipationStats> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-participation-stats")
-            }
+        public var get: Request<OctoKit.ParticipationStats, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-participation-stats")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

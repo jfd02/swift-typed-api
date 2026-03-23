@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Commits.WithCommitSha {
@@ -22,14 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithCommitSha {
         /// Returns all branches where the given commit SHA is the HEAD, or latest commit for the branch.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-branches-for-head-commit)
-        public var get: Request<[OctoKit.BranchShort]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/list-branches-for-head-commit")
-            }
+        public var get: Request<[OctoKit.BranchShort], GetError> {
+            Request(path: path, method: "GET", id: "repos/list-branches-for-head-commit")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

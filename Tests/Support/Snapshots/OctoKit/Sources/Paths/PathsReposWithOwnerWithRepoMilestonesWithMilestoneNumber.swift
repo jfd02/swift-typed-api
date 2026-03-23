@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Milestones {
@@ -18,20 +18,26 @@ extension Paths.Repos.WithOwner.WithRepo.Milestones {
         /// Get a milestone
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-a-milestone)
-        public var get: Request<OctoKit.Milestone> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "issues/get-milestone")
-            }
+        public var get: Request<OctoKit.Milestone, GetError> {
+            Request(path: path, method: "GET", id: "issues/get-milestone")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a milestone
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#update-a-milestone)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Milestone> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Milestone, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "issues/update-milestone")
         }
 
@@ -70,14 +76,20 @@ extension Paths.Repos.WithOwner.WithRepo.Milestones {
         /// Delete a milestone
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#delete-a-milestone)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "issues/delete-milestone")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "issues/delete-milestone")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

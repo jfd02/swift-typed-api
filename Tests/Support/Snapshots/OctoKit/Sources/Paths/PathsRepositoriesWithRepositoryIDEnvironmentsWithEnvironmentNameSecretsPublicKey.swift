@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName.Secrets {
@@ -20,7 +20,7 @@ extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName.S
         /// Get the public key for an environment, which you need to encrypt environment secrets. You need to encrypt a secret before you can create or update secrets. Anyone with read access to the repository can use this endpoint. If the repository is private you must use an access token with the `repo` scope. GitHub Apps must have the `secrets` repository permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-an-environment-public-key)
-        public var get: Request<OctoKit.ActionsPublicKey> {
+        public var get: Request<OctoKit.ActionsPublicKey, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-environment-public-key")
         }
     }

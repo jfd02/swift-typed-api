@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.App.Hook {
@@ -22,7 +22,7 @@ extension Paths.App.Hook {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-a-webhook-configuration-for-an-app)
-        public var get: Request<OctoKit.WebhookConfig> {
+        public var get: Request<OctoKit.WebhookConfig, DefaultRequestError> {
             Request(path: path, method: "GET", id: "apps/get-webhook-config-for-app")
         }
 
@@ -33,7 +33,7 @@ extension Paths.App.Hook {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#update-a-webhook-configuration-for-an-app)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.WebhookConfig> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.WebhookConfig, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "apps/update-webhook-config-for-app")
         }
 

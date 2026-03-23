@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -22,16 +22,24 @@ extension Paths {
         /// If the authenticated user is authenticated through OAuth without the `user` scope, then the response lists only public profile information.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-the-authenticated-user)
-        public var get: Request<GetResponse> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "users/get-authenticated")
-            }
+        public var get: Request<GetResponse, GetError> {
+            Request(path: path, method: "GET", id: "users/get-authenticated")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponse: Decodable {
@@ -58,16 +66,28 @@ extension Paths {
         /// **Note:** If your email is set to private and you send an `email` parameter as part of this request to update your profile, your privacy settings are still enforced: the email address will not be displayed on your public profile or via the API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users/#update-the-authenticated-user)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.PrivateUser> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.PrivateUser, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "users/update-authenticated")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {

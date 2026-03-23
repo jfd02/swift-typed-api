@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls {
@@ -34,16 +34,24 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
         /// Pass the appropriate [media type](https://docs.github.com/rest/overview/media-types/#commits-commit-comparison-and-pull-requests) to fetch diff and patch formats.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#get-a-pull-request)
-        public var get: Request<OctoKit.PullRequest> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "pulls/get")
-            }
+        public var get: Request<OctoKit.PullRequest, GetError> {
+            Request(path: path, method: "GET", id: "pulls/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case internalServerError(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a pull request
@@ -53,13 +61,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
         /// To open or update a pull request in a public repository, you must have write access to the head or the source branch. For organization-owned repositories, you must be a member of the organization that owns the repository to open or update a pull request.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls/#update-a-pull-request)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.PullRequest> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.PullRequest, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "pulls/update")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {

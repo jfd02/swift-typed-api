@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername.Following {
@@ -18,14 +18,20 @@ extension Paths.Users.WithUsername.Following {
         /// Check if a user follows another user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#check-if-a-user-follows-another-user)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "users/check-following-for-user")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "users/check-following-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

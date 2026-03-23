@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
@@ -22,14 +22,20 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-labels-for-a-self-hosted-runner-for-an-enterprise)
-        public var get: Request<GetResponse> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "enterprise-admin/list-labels-for-self-hosted-runner-for-enterprise")
-            }
+        public var get: Request<GetResponse, GetError> {
+            Request(path: path, method: "GET", id: "enterprise-admin/list-labels-for-self-hosted-runner-for-enterprise")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {
@@ -55,13 +61,22 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#add-custom-labels-to-a-self-hosted-runner-for-an-enterprise)
-        public func post(labels: [String]) throws(PostError) -> Request<PostResponse> {
+        public func post(labels: [String]) -> Request<PostResponse, PostError> {
             Request(path: path, method: "POST", body: ["labels": labels], id: "enterprise-admin/add-custom-labels-to-self-hosted-runner-for-enterprise")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostResponse: Decodable {
@@ -88,13 +103,22 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#set-custom-labels-for-a-self-hosted-runner-for-an-enterprise)
-        public func put(labels: [String]) throws(PutError) -> Request<PutResponse> {
+        public func put(labels: [String]) -> Request<PutResponse, PutError> {
             Request(path: path, method: "PUT", body: ["labels": labels], id: "enterprise-admin/set-custom-labels-for-self-hosted-runner-for-enterprise")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutResponse: Decodable {
@@ -121,15 +145,22 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#remove-all-custom-labels-from-a-self-hosted-runner-for-an-enterprise)
-        public var delete: Request<DeleteResponse> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "enterprise-admin/remove-all-custom-labels-from-self-hosted-runner-for-enterprise")
-            }
+        public var delete: Request<DeleteResponse, DeleteError> {
+            Request(path: path, method: "DELETE", id: "enterprise-admin/remove-all-custom-labels-from-self-hosted-runner-for-enterprise")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteResponse: Decodable {

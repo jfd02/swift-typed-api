@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -22,14 +22,24 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#create-a-codespace-from-a-pull-request)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Codespace> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Codespace, PostError> {
             Request(path: path, method: "POST", body: body, id: "codespaces/create-with-pr-for-authenticated-user")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unauthorized(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

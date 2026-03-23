@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID.Discussions.WithDiscussionNumber {
@@ -23,7 +23,7 @@ extension Paths.Teams.WithTeamID.Discussions.WithDiscussionNumber {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-discussion-comments-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.TeamDiscussionComment]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.TeamDiscussionComment], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "teams/list-discussion-comments-legacy")
         }
 
@@ -66,7 +66,7 @@ extension Paths.Teams.WithTeamID.Discussions.WithDiscussionNumber {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-a-discussion-comment-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func post(body: String) -> Request<OctoKit.TeamDiscussionComment> {
+        public func post(body: String) -> Request<OctoKit.TeamDiscussionComment, DefaultRequestError> {
             Request(path: path, method: "POST", body: ["body": body], id: "teams/create-discussion-comment-legacy")
         }
     }

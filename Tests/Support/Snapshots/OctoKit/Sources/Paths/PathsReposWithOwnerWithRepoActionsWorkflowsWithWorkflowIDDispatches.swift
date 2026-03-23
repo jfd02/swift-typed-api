@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
         /// You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `actions:write` permission to use this endpoint. For more information, see "[Creating a personal access token for the command line](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#create-a-workflow-dispatch-event)
-        public func post(_ body: PostRequest) -> Request<Void> {
+        public func post(_ body: PostRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "actions/create-workflow-dispatch")
         }
 

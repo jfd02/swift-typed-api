@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.Permissions {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Permissions {
         /// You must authenticate using an access token with the `admin:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-selected-organizations-enabled-for-github-actions-in-an-enterprise)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "enterprise-admin/list-selected-organizations-enabled-github-actions-enterprise")
         }
 
@@ -56,7 +56,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Permissions {
         /// You must authenticate using an access token with the `admin:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#set-selected-organizations-enabled-for-github-actions-in-an-enterprise)
-        public func put(selectedOrganizationIDs: [Int]) -> Request<Void> {
+        public func put(selectedOrganizationIDs: [Int]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["selected_organization_ids": selectedOrganizationIDs], id: "enterprise-admin/set-selected-organizations-enabled-github-actions-enterprise")
         }
     }

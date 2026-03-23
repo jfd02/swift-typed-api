@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
@@ -24,14 +24,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         /// **Note**: You must enable branch protection to require signed commits.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-commit-signature-protection)
-        public var get: Request<OctoKit.ProtectedBranchAdminEnforced> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-commit-signature-protection")
-            }
+        public var get: Request<OctoKit.ProtectedBranchAdminEnforced, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-commit-signature-protection")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Create commit signature protection
@@ -41,14 +47,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         /// When authenticated with admin or owner permissions to the repository, you can use this endpoint to require signed commits on a branch. You must enable branch protection to require signed commits.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-commit-signature-protection)
-        public var post: Request<OctoKit.ProtectedBranchAdminEnforced> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "repos/create-commit-signature-protection")
-            }
+        public var post: Request<OctoKit.ProtectedBranchAdminEnforced, PostError> {
+            Request(path: path, method: "POST", id: "repos/create-commit-signature-protection")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete commit signature protection
@@ -58,14 +70,20 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
         /// When authenticated with admin or owner permissions to the repository, you can use this endpoint to disable required signed commits on a branch. You must enable branch protection to require signed commits.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-commit-signature-protection)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete-commit-signature-protection")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete-commit-signature-protection")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

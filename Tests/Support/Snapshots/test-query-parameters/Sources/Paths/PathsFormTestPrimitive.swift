@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Form {
@@ -15,7 +15,7 @@ extension Paths.Form {
         public let path: String
 
         /// Test passing primitive query parameters
-        public func get(parameters: GetParameters) -> Request<Void> {
+        public func get(parameters: GetParameters) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters.asQuery)
         }
 
@@ -40,12 +40,12 @@ extension Paths.Form {
         }
 
         /// Inlining simple queries
-        public func post(name: String) -> Request<Void> {
+        public func post(name: String) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "POST", query: [("name", name)])
         }
 
         /// Inlining more complex queries (with an enum)
-        public func patch(type: `Type`) -> Request<Void> {
+        public func patch(type: `Type`) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PATCH", query: makePatchQuery(type))
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,12 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List forks
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-forks)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MinimalRepository], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-forks")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case badRequest(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -64,15 +72,26 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// **Note**: Forking a Repository happens asynchronously. You may have to wait a short period of time before you can access the git objects. If this takes longer than 5 minutes, be sure to contact [GitHub Support](https://support.github.com/contact?tags=dotcom-rest-api).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-fork)
-        public func post(organization: String? = nil) throws(PostError) -> Request<OctoKit.FullRepository> {
+        public func post(organization: String? = nil) -> Request<OctoKit.FullRepository, PostError> {
             Request(path: path, method: "POST", body: ["organization": organization], id: "repos/create-fork")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case badRequest(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

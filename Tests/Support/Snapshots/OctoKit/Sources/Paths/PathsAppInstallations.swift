@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.App {
@@ -22,7 +22,7 @@ extension Paths.App {
         /// The permissions the installation has are included under the `permissions` key.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#list-installations-for-the-authenticated-app)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Installation]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Installation], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "apps/list-installations")
         }
 

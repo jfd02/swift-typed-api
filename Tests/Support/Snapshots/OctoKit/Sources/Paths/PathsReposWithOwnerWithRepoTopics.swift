@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,12 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Get all repository topics
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-all-repository-topics)
-        public func get(page: Int? = nil, perPage: Int? = nil) throws(GetError) -> Request<OctoKit.Topic> {
+        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<OctoKit.Topic, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "repos/get-all-topics")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ page: Int?, _ perPage: Int?) -> [(String, String?)] {
@@ -36,13 +44,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Replace all repository topics
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#replace-all-repository-topics)
-        public func put(names: [String]) throws(PutError) -> Request<OctoKit.Topic> {
+        public func put(names: [String]) -> Request<OctoKit.Topic, PutError> {
             Request(path: path, method: "PUT", body: ["names": names], id: "repos/replace-all-topics")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

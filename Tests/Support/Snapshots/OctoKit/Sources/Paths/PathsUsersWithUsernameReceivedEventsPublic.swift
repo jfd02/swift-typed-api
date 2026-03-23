@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername.ReceivedEvents {
@@ -18,7 +18,7 @@ extension Paths.Users.WithUsername.ReceivedEvents {
         /// List public events received by a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-public-events-received-by-a-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "activity/list-received-public-events-for-user")
         }
 

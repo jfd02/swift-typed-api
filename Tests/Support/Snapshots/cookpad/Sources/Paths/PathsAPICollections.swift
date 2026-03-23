@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 extension Paths {
     public static var collections: Collections {
@@ -16,7 +16,7 @@ extension Paths {
         /// All Collections
         ///
         /// Returns an array of all Collection models in display order.
-        public var get: Request<[cookpad.Collection]> {
+        public var get: Request<[cookpad.Collection], DefaultRequestError> {
             Request(path: path, method: "GET", id: "getAllCollections")
         }
     }

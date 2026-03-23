@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Store.Order {
@@ -19,29 +19,43 @@ extension Paths.Store.Order {
         /// Find purchase order by ID
         ///
         /// For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions
-        var get: Request<edgecases_change_access_control.Order> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "getOrderById")
-            }
+        var get: Request<edgecases_change_access_control.Order, GetError> {
+            Request(path: path, method: "GET", id: "getOrderById")
         }
 
-        enum GetError: Error {
+        enum GetError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete purchase order by ID
         ///
         /// For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-        var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "deleteOrder")
-            }
+        var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "deleteOrder")
         }
 
-        enum DeleteError: Error {
+        enum DeleteError: RequestError {
             case badRequest
             case notFound
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

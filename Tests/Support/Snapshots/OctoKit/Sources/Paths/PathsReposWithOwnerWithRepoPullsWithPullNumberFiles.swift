@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -20,13 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// **Note:** Responses include a maximum of 3000 files. The paginated response returns 30 files per page by default.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-pull-requests-files)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.DiffEntry]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.DiffEntry], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "pulls/list-files")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case internalServerError(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 500: return .internalServerError(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

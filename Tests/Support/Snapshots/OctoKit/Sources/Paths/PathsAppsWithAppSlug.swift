@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Apps {
@@ -22,16 +22,24 @@ extension Paths.Apps {
         /// If the GitHub App you specify is public, you can access this endpoint without authenticating. If the GitHub App you specify is private, you must authenticate with a [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) or an [installation access token](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps/#get-an-app)
-        public var get: Request<OctoKit.Integration> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "apps/get-by-slug")
-            }
+        public var get: Request<OctoKit.Integration, GetError> {
+            Request(path: path, method: "GET", id: "apps/get-by-slug")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case unsupportedMediaType(GetUnsupportedMediaTypeBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 415: return .unsupportedMediaType(try decoder.decode(GetUnsupportedMediaTypeBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetUnsupportedMediaTypeBody: Decodable {

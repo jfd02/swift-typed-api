@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Secrets {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Secrets {
         /// Gets a single repository secret without revealing its encrypted value. You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `secrets` repository permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-repository-secret)
-        public var get: Request<OctoKit.ActionsSecret> {
+        public var get: Request<OctoKit.ActionsSecret, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-repo-secret")
         }
 
@@ -103,7 +103,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Secrets {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#create-or-update-a-repository-secret)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "actions/create-or-update-repo-secret")
         }
 
@@ -130,7 +130,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Secrets {
         /// Deletes a secret in a repository using the secret name. You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `secrets` repository permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-a-repository-secret)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-repo-secret")
         }
     }

@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Pet {
@@ -19,24 +19,39 @@ extension Paths.Pet {
         /// Find pet by ID
         ///
         /// Returns a single pet
-        public var get: Request<edgecases_rename_properties.Pet> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "getPetById")
+        public var get: Request<edgecases_rename_properties.Pet, GetError> {
+            Request(path: path, method: "GET", id: "getPetById")
+        }
+
+        public enum GetError: RequestError {
+            case badRequest
+            case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
             }
         }
 
-        public enum GetError: Error {
-            case badRequest
-            case notFound
-        }
-
         /// Updates a pet in the store with form data
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<Void> {
+        public func post(_ body: PostRequest? = nil) -> Request<Void, PostError> {
             Request(path: path, method: "POST", body: body.map(URLQueryEncoder.encode)?.percentEncodedQuery, id: "updatePetWithForm")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case methodNotAllowed
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 405: return .methodNotAllowed
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {
@@ -59,14 +74,20 @@ extension Paths.Pet {
         }
 
         /// Deletes a pet
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "deletePet")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "deletePet")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case badRequest
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

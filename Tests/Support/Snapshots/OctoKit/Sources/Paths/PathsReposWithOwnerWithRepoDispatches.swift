@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -29,12 +29,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// This input example shows how you can use the `client_payload` as a test to debug your workflow.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-repository-dispatch-event)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<Void> {
+        public func post(_ body: PostRequest) -> Request<Void, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-dispatch-event")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

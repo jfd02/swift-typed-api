@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -20,7 +20,7 @@ extension Paths.Users.WithUsername {
         /// These are events that you've received by watching repos and following users. If you are authenticated as the given user, you will see private events. Otherwise, you'll only see public events.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-events-received-by-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "activity/list-received-events-for-user")
         }
 

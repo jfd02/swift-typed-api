@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Keys {
@@ -18,14 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Keys {
         /// Get a deploy key
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-deploy-key)
-        public var get: Request<OctoKit.DeployKey> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-deploy-key")
-            }
+        public var get: Request<OctoKit.DeployKey, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-deploy-key")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a deploy key
@@ -33,7 +39,7 @@ extension Paths.Repos.WithOwner.WithRepo.Keys {
         /// Deploy keys are immutable. If you need to update a key, remove the key and create a new one instead.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-deploy-key)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/delete-deploy-key")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,14 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Get a GitHub Pages site
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-github-pages-site)
-        public var get: Request<OctoKit.Page> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-pages")
-            }
+        public var get: Request<OctoKit.Page, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-pages")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Create a GitHub Pages site
@@ -33,13 +39,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Configures a GitHub Pages site. For more information, see "[About GitHub Pages](/github/working-with-github-pages/about-github-pages)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-github-pages-site)
-        public func post(source: PostRequest.Source) throws(PostError) -> Request<OctoKit.Page> {
+        public func post(source: PostRequest.Source) -> Request<OctoKit.Page, PostError> {
             Request(path: path, method: "POST", body: PostRequest(source: source), id: "repos/create-pages-site")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case conflict(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// The source branch and directory used to publish your Pages site.
@@ -87,13 +102,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Updates information for a GitHub Pages site. For more information, see "[About GitHub Pages](/github/working-with-github-pages/about-github-pages).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-information-about-a-github-pages-site)
-        public func put(_ body: PutRequest) throws(PutError) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: body, id: "repos/update-information-about-pages-site")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case badRequest(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -174,15 +198,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Delete a GitHub Pages site
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-github-pages-site)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete-pages-site")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete-pages-site")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

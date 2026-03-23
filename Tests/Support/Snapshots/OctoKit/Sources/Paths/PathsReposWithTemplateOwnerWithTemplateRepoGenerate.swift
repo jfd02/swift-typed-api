@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithTemplateOwner.WithTemplateRepo {
@@ -27,7 +27,7 @@ extension Paths.Repos.WithTemplateOwner.WithTemplateRepo {
         /// *   `repo` scope to create a private repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-repository-using-a-template)
-        public func post(_ body: PostRequest) -> Request<OctoKit.Repository> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Repository, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-using-template")
         }
 

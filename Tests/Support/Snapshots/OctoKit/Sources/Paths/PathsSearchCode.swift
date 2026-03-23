@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Search {
@@ -37,15 +37,26 @@ extension Paths.Search {
         /// language:go`](https://github.com/search?utf8=%E2%9C%93&q=amazing+language%3Ago&type=Code) is.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-code)
-        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/code")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case serviceUnavailable(GetServiceUnavailableBody)
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {

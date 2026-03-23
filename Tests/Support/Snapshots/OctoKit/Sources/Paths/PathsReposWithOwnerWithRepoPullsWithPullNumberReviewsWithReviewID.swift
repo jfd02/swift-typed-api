@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews {
@@ -18,14 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews {
         /// Get a review for a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#get-a-review-for-a-pull-request)
-        public var get: Request<OctoKit.PullRequestReview> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "pulls/get-review")
-            }
+        public var get: Request<OctoKit.PullRequestReview, GetError> {
+            Request(path: path, method: "GET", id: "pulls/get-review")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a review for a pull request
@@ -33,26 +39,41 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews {
         /// Update the review summary comment with new text.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#update-a-review-for-a-pull-request)
-        public func put(body: String) throws(PutError) -> Request<OctoKit.PullRequestReview> {
+        public func put(body: String) -> Request<OctoKit.PullRequestReview, PutError> {
             Request(path: path, method: "PUT", body: ["body": body], id: "pulls/update-review")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete a pending review for a pull request
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#delete-a-pending-review-for-a-pull-request)
-        public var delete: Request<OctoKit.PullRequestReview> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "pulls/delete-pending-review")
-            }
+        public var delete: Request<OctoKit.PullRequestReview, DeleteError> {
+            Request(path: path, method: "DELETE", id: "pulls/delete-pending-review")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Import {
@@ -20,12 +20,20 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
         /// You can import repositories from Subversion, Mercurial, and TFS that include files larger than 100MB. This ability is powered by [Git LFS](https://git-lfs.github.com). You can learn more about our LFS feature and working with large files [on our help site](https://help.github.com/articles/versioning-large-files/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#update-git-lfs-preference)
-        public func patch(useLfs: PatchRequest.UseLfs) throws(PatchError) -> Request<OctoKit.Import> {
+        public func patch(useLfs: PatchRequest.UseLfs) -> Request<OctoKit.Import, PatchError> {
             Request(path: path, method: "PATCH", body: PatchRequest(useLfs: useLfs), id: "migrations/set-lfs-preference")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {

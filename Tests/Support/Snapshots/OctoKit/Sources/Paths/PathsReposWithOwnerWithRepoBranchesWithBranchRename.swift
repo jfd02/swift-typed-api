@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
@@ -34,14 +34,24 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
         /// * GitHub Apps must have the `administration:write` repository permission.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#rename-a-branch)
-        public func post(newName: String) throws(PostError) -> Request<OctoKit.BranchWithProtection> {
+        public func post(newName: String) -> Request<OctoKit.BranchWithProtection, PostError> {
             Request(path: path, method: "POST", body: ["new_name": newName], id: "repos/rename-branch")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Releases.Assets {
@@ -20,16 +20,24 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Assets {
         /// To download the asset's binary content, set the `Accept` header of the request to [`application/octet-stream`](https://docs.github.com/rest/overview/media-types). The API will either redirect the client to the location, or stream it directly if possible. API clients should handle both a `200` or `302` response.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-release-asset)
-        public var get: Request<OctoKit.ReleaseAsset> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get-release-asset")
-            }
+        public var get: Request<OctoKit.ReleaseAsset, GetError> {
+            Request(path: path, method: "GET", id: "repos/get-release-asset")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case unsupportedMediaType(GetUnsupportedMediaTypeBody)
             case status302
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 415: return .unsupportedMediaType(try decoder.decode(GetUnsupportedMediaTypeBody.self, from: data))
+                case 302: return .status302
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetUnsupportedMediaTypeBody: Decodable {
@@ -53,7 +61,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Assets {
         /// Users with push access to the repository can edit a release asset.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-release-asset)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.ReleaseAsset> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.ReleaseAsset, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-release-asset")
         }
 
@@ -82,7 +90,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Assets {
         /// Delete a release asset
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-release-asset)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/delete-release-asset")
         }
     }

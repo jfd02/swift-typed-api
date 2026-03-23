@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.App.Installations.WithInstallationID {
@@ -22,16 +22,28 @@ extension Paths.App.Installations.WithInstallationID {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps/#create-an-installation-access-token-for-an-app)
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.InstallationToken> {
+        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.InstallationToken, PostError> {
             Request(path: path, method: "POST", body: body, id: "apps/create-installation-access-token")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unsupportedMediaType(PostUnsupportedMediaTypeBody)
             case unauthorized(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 415: return .unsupportedMediaType(try decoder.decode(PostUnsupportedMediaTypeBody.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostUnsupportedMediaTypeBody: Decodable {

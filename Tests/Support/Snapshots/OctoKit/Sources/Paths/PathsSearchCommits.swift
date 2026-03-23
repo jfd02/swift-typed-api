@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Search {
@@ -27,12 +27,20 @@ extension Paths.Search {
         /// `q=repo:octocat/Spoon-Knife+css`
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-commits)
-        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/commits")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {

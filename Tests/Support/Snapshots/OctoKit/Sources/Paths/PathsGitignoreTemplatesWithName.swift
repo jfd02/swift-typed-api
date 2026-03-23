@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Gitignore.Templates {
@@ -21,14 +21,20 @@ extension Paths.Gitignore.Templates {
         /// Use the raw [media type](https://docs.github.com/rest/overview/media-types/) to get the raw contents.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/gitignore#get-a-gitignore-template)
-        public var get: Request<OctoKit.GitignoreTemplate> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "gitignore/get-template")
-            }
+        public var get: Request<OctoKit.GitignoreTemplate, GetError> {
+            Request(path: path, method: "GET", id: "gitignore/get-template")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

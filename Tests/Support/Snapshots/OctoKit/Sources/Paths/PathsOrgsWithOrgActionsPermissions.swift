@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Actions {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `administration` organization permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-github-actions-permissions-for-an-organization)
-        public var get: Request<OctoKit.ActionsOrganizationPermissions> {
+        public var get: Request<OctoKit.ActionsOrganizationPermissions, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-github-actions-permissions-organization")
         }
 
@@ -35,7 +35,7 @@ extension Paths.Orgs.WithOrg.Actions {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `administration` organization permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-github-actions-permissions-for-an-organization)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "actions/set-github-actions-permissions-organization")
         }
 

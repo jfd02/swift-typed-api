@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Migrations.WithMigrationID {
@@ -20,15 +20,22 @@ extension Paths.Orgs.WithOrg.Migrations.WithMigrationID {
         /// Fetches the URL to a migration archive.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#download-an-organization-migration-archive)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "migrations/download-archive-for-org")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "migrations/download-archive-for-org")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case status302
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 302: return .status302
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Delete an organization migration archive
@@ -36,14 +43,20 @@ extension Paths.Orgs.WithOrg.Migrations.WithMigrationID {
         /// Deletes a previous migration archive. Migration archives are automatically deleted after seven days.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#delete-an-organization-migration-archive)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "migrations/delete-archive-for-org")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "migrations/delete-archive-for-org")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

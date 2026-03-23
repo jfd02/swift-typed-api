@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Permissions {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Permissions {
         /// You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `administration` repository permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-allowed-actions-for-a-repository)
-        public var get: Request<OctoKit.SelectedActions> {
+        public var get: Request<OctoKit.SelectedActions, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-allowed-actions-repository")
         }
 
@@ -37,7 +37,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Permissions {
         /// You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `administration` repository permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-allowed-actions-for-a-repository)
-        public func put(_ body: OctoKit.SelectedActions? = nil) -> Request<Void> {
+        public func put(_ body: OctoKit.SelectedActions? = nil) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "actions/set-allowed-actions-repository")
         }
     }

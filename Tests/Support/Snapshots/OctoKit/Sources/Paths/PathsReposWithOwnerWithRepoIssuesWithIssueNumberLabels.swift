@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
@@ -18,12 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// List labels for an issue
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-labels-for-an-issue)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Label]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Label], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "issues/list-labels-on-issue")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case gone(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -40,13 +48,22 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Add labels to an issue
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#add-labels-to-an-issue)
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<[OctoKit.Label]> {
+        public func post(_ body: PostRequest? = nil) -> Request<[OctoKit.Label], PostError> {
             Request(path: path, method: "POST", body: body, id: "issues/add-labels")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case gone(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostRequest: Encodable {
@@ -126,13 +143,22 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Removes any previous labels and sets the new labels for an issue.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#set-labels-for-an-issue)
-        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<[OctoKit.Label]> {
+        public func put(_ body: PutRequest? = nil) -> Request<[OctoKit.Label], PutError> {
             Request(path: path, method: "PUT", body: body, id: "issues/set-labels")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case gone(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PutRequest: Encodable {
@@ -210,14 +236,20 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
         /// Remove all labels from an issue
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#remove-all-labels-from-an-issue)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "issues/remove-all-labels")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "issues/remove-all-labels")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case gone(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

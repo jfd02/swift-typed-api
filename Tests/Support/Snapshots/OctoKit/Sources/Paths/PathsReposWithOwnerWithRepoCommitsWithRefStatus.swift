@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
@@ -27,12 +27,20 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
         /// *   **success** if the latest status for all contexts is `success`
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-the-combined-status-for-a-specific-reference)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<OctoKit.CombinedCommitStatus> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<OctoKit.CombinedCommitStatus, GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/get-combined-status-for-ref")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ perPage: Int?, _ page: Int?) -> [(String, String?)] {

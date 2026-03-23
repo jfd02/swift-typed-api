@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,15 +18,26 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Merge a branch
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#merge-a-branch)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Commit> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Commit, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/merge")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound
             case conflict
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                case 409: return .conflict
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

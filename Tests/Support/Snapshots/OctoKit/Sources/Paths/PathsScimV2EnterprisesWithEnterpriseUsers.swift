@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Scim.V2.Enterprises.WithEnterprise {
@@ -37,7 +37,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
         ///    - If the user does not sign in (or does not create a new account when prompted), they are not added to the GitHub enterprise, and the external identity `null` entry remains in place.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-scim-provisioned-identities-for-an-enterprise)
-        public func get(parameters: GetParameters? = nil) -> Request<OctoKit.ScimUserListEnterprise> {
+        public func get(parameters: GetParameters? = nil) -> Request<OctoKit.ScimUserListEnterprise, DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "enterprise-admin/list-provisioned-identities-enterprise")
         }
 
@@ -70,7 +70,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
         /// You can optionally include the groups a user will be invited to join. If you do not provide a list of `groups`, the user is provisioned for the enterprise, but no organization invitation emails will be sent.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#provision-and-invite-a-scim-enterprise-user)
-        public func post(_ body: PostRequest) -> Request<OctoKit.ScimEnterpriseUser> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.ScimEnterpriseUser, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "enterprise-admin/provision-and-invite-enterprise-user")
         }
 

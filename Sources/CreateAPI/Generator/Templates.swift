@@ -627,18 +627,39 @@ final class Templates {
 
     // MARK: Typed Errors
 
-    /// Generates a typed error enum for an operation.
+    /// Generates a typed error enum conforming to `RequestError`.
     ///
-    ///     public enum ListPetsError: Error {
-    ///         case notFound(ErrorResponse)
-    ///         case internalServerError(ErrorResponse)
-    ///         case `default`(statusCode: Int, ErrorResponse)
-    ///     }
+    /// Includes API-spec cases, an `unhandled` catch-all, and the required
+    /// `decode(statusCode:data:decoder:)` and `unhandled(_:)` methods.
     func errorEnum(name: String, cases: [ErrorEnumCase]) -> String {
-        let caseDecls = cases.map { errorCase($0) }.joined(separator: "\n")
+        var caseDecls = cases.map { errorCase($0) }
+        caseDecls.append("case unhandled(any Swift.Error)")
+
+        var decodeBody = cases.map { errorDecodeCase($0) }
+        // If there's no `default` case from the spec, add a fallback that wraps
+        // the undocumented status code as an unhandled error.
+        if !cases.contains(where: { $0.isDefault }) {
+            decodeBody.append("default: return .unhandled(APIError.unacceptableStatusCode(statusCode))")
+        }
+
+        let decodeSwitchContents = decodeBody.joined(separator: "\n")
+
+        let decodeMethod = """
+        \(access)static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+            switch statusCode {
+        \(decodeSwitchContents.indented)
+            }
+        }
+        """
+
+        let contents = [
+            caseDecls.joined(separator: "\n"),
+            decodeMethod
+        ].joined(separator: "\n\n")
+
         return """
-        \(access)enum \(name): Error {
-        \(caseDecls.indented)
+        \(access)enum \(name): RequestError {
+        \(contents.indented)
         }
         """
     }
@@ -652,35 +673,34 @@ final class Templates {
         return "case \(c.name)\(bodyParam)"
     }
 
-    /// Generates a method with typed throws.
-    ///
-    ///     public func get() throws(ListPetsError) -> [Pet] {
-    ///         ...
-    ///     }
-    func methodOrPropertyWithTypedThrows(name: String, parameters: [String] = [], returning type: String, errorType: String, contents: String, isStatic: Bool) -> String {
-        if parameters.isEmpty {
-            return propertyWithTypedThrows(name: name, returning: type, errorType: errorType, contents: contents, isStatic: isStatic)
-        } else {
-            return methodWithTypedThrows(name: name, parameters: parameters, returning: type, errorType: errorType, contents: contents, isStatic: isStatic)
+    private func errorDecodeCase(_ c: ErrorEnumCase) -> String {
+        let decode = c.bodyType.map { "try decoder.decode(\($0).self, from: data)" }
+
+        if c.isDefault {
+            let body = decode.map { ", \($0)" } ?? ""
+            return "default: return .\(c.name)(statusCode: statusCode\(body))"
         }
+        if c.isRange {
+            let range = rangePattern(for: c.name)
+            let body = decode.map { ", \($0)" } ?? ""
+            return "case \(range): return .\(c.name)(statusCode: statusCode\(body))"
+        }
+        if let statusCode = c.statusCode {
+            let body = decode.map { "(\($0))" } ?? ""
+            return "case \(statusCode): return .\(c.name)\(body)"
+        }
+        return ""
     }
 
-    func methodWithTypedThrows(name: String, parameters: [String] = [], returning type: String, errorType: String, contents: String, isStatic: Bool) -> String {
-        """
-        \(isStatic ? "static " : "")\(access)func \(name)(\(parameters.joined(separator: ", "))) throws(\(errorType)) -> \(type) {
-        \(contents.indented)
+    private func rangePattern(for caseName: String) -> String {
+        switch caseName {
+        case "informational": return "100..<200"
+        case "success": return "200..<300"
+        case "redirect": return "300..<400"
+        case "clientError": return "400..<500"
+        case "serverError": return "500..<600"
+        default: return "0..<0"
         }
-        """
-    }
-
-    func propertyWithTypedThrows(name: String, returning type: String, errorType: String, contents: String, isStatic: Bool) -> String {
-        """
-        \(isStatic ? "static " : "")\(access)var \(name): \(type) {
-            get throws(\(errorType)) {
-        \(contents.indented(count: 2))
-            }
-        }
-        """
     }
 
     // MARK: Misc

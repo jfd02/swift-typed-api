@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions {
@@ -23,7 +23,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
         /// endpoint. GitHub Apps must have the `administration` repository permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-github-actions-permissions-for-a-repository)
-        public var get: Request<OctoKit.ActionsRepositoryPermissions> {
+        public var get: Request<OctoKit.ActionsRepositoryPermissions, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-github-actions-permissions-repository")
         }
 
@@ -36,7 +36,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
         /// You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `administration` repository permission to use this API.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-github-actions-permissions-for-a-repository)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "actions/set-github-actions-permissions-repository")
         }
 

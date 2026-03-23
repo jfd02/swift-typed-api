@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 extension Paths {
     public static var packages: Packages {
@@ -13,7 +13,7 @@ extension Paths {
         /// Path: `/packages`
         public let path: String
 
-        public var get: Request<[inlining_default.Package]> {
+        public var get: Request<[inlining_default.Package], DefaultRequestError> {
             Request(path: path, method: "GET")
         }
     }

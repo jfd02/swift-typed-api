@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Scim.V2.Organizations.WithOrg.Users {
@@ -18,16 +18,24 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         /// Get SCIM provisioning information for a user
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#get-scim-provisioning-information-for-a-user)
-        public var get: Request<OctoKit.ScimUser> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "scim/get-provisioning-information-for-user")
-            }
+        public var get: Request<OctoKit.ScimUser, GetError> {
+            Request(path: path, method: "GET", id: "scim/get-provisioning-information-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.ScimError)
             case forbidden(OctoKit.ScimError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a provisioned organization membership
@@ -39,14 +47,24 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         /// **Warning:** Setting `active: false` removes the user from the organization, deletes the external identity, and deletes the associated `{scim_user_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#set-scim-information-for-a-provisioned-user)
-        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.ScimUser> {
+        public func put(_ body: PutRequest) -> Request<OctoKit.ScimUser, PutError> {
             Request(path: path, method: "PUT", body: body, id: "scim/set-information-for-provisioned-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case notModified
             case notFound(OctoKit.ScimError)
             case forbidden(OctoKit.ScimError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.ScimError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -173,16 +191,28 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#update-an-attribute-for-a-scim-user)
-        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.ScimUser> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.ScimUser, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "scim/update-attribute-for-user")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case notModified
             case notFound(OctoKit.ScimError)
             case forbidden(OctoKit.ScimError)
             case badRequest(OctoKit.ScimError)
             case tooManyRequests(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 400: return .badRequest(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 429: return .tooManyRequests(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -297,16 +327,24 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
         /// Delete a SCIM user from an organization
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/scim#delete-a-scim-user-from-an-organization)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "scim/delete-user-from-org")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "scim/delete-user-from-org")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.ScimError)
             case forbidden(OctoKit.ScimError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.ScimError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

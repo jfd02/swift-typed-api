@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues {
@@ -20,13 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
         /// By default, Issue Comments are ordered by ascending ID.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-issue-comments-for-a-repository)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.IssueComment]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.IssueComment], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-comments-for-repo")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

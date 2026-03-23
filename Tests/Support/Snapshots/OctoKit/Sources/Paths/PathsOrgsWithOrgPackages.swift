@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -23,13 +23,22 @@ extension Paths.Orgs.WithOrg {
         /// If `package_type` is not `container`, your token must also include the `repo` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#list-packages-for-an-organization)
-        public func get(packageType: PackageType, visibility: Visibility? = nil) throws(GetError) -> Request<[OctoKit.Package]> {
+        public func get(packageType: PackageType, visibility: Visibility? = nil) -> Request<[OctoKit.Package], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(packageType, visibility), id: "packages/list-packages-for-organization")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ packageType: PackageType, _ visibility: Visibility?) -> [(String, String?)] {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git.Ref {
@@ -22,14 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Ref {
         /// **Note:** You need to explicitly [request a pull request](https://docs.github.com/rest/reference/pulls#get-a-pull-request) to trigger a test merge commit, which checks the mergeability of pull requests. For more information, see "[Checking mergeability of pull requests](https://docs.github.com/rest/guides/getting-started-with-the-git-database-api#checking-mergeability-of-pull-requests)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#get-a-reference)
-        public var get: Request<OctoKit.GitRef> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "git/get-ref")
-            }
+        public var get: Request<OctoKit.GitRef, GetError> {
+            Request(path: path, method: "GET", id: "git/get-ref")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername.Events.Orgs {
@@ -20,7 +20,7 @@ extension Paths.Users.WithUsername.Events.Orgs {
         /// This is the user's organization dashboard. You must be authenticated as the user to view this.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#list-organization-events-for-the-authenticated-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Event], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "activity/list-org-events-for-authenticated-user")
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Import {
@@ -22,12 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
         /// This endpoint and the [Map a commit author](https://docs.github.com/rest/reference/migrations#map-a-commit-author) endpoint allow you to provide correct Git author information.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-commit-authors)
-        public func get(since: Int? = nil) throws(GetError) -> Request<[OctoKit.PorterAuthor]> {
+        public func get(since: Int? = nil) -> Request<[OctoKit.PorterAuthor], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(since), id: "migrations/get-commit-authors")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ since: Int?) -> [(String, String?)] {

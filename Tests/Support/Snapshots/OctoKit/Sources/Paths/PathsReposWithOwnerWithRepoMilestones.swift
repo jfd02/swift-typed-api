@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -18,12 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// List milestones
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#list-milestones)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Milestone]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Milestone], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "issues/list-milestones")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -75,13 +83,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Create a milestone
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#create-a-milestone)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Milestone> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Milestone, PostError> {
             Request(path: path, method: "POST", body: body, id: "issues/create-milestone")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

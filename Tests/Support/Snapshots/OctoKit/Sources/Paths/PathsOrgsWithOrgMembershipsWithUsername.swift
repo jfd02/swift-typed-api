@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Memberships {
@@ -20,15 +20,22 @@ extension Paths.Orgs.WithOrg.Memberships {
         /// In order to get a user's membership with an organization, the authenticated user must be an organization member. The `state` parameter in the response can be used to identify the user's membership status.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-organization-membership-for-a-user)
-        public var get: Request<OctoKit.OrgMembership> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/get-membership-for-user")
-            }
+        public var get: Request<OctoKit.OrgMembership, GetError> {
+            Request(path: path, method: "GET", id: "orgs/get-membership-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Set organization membership for a user
@@ -44,13 +51,22 @@ extension Paths.Orgs.WithOrg.Memberships {
         /// To prevent abuse, the authenticated user is limited to 50 organization invitations per 24 hour period. If the organization is more than one month old or on a paid plan, the limit is 500 invitations per 24 hour period.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#set-organization-membership-for-a-user)
-        public func put(role: PutRequest.Role? = nil) throws(PutError) -> Request<OctoKit.OrgMembership> {
+        public func put(role: PutRequest.Role? = nil) -> Request<OctoKit.OrgMembership, PutError> {
             Request(path: path, method: "PUT", body: PutRequest(role: role), id: "orgs/set-membership-for-user")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -84,15 +100,22 @@ extension Paths.Orgs.WithOrg.Memberships {
         /// If the specified user is an active member of the organization, this will remove them from the organization. If the specified user has been invited to the organization, this will cancel their invitation. The specified user will receive an email notification in both cases.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#remove-organization-membership-for-a-user)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "orgs/remove-membership-for-user")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "orgs/remove-membership-for-user")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

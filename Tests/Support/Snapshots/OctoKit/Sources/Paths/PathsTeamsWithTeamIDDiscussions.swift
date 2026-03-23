@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID {
@@ -23,7 +23,7 @@ extension Paths.Teams.WithTeamID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-discussions-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.TeamDiscussion]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.TeamDiscussion], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "teams/list-discussions-legacy")
         }
 
@@ -66,7 +66,7 @@ extension Paths.Teams.WithTeamID {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-a-discussion-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func post(_ body: PostRequest) -> Request<OctoKit.TeamDiscussion> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.TeamDiscussion, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "teams/create-discussion-legacy")
         }
 

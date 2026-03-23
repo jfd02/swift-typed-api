@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.RunnerGroups {
@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-self-hosted-runner-group-for-an-organization)
-        public var get: Request<OctoKit.RunnerGroupsOrg> {
+        public var get: Request<OctoKit.RunnerGroupsOrg, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-self-hosted-runner-group-for-org")
         }
 
@@ -37,7 +37,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#update-a-self-hosted-runner-group-for-an-organization)
-        public func patch(_ body: PatchRequest) -> Request<OctoKit.RunnerGroupsOrg> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.RunnerGroupsOrg, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "actions/update-self-hosted-runner-group-for-org")
         }
 
@@ -79,7 +79,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-a-self-hosted-runner-group-from-an-organization)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-self-hosted-runner-group-from-org")
         }
     }

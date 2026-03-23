@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Enables automated security fixes for a repository. The authenticated user must have admin access to the repository. For more information, see "[Configuring automated security fixes](https://help.github.com/en/articles/configuring-automated-security-fixes)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#enable-automated-security-fixes)
-        public var put: Request<Void> {
+        public var put: Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", id: "repos/enable-automated-security-fixes")
         }
 
@@ -29,7 +29,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Disables automated security fixes for a repository. The authenticated user must have admin access to the repository. For more information, see "[Configuring automated security fixes](https://help.github.com/en/articles/configuring-automated-security-fixes)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#disable-automated-security-fixes)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/disable-automated-security-fixes")
         }
     }

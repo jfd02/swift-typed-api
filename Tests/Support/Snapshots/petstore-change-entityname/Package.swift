@@ -10,13 +10,13 @@ let package = Package(
         .library(name: "petstore-change-entityname", targets: ["petstore-change-entityname"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kean/Get", from: "2.1.0"),
+        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/HTTPHeaders", from: "0.1.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
     ],
     targets: [
         .target(name: "petstore-change-entityname", dependencies: [
-            .product(name: "Get", package: "Get"),
+            .product(name: "TypedAPI", package: "swift-typed-api"),
             .product(name: "HTTPHeaders", package: "HTTPHeaders"),
             .product(name: "URLQueryEncoder", package: "URLQueryEncoder")
         ], path: "Sources")

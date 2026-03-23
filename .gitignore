@@ -11,3 +11,5 @@ DerivedData/
 
 # Custom ignores
 /Tests/Support/Snapshots/**/Package.resolved
+.build-allpackages/
+.build-scratch/

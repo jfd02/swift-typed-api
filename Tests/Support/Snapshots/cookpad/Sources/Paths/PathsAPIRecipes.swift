@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 extension Paths {
     public static var recipes: Recipes {
@@ -16,7 +16,7 @@ extension Paths {
         /// All Recipes
         ///
         /// Returns an array of all Recipe models in order of most recently published.
-        public var get: Request<[cookpad.Recipe]> {
+        public var get: Request<[cookpad.Recipe], DefaultRequestError> {
             Request(path: path, method: "GET", id: "getAllRecipes")
         }
     }

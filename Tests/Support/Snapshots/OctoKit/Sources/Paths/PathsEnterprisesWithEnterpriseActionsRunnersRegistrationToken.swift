@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.Runners {
@@ -30,7 +30,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners {
         /// ```
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#create-a-registration-token-for-an-enterprise)
-        public var post: Request<OctoKit.AuthenticationToken> {
+        public var post: Request<OctoKit.AuthenticationToken, DefaultRequestError> {
             Request(path: path, method: "POST", id: "enterprise-admin/create-registration-token-for-enterprise")
         }
     }

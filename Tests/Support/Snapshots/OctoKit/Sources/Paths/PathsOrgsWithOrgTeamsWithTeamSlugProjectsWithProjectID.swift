@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
@@ -22,14 +22,20 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}/projects/{project_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#check-team-permissions-for-a-project)
-        public var get: Request<OctoKit.TeamProject> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "teams/check-permissions-for-project-in-org")
-            }
+        public var get: Request<OctoKit.TeamProject, GetError> {
+            Request(path: path, method: "GET", id: "teams/check-permissions-for-project-in-org")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add or update team project permissions
@@ -39,12 +45,20 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `PUT /organizations/{org_id}/team/{team_id}/projects/{project_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-or-update-team-project-permissions)
-        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "teams/add-or-update-project-permissions-in-org")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(PutForbiddenBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(PutForbiddenBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutForbiddenBody: Decodable {
@@ -99,7 +113,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `DELETE /organizations/{org_id}/team/{team_id}/projects/{project_id}`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#remove-a-project-from-a-team)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/remove-project-in-org")
         }
     }

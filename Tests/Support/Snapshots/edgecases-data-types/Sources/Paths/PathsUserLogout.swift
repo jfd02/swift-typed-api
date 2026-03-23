@@ -3,7 +3,7 @@
 
 import Foundation
 import NaiveDate
-import Get
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -16,14 +16,19 @@ extension Paths.User {
         public let path: String
 
         /// Logs out current logged in user session
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "logoutUser")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "logoutUser")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case `default`(statusCode: Int)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                default: return .`default`(statusCode: statusCode)
+                }
+            }
         }
     }
 }

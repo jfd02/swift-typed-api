@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Pet {
@@ -19,12 +19,20 @@ extension Paths.Pet {
         /// Finds Pets by tags
         ///
         /// Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-        func get(tags: [String]) throws(GetError) -> Request<[edgecases_change_access_control.Pet]> {
+        func get(tags: [String]) -> Request<[edgecases_change_access_control.Pet], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(tags), id: "findPetsByTags")
         }
 
-        enum GetError: Error {
+        enum GetError: RequestError {
             case badRequest
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ tags: [String]) -> [(String, String?)] {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git.Refs {
@@ -18,12 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Refs {
         /// Update a reference
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#update-a-reference)
-        public func patch(_ body: PatchRequest) throws(PatchError) -> Request<OctoKit.GitRef> {
+        public func patch(_ body: PatchRequest) -> Request<OctoKit.GitRef, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "git/update-ref")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -47,14 +55,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git.Refs {
         /// Delete a reference
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#delete-a-reference)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "git/delete-ref")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "git/delete-ref")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

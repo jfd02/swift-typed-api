@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// The list of reviews returns in chronological order.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#list-reviews-for-a-pull-request)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.PullRequestReview]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.PullRequestReview], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "pulls/list-reviews")
         }
 
@@ -46,13 +46,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// The `position` value equals the number of lines down from the first "@@" hunk header in the file you want to add a comment. The line just below the "@@" line is position 1, the next line is position 2, and so on. The position in the diff continues to increase through lines of whitespace and additional hunks until the beginning of a new file.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#create-a-review-for-a-pull-request)
-        public func post(_ body: PostRequest? = nil) throws(PostError) -> Request<OctoKit.PullRequestReview> {
+        public func post(_ body: PostRequest? = nil) -> Request<OctoKit.PullRequestReview, PostError> {
             Request(path: path, method: "POST", body: body, id: "pulls/create-review")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

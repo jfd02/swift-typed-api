@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions.Runners {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners {
         /// You must authenticate using an access token with the `manage_runners:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#list-runner-applications-for-an-enterprise)
-        public var get: Request<[OctoKit.RunnerApplication]> {
+        public var get: Request<[OctoKit.RunnerApplication], DefaultRequestError> {
             Request(path: path, method: "GET", id: "enterprise-admin/list-runner-applications-for-enterprise")
         }
     }

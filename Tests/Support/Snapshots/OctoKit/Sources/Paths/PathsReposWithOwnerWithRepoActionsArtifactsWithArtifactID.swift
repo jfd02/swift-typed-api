@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Artifacts {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Artifacts {
         /// Gets a specific artifact for a workflow run. Anyone with read access to the repository can use this endpoint. If the repository is private you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-an-artifact)
-        public var get: Request<OctoKit.Artifact> {
+        public var get: Request<OctoKit.Artifact, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-artifact")
         }
 
@@ -29,7 +29,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Artifacts {
         /// Deletes an artifact for a workflow run. You must authenticate using an access token with the `repo` scope to use this endpoint. GitHub Apps must have the `actions:write` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-an-artifact)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-artifact")
         }
     }

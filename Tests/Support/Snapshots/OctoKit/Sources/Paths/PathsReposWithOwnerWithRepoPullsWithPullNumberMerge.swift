@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
@@ -18,14 +18,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Check if a pull request has been merged
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#check-if-a-pull-request-has-been-merged)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "pulls/check-if-merged")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "pulls/check-if-merged")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Merge a pull request
@@ -33,16 +39,28 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// This endpoint triggers [notifications](https://docs.github.com/github/managing-subscriptions-and-notifications-on-github/about-notifications). Creating content too quickly using this endpoint may result in secondary rate limiting. See "[Secondary rate limits](https://docs.github.com/rest/overview/resources-in-the-rest-api#secondary-rate-limits)" and "[Dealing with secondary rate limits](https://docs.github.com/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits)" for details.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#merge-a-pull-request)
-        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<OctoKit.PullRequestMergeResult> {
+        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.PullRequestMergeResult, PutError> {
             Request(path: path, method: "PUT", body: body, id: "pulls/merge")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case methodNotAllowed(PutMethodNotAllowedBody)
             case conflict(PutConflictBody)
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 405: return .methodNotAllowed(try decoder.decode(PutMethodNotAllowedBody.self, from: data))
+                case 409: return .conflict(try decoder.decode(PutConflictBody.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutMethodNotAllowedBody: Decodable {

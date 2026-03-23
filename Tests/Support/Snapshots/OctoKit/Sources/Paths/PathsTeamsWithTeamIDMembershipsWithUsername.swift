@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID.Memberships {
@@ -30,14 +30,20 @@ extension Paths.Teams.WithTeamID.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-team-membership-for-a-user-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<OctoKit.TeamMembership> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "teams/get-membership-for-user-legacy")
-            }
+        public var get: Request<OctoKit.TeamMembership, GetError> {
+            Request(path: path, method: "GET", id: "teams/get-membership-for-user-legacy")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add or update team membership for a user (Legacy)
@@ -56,14 +62,24 @@ extension Paths.Teams.WithTeamID.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#add-or-update-team-membership-for-a-user-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func put(role: PutRequest.Role? = nil) throws(PutError) -> Request<OctoKit.TeamMembership> {
+        public func put(role: PutRequest.Role? = nil) -> Request<OctoKit.TeamMembership, PutError> {
             Request(path: path, method: "PUT", body: PutRequest(role: role), id: "teams/add-or-update-membership-for-user-legacy")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden
             case unprocessableEntity
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden
+                case 422: return .unprocessableEntity
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -102,14 +118,20 @@ extension Paths.Teams.WithTeamID.Memberships {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#remove-team-membership-for-a-user-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "teams/remove-membership-for-user-legacy")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "teams/remove-membership-for-user-legacy")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

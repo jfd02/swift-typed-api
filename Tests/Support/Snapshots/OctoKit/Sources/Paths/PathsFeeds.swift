@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -30,7 +30,7 @@ extension Paths {
         /// **Note**: Private feeds are only returned when [authenticating via Basic Auth](https://docs.github.com/rest/overview/other-authentication-methods#basic-authentication) since current feed URIs use the older, non revocable auth tokens.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#get-feeds)
-        public var get: Request<OctoKit.Feed> {
+        public var get: Request<OctoKit.Feed, DefaultRequestError> {
             Request(path: path, method: "GET", id: "activity/get-feeds")
         }
     }

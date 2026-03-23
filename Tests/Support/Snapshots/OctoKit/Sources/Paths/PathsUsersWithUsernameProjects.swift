@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -18,12 +18,20 @@ extension Paths.Users.WithUsername {
         /// List user projects
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#list-user-projects)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Project]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Project], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "projects/list-for-user")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

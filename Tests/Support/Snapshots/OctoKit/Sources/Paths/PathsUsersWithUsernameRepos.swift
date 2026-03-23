@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -20,7 +20,7 @@ extension Paths.Users.WithUsername {
         /// Lists public repositories for the specified user. Note: For GitHub AE, this endpoint will list internal repositories for the specified user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repositories-for-a-user)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MinimalRepository], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-for-user")
         }
 

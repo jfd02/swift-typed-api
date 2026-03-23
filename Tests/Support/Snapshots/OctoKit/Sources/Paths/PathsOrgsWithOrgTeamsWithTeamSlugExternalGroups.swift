@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
         /// You can manage team membership with your identity provider using Enterprise Managed Users for GitHub Enterprise Cloud. For more information, see "[GitHub's products](https://docs.github.com/github/getting-started-with-github/githubs-products)" in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#link-external-idp-group-team-connection)
-        public func patch(groupID: Int) -> Request<OctoKit.ExternalGroup> {
+        public func patch(groupID: Int) -> Request<OctoKit.ExternalGroup, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: ["group_id": groupID], id: "teams/link-external-idp-group-to-team-for-org")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
         /// You can manage team membership with your IdP using Enterprise Managed Users for GitHub Enterprise Cloud. For more information, see [GitHub's products](https://docs.github.com/github/getting-started-with-github/githubs-products) in the GitHub Help documentation.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#unlink-external-idp-group-team-connection)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/unlink-external-idp-group-from-team-for-org")
         }
     }

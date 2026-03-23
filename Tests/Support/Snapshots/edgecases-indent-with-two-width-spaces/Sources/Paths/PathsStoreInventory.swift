@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Store {
@@ -19,7 +19,7 @@ extension Paths.Store {
     /// Returns pet inventories by status
     ///
     /// Returns a map of status codes to quantities
-    public var get: Request<[String: Int32]> {
+    public var get: Request<[String: Int32], DefaultRequestError> {
       Request(path: path, method: "GET", id: "getInventory")
     }
   }

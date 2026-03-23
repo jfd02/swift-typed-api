@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-repository-access-to-a-self-hosted-runner-group-in-an-organization)
-        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<GetResponse> {
+        public func get(page: Int? = nil, perPage: Int? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "actions/list-repo-access-to-self-hosted-runner-group-in-org")
         }
 
@@ -60,7 +60,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
         /// You must authenticate using an access token with the `admin:org` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#set-repository-access-to-a-self-hosted-runner-group-in-an-organization)
-        public func put(selectedRepositoryIDs: [Int]) -> Request<Void> {
+        public func put(selectedRepositoryIDs: [Int]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["selected_repository_ids": selectedRepositoryIDs], id: "actions/set-repo-access-to-self-hosted-runner-group-in-org")
         }
     }

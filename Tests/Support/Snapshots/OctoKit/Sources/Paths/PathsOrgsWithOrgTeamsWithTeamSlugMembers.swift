@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
         /// To list members in a team, the team must be visible to the authenticated user.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-team-members)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SimpleUser]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SimpleUser], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "teams/list-members-in-org")
         }
 

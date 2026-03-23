@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -20,7 +20,7 @@ extension Paths {
         /// Get the octocat as ASCII art
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/meta#get-octocat)
-        public func get(s: String? = nil) -> Request<String> {
+        public func get(s: String? = nil) -> Request<String, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(s), id: "meta/get-octocat")
         }
 

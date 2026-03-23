@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Environments {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Environments {
         /// Anyone with read access to the repository can use this endpoint. If the repository is private, you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-an-environment)
-        public var get: Request<OctoKit.Environment> {
+        public var get: Request<OctoKit.Environment, DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-environment")
         }
 
@@ -35,12 +35,20 @@ extension Paths.Repos.WithOwner.WithRepo.Environments {
         /// You must authenticate using an access token with the repo scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-or-update-an-environment)
-        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<OctoKit.Environment> {
+        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.Environment, PutError> {
             Request(path: path, method: "PUT", body: body, id: "repos/create-or-update-environment")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -94,7 +102,7 @@ extension Paths.Repos.WithOwner.WithRepo.Environments {
         /// You must authenticate using an access token with the repo scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-an-environment)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/delete-an-environment")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.SecretScanning {
@@ -22,13 +22,22 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning {
         /// GitHub Apps must have the `secret_scanning_alerts` read permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/secret-scanning#list-secret-scanning-alerts-for-a-repository)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.SecretScanningAlert]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.SecretScanningAlert], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "secret-scanning/list-alerts-for-repo")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
             case serviceUnavailable(GetServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable {

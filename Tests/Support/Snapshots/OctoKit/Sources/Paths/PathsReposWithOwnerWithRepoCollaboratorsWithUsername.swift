@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Collaborators {
@@ -22,14 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators {
         /// Team members will include the members of child teams.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#check-if-a-user-is-a-repository-collaborator)
-        public var get: Request<Void> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/check-collaborator")
-            }
+        public var get: Request<Void, GetError> {
+            Request(path: path, method: "GET", id: "repos/check-collaborator")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add a repository collaborator
@@ -51,13 +57,22 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators {
         /// You are limited to sending 50 invitations to a repository per 24 hour period. Note there is no limit if you are inviting organization members to an organization repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#add-a-repository-collaborator)
-        public func put(_ body: PutRequest? = nil) throws(PutError) -> Request<OctoKit.RepositoryInvitation> {
+        public func put(_ body: PutRequest? = nil) -> Request<OctoKit.RepositoryInvitation, PutError> {
             Request(path: path, method: "PUT", body: body, id: "repos/add-collaborator")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutRequest: Encodable {
@@ -102,7 +117,7 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators {
         /// Remove a repository collaborator
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#remove-a-repository-collaborator)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/remove-collaborator")
         }
     }

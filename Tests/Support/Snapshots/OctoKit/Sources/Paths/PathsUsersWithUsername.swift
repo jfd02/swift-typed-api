@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users {
@@ -26,14 +26,20 @@ extension Paths.Users {
         /// The Emails API enables you to list all of your email addresses, and toggle a primary email to be visible publicly. For more information, see "[Emails API](https://docs.github.com/rest/reference/users#emails)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/users#get-a-user)
-        public var get: Request<GetResponse> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "users/get-by-username")
-            }
+        public var get: Request<GetResponse, GetError> {
+            Request(path: path, method: "GET", id: "users/get-by-username")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponse: Decodable {

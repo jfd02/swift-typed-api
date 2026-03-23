@@ -1,97 +1,140 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "Get",
-        "repositoryURL": "https://github.com/kean/Get",
-        "state": {
-          "branch": null,
-          "revision": "f0795a24f4864152c47c444c0163088b4510ac5b",
-          "version": "1.0.3"
-        }
-      },
-      {
-        "package": "HTTPHeaders",
-        "repositoryURL": "https://github.com/CreateAPI/HTTPHeaders",
-        "state": {
-          "branch": null,
-          "revision": "96c4cb3fcb904c12891c9d65c902fbb691453562",
-          "version": "0.1.1"
-        }
-      },
-      {
-        "package": "NaiveDate",
-        "repositoryURL": "https://github.com/CreateAPI/NaiveDate",
-        "state": {
-          "branch": null,
-          "revision": "08fad5d02e9117f6cea96096c5951e445aa710b1",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "swift-algorithms",
-        "repositoryURL": "https://github.com/apple/swift-algorithms",
-        "state": {
-          "branch": null,
-          "revision": "b14b7f4c528c942f121c8b860b9410b2bf57825e",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "swift-argument-parser",
-        "repositoryURL": "https://github.com/apple/swift-argument-parser",
-        "state": {
-          "branch": null,
-          "revision": "82905286cc3f0fa8adc4674bf49437cab65a8373",
-          "version": "1.1.1"
-        }
-      },
-      {
-        "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log",
-        "state": {
-          "branch": "main",
-          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-metrics",
-        "repositoryURL": "https://github.com/apple/swift-metrics.git",
-        "state": {
-          "branch": null,
-          "revision": "53be78637ecd165d1ddedc4e20de69b8f43ec3b7",
-          "version": "2.3.2"
-        }
-      },
-      {
-        "package": "swift-numerics",
-        "repositoryURL": "https://github.com/apple/swift-numerics",
-        "state": {
-          "branch": null,
-          "revision": "7f2d022d3d9b55bf812814f5d01896cbfa0fd4da",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-system",
-        "repositoryURL": "https://github.com/apple/swift-system",
-        "state": {
-          "branch": null,
-          "revision": "025bcb1165deab2e20d4eaba79967ce73013f496",
-          "version": "1.2.1"
-        }
-      },
-      {
-        "package": "URLQueryEncoder",
-        "repositoryURL": "https://github.com/CreateAPI/URLQueryEncoder",
-        "state": {
-          "branch": null,
-          "revision": "4cc975d4d075d0e62699a796a08284e217d4ee93",
-          "version": "0.2.0"
-        }
+  "originHash" : "9b0abcf6a503075f21555fa054c3f59a5e3f250568ae4f63219ee89539784026",
+  "pins" : [
+    {
+      "identity" : "filewatcher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eonist/FileWatcher",
+      "state" : {
+        "revision" : "e67c2a99502eade343fecabeca8c57e749a55b59",
+        "version" : "0.2.3"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "get",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Get",
+      "state" : {
+        "revision" : "31249885da1052872e0ac91a2943f62567c0d96d",
+        "version" : "2.2.1"
+      }
+    },
+    {
+      "identity" : "grammaticalnumber",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Cosmo/GrammaticalNumber",
+      "state" : {
+        "revision" : "3827665bd38a0fd5f215220b26c92df876539af0",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "httpheaders",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CreateAPI/HTTPHeaders",
+      "state" : {
+        "revision" : "96c4cb3fcb904c12891c9d65c902fbb691453562",
+        "version" : "0.1.1"
+      }
+    },
+    {
+      "identity" : "naivedate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CreateAPI/NaiveDate",
+      "state" : {
+        "revision" : "08fad5d02e9117f6cea96096c5951e445aa710b1",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "openapikit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattpolzin/OpenAPIKit",
+      "state" : {
+        "revision" : "343b2c1793058fcc53c1bd7e2907f8e3a4d640fb",
+        "version" : "3.9.0"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms",
+      "state" : {
+        "revision" : "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "626b5b7b2f45e1b0b1c6f4a309296d1d21d7311b",
+        "version" : "1.7.1"
+      }
+    },
+    {
+      "identity" : "swift-configuration-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/liamnichols/swift-configuration-parser",
+      "state" : {
+        "revision" : "73ce739739c4a9d9881d5b41c54e7c98a6127d74",
+        "version" : "0.0.4"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log",
+      "state" : {
+        "branch" : "main",
+        "revision" : "6fe203dc33195667ce1759bf0182975e4653ba1c"
+      }
+    },
+    {
+      "identity" : "swift-metrics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-metrics.git",
+      "state" : {
+        "revision" : "53be78637ecd165d1ddedc4e20de69b8f43ec3b7",
+        "version" : "2.3.2"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics",
+      "state" : {
+        "revision" : "7f2d022d3d9b55bf812814f5d01896cbfa0fd4da"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system",
+      "state" : {
+        "revision" : "025bcb1165deab2e20d4eaba79967ce73013f496",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "urlqueryencoder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CreateAPI/URLQueryEncoder",
+      "state" : {
+        "revision" : "4cc975d4d075d0e62699a796a08284e217d4ee93",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "yams",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jpsim/Yams",
+      "state" : {
+        "revision" : "3d6871d5b4a5cd519adf233fbb576e0a2af71c17",
+        "version" : "5.4.0"
+      }
+    }
+  ],
+  "version" : 3
 }

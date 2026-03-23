@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Invitations {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo.Invitations {
         /// Update a repository invitation
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#update-a-repository-invitation)
-        public func patch(permissions: PatchRequest.Permissions? = nil) -> Request<OctoKit.RepositoryInvitation> {
+        public func patch(permissions: PatchRequest.Permissions? = nil) -> Request<OctoKit.RepositoryInvitation, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: PatchRequest(permissions: permissions), id: "repos/update-invitation")
         }
 
@@ -48,7 +48,7 @@ extension Paths.Repos.WithOwner.WithRepo.Invitations {
         /// Delete a repository invitation
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-repository-invitation)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "repos/delete-invitation")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Git.MatchingRefs {
@@ -26,7 +26,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git.MatchingRefs {
         /// If you request matching references for a branch named `feature` but the branch `feature` doesn't exist, the response can still include other matching head refs that start with the word `feature`, such as `featureA` and `featureB`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/git#list-matching-references)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.GitRef]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.GitRef], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "git/list-matching-refs")
         }
 

@@ -1,13 +1,14 @@
-// swift-tools-version:5.5
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "CreateAPI",
+    name: "swift-typed-api",
     platforms: [.macOS(.v10_15)],
     products: [
-        .executable(name: "create-api", targets: ["create-api"])
+        .executable(name: "create-api", targets: ["create-api"]),
+        .library(name: "TypedAPI", targets: ["TypedAPI"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.3"),
@@ -29,14 +30,16 @@ let package = Package(
                 .product(name: "FileWatcher", package: "FileWatcher", condition: .when(platforms: [.macOS])),
                 .target(name: "CreateOptions")
             ],
-            path: "Sources/CreateAPI"
+            path: "Sources/CreateAPI",
+            swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .target(
             name: "CreateOptions",
             dependencies: [
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "ConfigurationParser", package: "swift-configuration-parser")
-            ]
+            ],
+            swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(
             name: "create-api-tests",
@@ -46,11 +49,17 @@ let package = Package(
                 .product(name: "OpenAPIKit", package: "OpenAPIKit"),
                 .product(name: "Yams", package: "Yams")
             ],
-            path: "Tests/CreateAPITests"
+            path: "Tests/CreateAPITests",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .target(
+            name: "TypedAPI",
+            swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(
             name: "CreateOptionsTests",
-            dependencies: ["CreateOptions"]
+            dependencies: ["CreateOptions"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]
 )

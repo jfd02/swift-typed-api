@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Organizations.WithOrganizationID {
@@ -23,7 +23,7 @@ extension Paths.Organizations.WithOrganizationID {
         /// For more information on custom repository roles, see "[Managing custom repository roles for an organization](https://docs.github.com/organizations/managing-peoples-access-to-your-organization-with-roles/managing-custom-repository-roles-for-an-organization)".
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-custom-repository-roles-in-an-organization)
-        public var get: Request<GetResponse> {
+        public var get: Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", id: "orgs/list-custom-roles")
         }
 

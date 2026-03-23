@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Actions.Secrets {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets {
         /// Gets your public key, which you need to encrypt secrets. You need to encrypt a secret before you can create or update secrets. You must authenticate using an access token with the `admin:org` scope to use this endpoint. GitHub Apps must have the `secrets` organization permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-an-organization-public-key)
-        public var get: Request<OctoKit.ActionsPublicKey> {
+        public var get: Request<OctoKit.ActionsPublicKey, DefaultRequestError> {
             Request(path: path, method: "GET", id: "actions/get-org-public-key")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Simple filtering of deployments is available via query parameters:
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-deployments)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Deployment]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Deployment], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-deployments")
         }
 
@@ -106,13 +106,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// status for the commit to be deployed, but one or more of the required contexts do not have a state of `success`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-deployment)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Deployment> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Deployment, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-deployment")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case conflict
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 409: return .conflict
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostRequest: Encodable {

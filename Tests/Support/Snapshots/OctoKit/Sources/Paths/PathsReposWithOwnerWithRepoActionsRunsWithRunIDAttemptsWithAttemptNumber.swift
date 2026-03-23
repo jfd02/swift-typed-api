@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID.Attempts {
@@ -23,7 +23,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID.Attempts {
         /// use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-workflow-run-attempt)
-        public func get(excludePullRequests: Bool? = nil) -> Request<OctoKit.WorkflowRun> {
+        public func get(excludePullRequests: Bool? = nil) -> Request<OctoKit.WorkflowRun, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(excludePullRequests), id: "actions/get-workflow-run-attempt")
         }
 

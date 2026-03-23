@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Search {
@@ -28,14 +28,24 @@ extension Paths.Search {
         /// This query searches for repositories with the word `tetris` in the name, the description, or the README. The results are limited to repositories where the primary language is assembly. The results are sorted by stars in descending order, so that the most popular repositories appear first in the search results.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/search#search-repositories)
-        public func get(parameters: GetParameters) throws(GetError) -> Request<GetResponse> {
+        public func get(parameters: GetParameters) -> Request<GetResponse, GetError> {
             Request(path: path, method: "GET", query: parameters.asQuery, id: "search/repos")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case serviceUnavailable(GetServiceUnavailableBody)
             case unprocessableEntity(OctoKit.ValidationError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct GetResponse: Decodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID.Projects {
@@ -23,14 +23,20 @@ extension Paths.Teams.WithTeamID.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#check-team-permissions-for-a-project-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<OctoKit.TeamProject> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "teams/check-permissions-for-project-legacy")
-            }
+        public var get: Request<OctoKit.TeamProject, GetError> {
+            Request(path: path, method: "GET", id: "teams/check-permissions-for-project-legacy")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Add or update team project permissions (Legacy)
@@ -41,14 +47,24 @@ extension Paths.Teams.WithTeamID.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#add-or-update-team-project-permissions-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func put(permission: PutRequest.Permission? = nil) throws(PutError) -> Request<Void> {
+        public func put(permission: PutRequest.Permission? = nil) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: PutRequest(permission: permission), id: "teams/add-or-update-project-permissions-legacy")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case forbidden(PutForbiddenBody)
             case notFound(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(PutForbiddenBody.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PutForbiddenBody: Decodable {
@@ -104,16 +120,24 @@ extension Paths.Teams.WithTeamID.Projects {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams/#remove-a-project-from-a-team-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "teams/remove-project-legacy")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "teams/remove-project-legacy")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
             case unsupportedMediaType(DeleteUnsupportedMediaTypeBody)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 415: return .unsupportedMediaType(try decoder.decode(DeleteUnsupportedMediaTypeBody.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteUnsupportedMediaTypeBody: Decodable {

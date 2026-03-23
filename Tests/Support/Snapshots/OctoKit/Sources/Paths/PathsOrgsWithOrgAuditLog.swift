@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg {
         /// To use this endpoint, you must be an organization owner, and you must use an access token with the `admin:org` scope. GitHub Apps must have the `organization_administration` read permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-audit-log)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.AuditLogEvent]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.AuditLogEvent], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "orgs/get-audit-log")
         }
 

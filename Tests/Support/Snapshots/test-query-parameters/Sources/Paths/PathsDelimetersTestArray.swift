@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Delimeters {
@@ -15,7 +15,7 @@ extension Paths.Delimeters {
         public let path: String
 
         /// Space Delimited Explode False
-        public func get(type: [String]) -> Request<Void> {
+        public func get(type: [String]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(type))
         }
 
@@ -26,7 +26,7 @@ extension Paths.Delimeters {
         }
 
         /// Pipe Delimited Explode False
-        public func post(type: [String]? = nil) -> Request<Void> {
+        public func post(type: [String]? = nil) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "POST", query: makePostQuery(type))
         }
 
@@ -37,7 +37,7 @@ extension Paths.Delimeters {
         }
 
         /// Space Delimited Explode True
-        public func put(type: [String]) -> Request<Void> {
+        public func put(type: [String]) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", query: makePutQuery(type))
         }
 
@@ -48,7 +48,7 @@ extension Paths.Delimeters {
         }
 
         /// Pipe Delimited Explode True
-        public func patch(type: [String]? = nil) -> Request<Void> {
+        public func patch(type: [String]? = nil) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PATCH", query: makePatchQuery(type))
         }
 

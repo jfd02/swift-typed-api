@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Issues.Events {
@@ -18,16 +18,24 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.Events {
         /// Get an issue event
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/issues#get-an-issue-event)
-        public var get: Request<OctoKit.IssueEvent> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "issues/get-event")
-            }
+        public var get: Request<OctoKit.IssueEvent, GetError> {
+            Request(path: path, method: "GET", id: "issues/get-event")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
             case gone(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -18,7 +18,7 @@ extension Paths {
         /// Get the Zen of GitHub
         ///
         /// Get a random sentence from the Zen of GitHub
-        public var get: Request<String> {
+        public var get: Request<String, DefaultRequestError> {
             Request(path: path, method: "GET", id: "meta/get-zen")
         }
     }

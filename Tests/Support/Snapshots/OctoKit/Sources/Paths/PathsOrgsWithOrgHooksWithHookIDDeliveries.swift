@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Hooks.WithHookID {
@@ -20,13 +20,22 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID {
         /// Returns a list of webhook deliveries for a webhook configured in an organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-deliveries-for-an-organization-webhook)
-        public func get(perPage: Int? = nil, cursor: String? = nil) throws(GetError) -> Request<[OctoKit.HookDeliveryItem]> {
+        public func get(perPage: Int? = nil, cursor: String? = nil) -> Request<[OctoKit.HookDeliveryItem], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, cursor), id: "orgs/list-webhook-deliveries")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case badRequest(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         private func makeGetQuery(_ perPage: Int?, _ cursor: String?) -> [(String, String?)] {

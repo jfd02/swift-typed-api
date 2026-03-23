@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Community {
@@ -31,7 +31,7 @@ extension Paths.Repos.WithOwner.WithRepo.Community {
         /// `content_reports_enabled` is only returned for organization-owned repositories.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-community-profile-metrics)
-        public var get: Request<OctoKit.CommunityProfile> {
+        public var get: Request<OctoKit.CommunityProfile, DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-community-profile-metrics")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions.Runs {
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs {
         /// Gets a specific workflow run. Anyone with read access to the repository can use this endpoint. If the repository is private you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#get-a-workflow-run)
-        public func get(excludePullRequests: Bool? = nil) -> Request<OctoKit.WorkflowRun> {
+        public func get(excludePullRequests: Bool? = nil) -> Request<OctoKit.WorkflowRun, DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(excludePullRequests), id: "actions/get-workflow-run")
         }
 
@@ -37,7 +37,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs {
         /// this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#delete-a-workflow-run)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "actions/delete-workflow-run")
         }
     }

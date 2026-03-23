@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -20,13 +20,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Sync a branch of a forked repository to keep it up-to-date with the upstream repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#sync-a-fork-branch-with-the-upstream-repository)
-        public func post(branch: String) throws(PostError) -> Request<OctoKit.MergedUpstream> {
+        public func post(branch: String) -> Request<OctoKit.MergedUpstream, PostError> {
             Request(path: path, method: "POST", body: ["branch": branch], id: "repos/merge-upstream")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case conflict
             case unprocessableEntity
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 409: return .conflict
+                case 422: return .unprocessableEntity
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

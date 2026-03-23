@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -22,7 +22,7 @@ extension Paths.Users.WithUsername {
         /// This method only lists _public_ memberships, regardless of authentication. If you need to fetch all of the organization memberships (public and private) for the authenticated user, use the [List organizations for the authenticated user](https://docs.github.com/rest/reference/orgs#list-organizations-for-the-authenticated-user) API instead.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#list-organizations-for-a-user)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrganizationSimple]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.OrganizationSimple], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-for-user")
         }
 

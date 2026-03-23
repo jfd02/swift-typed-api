@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -24,12 +24,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// You must have push access to the repository in order to list collaborators.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-repository-collaborators)
-        public func get(parameters: GetParameters? = nil) throws(GetError) -> Request<[OctoKit.Collaborator]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Collaborator], GetError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-collaborators")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {

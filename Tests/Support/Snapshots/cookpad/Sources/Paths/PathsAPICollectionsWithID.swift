@@ -2,7 +2,7 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
+import TypedAPI
 
 extension Paths.Collections {
     public func id(_ id: Int) -> WithID {
@@ -16,14 +16,20 @@ extension Paths.Collections {
         /// Find a Collection by ID
         ///
         /// Returns a single Collection model associated with the given identifier.
-        public var get: Request<cookpad.Collection> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "getCollection")
-            }
+        public var get: Request<cookpad.Collection, GetError> {
+            Request(path: path, method: "GET", id: "getCollection")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

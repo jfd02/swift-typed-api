@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo {
@@ -53,14 +53,20 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// *   `large_files_count` - the total number of files larger than 100MB found in the originating repository. To see a list of these files, make a "Get Large Files" request.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#get-an-import-status)
-        public var get: Request<OctoKit.Import> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "migrations/get-import-status")
-            }
+        public var get: Request<OctoKit.Import, GetError> {
+            Request(path: path, method: "GET", id: "migrations/get-import-status")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Start an import
@@ -68,13 +74,22 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Start a source import to a GitHub repository using GitHub Importer.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#start-an-import)
-        public func put(_ body: PutRequest) throws(PutError) -> Request<OctoKit.Import> {
+        public func put(_ body: PutRequest) -> Request<OctoKit.Import, PutError> {
             Request(path: path, method: "PUT", body: body, id: "migrations/start-import")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PutResponseHeaders {
@@ -125,7 +140,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// request. If no parameters are provided, the import will be restarted.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#update-an-import)
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Import> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Import, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "migrations/update-import")
         }
 
@@ -160,7 +175,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Stop an import for a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/migrations#cancel-an-import)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "migrations/cancel-import")
         }
     }

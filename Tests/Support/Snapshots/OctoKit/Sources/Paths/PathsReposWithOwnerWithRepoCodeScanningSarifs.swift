@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
@@ -36,16 +36,28 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
         /// For more information, see "[Get information about a SARIF upload](/rest/reference/code-scanning#get-information-about-a-sarif-upload)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/code-scanning#upload-a-sarif-file)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.CodeScanningSarifsReceipt> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.CodeScanningSarifsReceipt, PostError> {
             Request(path: path, method: "POST", body: body, id: "code-scanning/upload-sarif")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case badRequest
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case status413
             case serviceUnavailable(PostServiceUnavailableBody)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 413: return .status413
+                case 503: return .serviceUnavailable(try decoder.decode(PostServiceUnavailableBody.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostServiceUnavailableBody: Decodable {

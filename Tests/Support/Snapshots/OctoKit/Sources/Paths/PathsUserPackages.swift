@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -23,7 +23,7 @@ extension Paths.User {
         /// If `package_type` is not `container`, your token must also include the `repo` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/packages#list-packages-for-the-authenticated-user)
-        public func get(packageType: PackageType, visibility: Visibility? = nil) -> Request<[OctoKit.Package]> {
+        public func get(packageType: PackageType, visibility: Visibility? = nil) -> Request<[OctoKit.Package], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(packageType, visibility), id: "packages/list-packages-for-authenticated-user")
         }
 

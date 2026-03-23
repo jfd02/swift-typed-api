@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise {
@@ -20,7 +20,7 @@ extension Paths.Enterprises.WithEnterprise {
         /// Gets the audit log for an enterprise. To use this endpoint, you must be an enterprise admin, and you must use an access token with the `admin:enterprise` scope.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#get-the-audit-log-for-an-enterprise)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.AuditLogEvent]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.AuditLogEvent], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "enterprise-admin/get-audit-log")
         }
 

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pages.Builds {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pages.Builds {
         /// Get GitHub Pages build
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-github-pages-build)
-        public var get: Request<OctoKit.PageBuild> {
+        public var get: Request<OctoKit.PageBuild, DefaultRequestError> {
             Request(path: path, method: "GET", id: "repos/get-pages-build")
         }
     }

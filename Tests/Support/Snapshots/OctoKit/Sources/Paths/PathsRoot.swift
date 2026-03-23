@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -20,7 +20,7 @@ extension Paths {
         /// Get Hypermedia links to resources accessible in GitHub's REST API
         ///
         /// [API method documentation](https://docs.github.com/rest/overview/resources-in-the-rest-api#root-endpoint)
-        public var get: Request<GetResponse> {
+        public var get: Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", id: "meta/root")
         }
 

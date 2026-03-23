@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.CheckRuns.WithCheckRunID {
@@ -22,16 +22,24 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns.WithCheckRunID {
         /// To rerequest a check run, your GitHub App must have the `checks:read` permission on a private repository or pull access to a public repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/checks#rerequest-a-check-run)
-        public var post: Request<Void> {
-            get throws(PostError) {
-                Request(path: path, method: "POST", id: "checks/rerequest-run")
-            }
+        public var post: Request<Void, PostError> {
+            Request(path: path, method: "POST", id: "checks/rerequest-run")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

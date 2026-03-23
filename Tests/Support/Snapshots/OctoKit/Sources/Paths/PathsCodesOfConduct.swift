@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths {
@@ -18,14 +18,20 @@ extension Paths {
         /// Get all codes of conduct
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codes-of-conduct#get-all-codes-of-conduct)
-        public var get: Request<[OctoKit.CodeOfConduct]> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "codes-of-conduct/get-all-codes-of-conduct")
-            }
+        public var get: Request<[OctoKit.CodeOfConduct], GetError> {
+            Request(path: path, method: "GET", id: "codes-of-conduct/get-all-codes-of-conduct")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

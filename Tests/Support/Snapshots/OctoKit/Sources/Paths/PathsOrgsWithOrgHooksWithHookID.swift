@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Hooks {
@@ -20,14 +20,20 @@ extension Paths.Orgs.WithOrg.Hooks {
         /// Returns a webhook configured in an organization. To get only the webhook `config` properties, see "[Get a webhook configuration for an organization](/rest/reference/orgs#get-a-webhook-configuration-for-an-organization)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#get-an-organization-webhook)
-        public var get: Request<OctoKit.OrgHook> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "orgs/get-webhook")
-            }
+        public var get: Request<OctoKit.OrgHook, GetError> {
+            Request(path: path, method: "GET", id: "orgs/get-webhook")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an organization webhook
@@ -35,13 +41,22 @@ extension Paths.Orgs.WithOrg.Hooks {
         /// Updates a webhook configured in an organization. When you update a webhook, the `secret` will be overwritten. If you previously had a `secret` set, you must provide the same `secret` or set a new `secret` or the secret will be removed. If you are only updating individual webhook `config` properties, use "[Update a webhook configuration for an organization](/rest/reference/orgs#update-a-webhook-configuration-for-an-organization)."
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#update-an-organization-webhook)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.OrgHook> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.OrgHook, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "orgs/update-webhook")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -105,14 +120,20 @@ extension Paths.Orgs.WithOrg.Hooks {
         /// Delete an organization webhook
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/orgs#delete-an-organization-webhook)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "orgs/delete-webhook")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "orgs/delete-webhook")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

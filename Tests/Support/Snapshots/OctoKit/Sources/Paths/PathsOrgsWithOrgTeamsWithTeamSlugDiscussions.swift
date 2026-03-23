@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/{org_id}/team/{team_id}/discussions`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#list-discussions)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.TeamDiscussion]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.TeamDiscussion], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "teams/list-discussions-in-org")
         }
 
@@ -67,7 +67,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `POST /organizations/{org_id}/team/{team_id}/discussions`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#create-a-discussion)
-        public func post(_ body: PostRequest) -> Request<OctoKit.TeamDiscussion> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.TeamDiscussion, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "teams/create-discussion-in-org")
         }
 

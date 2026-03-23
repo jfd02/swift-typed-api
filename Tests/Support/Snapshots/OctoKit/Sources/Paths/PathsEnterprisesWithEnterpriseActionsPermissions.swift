@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Enterprises.WithEnterprise.Actions {
@@ -22,7 +22,7 @@ extension Paths.Enterprises.WithEnterprise.Actions {
         /// You must authenticate using an access token with the `admin:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#get-github-actions-permissions-for-an-enterprise)
-        public var get: Request<OctoKit.ActionsEnterprisePermissions> {
+        public var get: Request<OctoKit.ActionsEnterprisePermissions, DefaultRequestError> {
             Request(path: path, method: "GET", id: "enterprise-admin/get-github-actions-permissions-enterprise")
         }
 
@@ -33,7 +33,7 @@ extension Paths.Enterprises.WithEnterprise.Actions {
         /// You must authenticate using an access token with the `admin:enterprise` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/enterprise-admin#set-github-actions-permissions-for-an-enterprise)
-        public func put(_ body: PutRequest) -> Request<Void> {
+        public func put(_ body: PutRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: body, id: "enterprise-admin/set-github-actions-permissions-enterprise")
         }
 

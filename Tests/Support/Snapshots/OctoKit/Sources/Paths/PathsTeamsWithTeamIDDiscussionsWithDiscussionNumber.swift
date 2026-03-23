@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Teams.WithTeamID.Discussions {
@@ -23,7 +23,7 @@ extension Paths.Teams.WithTeamID.Discussions {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#get-a-discussion-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<OctoKit.TeamDiscussion> {
+        public var get: Request<OctoKit.TeamDiscussion, DefaultRequestError> {
             Request(path: path, method: "GET", id: "teams/get-discussion-legacy")
         }
 
@@ -35,7 +35,7 @@ extension Paths.Teams.WithTeamID.Discussions {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#update-a-discussion-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.TeamDiscussion> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.TeamDiscussion, DefaultRequestError> {
             Request(path: path, method: "PATCH", body: body, id: "teams/update-discussion-legacy")
         }
 
@@ -65,7 +65,7 @@ extension Paths.Teams.WithTeamID.Discussions {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/teams#delete-a-discussion-legacy)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "teams/delete-discussion-legacy")
         }
     }

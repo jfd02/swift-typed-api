@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Authorizations {
@@ -21,16 +21,24 @@ extension Paths.Authorizations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#get-a-single-authorization)
         @available(*, deprecated, message: "Deprecated")
-        public var get: Request<OctoKit.Authorization> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "oauth-authorizations/get-authorization")
-            }
+        public var get: Request<OctoKit.Authorization, GetError> {
+            Request(path: path, method: "GET", id: "oauth-authorizations/get-authorization")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update an existing authorization
@@ -43,12 +51,20 @@ extension Paths.Authorizations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#update-an-existing-authorization)
         @available(*, deprecated, message: "Deprecated")
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.Authorization> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.Authorization, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "oauth-authorizations/update-authorization")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -95,16 +111,24 @@ extension Paths.Authorizations {
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/oauth-authorizations#delete-an-authorization)
         @available(*, deprecated, message: "Deprecated")
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-authorization")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "oauth-authorizations/delete-authorization")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

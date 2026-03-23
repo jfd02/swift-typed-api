@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber.Comments.WithCommentNumber {
@@ -22,7 +22,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `GET /organizations/:org_id/team/:team_id/discussions/:discussion_number/comments/:comment_number/reactions`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#list-reactions-for-a-team-discussion-comment)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Reaction]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.Reaction], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "reactions/list-for-team-discussion-comment-in-org")
         }
 
@@ -68,7 +68,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Discussions.WithDiscussionNumber
         /// **Note:** You can also specify a team by `org_id` and `team_id` using the route `POST /organizations/:org_id/team/:team_id/discussions/:discussion_number/comments/:comment_number/reactions`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/reactions#create-reaction-for-a-team-discussion-comment)
-        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction> {
+        public func post(content: PostRequest.Content) -> Request<OctoKit.Reaction, DefaultRequestError> {
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-team-discussion-comment-in-org")
         }
 

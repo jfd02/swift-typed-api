@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Users.WithUsername {
@@ -22,7 +22,7 @@ extension Paths.Users.WithUsername {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#get-a-user-installation-for-the-authenticated-app)
-        public var get: Request<OctoKit.Installation> {
+        public var get: Request<OctoKit.Installation, DefaultRequestError> {
             Request(path: path, method: "GET", id: "apps/get-user-installation")
         }
     }

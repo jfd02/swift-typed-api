@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Actions {
@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
         /// Anyone with read access to the repository can use this endpoint. If the repository is private you must use an access token with the `repo` scope. GitHub Apps must have the `actions:read` permission to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/actions#list-workflow-runs-for-a-repository)
-        public func get(parameters: GetParameters? = nil) -> Request<GetResponse> {
+        public func get(parameters: GetParameters? = nil) -> Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "actions/list-workflow-runs-for-repo")
         }
 

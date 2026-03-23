@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Store {
@@ -17,12 +17,20 @@ extension Paths.Store {
         let path: String
 
         /// Place an order for a pet
-        func post(_ body: edgecases_change_access_control.Order) throws(PostError) -> Request<edgecases_change_access_control.Order> {
+        func post(_ body: edgecases_change_access_control.Order) -> Request<edgecases_change_access_control.Order, PostError> {
             Request(path: path, method: "POST", body: body, id: "placeOrder")
         }
 
-        enum PostError: Error {
+        enum PostError: RequestError {
             case badRequest
+            case unhandled(any Swift.Error)
+
+            static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 400: return .badRequest
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Pages {
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pages {
         /// List GitHub Pages builds
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-github-pages-builds)
-        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.PageBuild]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.PageBuild], DefaultRequestError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-pages-builds")
         }
 
@@ -40,7 +40,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pages {
         /// Build requests are limited to one concurrent build per repository and one concurrent build per requester. If you request a build while another is still in progress, the second request will be queued until the first completes.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#request-a-github-pages-build)
-        public var post: Request<OctoKit.PageBuildStatus> {
+        public var post: Request<OctoKit.PageBuildStatus, DefaultRequestError> {
             Request(path: path, method: "POST", id: "repos/request-pages-build")
         }
     }

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -18,16 +18,28 @@ extension Paths.User {
         /// Create a user project
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/projects#create-a-user-project)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Project> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Project, PostError> {
             Request(path: path, method: "POST", body: body, id: "projects/create-for-authenticated-user")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case notModified
             case forbidden(OctoKit.BasicError)
             case unauthorized(OctoKit.BasicError)
             case unsupportedMediaType(PostUnsupportedMediaTypeBody)
             case unprocessableEntity(OctoKit.ValidationErrorSimple)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 304: return .notModified
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 415: return .unsupportedMediaType(try decoder.decode(PostUnsupportedMediaTypeBody.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PostUnsupportedMediaTypeBody: Decodable {

@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User.RepositoryInvitations {
@@ -18,33 +18,51 @@ extension Paths.User.RepositoryInvitations {
         /// Accept a repository invitation
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#accept-a-repository-invitation)
-        public var patch: Request<Void> {
-            get throws(PatchError) {
-                Request(path: path, method: "PATCH", id: "repos/accept-invitation-for-authenticated-user")
-            }
+        public var patch: Request<Void, PatchError> {
+            Request(path: path, method: "PATCH", id: "repos/accept-invitation-for-authenticated-user")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case forbidden(OctoKit.BasicError)
             case conflict(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case notModified
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Decline a repository invitation
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#decline-a-repository-invitation)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/decline-invitation-for-authenticated-user")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/decline-invitation-for-authenticated-user")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case conflict(OctoKit.BasicError)
             case notModified
             case notFound(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 304: return .notModified
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
     }
 }

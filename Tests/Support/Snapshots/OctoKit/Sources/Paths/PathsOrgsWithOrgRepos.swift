@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg {
         /// Lists repositories for the specified organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-organization-repositories)
-        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MinimalRepository]> {
+        public func get(parameters: GetParameters? = nil) -> Request<[OctoKit.MinimalRepository], DefaultRequestError> {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "repos/list-for-org")
         }
 
@@ -88,13 +88,22 @@ extension Paths.Orgs.WithOrg {
         /// *   `repo` scope to create a private repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-an-organization-repository)
-        public func post(_ body: PostRequest) throws(PostError) -> Request<OctoKit.Repository> {
+        public func post(_ body: PostRequest) -> Request<OctoKit.Repository, PostError> {
             Request(path: path, method: "POST", body: body, id: "repos/create-in-org")
         }
 
-        public enum PostError: Error {
+        public enum PostError: RequestError {
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum PostResponseHeaders {

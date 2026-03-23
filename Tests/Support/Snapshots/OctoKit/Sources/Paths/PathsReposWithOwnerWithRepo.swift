@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner {
@@ -20,16 +20,24 @@ extension Paths.Repos.WithOwner {
         /// The `parent` and `source` objects are present when the repository is a fork. `parent` is the repository this repository was forked from, `source` is the ultimate source for the network.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#get-a-repository)
-        public var get: Request<OctoKit.FullRepository> {
-            get throws(GetError) {
-                Request(path: path, method: "GET", id: "repos/get")
-            }
+        public var get: Request<OctoKit.FullRepository, GetError> {
+            Request(path: path, method: "GET", id: "repos/get")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case forbidden(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
             case movedPermanently(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Update a repository
@@ -37,15 +45,26 @@ extension Paths.Repos.WithOwner {
         /// **Note**: To edit a repository's topics, use the [Replace all repository topics](https://docs.github.com/rest/reference/repos#replace-all-repository-topics) endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos/#update-a-repository)
-        public func patch(_ body: PatchRequest? = nil) throws(PatchError) -> Request<OctoKit.FullRepository> {
+        public func patch(_ body: PatchRequest? = nil) -> Request<OctoKit.FullRepository, PatchError> {
             Request(path: path, method: "PATCH", body: body, id: "repos/update")
         }
 
-        public enum PatchError: Error {
+        public enum PatchError: RequestError {
             case status307(OctoKit.BasicError)
             case forbidden(OctoKit.BasicError)
             case unprocessableEntity(OctoKit.ValidationError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 307: return .status307(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct PatchRequest: Encodable {
@@ -195,16 +214,24 @@ extension Paths.Repos.WithOwner {
         /// repositories, you will get a `403 Forbidden` response.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#delete-a-repository)
-        public var delete: Request<Void> {
-            get throws(DeleteError) {
-                Request(path: path, method: "DELETE", id: "repos/delete")
-            }
+        public var delete: Request<Void, DeleteError> {
+            Request(path: path, method: "DELETE", id: "repos/delete")
         }
 
-        public enum DeleteError: Error {
+        public enum DeleteError: RequestError {
             case forbidden(DeleteForbiddenBody)
             case status307(OctoKit.BasicError)
             case notFound(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 403: return .forbidden(try decoder.decode(DeleteForbiddenBody.self, from: data))
+                case 307: return .status307(try decoder.decode(OctoKit.BasicError.self, from: data))
+                case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public struct DeleteForbiddenBody: Decodable {

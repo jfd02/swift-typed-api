@@ -3,8 +3,8 @@
 
 import Foundation
 import NaiveDate
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.User {
@@ -17,12 +17,20 @@ extension Paths.User {
 		public let path: String
 
 		/// Logs user into the system
-		public func get(username: String, password: String) throws(GetError) -> Request<String> {
+		public func get(username: String, password: String) -> Request<String, GetError> {
 			Request(path: path, method: "GET", query: [("username", username), ("password", password)], id: "loginUser")
 		}
 
-		public enum GetError: Error {
+		public enum GetError: RequestError {
 			case badRequest
+			case unhandled(any Swift.Error)
+
+			public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+				switch statusCode {
+				case 400: return .badRequest
+				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+				}
+			}
 		}
 
 		public enum GetResponseHeaders {

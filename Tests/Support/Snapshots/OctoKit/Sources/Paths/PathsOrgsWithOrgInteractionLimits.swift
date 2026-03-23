@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Orgs.WithOrg {
@@ -20,7 +20,7 @@ extension Paths.Orgs.WithOrg {
         /// Shows which type of GitHub user can interact with this organization and when the restriction expires. If there is no restrictions, you will see an empty response.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#get-interaction-restrictions-for-an-organization)
-        public var get: Request<GetResponse> {
+        public var get: Request<GetResponse, DefaultRequestError> {
             Request(path: path, method: "GET", id: "interactions/get-restrictions-for-org")
         }
 
@@ -45,12 +45,20 @@ extension Paths.Orgs.WithOrg {
         /// Temporarily restricts interactions to a certain type of GitHub user in any public repository in the given organization. You must be an organization owner to set these restrictions. Setting the interaction limit at the organization level will overwrite any interaction limits that are set for individual repositories owned by the organization.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#set-interaction-restrictions-for-an-organization)
-        public func put(_ body: OctoKit.InteractionLimit) throws(PutError) -> Request<OctoKit.InteractionLimitResponse> {
+        public func put(_ body: OctoKit.InteractionLimit) -> Request<OctoKit.InteractionLimitResponse, PutError> {
             Request(path: path, method: "PUT", body: body, id: "interactions/set-restrictions-for-org")
         }
 
-        public enum PutError: Error {
+        public enum PutError: RequestError {
             case unprocessableEntity(OctoKit.ValidationError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         /// Remove interaction restrictions for an organization
@@ -58,7 +66,7 @@ extension Paths.Orgs.WithOrg {
         /// Removes all interaction restrictions from public repositories in the given organization. You must be an organization owner to remove restrictions.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/interactions#remove-interaction-restrictions-for-an-organization)
-        public var delete: Request<Void> {
+        public var delete: Request<Void, DefaultRequestError> {
             Request(path: path, method: "DELETE", id: "interactions/remove-restrictions-for-org")
         }
     }

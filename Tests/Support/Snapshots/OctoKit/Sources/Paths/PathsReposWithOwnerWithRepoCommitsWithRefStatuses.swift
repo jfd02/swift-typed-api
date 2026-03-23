@@ -2,8 +2,8 @@
 // https://github.com/CreateAPI/CreateAPI
 
 import Foundation
-import Get
 import HTTPHeaders
+import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
@@ -22,12 +22,20 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
         /// This resource is also available via a legacy route: `GET /repos/:owner/:repo/statuses/:ref`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#list-commit-statuses-for-a-reference)
-        public func get(perPage: Int? = nil, page: Int? = nil) throws(GetError) -> Request<[OctoKit.Status]> {
+        public func get(perPage: Int? = nil, page: Int? = nil) -> Request<[OctoKit.Status], GetError> {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "repos/list-commit-statuses-for-ref")
         }
 
-        public enum GetError: Error {
+        public enum GetError: RequestError {
             case movedPermanently(OctoKit.BasicError)
+            case unhandled(any Swift.Error)
+
+            public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
+                switch statusCode {
+                case 301: return .movedPermanently(try decoder.decode(OctoKit.BasicError.self, from: data))
+                default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
         }
 
         public enum GetResponseHeaders {
