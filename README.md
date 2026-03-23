@@ -145,7 +145,7 @@ components:
           type: string
 ```
 
-CreateAPI generates Swift like this:
+CreateAPI generates Swift that uses `TypedAPI` like this:
 
 ```swift
 import Foundation
@@ -173,6 +173,25 @@ public enum Paths {
 public struct Pet: Codable {
     public var id: Int
     public var name: String
+}
+```
+
+And you can consume it with typed error handling like this:
+
+```swift
+import Foundation
+import PetstoreKit
+import TypedAPI
+
+let client = APIClient(baseURL: URL(string: "https://example.com"))
+
+do {
+    let response = try await client.send(Paths.pets.get)
+    print(response.value)
+} catch Paths.Pets.GetError.default(let statusCode, let errorResponse) {
+    print("API error (\(statusCode)): \(errorResponse.message)")
+} catch Paths.Pets.GetError.unhandled(let error) {
+    print("Transport or decoding error: \(error)")
 }
 ```
 

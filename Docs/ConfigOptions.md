@@ -847,7 +847,7 @@ Generate response headers using [HTTPHeaders](https://github.com/CreateAPI/HTTPH
 ## paths.imports
 
 **Type:** Set<String><br />
-**Default:** `["Get"]`
+**Default:** `["TypedAPI"]`
 
 Modules to be imported within the source files for generated requests
 
@@ -970,8 +970,8 @@ paths:
 If `false`, CreateAPI generates request body structures for "multipart/form-data" format just like it would for "application/json".
 Otherwise the `body` of the generated `Request` will use `Data`. The default value is `true`.
 
-When using Get and it's `APIClient`, because Multipart Form Data isn't supported from the `Request` `body` property, it is best to leave this option set to `true`.
-If however you have implemented your API Client, and you prefer to use structured `Codable` types to encode a Multipart Form Data request body, setting this value to `false` can be more convenient.
+When using TypedAPI's `APIClient`, multipart form data is still best handled as raw `Data`, so it is usually best to leave this option set to `true`.
+If however you have implemented your own API client, and you prefer to use structured `Codable` types to encode a multipart form data request body, setting this value to `false` can be more convenient.
 You might also need to use the [`dataTypes`](#datatypes) option to customise the type used to represent `binary` data.
 
 <br/>

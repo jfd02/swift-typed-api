@@ -41,10 +41,10 @@ And you will find a new folder called **PetstoreKit** located within the output 
 
 <img
   src="./Images/Tutorial_01_NewPackage.png#gh-light-mode-only"
-  alt="A screenshot of Xcode focusing on a swift source file within the newly generated PetstoreKit package. To the left, you can see the project navigator which displays all of the source files and the resolved dependencies (Get, HTTPHeaders, URLQueryEncoder)."
+  alt="A screenshot of Xcode focusing on a swift source file within the newly generated PetstoreKit package. To the left, you can see the project navigator which displays all of the source files and the resolved dependencies (TypedAPI, HTTPHeaders, URLQueryEncoder)."
 /><img
   src="./Images/Tutorial_01_NewPackage_Dark.png#gh-dark-mode-only"
-  alt="A screenshot of Xcode focusing on a swift source file within the newly generated PetstoreKit package. To the left, you can see the project navigator which displays all of the source files and the resolved dependencies (Get, HTTPHeaders, URLQueryEncoder)."
+  alt="A screenshot of Xcode focusing on a swift source file within the newly generated PetstoreKit package. To the left, you can see the project navigator which displays all of the source files and the resolved dependencies (TypedAPI, HTTPHeaders, URLQueryEncoder)."
 />
 
 Once the dependencies have resolved, build the project and everything will succeed. Congratulations, you've generated your first project using CreateAPI!
@@ -81,8 +81,8 @@ All set! Now, in the **Petstore** group, add a new file called **PetstoreClient.
 
 ```swift
 import Foundation
-import Get
 import PetstoreKit
+import TypedAPI
 
 public class PetstoreClient {
     let api: APIClient
@@ -103,7 +103,7 @@ public class PetstoreClient {
 
 Lets summarize the key parts of this code:
 
-1. You import [**Get**](https://github.com/kean/get) to access the `APIClient`.
+1. You import **TypedAPI** to access the `APIClient`.
 2. You import **PetstoreKit** to access your generated paths and entities.
 2. You initialize the `PetstoreClient`'s `api` with the appropriate `baseURL`.
 3. You define the `findPets(by:)` method that accepts a generated enum for the `status` argument and returns an array of generated `Pet` types.
@@ -184,6 +184,6 @@ Congratulations for making it though this tutorial. Using CreateAPI to generate 
 - [Configuration Options](./ConfigOptions.md)
 - [Swift Package Plugins](./SwiftPackagePlugins.md)
 - [Advanced Setup](./AdvancedSetup.md)
-- [Get](http://github.com/kean/get)
+- [TypedAPI](https://github.com/0xff8c00/swift-typed-api)
 
 If you have any questions or feedback, you are always welcome to [Submit an Issue](https://github.com/CreateAPI/CreateAPI/issues/new).
