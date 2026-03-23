@@ -85,17 +85,10 @@ public actor APIClient {
         configure: ((inout URLRequest) throws -> Void)? = nil
     ) async throws(E) -> Response<T> {
         do {
-            let response = try await rawData(for: request, delegate: delegate, configure: configure)
-            let statusCode = (response.response as? HTTPURLResponse)?.statusCode ?? 0
-
-            if (200..<300).contains(statusCode) {
-                let decoder = self.delegate.client(self, decoderForRequest: request) ?? self.decoder
-                let value: T = try await decode(response.data, using: decoder)
-                return response.map { _ in value }
-            } else {
-                let decoder = self.delegate.client(self, decoderForRequest: request) ?? self.decoder
-                throw try E.decode(statusCode: statusCode, data: response.data, decoder: decoder)
-            }
+            let response = try await sendData(for: request, delegate: delegate, configure: configure)
+            let decoder = self.delegate.client(self, decoderForRequest: request) ?? self.decoder
+            let value: T = try await decode(response.data, using: decoder)
+            return response.map { _ in value }
         } catch let error as E {
             throw error
         } catch {
@@ -110,20 +103,39 @@ public actor APIClient {
         configure: ((inout URLRequest) throws -> Void)? = nil
     ) async throws(E) -> Response<Void> {
         do {
-            let response = try await rawData(for: request, delegate: delegate, configure: configure)
-            let statusCode = (response.response as? HTTPURLResponse)?.statusCode ?? 0
-
-            if (200..<300).contains(statusCode) {
-                return response.map { _ in () }
-            } else {
-                let decoder = self.delegate.client(self, decoderForRequest: request) ?? self.decoder
-                throw try E.decode(statusCode: statusCode, data: response.data, decoder: decoder)
-            }
+            let response = try await sendData(for: request, delegate: delegate, configure: configure)
+            return response.map { _ in () }
         } catch let error as E {
             throw error
         } catch {
             throw E.unhandled(error)
         }
+    }
+
+    /// Fetches raw data, handles non-2xx with error decoding and retry.
+    private func sendData<T, E: RequestError>(
+        for request: Request<T, E>,
+        attempts: Int = 1,
+        delegate: URLSessionDataDelegate? = nil,
+        configure: ((inout URLRequest) throws -> Void)? = nil
+    ) async throws -> Response<Data> {
+        let response = try await rawData(for: request, delegate: delegate, configure: configure)
+        let httpResponse = response.response as? HTTPURLResponse
+        let statusCode = httpResponse?.statusCode ?? 0
+
+        if (200..<300).contains(statusCode) {
+            return response
+        }
+
+        // Give the delegate a chance to retry (e.g. refresh token on 401)
+        let error = APIError.unacceptableStatusCode(statusCode)
+        if try await self.delegate.client(self, shouldRetry: response.task, response: httpResponse, error: error, attempts: attempts) {
+            return try await sendData(for: request, attempts: attempts + 1, delegate: delegate, configure: configure)
+        }
+
+        // No retry — decode into the typed error
+        let decoder = self.delegate.client(self, decoderForRequest: request) ?? self.decoder
+        throw try E.decode(statusCode: statusCode, data: response.data, decoder: decoder)
     }
 
     // MARK: Fetching Raw Data
@@ -177,7 +189,6 @@ public actor APIClient {
         delegate: URLSessionDownloadDelegate?
     ) async throws -> Response<URL> {
         let response = try await dataLoader.startDownloadTask(task, session: session, delegate: delegate)
-        try validate(response)
         return response
     }
 
@@ -219,7 +230,6 @@ public actor APIClient {
             let task = session.uploadTask(with: urlRequest, fromFile: fileURL)
             do {
                 let response = try await dataLoader.startUploadTask(task, session: session, delegate: delegate)
-                try validate(response)
                 return response
             } catch {
                 throw DataLoaderError(task: task, error: error)
@@ -263,7 +273,6 @@ public actor APIClient {
             let task = session.uploadTask(with: urlRequest, from: data)
             do {
                 let response = try await dataLoader.startUploadTask(task, session: session, delegate: delegate)
-                try validate(response)
                 return response
             } catch {
                 throw DataLoaderError(task: task, error: error)
@@ -335,16 +344,11 @@ public actor APIClient {
             guard let error = error as? DataLoaderError else {
                 throw error
             }
-            guard try await delegate.client(self, shouldRetry: error.task, error: error.error, attempts: attempts) else {
+            guard try await delegate.client(self, shouldRetry: error.task, response: nil, error: error.error, attempts: attempts) else {
                 throw error.error
             }
             return try await performRequest(attempts: attempts + 1, send: send)
         }
-    }
-
-    private func validate<T>(_ response: Response<T>) throws {
-        guard let httpResponse = response.response as? HTTPURLResponse else { return }
-        try delegate.client(self, validateResponse: httpResponse, data: response.data, task: response.task)
     }
 }
 

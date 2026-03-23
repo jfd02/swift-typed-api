@@ -13,46 +13,26 @@ public protocol APIClientDelegate {
     ///
     /// Gets called right before sending the request. If the retries are enabled,
     /// is called before every attempt.
-    ///
-    /// - parameters:
-    ///   - client: The client that sends the request.
-    ///   - request: The request about to be sent. Can be modified
     func client(_ client: APIClient, willSendRequest request: inout URLRequest) async throws
 
-    /// Validates response for the given request.
+    /// Called when a request fails — either from a transport error (network
+    /// failure, timeout) or a non-2xx HTTP response.
     ///
-    /// - parameters:
-    ///   - client: The client that sent the request.
-    ///   - response: The response with an invalid status code.
-    ///   - data: Body of the response, if any.
-    ///   - request: Failing request.
+    /// Use this to handle global concerns like token refresh on 401:
     ///
-    /// - throws: An error to be returned to the user. By default, throws
-    /// ``APIError/unacceptableStatusCode(_:)`` if the code is outside of
-    /// the `200..<300` range.
-    func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws
-
-    /// Gets called after a networking failure. Only one retry attempt is allowed.
-    ///
-    /// - important: This method will only be called for network requests, but not for
-    /// response body decoding failures or failures with creating requests using
-    /// ``client(_:makeURLForRequest:)-8w0zh`` and ``client(_:willSendRequest:)-2d1ke``.
-    ///
-    /// - parameters:
-    ///   - client: The client that sent the request.
-    ///   - task: The failed task.
-    ///   - error: The encountered error.
-    ///   - attempts: The number of already performed attempts.
+    ///     func client(_ client: APIClient, shouldRetry task: URLSessionTask,
+    ///                 response: HTTPURLResponse?, error: Error, attempts: Int) async throws -> Bool {
+    ///         if response?.statusCode == 401, attempts == 1 {
+    ///             await refreshToken()
+    ///             return true
+    ///         }
+    ///         return false
+    ///     }
     ///
     /// - returns: Return `true` to retry the request.
-    func client(_ client: APIClient, shouldRetry task: URLSessionTask, error: Error, attempts: Int) async throws -> Bool
+    func client(_ client: APIClient, shouldRetry task: URLSessionTask, response: HTTPURLResponse?, error: Error, attempts: Int) async throws -> Bool
 
     /// Constructs URL for the given request.
-    ///
-    /// - parameters:
-    ///   - client: The client that sends the request.
-    ///   - url: The URL passed by the client.
-    ///   - request: The request about to be sent.
     ///
     /// - returns: The URL for the request. Return `nil` to use the default
     /// logic used by client.
@@ -70,14 +50,8 @@ public extension APIClientDelegate {
         // Do nothing
     }
 
-    func client(_ client: APIClient, shouldRetry task: URLSessionTask, error: Error, attempts: Int) async throws -> Bool {
-        false // Disabled by default
-    }
-
-    func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws {
-        guard (200..<300).contains(response.statusCode) else {
-            throw APIError.unacceptableStatusCode(response.statusCode)
-        }
+    func client(_ client: APIClient, shouldRetry task: URLSessionTask, response: HTTPURLResponse?, error: Error, attempts: Int) async throws -> Bool {
+        false
     }
 
     func client<T, E: RequestError>(_ client: APIClient, makeURLForRequest request: Request<T, E>) throws -> URL? {
