@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "swift-typed-api",
-    platforms: [.macOS(.v10_15)],
+    platforms: [.iOS(.v13), .macCatalyst(.v13), .macOS(.v10_15), .watchOS(.v6), .tvOS(.v13)],
     products: [
         .executable(name: "create-api", targets: ["create-api"]),
         .library(name: "TypedAPI", targets: ["TypedAPI"])
