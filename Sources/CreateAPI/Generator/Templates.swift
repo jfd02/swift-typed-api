@@ -381,6 +381,13 @@ final class Templates {
         }
         return """
         \(access)func encode(to encoder: Encoder) throws {
+            let encodedValueCount = [\(properties.map { "\($0.name) != nil" }.joined(separator: ", "))].filter { $0 }.count
+            guard encodedValueCount == 1 else {
+                throw EncodingError.invalidValue(
+                    self,
+                    .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
+                )
+            }
             var container = encoder.singleValueContainer()
         \(statements.joined(separator: "\n").indented)
         }

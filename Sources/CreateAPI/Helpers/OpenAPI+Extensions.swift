@@ -63,11 +63,21 @@ extension OpenAPI.Parameter {
 }
 
 extension OpenAPI.Operation {
+    var successfulResponses: [(OpenAPI.Response.StatusCode, Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>)] {
+        responses.compactMap { $0.key.isSuccess ? ($0.key, $0.value) : nil }
+    }
+
     var firstSuccessfulResponse: Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>? {
-        guard responses.count > 1 else {
+        if let response = successfulResponses.first {
+            return response.1
+        }
+        guard responses.count == 1 else {
+            return nil
+        }
+        if responses.first?.key == .default {
             return responses.first { $0.key == .default || $0.key.isSuccess }?.value
         }
-        return responses.first { $0.key.isSuccess }?.value
+        return nil
     }
 }
 

@@ -110,25 +110,41 @@ info:
   version: 1.0.0
 paths:
   /pets:
-    get:
-      operationId: listPets
+    post:
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewPet"
       responses:
-        "200":
-          description: A list of pets
+        "201":
+          description: Created pet
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Pet"
-        default:
-          description: Unexpected error
+                $ref: "#/components/schemas/Pet"
+        "409":
+          description: Pet already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Validation failed
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
+    NewPet:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
     Pet:
       type: object
       required: [id, name]
@@ -159,13 +175,18 @@ public enum Paths {
     public struct Pets {
         public let path: String
 
-        public var get: Request<[PetstoreKit.Pet], GetError> {
-            Request(path: path, method: "GET", id: "listPets")
+        public func post(_ body: PostRequest) -> Request<PetstoreKit.Pet, PostError> {
+            Request(path: path, method: "POST", body: body, id: "createPet")
         }
 
-        public enum GetError: RequestError {
-            case `default`(statusCode: Int, PetstoreKit.ErrorResponse)
+        public enum PostError: RequestError {
+            case conflict(PetstoreKit.ErrorResponse)
+            case unprocessableEntity(PetstoreKit.ErrorResponse)
             case unhandled(any Swift.Error)
+        }
+
+        public struct PostRequest: Codable {
+            public var name: String
         }
     }
 }
@@ -176,7 +197,7 @@ public struct Pet: Codable {
 }
 ```
 
-And you can consume it with typed error handling like this:
+That lets you handle real API errors directly in Swift:
 
 ```swift
 import Foundation
@@ -184,13 +205,16 @@ import PetstoreKit
 import TypedAPI
 
 let client = APIClient(baseURL: URL(string: "https://example.com"))
+let request = Paths.pets.post(.init(name: "Fido"))
 
 do {
-    let response = try await client.send(Paths.pets.get)
-    print(response.value)
-} catch Paths.Pets.GetError.default(let statusCode, let errorResponse) {
-    print("API error (\(statusCode)): \(errorResponse.message)")
-} catch Paths.Pets.GetError.unhandled(let error) {
+    let pet = try await client.send(request).value
+    print("Created pet:", pet)
+} catch Paths.Pets.PostError.conflict(let errorResponse) {
+    print("A pet with that name already exists:", errorResponse.message)
+} catch Paths.Pets.PostError.unprocessableEntity(let errorResponse) {
+    print("The API rejected the payload:", errorResponse.message)
+} catch Paths.Pets.PostError.unhandled(let error) {
     print("Transport or decoding error: \(error)")
 }
 ```

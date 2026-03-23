@@ -562,6 +562,293 @@ final class OpenAPI31GenerationTests: XCTestCase {
             XCTAssertTrue(contents.contains("String?"), "Nullable required property should generate optional type")
         }
     }
+
+    /// Tests that path parameters use the same primitive/format mapping as the rest of generation.
+    func testPathParametersUseFormattedSwiftTypes() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /events/{eventId}/{enabled}/{at}/{userId}:
+            get:
+              operationId: fetchEvent
+              parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+                - name: enabled
+                  in: path
+                  required: true
+                  schema:
+                    type: boolean
+                - name: at
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                    format: date-time
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                    format: uuid
+              responses:
+                '200':
+                  description: OK
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = output.files.first { $0.name == "FetchEvent" }
+        XCTAssertNotNil(pathFile, "Should generate the fetchEvent operation")
+
+        if let contents = pathFile?.contents {
+            XCTAssertTrue(contents.contains("eventID: Int64"), "int64 path params should generate Int64")
+            XCTAssertTrue(contents.contains("enabled: Bool"), "boolean path params should generate Bool")
+            XCTAssertTrue(contents.contains("at: Date"), "date-time path params should generate Date")
+            XCTAssertTrue(contents.contains("userID: UUID"), "uuid path params should generate UUID")
+        }
+    }
+
+    func testPathLevelQueryParametersAreIncludedInOperations() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /items:
+            parameters:
+              - name: locale
+                in: query
+                required: false
+                schema:
+                  type: string
+            get:
+              operationId: listItems
+              responses:
+                '200':
+                  description: OK
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = output.files.first { $0.name == "ListItems" }
+        XCTAssertNotNil(pathFile)
+
+        if let contents = pathFile?.contents {
+            XCTAssertTrue(contents.contains("locale: String? = nil"), "Path-level query params should be exposed on generated operations")
+        }
+    }
+
+    func testScalarJSONBodiesUseTypedScalars() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /flags:
+            post:
+              operationId: updateFlag
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: boolean
+              responses:
+                '200':
+                  description: OK
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int64
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = output.files.first { $0.name == "UpdateFlag" }
+        XCTAssertNotNil(pathFile)
+
+        if let contents = pathFile?.contents {
+            XCTAssertTrue(contents.contains("_ body: Bool"), "Boolean JSON request bodies should use Bool")
+            XCTAssertTrue(contents.contains("Request<Int64, DefaultRequestError>"), "Integer JSON responses should use Int64")
+        }
+    }
+
+    func testReferencedRequestBodyKeepsOptionality() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /items:
+            post:
+              operationId: createItem
+              requestBody:
+                $ref: "#/components/requestBodies/CreateItemBody"
+              responses:
+                '200':
+                  description: OK
+        components:
+          requestBodies:
+            CreateItemBody:
+              required: false
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      enabled:
+                        type: boolean
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = output.files.first { $0.name == "CreateItem" }
+        XCTAssertNotNil(pathFile)
+
+        if let contents = pathFile?.contents {
+            XCTAssertTrue(contents.contains("_ body: CreateItemRequest? = nil"), "Referenced request bodies should preserve optionality from components")
+        }
+    }
+
+    func testReferencedSuccessResponseGeneratesHeaders() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /items:
+            get:
+              operationId: listItems
+              responses:
+                '200':
+                  $ref: "#/components/responses/ItemsResponse"
+        components:
+          responses:
+            ItemsResponse:
+              description: OK
+              headers:
+                x-request-id:
+                  description: Request ID
+                  schema:
+                    type: string
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      type: string
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = output.files.first { $0.name == "ListItems" }
+        XCTAssertNotNil(pathFile)
+
+        if let contents = pathFile?.contents {
+            XCTAssertTrue(contents.contains("enum ListItemsResponseHeaders"), "Referenced success responses should still generate response headers")
+            XCTAssertTrue(contents.contains("HTTPHeader<String>"), "Referenced response headers should use the resolved header schema")
+        }
+    }
+
+    func testIncompatibleMultipleSuccessResponsesFailGeneration() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /items:
+            post:
+              operationId: createItem
+              responses:
+                '200':
+                  description: Updated
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/UpdatedItem"
+                '201':
+                  description: Created
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/CreatedItem"
+        components:
+          schemas:
+            UpdatedItem:
+              type: object
+              properties:
+                id:
+                  type: string
+            CreatedItem:
+              type: object
+              properties:
+                uuid:
+                  type: string
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        XCTAssertThrowsError(try generator.paths()) { error in
+            XCTAssertTrue(error.localizedDescription.contains("multiple successful responses with incompatible body types"))
+        }
+    }
 }
 
 // MARK: - Typed Error Enum Generation Tests
@@ -989,5 +1276,18 @@ final class TypedErrorGenerationTests: XCTestCase {
             XCTAssertTrue(contents.contains("DefaultRequestError"), "Should use DefaultRequestError for success-only responses")
             XCTAssertFalse(contents.contains("enum") && contents.contains("RequestError"), "Should not generate error enum")
         }
+    }
+}
+
+final class GeneratorTemplateTests: XCTestCase {
+    func testAnyOfEncoderRequiresExactlyOneValue() {
+        let templates = Templates(options: .default)
+        let output = templates.encodeAnyOf(properties: [
+            Property(name: PropertyName("foo"), type: .builtin("String"), isOptional: true, key: "foo"),
+            Property(name: PropertyName("bar"), type: .builtin("Int"), isOptional: true, key: "bar")
+        ])
+
+        XCTAssertTrue(output.contains("encodedValueCount == 1"))
+        XCTAssertTrue(output.contains("Expected exactly one anyOf value to be set."))
     }
 }

@@ -281,20 +281,49 @@ extension Generator {
         let parameter = try parameters
             .map { try $0.unwrapped(in: spec) }
             .first { $0.context.inPath && $0.name == name }
-        let type: TypeName
+        let type: TypeIdentifier
         if let parameter = parameter {
             type = try getPathParameterType(for: parameter)
         } else {
-            type = TypeName("String")
+            type = .builtin("String")
         }
         return PathParameter(key: name, name: makePropertyName(name), type: type)
     }
 
-    private func getPathParameterType(for parameter: OpenAPI.Parameter) throws -> TypeName {
+    private func getPathParameterType(for parameter: OpenAPI.Parameter) throws -> TypeIdentifier {
         let schema = try parameter.unwrapped(in: spec).schema.unwrapped(in: spec)
+        return try getPathParameterType(for: parameter.name, schema: schema)
+    }
+
+    private func getPathParameterType(for name: String, schema: JSONSchema) throws -> TypeIdentifier {
         switch schema.value {
-        case .integer: return TypeName("Int")
-        default: return TypeName("String")
+        case .boolean:
+            return .builtin("Bool")
+        case .number(let info, _):
+            return numberType(for: info.format)
+        case .integer(let info, _):
+            return integerType(for: info.format)
+        case .string(let info, _):
+            // Path parameters are interpolated directly into URLs, so enums
+            // shouldn't introduce nested generated types here.
+            if info.allowedValues != nil {
+                return .builtin("String")
+            }
+            return stringType(for: info.format)
+        case .reference(let ref, _):
+            guard let key = OpenAPI.ComponentKey(rawValue: ref.name ?? ""),
+                  let schema = spec.components.schemas[key] else {
+                try handle(warning: "A reference \"\(ref.name ?? name)\" is missing for path parameter \"\(name)\". Defaulting to String.")
+                return .builtin("String")
+            }
+            return try getPathParameterType(for: name, schema: schema)
+        case .all(let schemas, _) where schemas.count == 1,
+             .one(let schemas, _) where schemas.count == 1,
+             .any(let schemas, _) where schemas.count == 1:
+            return try getPathParameterType(for: name, schema: schemas[0])
+        default:
+            try handle(warning: "Unsupported schema for path parameter \"\(name)\". Defaulting to String.")
+            return .builtin("String")
         }
     }
 
@@ -418,7 +447,7 @@ extension Generator {
         }
 
         // Query parameters
-        let query = try task.operation.parameters.compactMap {
+        let query = try (task.operation.parameters + task.item.parameters).compactMap {
             try makeQueryParameter(for: $0, context: context)
         }.removingDuplicates(by: \.name)
         if query.isEmpty {
@@ -633,7 +662,7 @@ extension Generator {
         let request = try requestBody.unwrapped(in: spec)
 
         var type = try makeBodyType(for: request.content, nestedTypeName: nestedTypeName, context: context)
-        type.isOptional = !(requestBody.requestValue?.required ?? true)
+        type.isOptional = !request.required
         return type
     }
 
@@ -683,6 +712,12 @@ extension Generator {
         var errorCases: [ErrorEnumCase]
     }
 
+    private struct SuccessfulResponseCandidate {
+        let statusCode: OpenAPI.Response.StatusCode
+        let body: BodyType
+        let contentSignature: String
+    }
+
     private func makeTypedResponse(for task: GenerateOperationTask, context: Context) throws -> TypedResponse {
         var context = context
         context.isEncodableNeeded = false
@@ -690,16 +725,37 @@ extension Generator {
         var successType = BodyType("Void")
         var errorCases: [ErrorEnumCase] = []
 
+        let successCandidates = try task.operation.successfulResponses.map { statusCode, responseRef in
+            let response = try resolveResponse(responseRef)
+            let typeName = task.makeNestedTypeName("Response")
+            let body = try makeBodyType(for: response.content, nestedTypeName: typeName, context: context)
+            return SuccessfulResponseCandidate(
+                statusCode: statusCode,
+                body: body,
+                contentSignature: String(describing: response.content)
+            )
+        }
+
+        if let first = successCandidates.first {
+            successType = first.body
+            let incompatible = successCandidates.dropFirst().first {
+                $0.body.type.rawValue != first.body.type.rawValue ||
+                $0.body.isOptional != first.body.isOptional ||
+                $0.contentSignature != first.contentSignature
+            }
+            if let incompatible {
+                throw GeneratorError("""
+                    Operation \(task.operationId.isEmpty ? task.path.rawValue : task.operationId) has multiple successful responses with incompatible body types (\(statusCodeLabel(first.statusCode)) and \(statusCodeLabel(incompatible.statusCode))). Generate a single success schema or override the response types.
+                    """)
+            }
+        }
+
         for (statusCode, responseRef) in task.operation.responses {
             let response = try resolveResponse(responseRef)
             let isSuccess = statusCode.isSuccess
 
             if isSuccess {
-                // Use the first successful response as the return type
-                if successType.type.rawValue == "Void" {
-                    let typeName = task.makeNestedTypeName("Response")
-                    successType = try makeBodyType(for: response.content, nestedTypeName: typeName, context: context)
-                }
+                continue
             } else {
                 // Build an error enum case for this status code
                 let errorCase = try makeErrorCase(statusCode: statusCode, response: response, task: task, context: context)
@@ -774,6 +830,23 @@ extension Generator {
             }
         case .b(let value):
             return value
+        }
+    }
+
+    private func statusCodeLabel(_ statusCode: OpenAPI.Response.StatusCode) -> String {
+        switch statusCode.value {
+        case .status(let code):
+            return "\(code)"
+        case .default:
+            return "default"
+        case .range(let range):
+            switch range {
+            case .information: return "1XX"
+            case .success: return "2XX"
+            case .redirect: return "3XX"
+            case .clientError: return "4XX"
+            case .serverError: return "5XX"
+            }
         }
     }
 
@@ -869,9 +942,15 @@ extension Generator {
             case .a(let reference):
                 schema = JSONSchema.reference(reference.jsonReference)
             case .b(let value):
-                switch value {
-                case .string: return BodyType("String")
-                case .integer, .boolean: return BodyType("Data")
+                switch value.value {
+                case .boolean:
+                    return BodyType("Bool")
+                case .number(let info, _):
+                    return BodyType(type: numberType(for: info.format).name)
+                case .integer(let info, _):
+                    return BodyType(type: integerType(for: info.format).name)
+                case .string(let info, _):
+                    return BodyType(type: stringType(for: info.format).name)
                 default: schema = value
                 }
             default:
@@ -919,7 +998,7 @@ extension Generator {
     private func makeResponseHeaders(for task: GenerateOperationTask) throws -> Declaration? {
         guard options.paths.includeResponseHeaders,
               let response = task.operation.firstSuccessfulResponse,
-              let headers = response.responseValue?.headers else {
+              let headers = try resolveResponse(response).headers else {
             return nil
         }
         let contents = try headers.map(makeHeader)
