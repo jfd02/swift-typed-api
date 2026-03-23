@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct StarredRepository: Codable {
+public struct StarredRepository: Codable, Sendable {
     public var starredAt: Date
     /// Repository
     ///

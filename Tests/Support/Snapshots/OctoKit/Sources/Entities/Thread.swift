@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Thread: Codable {
+public struct Thread: Codable, Sendable {
     public var id: String
     /// Minimal Repository
     public var repository: MinimalRepository
@@ -17,7 +17,7 @@ public struct Thread: Codable {
     /// Example: "https://api.github.com/notifications/threads/2/subscription"
     public var subscriptionURL: String
 
-    public struct Subject: Codable {
+    public struct Subject: Codable, Sendable {
         public var title: String
         public var url: String
         public var latestCommentURL: String

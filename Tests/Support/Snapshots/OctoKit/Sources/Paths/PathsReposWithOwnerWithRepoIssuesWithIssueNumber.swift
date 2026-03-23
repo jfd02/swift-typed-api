@@ -83,7 +83,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
             }
         }
 
-        public struct PatchServiceUnavailableBody: Decodable {
+        public struct PatchServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
@@ -102,7 +102,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The title of the issue.
             public var title: Title?
             /// The contents of the issue.
@@ -118,7 +118,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
             public var assignees: [String]?
 
             /// The title of the issue.
-            public enum Title: Encodable, Hashable {
+            public enum Title: Encodable, Hashable, Sendable {
                 case string(String)
                 case int(Int)
 
@@ -137,7 +137,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
                 case closed
             }
 
-            public enum Milestone: Encodable, Hashable {
+            public enum Milestone: Encodable, Hashable, Sendable {
                 case string(String)
                 case int(Int)
 
@@ -150,11 +150,11 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
                 }
             }
 
-            public enum Label: Encodable {
+            public enum Label: Encodable, Sendable {
                 case string(String)
                 case object(Object)
 
-                public struct Object: Encodable {
+                public struct Object: Encodable, Sendable {
                     public var id: Int?
                     public var name: String?
                     public var description: String?

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Results of a successful merge upstream request
-public struct MergedUpstream: Codable {
+public struct MergedUpstream: Codable, Sendable {
     public var message: String?
     public var mergeType: MergeType?
     public var baseBranch: String?

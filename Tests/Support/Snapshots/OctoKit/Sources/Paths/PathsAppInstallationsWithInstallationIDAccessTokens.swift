@@ -46,7 +46,7 @@ extension Paths.App.Installations.WithInstallationID {
             }
         }
 
-        public struct PostUnsupportedMediaTypeBody: Decodable {
+        public struct PostUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 
@@ -62,7 +62,7 @@ extension Paths.App.Installations.WithInstallationID {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// List of repository names that the token should have access to
             public var repositories: [String]?
             /// List of repository IDs that the token should have access to

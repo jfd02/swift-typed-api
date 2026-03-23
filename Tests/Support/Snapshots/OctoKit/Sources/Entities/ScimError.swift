@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ScimError: Codable {
+public struct ScimError: Codable, Sendable {
     public var message: String?
     public var documentationURL: String?
     public var detail: String?

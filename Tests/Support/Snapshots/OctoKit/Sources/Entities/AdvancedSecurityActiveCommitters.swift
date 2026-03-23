@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct AdvancedSecurityActiveCommitters: Codable {
+public struct AdvancedSecurityActiveCommitters: Codable, Sendable {
     /// Example: 25
     public var totalAdvancedSecurityCommitters: Int?
     public var repositories: [AdvancedSecurityActiveCommittersRepository]

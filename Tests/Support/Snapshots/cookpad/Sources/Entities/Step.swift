@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Step: Codable {
+public struct Step: Codable, Sendable {
     /// The instructions for the step.
     ///
     /// Example: "Crush the garlic cloves and add all ingredients apart from the ribs into a pan"

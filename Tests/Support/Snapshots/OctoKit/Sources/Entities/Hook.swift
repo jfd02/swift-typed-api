@@ -7,7 +7,7 @@ import NaiveDate
 /// Webhook
 ///
 /// Webhooks for repositories.
-public struct Hook: Codable {
+public struct Hook: Codable, Sendable {
     public var type: String
     /// Unique identifier of the webhook.
     ///
@@ -41,7 +41,7 @@ public struct Hook: Codable {
     /// Hook Response
     public var lastResponse: HookResponse
 
-    public struct Config: Codable {
+    public struct Config: Codable, Sendable {
         /// Example: "foo@bar.com"
         public var email: String?
         /// Example: "foo"

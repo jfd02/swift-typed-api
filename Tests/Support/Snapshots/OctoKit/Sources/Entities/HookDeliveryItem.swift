@@ -7,7 +7,7 @@ import NaiveDate
 /// Simple webhook delivery
 ///
 /// Delivery made by a webhook, without request and response information.
-public struct HookDeliveryItem: Codable {
+public struct HookDeliveryItem: Codable, Sendable {
     /// Unique identifier of the webhook delivery.
     ///
     /// Example: 42

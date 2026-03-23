@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEventMilestone: Codable {
+public struct IssueEventMilestone: Codable, Sendable {
     public var title: String
 
     public init(title: String) {

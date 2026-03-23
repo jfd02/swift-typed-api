@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TimelineAssignedIssueEvent: Codable {
+public struct TimelineAssignedIssueEvent: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var url: String

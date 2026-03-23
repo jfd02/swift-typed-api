@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEventProjectCard: Codable {
+public struct IssueEventProjectCard: Codable, Sendable {
     public var url: URL
     public var id: Int
     public var projectURL: URL

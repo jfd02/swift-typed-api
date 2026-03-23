@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "orgs/list-app-installations")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var installations: [OctoKit.Installation]
 

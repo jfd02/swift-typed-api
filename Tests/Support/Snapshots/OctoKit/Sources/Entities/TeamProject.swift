@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A team's access to a project.
-public struct TeamProject: Codable {
+public struct TeamProject: Codable, Sendable {
     public var ownerURL: String
     public var url: String
     public var htmlURL: String
@@ -26,7 +26,7 @@ public struct TeamProject: Codable {
     public var isPrivate: Bool?
     public var permissions: Permissions
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isRead: Bool
         public var isWrite: Bool
         public var isAdmin: Bool

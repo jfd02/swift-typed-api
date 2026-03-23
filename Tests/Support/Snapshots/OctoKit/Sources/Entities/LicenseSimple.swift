@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct LicenseSimple: Codable {
+public struct LicenseSimple: Codable, Sendable {
     /// Example: "mit"
     public var key: String
     /// Example: "MIT License"

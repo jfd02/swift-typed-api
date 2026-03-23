@@ -71,7 +71,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The commit message
             public var message: String
             /// The SHA of the tree object this commit points to
@@ -86,7 +86,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             public var signature: String?
 
             /// Information about the author of the commit. By default, the `author` will be the authenticated user and the current date. See the `author` and `committer` object below for details.
-            public struct Author: Encodable {
+            public struct Author: Encodable, Sendable {
                 /// The name of the author (or committer) of the commit
                 public var name: String
                 /// The email of the author (or committer) of the commit
@@ -109,7 +109,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             }
 
             /// Information about the person who is making the commit. By default, `committer` will use the information set in `author`. See the `author` and `committer` object below for details.
-            public struct Committer: Encodable {
+            public struct Committer: Encodable, Sendable {
                 /// The name of the author (or committer) of the commit
                 public var name: String?
                 /// The email of the author (or committer) of the commit

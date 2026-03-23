@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeScanningAlertInstance: Codable {
+public struct CodeScanningAlertInstance: Codable, Sendable {
     /// The full Git reference, formatted as `refs/heads/<branch name>`,
     /// `refs/pull/<number>/merge`, or `refs/pull/<number>/head`.
     public var ref: String?
@@ -25,7 +25,7 @@ public struct CodeScanningAlertInstance: Codable {
     /// For example identifying it as documentation, or a generated file.
     public var classifications: [CodeScanningAlertClassification]?
 
-    public struct Message: Codable {
+    public struct Message: Codable, Sendable {
         public var text: String?
 
         public init(text: String? = nil) {

@@ -85,7 +85,7 @@ extension Paths {
             }
         }
 
-        struct PostRequest: Encodable {
+        struct PostRequest: Encodable, Sendable {
             /// None
             var integer: Int?
             /// None

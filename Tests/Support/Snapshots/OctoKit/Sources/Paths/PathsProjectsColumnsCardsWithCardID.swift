@@ -67,7 +67,7 @@ extension Paths.Projects.Columns.Cards {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The project card's note
             ///
             /// Example: "Update all gems"
@@ -114,7 +114,7 @@ extension Paths.Projects.Columns.Cards {
             }
         }
 
-        public struct DeleteForbiddenBody: Decodable {
+        public struct DeleteForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
             public var errors: [String]?

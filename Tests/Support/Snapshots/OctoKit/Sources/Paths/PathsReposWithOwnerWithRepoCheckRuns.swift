@@ -28,11 +28,11 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "POST", body: body, id: "checks/create")
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case a(A)
             case b(B)
 
-            public struct A: Encodable {
+            public struct A: Encodable, Sendable {
                 public var status: AnyJSON
                 public var conclusion: AnyJSON
 
@@ -48,7 +48,7 @@ extension Paths.Repos.WithOwner.WithRepo {
                 }
             }
 
-            public struct B: Encodable {
+            public struct B: Encodable, Sendable {
                 public var status: AnyJSON?
 
                 public init(status: AnyJSON? = nil) {

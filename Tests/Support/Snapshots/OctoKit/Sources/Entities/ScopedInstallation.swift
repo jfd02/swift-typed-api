@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ScopedInstallation: Codable {
+public struct ScopedInstallation: Codable, Sendable {
     /// App Permissions
     ///
     /// The permissions granted to the user-to-server access token.

@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct ErrorGenerated: Codable {
+public struct ErrorGenerated: Codable, Sendable {
     public var code: Int32
     public var message: String
 

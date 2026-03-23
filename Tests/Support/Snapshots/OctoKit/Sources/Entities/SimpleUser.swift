@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct SimpleUser: Codable {
+public struct SimpleUser: Codable, Sendable {
     public var name: String?
     public var email: String?
     /// Example: "octocat"

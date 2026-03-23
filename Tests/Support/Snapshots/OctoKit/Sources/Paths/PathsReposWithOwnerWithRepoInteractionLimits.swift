@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "GET", id: "interactions/get-restrictions-for-repo")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             /// Interaction Limits
             ///
             /// Interaction limit settings.

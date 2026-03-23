@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CommunityHealthFile: Codable {
+public struct CommunityHealthFile: Codable, Sendable {
     public var url: URL
     public var htmlURL: URL
 

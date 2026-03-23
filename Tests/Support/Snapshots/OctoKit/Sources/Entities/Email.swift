@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Email: Codable {
+public struct Email: Codable, Sendable {
     /// Example: "octocat@github.com"
     public var email: String
     /// Example: true

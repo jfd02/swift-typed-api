@@ -44,7 +44,7 @@ extension Paths.User.Email {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Denotes whether an email is publicly visible.
             public var visibility: Visibility
 

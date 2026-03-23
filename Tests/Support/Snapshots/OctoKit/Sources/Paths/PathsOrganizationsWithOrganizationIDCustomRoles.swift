@@ -27,7 +27,7 @@ extension Paths.Organizations.WithOrganizationID {
             Request(path: path, method: "GET", id: "orgs/list-custom-roles")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             /// The number of custom roles in this organization
             public var totalCount: Int?
             public var customRoles: [OctoKit.OrganizationCustomRepositoryRole]?

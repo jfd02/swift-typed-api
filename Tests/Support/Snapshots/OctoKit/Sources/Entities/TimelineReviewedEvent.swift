@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TimelineReviewedEvent: Codable {
+public struct TimelineReviewedEvent: Codable, Sendable {
     public var event: String
     /// Unique identifier of the review
     ///
@@ -39,11 +39,11 @@ public struct TimelineReviewedEvent: Codable {
     /// Example: "OWNER"
     public var authorAssociation: AuthorAssociation
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var html: HTML
         public var pullRequest: PullRequest
 
-        public struct HTML: Codable {
+        public struct HTML: Codable, Sendable {
             public var href: String
 
             public init(href: String) {
@@ -61,7 +61,7 @@ public struct TimelineReviewedEvent: Codable {
             }
         }
 
-        public struct PullRequest: Codable {
+        public struct PullRequest: Codable, Sendable {
             public var href: String
 
             public init(href: String) {

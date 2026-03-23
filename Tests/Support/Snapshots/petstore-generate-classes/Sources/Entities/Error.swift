@@ -3,7 +3,7 @@
 
 import Foundation
 
-public final class Error: Codable {
+public final class Error: Codable, Sendable {
     public let code: Int32
     public let message: String
 

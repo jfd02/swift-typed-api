@@ -7,7 +7,7 @@ import NaiveDate
 /// Repository Invitation
 ///
 /// Repository invitations let you manage who you collaborate with.
-public struct RepositorySubscription: Codable {
+public struct RepositorySubscription: Codable, Sendable {
     /// Determines if notifications should be received from this repository.
     ///
     /// Example: true

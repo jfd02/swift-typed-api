@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The authorization for an OAuth app, GitHub App, or a Personal Access Token.
-public struct Authorization: Codable {
+public struct Authorization: Codable, Sendable {
     public var id: Int
     public var url: URL
     /// A list of scopes that this authorization is in.
@@ -25,7 +25,7 @@ public struct Authorization: Codable {
     public var installation: ScopedInstallation?
     public var expiresAt: Date?
 
-    public struct App: Codable {
+    public struct App: Codable, Sendable {
         public var clientID: String
         public var name: String
         public var url: URL

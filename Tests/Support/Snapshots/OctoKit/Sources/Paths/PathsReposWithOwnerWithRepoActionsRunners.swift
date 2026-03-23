@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-self-hosted-runners-for-repo")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var runners: [OctoKit.Runner]
 

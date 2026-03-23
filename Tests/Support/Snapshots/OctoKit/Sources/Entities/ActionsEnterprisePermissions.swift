@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ActionsEnterprisePermissions: Codable {
+public struct ActionsEnterprisePermissions: Codable, Sendable {
     /// The policy that controls the organizations in the enterprise that are allowed to run GitHub Actions. Can be one of: `all`, `none`, or `selected`.
     public var enabledOrganizations: EnabledOrganizations
     /// The API URL to use to get or set the selected organizations that are allowed to run GitHub Actions, when `enabled_organizations` is set to `selected`.

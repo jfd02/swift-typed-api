@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Pull Request Reviews are reviews on pull requests.
-public struct PullRequestReview: Codable {
+public struct PullRequestReview: Codable, Sendable {
     /// Unique identifier of the review
     ///
     /// Example: 42
@@ -39,11 +39,11 @@ public struct PullRequestReview: Codable {
     /// Example: "OWNER"
     public var authorAssociation: AuthorAssociation
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var html: HTML
         public var pullRequest: PullRequest
 
-        public struct HTML: Codable {
+        public struct HTML: Codable, Sendable {
             public var href: String
 
             public init(href: String) {
@@ -61,7 +61,7 @@ public struct PullRequestReview: Codable {
             }
         }
 
-        public struct PullRequest: Codable {
+        public struct PullRequest: Codable, Sendable {
             public var href: String
 
             public init(href: String) {

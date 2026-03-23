@@ -82,7 +82,7 @@ extension Paths.User {
             }
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
             case string(String)
@@ -95,7 +95,7 @@ extension Paths.User {
             ///     "mona@github.com"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Adds one or more email addresses to your GitHub account. Must contain at least one email address. **Note:** Alternatively, you can pass a single email address or an `array` of emails addresses directly, but we recommend that you pass an object using the `emails` key.
                 ///
                 /// Example: []
@@ -150,7 +150,7 @@ extension Paths.User {
             }
         }
 
-        public enum DeleteRequest: Encodable {
+        public enum DeleteRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
             case string(String)
@@ -165,7 +165,7 @@ extension Paths.User {
             ///     "mona@github.com"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Email addresses associated with the GitHub user account.
                 public var emails: [String]
 

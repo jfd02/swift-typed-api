@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Collaborator: Codable {
+public struct Collaborator: Codable, Sendable {
     /// Example: "octocat"
     public var login: String
     public var id: Int
@@ -45,7 +45,7 @@ public struct Collaborator: Codable {
     /// Example: "admin"
     public var roleName: String
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isPull: Bool
         public var isTriage: Bool?
         public var isPush: Bool

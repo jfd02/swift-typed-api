@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Authentication token for a GitHub App installed on a user or org.
-public struct InstallationToken: Codable {
+public struct InstallationToken: Codable, Sendable {
     public var token: String
     public var expiresAt: String
     /// App Permissions

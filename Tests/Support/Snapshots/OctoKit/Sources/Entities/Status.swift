@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The status of a commit.
-public struct Status: Codable {
+public struct Status: Codable, Sendable {
     public var url: String
     public var avatarURL: String?
     public var id: Int

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct MarketplacePurchase: Codable {
+public struct MarketplacePurchase: Codable, Sendable {
     public var url: String
     public var type: String
     public var id: Int
@@ -14,7 +14,7 @@ public struct MarketplacePurchase: Codable {
     public var marketplacePendingChange: MarketplacePendingChange?
     public var marketplacePurchase: MarketplacePurchase
 
-    public struct MarketplacePendingChange: Codable {
+    public struct MarketplacePendingChange: Codable, Sendable {
         public var isInstalled: Bool?
         public var effectiveDate: String?
         public var unitCount: Int?
@@ -49,7 +49,7 @@ public struct MarketplacePurchase: Codable {
         }
     }
 
-    public struct MarketplacePurchase: Codable {
+    public struct MarketplacePurchase: Codable, Sendable {
         public var billingCycle: String?
         public var nextBillingDate: String?
         public var isInstalled: Bool?

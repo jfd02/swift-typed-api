@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// An invocation of a workflow
-public struct WorkflowRun: Codable {
+public struct WorkflowRun: Codable, Sendable {
     /// The ID of the workflow run.
     public var id: Int
     /// The name of the workflow run.

@@ -48,7 +48,7 @@ extension Paths.Search {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var isIncompleteResults: Bool
             public var items: [OctoKit.UserSearchResultItem]
@@ -67,7 +67,7 @@ extension Paths.Search {
             }
         }
 
-        public struct GetServiceUnavailableBody: Decodable {
+        public struct GetServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?

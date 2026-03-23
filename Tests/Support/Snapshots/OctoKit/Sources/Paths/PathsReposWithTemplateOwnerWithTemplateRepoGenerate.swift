@@ -35,7 +35,7 @@ extension Paths.Repos.WithTemplateOwner.WithTemplateRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The organization or person who will own the new repository. To create a new repository in an organization, the authenticated user must be a member of the specified organization.
             public var owner: String?
             /// The name of the new repository.

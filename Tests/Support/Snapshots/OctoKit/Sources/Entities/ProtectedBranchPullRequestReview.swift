@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ProtectedBranchPullRequestReview: Codable {
+public struct ProtectedBranchPullRequestReview: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/dismissal_restrictions"
     public var url: URL?
     public var dismissalRestrictions: DismissalRestrictions?
@@ -14,7 +14,7 @@ public struct ProtectedBranchPullRequestReview: Codable {
     public var requireCodeOwnerReviews: Bool
     public var requiredApprovingReviewCount: Int?
 
-    public struct DismissalRestrictions: Codable {
+    public struct DismissalRestrictions: Codable, Sendable {
         /// The list of users with review dismissal access.
         public var users: [SimpleUser]?
         /// The list of teams with review dismissal access.

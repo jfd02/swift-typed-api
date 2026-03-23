@@ -78,7 +78,7 @@ extension Paths.Orgs.WithOrg {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// A list of arrays indicating which repositories should be migrated.
             public var repositories: [String]
             /// Indicates whether repositories should be locked (to prevent manipulation) while migrating data.

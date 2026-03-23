@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Tag: Codable {
+public struct Tag: Codable, Sendable {
     /// Example: "v0.1"
     public var name: String
     public var commit: Commit
@@ -14,7 +14,7 @@ public struct Tag: Codable {
     public var tarballURL: URL
     public var nodeID: String
 
-    public struct Commit: Codable {
+    public struct Commit: Codable, Sendable {
         public var sha: String
         public var url: URL
 

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CommitSearchResultItem: Codable {
+public struct CommitSearchResultItem: Codable, Sendable {
     public var url: URL
     public var sha: String
     public var htmlURL: URL
@@ -24,7 +24,7 @@ public struct CommitSearchResultItem: Codable {
     /// Search Result Text Matches
     public var textMatches: [SearchResultTextMatch]?
 
-    public struct Commit: Codable {
+    public struct Commit: Codable, Sendable {
         public var author: Author
         /// Git User
         ///
@@ -36,7 +36,7 @@ public struct CommitSearchResultItem: Codable {
         public var url: URL
         public var verification: Verification?
 
-        public struct Author: Codable {
+        public struct Author: Codable, Sendable {
             public var name: String
             public var email: String
             public var date: Date
@@ -62,7 +62,7 @@ public struct CommitSearchResultItem: Codable {
             }
         }
 
-        public struct Tree: Codable {
+        public struct Tree: Codable, Sendable {
             public var sha: String
             public var url: URL
 
@@ -117,7 +117,7 @@ public struct CommitSearchResultItem: Codable {
         }
     }
 
-    public struct Parent: Codable {
+    public struct Parent: Codable, Sendable {
         public var url: String?
         public var htmlURL: String?
         public var sha: String?

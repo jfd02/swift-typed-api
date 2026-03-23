@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct OrganizationInvitation: Codable {
+public struct OrganizationInvitation: Codable, Sendable {
     public var id: Int
     public var login: String?
     public var email: String?

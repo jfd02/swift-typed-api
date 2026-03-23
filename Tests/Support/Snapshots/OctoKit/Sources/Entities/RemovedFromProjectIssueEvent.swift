@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct RemovedFromProjectIssueEvent: Codable {
+public struct RemovedFromProjectIssueEvent: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var url: String
@@ -20,7 +20,7 @@ public struct RemovedFromProjectIssueEvent: Codable {
     public var performedViaGithubApp: Integration?
     public var projectCard: ProjectCard?
 
-    public struct ProjectCard: Codable {
+    public struct ProjectCard: Codable, Sendable {
         public var id: Int
         public var url: URL
         public var projectID: Int

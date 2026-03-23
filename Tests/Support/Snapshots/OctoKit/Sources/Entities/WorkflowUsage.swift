@@ -4,15 +4,15 @@
 import Foundation
 import NaiveDate
 
-public struct WorkflowUsage: Codable {
+public struct WorkflowUsage: Codable, Sendable {
     public var billable: Billable
 
-    public struct Billable: Codable {
+    public struct Billable: Codable, Sendable {
         public var ubuntu: Ubuntu?
         public var macos: Macos?
         public var windows: Windows?
 
-        public struct Ubuntu: Codable {
+        public struct Ubuntu: Codable, Sendable {
             public var totalMs: Int?
 
             public init(totalMs: Int? = nil) {
@@ -30,7 +30,7 @@ public struct WorkflowUsage: Codable {
             }
         }
 
-        public struct Macos: Codable {
+        public struct Macos: Codable, Sendable {
             public var totalMs: Int?
 
             public init(totalMs: Int? = nil) {
@@ -48,7 +48,7 @@ public struct WorkflowUsage: Codable {
             }
         }
 
-        public struct Windows: Codable {
+        public struct Windows: Codable, Sendable {
             public var totalMs: Int?
 
             public init(totalMs: Int? = nil) {

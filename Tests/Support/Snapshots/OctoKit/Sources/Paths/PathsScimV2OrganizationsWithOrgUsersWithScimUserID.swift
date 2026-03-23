@@ -67,7 +67,7 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             public var schemas: [String]?
             /// The name of the user, suitable for display to end-users
             ///
@@ -109,7 +109,7 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
             ///   "familyName" : "User",
             ///   "givenName" : "Jane"
             /// }
-            public struct Name: Encodable {
+            public struct Name: Encodable, Sendable {
                 public var givenName: String
                 public var familyName: String
                 public var formatted: String?
@@ -128,7 +128,7 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
                 }
             }
 
-            public struct Email: Encodable {
+            public struct Email: Encodable, Sendable {
                 public var type: String?
                 public var value: String
                 public var isPrimary: Bool?
@@ -215,7 +215,7 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             public var schemas: [String]?
             /// Set of operations to be performed
             ///
@@ -231,7 +231,7 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
             /// ]
             public var operations: [Operation]
 
-            public struct Operation: Encodable {
+            public struct Operation: Encodable, Sendable {
                 public var op: Op
                 public var path: String?
                 public var value: Value?
@@ -242,12 +242,12 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
                     case replace
                 }
 
-                public enum Value: Encodable {
+                public enum Value: Encodable, Sendable {
                     case object(Object)
                     case placeholderItems([PlaceholderItem])
                     case string(String)
 
-                    public struct Object: Encodable {
+                    public struct Object: Encodable, Sendable {
                         public var isActive: Bool?
                         public var userName: String?
                         public var externalID: String?
@@ -272,7 +272,7 @@ extension Paths.Scim.V2.Organizations.WithOrg.Users {
                         }
                     }
 
-                    public struct PlaceholderItem: Encodable {
+                    public struct PlaceholderItem: Encodable, Sendable {
                         public var value: String?
                         public var isPrimary: Bool?
 

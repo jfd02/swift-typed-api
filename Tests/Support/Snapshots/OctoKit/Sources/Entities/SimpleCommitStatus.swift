@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct SimpleCommitStatus: Codable {
+public struct SimpleCommitStatus: Codable, Sendable {
     public var description: String?
     public var id: Int
     public var nodeID: String

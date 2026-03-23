@@ -7,7 +7,7 @@ import NaiveDate
 /// SCIM /Users
 ///
 /// SCIM /Users provisioning endpoints
-public struct ScimUser: Codable {
+public struct ScimUser: Codable, Sendable {
     /// SCIM schema used.
     public var schemas: [String]
     /// Unique identifier of an external identity
@@ -77,7 +77,7 @@ public struct ScimUser: Codable {
     ///   "familyName" : "User",
     ///   "givenName" : "Jane"
     /// }
-    public struct Name: Codable {
+    public struct Name: Codable, Sendable {
         public var givenName: String?
         public var familyName: String?
         public var formatted: String?
@@ -103,7 +103,7 @@ public struct ScimUser: Codable {
         }
     }
 
-    public struct Email: Codable {
+    public struct Email: Codable, Sendable {
         public var value: String
         public var isPrimary: Bool?
 
@@ -125,7 +125,7 @@ public struct ScimUser: Codable {
         }
     }
 
-    public struct Meta: Codable {
+    public struct Meta: Codable, Sendable {
         /// Example: "User"
         public var resourceType: String?
         /// Example: "2019-01-24T22:45:36.000Z"
@@ -159,7 +159,7 @@ public struct ScimUser: Codable {
         }
     }
 
-    public struct Operation: Codable {
+    public struct Operation: Codable, Sendable {
         public var op: Op
         public var path: String?
         public var value: Value?
@@ -170,7 +170,7 @@ public struct ScimUser: Codable {
             case replace
         }
 
-        public enum Value: Codable {
+        public enum Value: Codable, Sendable {
             case string(String)
             case object([String: AnyJSON])
             case anyJSONs([AnyJSON])
@@ -222,7 +222,7 @@ public struct ScimUser: Codable {
         }
     }
 
-    public struct Group: Codable {
+    public struct Group: Codable, Sendable {
         public var value: String?
         public var display: String?
 

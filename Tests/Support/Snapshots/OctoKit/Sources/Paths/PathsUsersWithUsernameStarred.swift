@@ -26,7 +26,7 @@ extension Paths.Users.WithUsername {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "activity/list-repos-starred-by-user")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var starredRepositories: [OctoKit.StarredRepository]?
             public var repositories: [OctoKit.Repository]?
 

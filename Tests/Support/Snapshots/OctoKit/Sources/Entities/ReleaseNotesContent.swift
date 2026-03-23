@@ -7,7 +7,7 @@ import NaiveDate
 /// Generated Release Notes Content
 ///
 /// Generated name and body describing a release
-public struct ReleaseNotesContent: Codable {
+public struct ReleaseNotesContent: Codable, Sendable {
     /// The generated name of the release
     ///
     /// Example: "Release v1.0.0 is now available!"

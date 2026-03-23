@@ -100,7 +100,7 @@ extension Paths {
             }
         }
 
-        public struct PutResponse: Decodable {
+        public struct PutResponse: Decodable, Sendable {
             public var message: String?
 
             public init(message: String? = nil) {
@@ -113,7 +113,7 @@ extension Paths {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Describes the last point that notifications were checked.
             public var lastReadAt: Date?
             /// Whether the notification has been read.

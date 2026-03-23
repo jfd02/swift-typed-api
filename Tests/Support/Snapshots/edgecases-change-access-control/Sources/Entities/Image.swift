@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct Image: Codable {
+struct Image: Codable, Sendable {
     var id: String
     var url: String
 

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PullRequestReviewRequest: Codable {
+public struct PullRequestReviewRequest: Codable, Sendable {
     public var users: [SimpleUser]
     public var teams: [Team]
 

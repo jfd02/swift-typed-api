@@ -38,7 +38,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var simpleUsers: [OctoKit.SimpleUser]?
             public var stargazers: [OctoKit.Stargazer]?
 

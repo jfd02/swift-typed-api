@@ -38,12 +38,12 @@ extension Paths.Gists {
             }
         }
 
-        public struct GetForbiddenBody: Decodable {
+        public struct GetForbiddenBody: Decodable, Sendable {
             public var block: Block?
             public var message: String?
             public var documentationURL: String?
 
-            public struct Block: Decodable {
+            public struct Block: Decodable, Sendable {
                 public var reason: String?
                 public var createdAt: String?
                 public var htmlURL: String?
@@ -99,7 +99,7 @@ extension Paths.Gists {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Description of the gist
             ///
             /// Example: "Example Ruby script"
@@ -116,7 +116,7 @@ extension Paths.Gists {
             /// }
             public var files: [String: File]?
 
-            public struct File: Encodable {
+            public struct File: Encodable, Sendable {
                 /// The new content of the file
                 public var content: String
                 /// The new filename for the file

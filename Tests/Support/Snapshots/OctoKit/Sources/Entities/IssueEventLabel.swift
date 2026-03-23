@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEventLabel: Codable {
+public struct IssueEventLabel: Codable, Sendable {
     public var name: String?
     public var color: String?
 

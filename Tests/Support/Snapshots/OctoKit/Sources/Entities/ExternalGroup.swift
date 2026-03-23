@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Information about an external group's usage and its members
-public struct ExternalGroup: Codable {
+public struct ExternalGroup: Codable, Sendable {
     /// The internal ID of the group
     public var groupID: Int
     /// The display name for the group
@@ -51,7 +51,7 @@ public struct ExternalGroup: Codable {
     /// ]
     public var members: [Member]
 
-    public struct Team: Codable {
+    public struct Team: Codable, Sendable {
         /// The id for a team
         public var teamID: Int
         /// The name of the team
@@ -77,7 +77,7 @@ public struct ExternalGroup: Codable {
         }
     }
 
-    public struct Member: Codable {
+    public struct Member: Codable, Sendable {
         /// The internal user ID of the identity
         public var memberID: Int
         /// The handle/login for the user

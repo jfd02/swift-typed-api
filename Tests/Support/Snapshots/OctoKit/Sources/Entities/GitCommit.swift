@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Low-level Git commit operations within a repository
-public struct GitCommit: Codable {
+public struct GitCommit: Codable, Sendable {
     /// SHA for the commit
     ///
     /// Example: "7638417db6d59f3c431d3e1f261cc637155684cd"
@@ -26,7 +26,7 @@ public struct GitCommit: Codable {
     public var htmlURL: URL
 
     /// Identifying information for the git-user
-    public struct Author: Codable {
+    public struct Author: Codable, Sendable {
         /// Timestamp of the commit
         ///
         /// Example: "2014-08-09T08:02:04+12:00"
@@ -62,7 +62,7 @@ public struct GitCommit: Codable {
     }
 
     /// Identifying information for the git-user
-    public struct Committer: Codable {
+    public struct Committer: Codable, Sendable {
         /// Timestamp of the commit
         ///
         /// Example: "2014-08-09T08:02:04+12:00"
@@ -97,7 +97,7 @@ public struct GitCommit: Codable {
         }
     }
 
-    public struct Tree: Codable {
+    public struct Tree: Codable, Sendable {
         /// SHA for the commit
         ///
         /// Example: "7638417db6d59f3c431d3e1f261cc637155684cd"
@@ -122,7 +122,7 @@ public struct GitCommit: Codable {
         }
     }
 
-    public struct Parent: Codable {
+    public struct Parent: Codable, Sendable {
         /// SHA for the commit
         ///
         /// Example: "7638417db6d59f3c431d3e1f261cc637155684cd"
@@ -151,7 +151,7 @@ public struct GitCommit: Codable {
         }
     }
 
-    public struct Verification: Codable {
+    public struct Verification: Codable, Sendable {
         public var isVerified: Bool
         public var reason: String
         public var signature: String?

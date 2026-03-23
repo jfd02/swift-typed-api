@@ -103,7 +103,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The name of the project.
             public var name: String
             /// The description of the project.

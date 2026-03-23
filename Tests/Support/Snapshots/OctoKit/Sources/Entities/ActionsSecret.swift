@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Set secrets for GitHub Actions.
-public struct ActionsSecret: Codable {
+public struct ActionsSecret: Codable, Sendable {
     /// The name of the secret.
     ///
     /// Example: "SECRET_TOKEN"

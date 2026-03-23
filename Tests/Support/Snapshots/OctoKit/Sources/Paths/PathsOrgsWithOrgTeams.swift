@@ -72,7 +72,7 @@ extension Paths.Orgs.WithOrg {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The name of the team.
             public var name: String
             /// The description of the team.

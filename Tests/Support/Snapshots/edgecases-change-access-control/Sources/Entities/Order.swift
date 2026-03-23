@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct Order: Codable {
+struct Order: Codable, Sendable {
     var id: Int64?
     var petID: Int64?
     var quantity: Int32?

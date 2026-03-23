@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg.Actions.Secrets.WithSecretName {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "actions/list-selected-repos-for-org-secret")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var repositories: [OctoKit.MinimalRepository]
 

@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-repo-secrets")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var secrets: [OctoKit.ActionsSecret]
 

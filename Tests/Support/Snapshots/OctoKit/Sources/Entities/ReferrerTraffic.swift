@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ReferrerTraffic: Codable {
+public struct ReferrerTraffic: Codable, Sendable {
     /// Example: "Google"
     public var referrer: String
     public var count: Int

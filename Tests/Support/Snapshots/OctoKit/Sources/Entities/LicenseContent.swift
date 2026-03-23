@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct LicenseContent: Codable {
+public struct LicenseContent: Codable, Sendable {
     public var name: String
     public var path: String
     public var sha: String
@@ -20,7 +20,7 @@ public struct LicenseContent: Codable {
     /// License Simple
     public var license: LicenseSimple?
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var git: URL?
         public var html: URL?
         public var this: URL

@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Item: Codable {
+public struct Item: Codable, Sendable {
     public var weight: Int
 
     public init(weight: Int) {

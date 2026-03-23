@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct AuthenticationToken: Codable {
+public struct AuthenticationToken: Codable, Sendable {
     /// The token used for authentication
     ///
     /// Example: "v1.1f699f1069f60xxx"

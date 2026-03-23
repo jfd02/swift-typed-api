@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct BranchWithProtection: Codable {
+public struct BranchWithProtection: Codable, Sendable {
     public var name: String
     public var commit: Commit
     public var links: Links
@@ -16,7 +16,7 @@ public struct BranchWithProtection: Codable {
     public var pattern: String?
     public var requiredApprovingReviewCount: Int?
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var html: String
         public var this: URL
 

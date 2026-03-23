@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CommitComparison: Codable {
+public struct CommitComparison: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/compare/master...topic"
     public var url: URL
     /// Example: "https://github.com/octocat/Hello-World/compare/master...topic"

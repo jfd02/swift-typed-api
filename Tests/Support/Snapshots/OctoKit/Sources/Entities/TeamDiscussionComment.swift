@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A reply to a discussion within a team.
-public struct TeamDiscussionComment: Codable {
+public struct TeamDiscussionComment: Codable, Sendable {
     /// Simple User
     public var author: SimpleUser?
     /// The main text of the comment.

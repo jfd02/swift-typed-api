@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Reactions to conversations provide a way to help people express their feelings more simply and effectively.
-public struct Reaction: Codable {
+public struct Reaction: Codable, Sendable {
     public var id: Int
     /// Example: "MDg6UmVhY3Rpb24x"
     public var nodeID: String

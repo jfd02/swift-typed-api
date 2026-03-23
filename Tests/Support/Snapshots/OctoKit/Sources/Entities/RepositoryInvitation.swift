@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Repository invitations let you manage who you collaborate with.
-public struct RepositoryInvitation: Codable {
+public struct RepositoryInvitation: Codable, Sendable {
     /// Unique identifier of the repository invitation.
     ///
     /// Example: 42

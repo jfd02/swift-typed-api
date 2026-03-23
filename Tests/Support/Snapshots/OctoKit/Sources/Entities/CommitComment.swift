@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CommitComment: Codable {
+public struct CommitComment: Codable, Sendable {
     public var htmlURL: URL
     public var url: URL
     public var id: Int

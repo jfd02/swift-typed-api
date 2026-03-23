@@ -44,7 +44,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var codespaces: [OctoKit.Codespace]
 
@@ -94,7 +94,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Git ref (typically a branch name) for this codespace
             public var ref: String?
             /// Location for this codespace

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct GistHistory: Codable {
+public struct GistHistory: Codable, Sendable {
     /// Simple User
     public var user: SimpleUser?
     public var version: String?
@@ -12,7 +12,7 @@ public struct GistHistory: Codable {
     public var changeStatus: ChangeStatus?
     public var url: URL?
 
-    public struct ChangeStatus: Codable {
+    public struct ChangeStatus: Codable, Sendable {
         public var total: Int?
         public var additions: Int?
         public var deletions: Int?

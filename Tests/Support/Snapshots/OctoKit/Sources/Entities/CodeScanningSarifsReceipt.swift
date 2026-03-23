@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeScanningSarifsReceipt: Codable {
+public struct CodeScanningSarifsReceipt: Codable, Sendable {
     /// An identifier for the upload.
     ///
     /// Example: "6c81cd8e-b078-4ac3-a3be-1dad7dbd0b53"

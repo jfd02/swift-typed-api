@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Traffic: Codable {
+public struct Traffic: Codable, Sendable {
     public var timestamp: Date
     public var uniques: Int
     public var count: Int

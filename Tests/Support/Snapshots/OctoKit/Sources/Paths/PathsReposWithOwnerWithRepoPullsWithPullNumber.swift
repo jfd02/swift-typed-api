@@ -79,7 +79,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The title of the pull request.
             public var title: String?
             /// The contents of the pull request.

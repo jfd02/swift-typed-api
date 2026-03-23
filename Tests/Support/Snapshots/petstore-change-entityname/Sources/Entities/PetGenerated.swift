@@ -6,7 +6,7 @@ import Foundation
 /// A pet title
 ///
 /// A pet description
-public struct PetGenerated: Codable {
+public struct PetGenerated: Codable, Sendable {
     public var id: Int64
     /// Example: "Buddy"
     public var name: String

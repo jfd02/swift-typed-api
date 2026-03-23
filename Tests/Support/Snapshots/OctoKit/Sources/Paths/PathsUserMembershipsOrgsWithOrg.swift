@@ -59,7 +59,7 @@ extension Paths.User.Memberships.Orgs {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The state that the membership should be in. Only `"active"` will be accepted.
             public var state: State
 

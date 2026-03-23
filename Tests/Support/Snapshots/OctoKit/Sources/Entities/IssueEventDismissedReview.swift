@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEventDismissedReview: Codable {
+public struct IssueEventDismissedReview: Codable, Sendable {
     public var state: String
     public var reviewID: Int
     public var dismissalMessage: String?

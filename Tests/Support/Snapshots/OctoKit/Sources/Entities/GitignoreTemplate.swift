@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct GitignoreTemplate: Codable {
+public struct GitignoreTemplate: Codable, Sendable {
     /// Example: "C"
     public var name: String
     /// Example:

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Commit: Codable {
+public struct Commit: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/commits/6dcb09b5b57875f334f61aebed695e2e4193db5e"
     public var url: URL
     /// Example: "6dcb09b5b57875f334f61aebed695e2e4193db5e"
@@ -24,7 +24,7 @@ public struct Commit: Codable {
     public var stats: Stats?
     public var files: [DiffEntry]?
 
-    public struct Commit: Codable {
+    public struct Commit: Codable, Sendable {
         /// Example: "https://api.github.com/repos/octocat/Hello-World/commits/6dcb09b5b57875f334f61aebed695e2e4193db5e"
         public var url: URL
         /// Git User
@@ -41,7 +41,7 @@ public struct Commit: Codable {
         public var tree: Tree
         public var verification: Verification?
 
-        public struct Tree: Codable {
+        public struct Tree: Codable, Sendable {
             /// Example: "827efc6d56897b048c772eb4087f854f46256132"
             public var sha: String
             /// Example: "https://api.github.com/repos/octocat/Hello-World/tree/827efc6d56897b048c772eb4087f854f46256132"
@@ -98,7 +98,7 @@ public struct Commit: Codable {
         }
     }
 
-    public struct Parent: Codable {
+    public struct Parent: Codable, Sendable {
         /// Example: "7638417db6d59f3c431d3e1f261cc637155684cd"
         public var sha: String
         /// Example: "https://api.github.com/repos/octocat/Hello-World/commits/7638417db6d59f3c431d3e1f261cc637155684cd"
@@ -127,7 +127,7 @@ public struct Commit: Codable {
         }
     }
 
-    public struct Stats: Codable {
+    public struct Stats: Codable, Sendable {
         public var additions: Int?
         public var deletions: Int?
         public var total: Int?

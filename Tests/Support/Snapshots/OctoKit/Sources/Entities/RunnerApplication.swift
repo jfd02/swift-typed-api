@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct RunnerApplication: Codable {
+public struct RunnerApplication: Codable, Sendable {
     public var os: String
     public var architecture: String
     public var downloadURL: String

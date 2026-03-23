@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Event: Codable {
+public struct Event: Codable, Sendable {
     public var id: String
     public var type: String?
     public var actor: Actor
@@ -15,7 +15,7 @@ public struct Event: Codable {
     public var isPublic: Bool
     public var createdAt: Date?
 
-    public struct Repo: Codable {
+    public struct Repo: Codable, Sendable {
         public var id: Int
         public var name: String
         public var url: URL
@@ -41,7 +41,7 @@ public struct Event: Codable {
         }
     }
 
-    public struct Payload: Codable {
+    public struct Payload: Codable, Sendable {
         public var action: String?
         /// Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
         public var issue: Issue?
@@ -51,7 +51,7 @@ public struct Event: Codable {
         public var comment: IssueComment?
         public var pages: [Page]?
 
-        public struct Page: Codable {
+        public struct Page: Codable, Sendable {
             public var pageName: String?
             public var title: String?
             public var summary: String?

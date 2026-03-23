@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Error: Codable, Identifiable {
+public struct Error: Codable, Identifiable, Sendable {
     public var id: Int32
     public var message: String
 

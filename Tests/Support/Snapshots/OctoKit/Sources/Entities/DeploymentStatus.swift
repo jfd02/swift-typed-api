@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The status of a deployment.
-public struct DeploymentStatus: Codable {
+public struct DeploymentStatus: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/example/deployments/42/statuses/1"
     public var url: URL
     public var id: Int

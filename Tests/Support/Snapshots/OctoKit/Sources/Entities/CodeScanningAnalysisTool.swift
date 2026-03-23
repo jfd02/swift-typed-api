@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeScanningAnalysisTool: Codable {
+public struct CodeScanningAnalysisTool: Codable, Sendable {
     /// The name of the tool used to generate the code scanning analysis.
     public var name: String?
     /// The version of the tool used to generate the code scanning analysis.

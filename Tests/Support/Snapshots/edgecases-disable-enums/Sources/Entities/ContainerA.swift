@@ -4,16 +4,16 @@
 import Foundation
 import NaiveDate
 
-public struct ContainerA: Codable {
+public struct ContainerA: Codable, Sendable {
     public var child: Child?
     public var refChild: AnyJSON
 
-    public struct Child: Codable {
+    public struct Child: Codable, Sendable {
         public var `enum`: String
         public var renameMe: String
         public var child: Child
 
-        public struct Child: Codable {
+        public struct Child: Codable, Sendable {
             public var `enum`: String
             public var renameMe: String
 

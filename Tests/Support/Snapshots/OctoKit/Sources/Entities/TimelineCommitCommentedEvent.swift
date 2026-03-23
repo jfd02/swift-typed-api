@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TimelineCommitCommentedEvent: Codable {
+public struct TimelineCommitCommentedEvent: Codable, Sendable {
     public var event: String?
     public var nodeID: String?
     public var commitID: String?

@@ -41,14 +41,14 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
             Request(path: path, method: "PUT", body: body, id: "enterprise-admin/set-information-for-provisioned-enterprise-group")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The SCIM schema URIs.
             public var schemas: [String]
             /// The name of the SCIM group. This must match the GitHub organization that the group maps to.
             public var displayName: String
             public var members: [Member]?
 
-            public struct Member: Encodable {
+            public struct Member: Encodable, Sendable {
                 /// The SCIM user ID for a user.
                 public var value: String
 
@@ -87,13 +87,13 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
             Request(path: path, method: "PATCH", body: body, id: "enterprise-admin/update-attribute-for-enterprise-group")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The SCIM schema URIs.
             public var schemas: [String]
             /// Array of [SCIM operations](https://tools.ietf.org/html/rfc7644#section-3.5.2).
             public var operations: [Operation]
 
-            public struct Operation: Encodable {
+            public struct Operation: Encodable, Sendable {
                 public var op: Op
                 public var path: String?
                 /// Can be any value - string, number, array or object.

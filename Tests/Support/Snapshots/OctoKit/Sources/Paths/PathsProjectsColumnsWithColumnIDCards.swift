@@ -95,7 +95,7 @@ extension Paths.Projects.Columns.WithColumnID {
             }
         }
 
-        public enum PostUnprocessableEntityBody: Decodable {
+        public enum PostUnprocessableEntityBody: Decodable, Sendable {
             case validationError(OctoKit.ValidationError)
             case validationErrorSimple(OctoKit.ValidationErrorSimple)
 
@@ -114,13 +114,13 @@ extension Paths.Projects.Columns.WithColumnID {
             }
         }
 
-        public struct PostServiceUnavailableBody: Decodable {
+        public struct PostServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
             public var errors: [Error]?
 
-            public struct Error: Decodable {
+            public struct Error: Decodable, Sendable {
                 public var code: String?
                 public var message: String?
 
@@ -152,11 +152,11 @@ extension Paths.Projects.Columns.WithColumnID {
             }
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case a(A)
             case b(B)
 
-            public struct A: Encodable {
+            public struct A: Encodable, Sendable {
                 /// The project card's note
                 ///
                 /// Example: "Update all gems"
@@ -172,7 +172,7 @@ extension Paths.Projects.Columns.WithColumnID {
                 }
             }
 
-            public struct B: Encodable {
+            public struct B: Encodable, Sendable {
                 /// The unique identifier of the content associated with the card
                 ///
                 /// Example: 42

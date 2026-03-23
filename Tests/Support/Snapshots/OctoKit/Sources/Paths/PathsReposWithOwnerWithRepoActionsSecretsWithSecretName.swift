@@ -107,7 +107,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Secrets {
             Request(path: path, method: "PUT", body: body, id: "actions/create-or-update-repo-secret")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get a repository public key](https://docs.github.com/rest/reference/actions#get-a-repository-public-key) endpoint.
             public var encryptedValue: String?
             /// ID of the key you used to encrypt the secret.

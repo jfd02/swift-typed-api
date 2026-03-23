@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ContentFile: Codable {
+public struct ContentFile: Codable, Sendable {
     public var type: String
     public var encoding: String
     public var size: Int
@@ -22,7 +22,7 @@ public struct ContentFile: Codable {
     /// Example: "git://example.com/defunkt/dotjs.git"
     public var submoduleGitURL: String?
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var git: URL?
         public var html: URL?
         public var this: URL

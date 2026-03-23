@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Groups of organization members that gives permissions on specified repositories.
-public struct TeamSimple: Codable {
+public struct TeamSimple: Codable, Sendable {
     /// Unique identifier of the team
     public var id: Int
     /// Example: "MDQ6VGVhbTE="

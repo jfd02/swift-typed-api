@@ -44,7 +44,7 @@ extension Paths.Projects.WithProjectID.Collaborators {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The permission to grant the collaborator.
             ///
             /// Example: "write"

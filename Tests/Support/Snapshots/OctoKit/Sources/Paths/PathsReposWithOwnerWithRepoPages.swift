@@ -58,12 +58,12 @@ extension Paths.Repos.WithOwner.WithRepo {
         }
 
         /// The source branch and directory used to publish your Pages site.
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The source branch and directory used to publish your Pages site.
             public var source: Source
 
             /// The source branch and directory used to publish your Pages site.
-            public struct Source: Encodable {
+            public struct Source: Encodable, Sendable {
                 /// The repository branch used to publish your site's source files.
                 public var branch: String
                 /// The repository directory that includes the source files for the Pages site. Allowed paths are `/` or `/docs`. Default: `/`
@@ -120,7 +120,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Specify a custom domain for the repository. Sending a `null` value will remove the custom domain. For more about custom domains, see "[Using a custom domain with GitHub Pages](https://help.github.com/articles/using-a-custom-domain-with-github-pages/)."
             public var cname: String?
             /// Specify whether HTTPS should be enforced for the repository.
@@ -129,7 +129,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public var isPublic: Bool?
             public var source: Source?
 
-            public struct Source: Encodable {
+            public struct Source: Encodable, Sendable {
                 /// Update the source for the repository. Must include the branch name, and may optionally specify the subdirectory `/docs`. Possible values are `"gh-pages"`, `"master"`, and `"master /docs"`.
                 public var a: A?
                 /// Update the source for the repository. Must include the branch name and path.
@@ -143,7 +143,7 @@ extension Paths.Repos.WithOwner.WithRepo {
                 }
 
                 /// Update the source for the repository. Must include the branch name and path.
-                public struct B: Encodable {
+                public struct B: Encodable, Sendable {
                     /// The repository branch used to publish your site's source files.
                     public var branch: String
                     /// The repository directory that includes the source files for the Pages site. Allowed paths are `/` or `/docs`.

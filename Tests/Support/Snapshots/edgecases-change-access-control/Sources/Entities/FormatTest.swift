@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct FormatTest: Codable {
+struct FormatTest: Codable, Sendable {
     var integer: Int?
     var int32: Int32?
     var int64: Int64?

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Actor: Codable {
+public struct Actor: Codable, Sendable {
     public var id: Int
     public var login: String
     public var displayLogin: String?

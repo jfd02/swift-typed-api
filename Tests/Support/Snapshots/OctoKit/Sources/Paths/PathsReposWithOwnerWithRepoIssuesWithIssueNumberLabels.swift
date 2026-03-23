@@ -66,14 +66,14 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
             }
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case object1(Object1)
             case strings([String])
             case object2(Object2)
             case placeholderItems([PlaceholderItem])
             case string(String)
 
-            public struct Object1: Encodable {
+            public struct Object1: Encodable, Sendable {
                 /// The names of the labels to add to the issue. You can pass an empty array to remove all labels. **Note:** Alternatively, you can pass a single label as a `string` or an `array` of labels directly, but GitHub recommends passing an object with the `labels` key.
                 public var labels: [String]?
 
@@ -87,10 +87,10 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
                 }
             }
 
-            public struct Object2: Encodable {
+            public struct Object2: Encodable, Sendable {
                 public var labels: [Label]?
 
-                public struct Label: Encodable {
+                public struct Label: Encodable, Sendable {
                     public var name: String
 
                     public init(name: String) {
@@ -113,7 +113,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
                 }
             }
 
-            public struct PlaceholderItem: Encodable {
+            public struct PlaceholderItem: Encodable, Sendable {
                 public var name: String
 
                 public init(name: String) {
@@ -161,14 +161,14 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
             }
         }
 
-        public enum PutRequest: Encodable {
+        public enum PutRequest: Encodable, Sendable {
             case object1(Object1)
             case strings([String])
             case object2(Object2)
             case placeholderItems([PlaceholderItem])
             case string(String)
 
-            public struct Object1: Encodable {
+            public struct Object1: Encodable, Sendable {
                 /// The names of the labels to add to the issue. You can pass an empty array to remove all labels. **Note:** Alternatively, you can pass a single label as a `string` or an `array` of labels directly, but GitHub recommends passing an object with the `labels` key.
                 public var labels: [String]?
 
@@ -182,10 +182,10 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
                 }
             }
 
-            public struct Object2: Encodable {
+            public struct Object2: Encodable, Sendable {
                 public var labels: [Label]?
 
-                public struct Label: Encodable {
+                public struct Label: Encodable, Sendable {
                     public var name: String
 
                     public init(name: String) {
@@ -208,7 +208,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
                 }
             }
 
-            public struct PlaceholderItem: Encodable {
+            public struct PlaceholderItem: Encodable, Sendable {
                 public var name: String
 
                 public init(name: String) {

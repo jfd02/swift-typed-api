@@ -5,11 +5,11 @@ import Foundation
 import NaiveDate
 
 /// Pages Health Check Status
-public struct PagesHealthCheck: Codable {
+public struct PagesHealthCheck: Codable, Sendable {
     public var domain: Domain?
     public var altDomain: AltDomain?
 
-    public struct Domain: Codable {
+    public struct Domain: Codable, Sendable {
         public var host: String?
         public var uri: String?
         public var nameservers: String?
@@ -135,7 +135,7 @@ public struct PagesHealthCheck: Codable {
         }
     }
 
-    public struct AltDomain: Codable {
+    public struct AltDomain: Codable, Sendable {
         public var host: String?
         public var uri: String?
         public var nameservers: String?

@@ -26,7 +26,7 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "checks/list-suites-for-ref")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var checkSuites: [OctoKit.CheckSuite]
 

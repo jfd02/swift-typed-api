@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct BranchRestrictionPolicy: Codable {
+public struct BranchRestrictionPolicy: Codable, Sendable {
     public var url: URL
     public var usersURL: URL
     public var teamsURL: URL
@@ -13,7 +13,7 @@ public struct BranchRestrictionPolicy: Codable {
     public var teams: [Team]
     public var apps: [App]
 
-    public struct User: Codable {
+    public struct User: Codable, Sendable {
         public var login: String?
         public var id: Int?
         public var nodeID: String?
@@ -99,7 +99,7 @@ public struct BranchRestrictionPolicy: Codable {
         }
     }
 
-    public struct Team: Codable {
+    public struct Team: Codable, Sendable {
         public var id: Int?
         public var nodeID: String?
         public var url: String?
@@ -161,7 +161,7 @@ public struct BranchRestrictionPolicy: Codable {
         }
     }
 
-    public struct App: Codable {
+    public struct App: Codable, Sendable {
         public var id: Int?
         public var slug: String?
         public var nodeID: String?
@@ -175,7 +175,7 @@ public struct BranchRestrictionPolicy: Codable {
         public var permissions: Permissions?
         public var events: [String]?
 
-        public struct Owner: Codable {
+        public struct Owner: Codable, Sendable {
             public var login: String?
             public var id: Int?
             public var nodeID: String?
@@ -292,7 +292,7 @@ public struct BranchRestrictionPolicy: Codable {
             }
         }
 
-        public struct Permissions: Codable {
+        public struct Permissions: Codable, Sendable {
             public var metadata: String?
             public var contents: String?
             public var issues: String?

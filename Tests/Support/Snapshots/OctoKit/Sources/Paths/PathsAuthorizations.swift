@@ -111,7 +111,7 @@ extension Paths {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// A list of scopes that this authorization is in.
             ///
             /// Example: ["public_repo", "user"]

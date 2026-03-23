@@ -7,7 +7,7 @@ import NaiveDate
 /// Full Team
 ///
 /// Groups of organization members that gives permissions on specified repositories.
-public struct TeamFull: Codable {
+public struct TeamFull: Codable, Sendable {
     /// Unique identifier of the team
     ///
     /// Example: 42

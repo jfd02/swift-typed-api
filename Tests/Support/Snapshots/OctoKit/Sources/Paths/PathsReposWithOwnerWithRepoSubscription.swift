@@ -45,7 +45,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "PUT", body: body, id: "activity/set-repo-subscription")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Determines if notifications should be received from this repository.
             public var isSubscribed: Bool?
             /// Determines if all notifications should be blocked from this repository.

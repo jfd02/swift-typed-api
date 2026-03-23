@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CommunityProfile: Codable {
+public struct CommunityProfile: Codable, Sendable {
     /// Example: 100
     public var healthPercentage: Int
     /// Example: "My first repository on GitHub!"
@@ -17,7 +17,7 @@ public struct CommunityProfile: Codable {
     /// Example: true
     public var isContentReportsEnabled: Bool?
 
-    public struct Files: Codable {
+    public struct Files: Codable, Sendable {
         /// Code Of Conduct Simple
         ///
         /// Code of Conduct Simple

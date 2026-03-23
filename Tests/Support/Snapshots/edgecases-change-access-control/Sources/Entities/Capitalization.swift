@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct Capitalization: Codable {
+struct Capitalization: Codable, Sendable {
     var smallCamel: String?
     var capitalCamel: String?
     var smallSnake: String?

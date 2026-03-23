@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "POST", body: body, id: "repos/transfer")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The username or organization name the repository will be transferred to.
             public var newOwner: String
             /// ID of the team or teams to add to the repository. Teams can only be added to organization-owned repositories.

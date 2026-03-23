@@ -32,7 +32,7 @@ struct StringCodingKey: CodingKey, ExpressibleByStringLiteral {
 /// A pet title
 ///
 /// A pet description
-struct Pet: Codable {
+struct Pet: Codable, Sendable {
     let id: Int64
     /// Example: "Buddy"
     let name: String

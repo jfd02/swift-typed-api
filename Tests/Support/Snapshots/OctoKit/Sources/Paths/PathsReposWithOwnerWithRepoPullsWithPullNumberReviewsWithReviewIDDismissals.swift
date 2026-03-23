@@ -38,7 +38,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber.Reviews.WithReview
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The message for the pull request review dismissal
             public var message: String
             /// Example: "APPROVE"

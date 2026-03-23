@@ -42,7 +42,7 @@ extension Paths.Applications.WithClientID.Token {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The OAuth access token used to authenticate to the GitHub API.
             ///
             /// Example: "e72e16c7e42f292c6912e7710c838347ae178b4a"

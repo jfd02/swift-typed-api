@@ -51,7 +51,7 @@ extension Paths.Repos.WithOwner.WithRepo.Environments {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The amount of time to delay a job after the job is initially triggered. The time (in minutes) must be an integer between 0 and 43,200 (30 days).
             ///
             /// Example: 30
@@ -61,7 +61,7 @@ extension Paths.Repos.WithOwner.WithRepo.Environments {
             /// The type of deployment branch policy for this environment. To allow all branches to deploy, set to `null`.
             public var deploymentBranchPolicy: OctoKit.DeploymentBranchPolicy?
 
-            public struct Reviewer: Encodable {
+            public struct Reviewer: Encodable, Sendable {
                 /// The type of reviewer. Must be one of: `User` or `Team`
                 ///
                 /// Example: "User"

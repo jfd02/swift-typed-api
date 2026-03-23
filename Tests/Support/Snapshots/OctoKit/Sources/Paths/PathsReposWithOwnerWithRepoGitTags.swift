@@ -69,7 +69,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The tag's name. This is typically a version (e.g., "v0.0.1").
             public var tag: String
             /// The tag message.
@@ -89,7 +89,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             }
 
             /// An object with information about the individual creating the tag.
-            public struct Tagger: Encodable {
+            public struct Tagger: Encodable, Sendable {
                 /// The name of the author of the tag
                 public var name: String
                 /// The email of the author of the tag

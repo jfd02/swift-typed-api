@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ParticipationStats: Codable {
+public struct ParticipationStats: Codable, Sendable {
     public var all: [Int]
     public var owner: [Int]
 

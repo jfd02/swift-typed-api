@@ -41,11 +41,11 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.TeamSync {
             Request(path: path, method: "PATCH", body: PatchRequest(groups: groups), id: "teams/create-or-update-idp-group-connections-in-org")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The IdP groups you want to connect to a GitHub team. When updating, the new `groups` object will replace the original one. You must include any existing groups that you don't want to remove.
             public var groups: [Group]?
 
-            public struct Group: Encodable {
+            public struct Group: Encodable, Sendable {
                 /// ID of the IdP group.
                 public var groupID: String
                 /// Name of the IdP group.

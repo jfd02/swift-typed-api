@@ -26,7 +26,7 @@ extension Paths.Orgs.WithOrg.Actions.Permissions {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-selected-repositories-enabled-github-actions-organization")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Double
             public var repositories: [OctoKit.Repository]
 

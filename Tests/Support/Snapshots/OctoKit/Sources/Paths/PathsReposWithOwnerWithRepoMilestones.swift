@@ -105,7 +105,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The title of the milestone.
             public var title: String
             /// The state of the milestone. Either `open` or `closed`.

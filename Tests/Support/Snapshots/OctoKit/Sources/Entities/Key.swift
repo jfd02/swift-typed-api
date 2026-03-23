@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Key: Codable {
+public struct Key: Codable, Sendable {
     public var key: String
     public var id: Int
     public var url: String

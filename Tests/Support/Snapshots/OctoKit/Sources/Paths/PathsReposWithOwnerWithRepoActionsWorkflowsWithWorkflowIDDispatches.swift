@@ -28,7 +28,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
             Request(path: path, method: "POST", body: body, id: "actions/create-workflow-dispatch")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The git reference for the workflow. The reference can be a branch or tag name.
             public var ref: String
             /// Input keys and values configured in the workflow file. The maximum number of properties is 10. Any default properties configured in the workflow file will be used when `inputs` are omitted.

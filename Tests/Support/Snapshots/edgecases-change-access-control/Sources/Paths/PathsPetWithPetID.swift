@@ -54,7 +54,7 @@ extension Paths.Pet {
             }
         }
 
-        struct PostRequest: Encodable {
+        struct PostRequest: Encodable, Sendable {
             /// Updated name of the pet
             var name: String?
             /// Updated status of the pet

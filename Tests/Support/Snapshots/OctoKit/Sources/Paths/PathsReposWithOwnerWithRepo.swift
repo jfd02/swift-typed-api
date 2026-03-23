@@ -67,7 +67,7 @@ extension Paths.Repos.WithOwner {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The name of the repository.
             public var name: String?
             /// A short description of the repository.
@@ -114,14 +114,14 @@ extension Paths.Repos.WithOwner {
             }
 
             /// Specify which security and analysis features to enable or disable. For example, to enable GitHub Advanced Security, use this data in the body of the PATCH request: `{"security_and_analysis": {"advanced_security": {"status": "enabled"}}}`. If you have admin permissions for a private repository covered by an Advanced Security license, you can check which security and analysis features are currently enabled by using a `GET /repos/{owner}/{repo}` request.
-            public struct SecurityAndAnalysis: Encodable {
+            public struct SecurityAndAnalysis: Encodable, Sendable {
                 /// Use the `status` property to enable or disable GitHub Advanced Security for this repository. For more information, see "[About GitHub Advanced Security](/github/getting-started-with-github/learning-about-github/about-github-advanced-security)."
                 public var advancedSecurity: AdvancedSecurity?
                 /// Use the `status` property to enable or disable secret scanning for this repository. For more information, see "[About secret scanning](/code-security/secret-security/about-secret-scanning)."
                 public var secretScanning: SecretScanning?
 
                 /// Use the `status` property to enable or disable GitHub Advanced Security for this repository. For more information, see "[About GitHub Advanced Security](/github/getting-started-with-github/learning-about-github/about-github-advanced-security)."
-                public struct AdvancedSecurity: Encodable {
+                public struct AdvancedSecurity: Encodable, Sendable {
                     /// Can be `enabled` or `disabled`.
                     public var status: String?
 
@@ -136,7 +136,7 @@ extension Paths.Repos.WithOwner {
                 }
 
                 /// Use the `status` property to enable or disable secret scanning for this repository. For more information, see "[About secret scanning](/code-security/secret-security/about-secret-scanning)."
-                public struct SecretScanning: Encodable {
+                public struct SecretScanning: Encodable, Sendable {
                     /// Can be `enabled` or `disabled`.
                     public var status: String?
 
@@ -234,7 +234,7 @@ extension Paths.Repos.WithOwner {
             }
         }
 
-        public struct DeleteForbiddenBody: Decodable {
+        public struct DeleteForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
 

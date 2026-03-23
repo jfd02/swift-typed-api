@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct AuditLogEvent: Codable {
+public struct AuditLogEvent: Codable, Sendable {
     /// The time the audit log event occurred, given as a [Unix timestamp](http://en.wikipedia.org/wiki/Unix_time).
     public var timestamp: Int?
     /// The name of the action that was performed, for example `user.login` or `repo.create`.
@@ -59,7 +59,7 @@ public struct AuditLogEvent: Codable {
     /// The repository visibility, for example `public` or `private`.
     public var visibility: String?
 
-    public struct ActorLocation: Codable {
+    public struct ActorLocation: Codable, Sendable {
         public var countryName: String?
 
         public init(countryName: String? = nil) {

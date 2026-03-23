@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ProtectedBranchRequiredStatusCheck: Codable {
+public struct ProtectedBranchRequiredStatusCheck: Codable, Sendable {
     public var url: String?
     public var enforcementLevel: String?
     public var contexts: [String]
@@ -12,7 +12,7 @@ public struct ProtectedBranchRequiredStatusCheck: Codable {
     public var contextsURL: String?
     public var isStrict: Bool?
 
-    public struct Check: Codable {
+    public struct Check: Codable, Sendable {
         public var context: String
         public var appID: Int?
 

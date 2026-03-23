@@ -7,7 +7,7 @@ import CoreLocation
 /// A pet title
 ///
 /// A pet description
-public struct Pet: Codable {
+public struct Pet: Codable, Sendable {
     public var id: Int64
     /// Example: "Buddy"
     public var name: String

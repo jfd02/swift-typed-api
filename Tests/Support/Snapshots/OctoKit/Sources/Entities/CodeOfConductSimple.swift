@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Code of Conduct Simple
-public struct CodeOfConductSimple: Codable {
+public struct CodeOfConductSimple: Codable, Sendable {
     /// Example: "https://api.github.com/repos/github/docs/community/code_of_conduct"
     public var url: URL
     /// Example: "citizen_code_of_conduct"

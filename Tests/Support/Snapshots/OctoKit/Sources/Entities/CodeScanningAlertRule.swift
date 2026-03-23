@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeScanningAlertRule: Codable {
+public struct CodeScanningAlertRule: Codable, Sendable {
     /// A unique identifier for the rule used to detect the alert.
     public var id: String?
     /// The name of the rule used to detect the alert.

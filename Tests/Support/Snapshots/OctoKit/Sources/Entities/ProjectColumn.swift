@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Project columns contain cards of work.
-public struct ProjectColumn: Codable {
+public struct ProjectColumn: Codable, Sendable {
     /// Example: "https://api.github.com/projects/columns/367"
     public var url: URL
     /// Example: "https://api.github.com/projects/120"

@@ -94,7 +94,7 @@ extension Paths.Repos.WithOwner.WithRepo.Comments.WithCommentID {
             }
         }
 
-        public struct PostUnsupportedMediaTypeBody: Decodable {
+        public struct PostUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 
@@ -110,7 +110,7 @@ extension Paths.Repos.WithOwner.WithRepo.Comments.WithCommentID {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The [reaction type](https://docs.github.com/rest/reference/reactions#reaction-types) to add to the commit comment.
             public var content: Content
 

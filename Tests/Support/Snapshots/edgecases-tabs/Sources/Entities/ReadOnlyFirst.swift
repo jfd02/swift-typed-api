@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ReadOnlyFirst: Codable {
+public struct ReadOnlyFirst: Codable, Sendable {
 	public var bar: String?
 	public var baz: String?
 

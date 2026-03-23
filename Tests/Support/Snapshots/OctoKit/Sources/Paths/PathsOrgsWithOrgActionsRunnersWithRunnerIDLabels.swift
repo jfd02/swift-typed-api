@@ -38,7 +38,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners.WithRunnerID {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var labels: [OctoKit.RunnerLabel]
 
@@ -79,7 +79,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners.WithRunnerID {
             }
         }
 
-        public struct PostResponse: Decodable {
+        public struct PostResponse: Decodable, Sendable {
             public var totalCount: Int
             public var labels: [OctoKit.RunnerLabel]
 
@@ -121,7 +121,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners.WithRunnerID {
             }
         }
 
-        public struct PutResponse: Decodable {
+        public struct PutResponse: Decodable, Sendable {
             public var totalCount: Int
             public var labels: [OctoKit.RunnerLabel]
 
@@ -161,7 +161,7 @@ extension Paths.Orgs.WithOrg.Actions.Runners.WithRunnerID {
             }
         }
 
-        public struct DeleteResponse: Decodable {
+        public struct DeleteResponse: Decodable, Sendable {
             public var totalCount: Int
             public var labels: [OctoKit.RunnerLabel]
 

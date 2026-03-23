@@ -64,7 +64,7 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithCommitSha {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The contents of the comment.
             public var body: String
             /// Relative path of the file to comment on.

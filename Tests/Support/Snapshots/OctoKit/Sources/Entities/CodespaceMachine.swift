@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A description of the machine powering a codespace.
-public struct CodespaceMachine: Codable {
+public struct CodespaceMachine: Codable, Sendable {
     /// The name of the machine.
     ///
     /// Example: "standardLinux"

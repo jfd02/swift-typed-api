@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ContributorActivity: Codable {
+public struct ContributorActivity: Codable, Sendable {
     /// Simple User
     public var author: SimpleUser?
     /// Example: 135
@@ -21,7 +21,7 @@ public struct ContributorActivity: Codable {
     /// ]
     public var weeks: [Week]
 
-    public struct Week: Codable {
+    public struct Week: Codable, Sendable {
         public var w: Int?
         public var a: Int?
         public var d: Int?

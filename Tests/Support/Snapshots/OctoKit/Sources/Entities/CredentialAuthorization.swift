@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CredentialAuthorization: Codable {
+public struct CredentialAuthorization: Codable, Sendable {
     /// User login that owns the underlying credential.
     ///
     /// Example: "monalisa"

@@ -44,7 +44,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The new blob's content.
             public var content: String
             /// The encoding used for `content`. Currently, `"utf-8"` and `"base64"` are supported.

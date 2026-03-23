@@ -56,7 +56,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// An array of user `login`s that will be requested.
             public var reviewers: [String]?
             /// An array of team `slug`s that will be requested.
@@ -93,7 +93,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct DeleteRequest: Encodable {
+        public struct DeleteRequest: Encodable, Sendable {
             /// An array of user `login`s that will be removed.
             public var reviewers: [String]
             /// An array of team `slug`s that will be removed.

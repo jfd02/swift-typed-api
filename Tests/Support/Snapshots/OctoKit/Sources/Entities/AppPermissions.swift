@@ -14,7 +14,7 @@ import NaiveDate
 ///   "issues" : "read",
 ///   "single_file" : "read"
 /// }
-public struct AppPermissions: Codable {
+public struct AppPermissions: Codable, Sendable {
     /// The level of permission to grant the access token for GitHub Actions workflows, workflow runs, and artifacts. Can be one of: `read` or `write`.
     public var actions: Actions?
     /// The level of permission to grant the access token for repository creation, deletion, settings, teams, and collaborators creation. Can be one of: `read` or `write`.

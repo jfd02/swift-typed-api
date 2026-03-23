@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct MapTest: Codable {
+struct MapTest: Codable, Sendable {
     var mapMapOfString: [String: [String: String]]?
     var mapOfEnumString: [String: MapOfEnumStringItem]?
 

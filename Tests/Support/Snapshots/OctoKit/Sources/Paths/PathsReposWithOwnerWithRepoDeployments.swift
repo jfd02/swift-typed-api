@@ -124,7 +124,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The ref to deploy. This can be a branch, tag, or SHA.
             public var ref: String
             /// Specifies a task to execute (e.g., `deploy` or `deploy:migrations`).
@@ -143,7 +143,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             /// Specifies if the given environment is one that end-users directly interact with. Default: `true` when `environment` is `production` and `false` otherwise.
             public var isProductionEnvironment: Bool?
 
-            public enum Payload: Encodable {
+            public enum Payload: Encodable, Sendable {
                 case object([String: AnyJSON])
                 case string(String)
 

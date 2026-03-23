@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A request for a specific ref(branch,sha,tag) to be deployed
-public struct Deployment: Codable {
+public struct Deployment: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/example/deployments/1"
     public var url: URL
     /// Unique identifier of the deployment
@@ -56,7 +56,7 @@ public struct Deployment: Codable {
     /// GitHub apps are a new way to extend GitHub. They can be installed directly on organizations and user accounts and granted access to specific repositories. They come with granular permissions and built-in webhooks. GitHub apps are first class actors within GitHub.
     public var performedViaGithubApp: Integration?
 
-    public enum Payload: Codable {
+    public enum Payload: Codable, Sendable {
         case object([String: AnyJSON])
         case string(String)
 

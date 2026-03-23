@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct EnumTest: Codable {
+struct EnumTest: Codable, Sendable {
     var enumString: EnumString?
     var enumInteger: Int32?
     var enumNumber: Double?

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A migration.
-public struct Migration: Codable {
+public struct Migration: Codable, Sendable {
     /// Example: 79
     public var id: Int
     /// Simple User

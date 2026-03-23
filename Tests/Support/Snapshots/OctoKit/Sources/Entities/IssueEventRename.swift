@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEventRename: Codable {
+public struct IssueEventRename: Codable, Sendable {
     public var from: String
     public var to: String
 

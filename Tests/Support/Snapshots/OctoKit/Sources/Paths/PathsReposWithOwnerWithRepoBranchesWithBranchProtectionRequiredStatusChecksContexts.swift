@@ -61,7 +61,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
             }
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
 
@@ -72,7 +72,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
             ///     "contexts"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Contexts parameter
                 public var contexts: [String]
 
@@ -118,7 +118,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
             }
         }
 
-        public enum PutRequest: Encodable {
+        public enum PutRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
 
@@ -129,7 +129,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
             ///     "contexts"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Contexts parameter
                 public var contexts: [String]
 
@@ -175,7 +175,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
             }
         }
 
-        public enum DeleteRequest: Encodable {
+        public enum DeleteRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
 
@@ -186,7 +186,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Required
             ///     "contexts"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Contexts parameter
                 public var contexts: [String]
 

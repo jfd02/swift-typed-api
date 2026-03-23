@@ -66,7 +66,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "PUT", body: ["last_read_at": lastReadAt], id: "activity/mark-repo-notifications-as-read")
         }
 
-        public struct PutResponse: Decodable {
+        public struct PutResponse: Decodable, Sendable {
             public var message: String?
             public var url: String?
 

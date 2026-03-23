@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Person: Codable {
+public struct Person: Codable, Sendable {
     public var name: String
     public var address: String?
 

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// An enterprise account
-public struct Enterprise: Codable {
+public struct Enterprise: Codable, Sendable {
     /// A short description of the enterprise.
     public var description: String?
     /// Example: "https://github.com/enterprises/octo-business"

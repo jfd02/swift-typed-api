@@ -74,7 +74,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
             Request(path: path, method: "POST", body: body, id: "enterprise-admin/provision-and-invite-enterprise-user")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The SCIM schema URIs.
             public var schemas: [String]
             /// The username for the user.
@@ -85,7 +85,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
             /// List of SCIM group IDs the user is a member of.
             public var groups: [Group]?
 
-            public struct Name: Encodable {
+            public struct Name: Encodable, Sendable {
                 /// The first name of the user.
                 public var givenName: String
                 /// The last name of the user.
@@ -103,7 +103,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
                 }
             }
 
-            public struct Email: Encodable {
+            public struct Email: Encodable, Sendable {
                 /// The email address.
                 public var value: String
                 /// The type of email address.
@@ -125,7 +125,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
                 }
             }
 
-            public struct Group: Encodable {
+            public struct Group: Encodable, Sendable {
                 public var value: String?
 
                 public init(value: String? = nil) {

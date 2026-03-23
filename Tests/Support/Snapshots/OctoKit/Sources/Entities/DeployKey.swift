@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// An SSH key granting access to a single repository.
-public struct DeployKey: Codable {
+public struct DeployKey: Codable, Sendable {
     public var id: Int
     public var key: String
     public var url: String

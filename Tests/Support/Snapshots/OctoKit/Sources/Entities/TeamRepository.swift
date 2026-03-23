@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A team's access to a repository.
-public struct TeamRepository: Codable {
+public struct TeamRepository: Codable, Sendable {
     /// Unique identifier of the repository
     ///
     /// Example: 42
@@ -201,7 +201,7 @@ public struct TeamRepository: Codable {
     public var watchers: Int
     public var masterBranch: String?
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isAdmin: Bool
         public var isPull: Bool
         public var isTriage: Bool?

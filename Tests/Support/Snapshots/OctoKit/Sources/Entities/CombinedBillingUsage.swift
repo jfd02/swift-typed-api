@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CombinedBillingUsage: Codable {
+public struct CombinedBillingUsage: Codable, Sendable {
     /// Numbers of days left in billing cycle.
     public var daysLeftInBillingCycle: Int
     /// Estimated storage space (GB) used in billing cycle.

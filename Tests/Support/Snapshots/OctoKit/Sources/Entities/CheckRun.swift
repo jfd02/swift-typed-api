@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A check performed on the code of a given code change
-public struct CheckRun: Codable {
+public struct CheckRun: Codable, Sendable {
     /// The id of the check.
     ///
     /// Example: 21
@@ -68,7 +68,7 @@ public struct CheckRun: Codable {
         case actionRequired = "action_required"
     }
 
-    public struct Output: Codable {
+    public struct Output: Codable, Sendable {
         public var title: String?
         public var summary: String?
         public var text: String?
@@ -102,7 +102,7 @@ public struct CheckRun: Codable {
         }
     }
 
-    public struct CheckSuite: Codable {
+    public struct CheckSuite: Codable, Sendable {
         public var id: Int
 
         public init(id: Int) {

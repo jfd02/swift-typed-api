@@ -78,7 +78,7 @@ extension Paths.User {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Lock the repositories being migrated at the start of the migration
             ///
             /// Example: true

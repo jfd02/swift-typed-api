@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
-public struct Issue: Codable {
+public struct Issue: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     /// URL for the issue
@@ -72,11 +72,11 @@ public struct Issue: Codable {
     /// Reaction Rollup
     public var reactions: ReactionRollup?
 
-    public enum Label: Codable {
+    public enum Label: Codable, Sendable {
         case string(String)
         case object(Object)
 
-        public struct Object: Codable {
+        public struct Object: Codable, Sendable {
             public var id: Int64?
             public var nodeID: String?
             public var url: URL?
@@ -141,7 +141,7 @@ public struct Issue: Codable {
         }
     }
 
-    public struct PullRequest: Codable {
+    public struct PullRequest: Codable, Sendable {
         public var mergedAt: Date?
         public var diffURL: URL?
         public var htmlURL: URL?

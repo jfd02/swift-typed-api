@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Pull Request Review Comments are comments on a portion of the Pull Request's diff.
-public struct PullRequestReviewComment: Codable {
+public struct PullRequestReviewComment: Codable, Sendable {
     /// URL for the pull request review comment
     ///
     /// Example: "https://api.github.com/repos/octocat/Hello-World/pulls/comments/1"
@@ -86,12 +86,12 @@ public struct PullRequestReviewComment: Codable {
     /// Example: "comment body"
     public var bodyText: String?
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var this: `Self`
         public var html: HTML
         public var pullRequest: PullRequest
 
-        public struct `Self`: Codable {
+        public struct `Self`: Codable, Sendable {
             /// Example: "https://api.github.com/repos/octocat/Hello-World/pulls/comments/1"
             public var href: URL
 
@@ -110,7 +110,7 @@ public struct PullRequestReviewComment: Codable {
             }
         }
 
-        public struct HTML: Codable {
+        public struct HTML: Codable, Sendable {
             /// Example: "https://github.com/octocat/Hello-World/pull/1#discussion-diff-1"
             public var href: URL
 
@@ -129,7 +129,7 @@ public struct PullRequestReviewComment: Codable {
             }
         }
 
-        public struct PullRequest: Codable {
+        public struct PullRequest: Codable, Sendable {
             /// Example: "https://api.github.com/repos/octocat/Hello-World/pulls/1"
             public var href: URL
 

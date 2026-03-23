@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct User: Codable {
+struct User: Codable, Sendable {
     var id: Int64?
     var username: String?
     var firstName: String?

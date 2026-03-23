@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PublicUser: Codable {
+public struct PublicUser: Codable, Sendable {
     public var login: String
     public var id: Int
     public var nodeID: String
@@ -45,7 +45,7 @@ public struct PublicUser: Codable {
     public var diskUsage: Int?
     public var collaborators: Int?
 
-    public struct Plan: Codable {
+    public struct Plan: Codable, Sendable {
         public var collaborators: Int
         public var name: String
         public var space: Int

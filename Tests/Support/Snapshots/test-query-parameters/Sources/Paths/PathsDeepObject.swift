@@ -25,7 +25,7 @@ extension Paths {
             return encoder.items
         }
 
-        public struct `Type`: Codable {
+        public struct `Type`: Codable, Sendable {
             public var id: String
             public var name: String?
 

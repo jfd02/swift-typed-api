@@ -42,12 +42,12 @@ extension Paths.Projects.Columns.Cards.WithCardID {
             }
         }
 
-        public struct PostForbiddenBody: Decodable {
+        public struct PostForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
             public var errors: [Error]?
 
-            public struct Error: Decodable {
+            public struct Error: Decodable, Sendable {
                 public var code: String?
                 public var message: String?
                 public var resource: String?
@@ -83,13 +83,13 @@ extension Paths.Projects.Columns.Cards.WithCardID {
             }
         }
 
-        public struct PostServiceUnavailableBody: Decodable {
+        public struct PostServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
             public var errors: [Error]?
 
-            public struct Error: Decodable {
+            public struct Error: Decodable, Sendable {
                 public var code: String?
                 public var message: String?
 
@@ -121,7 +121,7 @@ extension Paths.Projects.Columns.Cards.WithCardID {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The position of the card in a column. Can be one of: `top`, `bottom`, or `after:<card_id>` to place after the specified card.
             ///
             /// Example: "bottom"

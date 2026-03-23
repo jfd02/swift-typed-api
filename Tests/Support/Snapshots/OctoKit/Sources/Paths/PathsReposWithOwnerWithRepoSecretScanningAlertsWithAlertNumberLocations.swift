@@ -40,7 +40,7 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts.WithAlertNumber {
             }
         }
 
-        public struct GetServiceUnavailableBody: Decodable {
+        public struct GetServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?

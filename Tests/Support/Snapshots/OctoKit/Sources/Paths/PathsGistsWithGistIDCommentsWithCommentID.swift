@@ -38,12 +38,12 @@ extension Paths.Gists.WithGistID.Comments {
             }
         }
 
-        public struct GetForbiddenBody: Decodable {
+        public struct GetForbiddenBody: Decodable, Sendable {
             public var block: Block?
             public var message: String?
             public var documentationURL: String?
 
-            public struct Block: Decodable {
+            public struct Block: Decodable, Sendable {
                 public var reason: String?
                 public var createdAt: String?
                 public var htmlURL: String?

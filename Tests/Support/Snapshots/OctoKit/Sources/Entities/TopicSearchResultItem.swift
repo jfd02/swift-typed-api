@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TopicSearchResultItem: Codable {
+public struct TopicSearchResultItem: Codable, Sendable {
     public var name: String
     public var displayName: String?
     public var shortDescription: String?
@@ -23,10 +23,10 @@ public struct TopicSearchResultItem: Codable {
     public var related: [RelatedItem]?
     public var aliases: [Alias]?
 
-    public struct RelatedItem: Codable {
+    public struct RelatedItem: Codable, Sendable {
         public var topicRelation: TopicRelation?
 
-        public struct TopicRelation: Codable {
+        public struct TopicRelation: Codable, Sendable {
             public var id: Int?
             public var name: String?
             public var topicID: Int?
@@ -71,10 +71,10 @@ public struct TopicSearchResultItem: Codable {
         }
     }
 
-    public struct Alias: Codable {
+    public struct Alias: Codable, Sendable {
         public var topicRelation: TopicRelation?
 
-        public struct TopicRelation: Codable {
+        public struct TopicRelation: Codable, Sendable {
             public var id: Int?
             public var name: String?
             public var topicID: Int?

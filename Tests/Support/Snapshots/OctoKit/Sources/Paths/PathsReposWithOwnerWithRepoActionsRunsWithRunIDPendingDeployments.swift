@@ -37,7 +37,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
             Request(path: path, method: "POST", body: body, id: "actions/review-pending-deployments-for-run")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The list of environment ids to approve or reject
             ///
             /// Example: [161171787, 161171795]

@@ -59,7 +59,7 @@ extension Paths.Orgs.WithOrg.OutsideCollaborators {
             }
         }
 
-        public struct DeleteUnprocessableEntityBody: Decodable {
+        public struct DeleteUnprocessableEntityBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
 

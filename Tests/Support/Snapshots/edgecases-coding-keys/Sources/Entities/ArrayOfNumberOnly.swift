@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ArrayOfNumberOnly: Codable {
+public struct ArrayOfNumberOnly: Codable, Sendable {
     public var arrayNumber: [Double]?
 
     public init(arrayNumber: [Double]? = nil) {

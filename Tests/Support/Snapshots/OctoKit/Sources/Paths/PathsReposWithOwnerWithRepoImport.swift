@@ -96,7 +96,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The URL of the originating repository.
             public var vcsURL: String
             /// The originating VCS type. Can be one of `subversion`, `git`, `mercurial`, or `tfvc`. Please be aware that without this parameter, the import job will take additional time to detect the VCS type before beginning the import. This detection step will be reflected in the response.
@@ -144,7 +144,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "PATCH", body: body, id: "migrations/update-import")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The username to provide to the originating repository.
             public var vcsUsername: String?
             /// The password to provide to the originating repository.

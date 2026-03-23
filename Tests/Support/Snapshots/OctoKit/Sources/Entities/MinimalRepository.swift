@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct MinimalRepository: Codable {
+public struct MinimalRepository: Codable, Sendable {
     /// Example: 1296269
     public var id: Int
     /// Example: "MDEwOlJlcG9zaXRvcnkxMjk2MjY5"
@@ -142,7 +142,7 @@ public struct MinimalRepository: Codable {
     public var watchers: Int?
     public var allowForking: Bool?
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isAdmin: Bool?
         public var isMaintain: Bool?
         public var isPush: Bool?
@@ -176,7 +176,7 @@ public struct MinimalRepository: Codable {
         }
     }
 
-    public struct License: Codable {
+    public struct License: Codable, Sendable {
         public var key: String?
         public var name: String?
         public var spdxID: String?

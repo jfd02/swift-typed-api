@@ -7,7 +7,7 @@ import NaiveDate
 /// Actions Secret for an Organization
 ///
 /// Secrets for GitHub Actions for an organization.
-public struct OrganizationActionsSecret: Codable {
+public struct OrganizationActionsSecret: Codable, Sendable {
     /// The name of the secret.
     ///
     /// Example: "SECRET_TOKEN"

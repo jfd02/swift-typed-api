@@ -26,7 +26,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             Request(path: path, method: "GET", id: "repos/get-all-environments")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             /// The number of environments in this repository
             public var totalCount: Int?
             public var environments: [OctoKit.Environment]?

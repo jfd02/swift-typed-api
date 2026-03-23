@@ -40,7 +40,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions {
             Request(path: path, method: "PUT", body: body, id: "actions/set-github-actions-permissions-repository")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Whether GitHub Actions is enabled on the repository.
             public var isEnabled: Bool
             /// The permissions policy that controls the actions that are allowed to run. Can be one of: `all`, `local_only`, or `selected`.

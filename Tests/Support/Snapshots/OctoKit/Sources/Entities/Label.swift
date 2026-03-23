@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Color-coded labels help you categorize and filter your issues (just like labels in Gmail).
-public struct Label: Codable {
+public struct Label: Codable, Sendable {
     /// Example: 208045946
     public var id: Int64
     /// Example: "MDU6TGFiZWwyMDgwNDU5NDY="

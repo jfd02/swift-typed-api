@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The authorization associated with an OAuth Access.
-public struct ApplicationGrant: Codable {
+public struct ApplicationGrant: Codable, Sendable {
     public var id: Int
     /// Example: "https://api.github.com/applications/grants/1"
     public var url: URL
@@ -19,7 +19,7 @@ public struct ApplicationGrant: Codable {
     /// Simple User
     public var user: SimpleUser?
 
-    public struct App: Codable {
+    public struct App: Codable, Sendable {
         public var clientID: String
         public var name: String
         public var url: URL

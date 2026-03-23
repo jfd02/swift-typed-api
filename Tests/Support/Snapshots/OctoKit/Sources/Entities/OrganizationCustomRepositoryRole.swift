@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Custom repository roles created by organization administrators
-public struct OrganizationCustomRepositoryRole: Codable {
+public struct OrganizationCustomRepositoryRole: Codable, Sendable {
     public var id: Int
     public var name: String
 

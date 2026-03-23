@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The status of auto merging a pull request.
-public struct AutoMerge: Codable {
+public struct AutoMerge: Codable, Sendable {
     /// Simple User
     public var enabledBy: SimpleUser
     /// The merge method to use.

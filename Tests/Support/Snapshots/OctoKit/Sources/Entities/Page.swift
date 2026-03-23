@@ -7,7 +7,7 @@ import NaiveDate
 /// GitHub Pages
 ///
 /// The configuration for GitHub Pages for a repository.
-public struct Page: Codable {
+public struct Page: Codable, Sendable {
     /// The API address for accessing this Page resource.
     ///
     /// Example: "https://api.github.com/repos/github/hello-world/pages"

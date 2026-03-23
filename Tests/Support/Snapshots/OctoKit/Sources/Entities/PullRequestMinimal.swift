@@ -4,19 +4,19 @@
 import Foundation
 import NaiveDate
 
-public struct PullRequestMinimal: Codable {
+public struct PullRequestMinimal: Codable, Sendable {
     public var id: Int
     public var number: Int
     public var url: String
     public var head: Head
     public var base: Base
 
-    public struct Head: Codable {
+    public struct Head: Codable, Sendable {
         public var ref: String
         public var sha: String
         public var repo: Repo
 
-        public struct Repo: Codable {
+        public struct Repo: Codable, Sendable {
             public var id: Int
             public var url: String
             public var name: String
@@ -63,12 +63,12 @@ public struct PullRequestMinimal: Codable {
         }
     }
 
-    public struct Base: Codable {
+    public struct Base: Codable, Sendable {
         public var ref: String
         public var sha: String
         public var repo: Repo
 
-        public struct Repo: Codable {
+        public struct Repo: Codable, Sendable {
             public var id: Int
             public var url: String
             public var name: String

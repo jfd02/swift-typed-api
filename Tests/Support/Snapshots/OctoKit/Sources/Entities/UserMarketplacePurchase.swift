@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct UserMarketplacePurchase: Codable {
+public struct UserMarketplacePurchase: Codable, Sendable {
     /// Example: "monthly"
     public var billingCycle: String
     /// Example: "2017-11-11T00:00:00Z"

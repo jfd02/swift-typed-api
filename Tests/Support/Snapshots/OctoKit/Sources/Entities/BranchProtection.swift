@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct BranchProtection: Codable {
+public struct BranchProtection: Codable, Sendable {
     public var url: String?
     public var isEnabled: Bool?
     /// Protected Branch Required Status Check
@@ -25,7 +25,7 @@ public struct BranchProtection: Codable {
     public var protectionURL: String?
     public var requiredSignatures: RequiredSignatures?
 
-    public struct RequiredLinearHistory: Codable {
+    public struct RequiredLinearHistory: Codable, Sendable {
         public var isEnabled: Bool?
 
         public init(isEnabled: Bool? = nil) {
@@ -43,7 +43,7 @@ public struct BranchProtection: Codable {
         }
     }
 
-    public struct AllowForcePushes: Codable {
+    public struct AllowForcePushes: Codable, Sendable {
         public var isEnabled: Bool?
 
         public init(isEnabled: Bool? = nil) {
@@ -61,7 +61,7 @@ public struct BranchProtection: Codable {
         }
     }
 
-    public struct AllowDeletions: Codable {
+    public struct AllowDeletions: Codable, Sendable {
         public var isEnabled: Bool?
 
         public init(isEnabled: Bool? = nil) {
@@ -79,7 +79,7 @@ public struct BranchProtection: Codable {
         }
     }
 
-    public struct RequiredConversationResolution: Codable {
+    public struct RequiredConversationResolution: Codable, Sendable {
         public var isEnabled: Bool?
 
         public init(isEnabled: Bool? = nil) {
@@ -97,7 +97,7 @@ public struct BranchProtection: Codable {
         }
     }
 
-    public struct RequiredSignatures: Codable {
+    public struct RequiredSignatures: Codable, Sendable {
         /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/required_signatures"
         public var url: URL
         /// Example: true

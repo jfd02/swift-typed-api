@@ -69,7 +69,7 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The permission to grant the team on this repository. Can be one of:  
             /// \* `pull` - team members can pull, but not push to or administer this repository.  
             /// \* `push` - team members can pull and push, but not administer this repository.  

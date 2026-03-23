@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Details of a deployment environment
-public struct Environment: Codable {
+public struct Environment: Codable, Sendable {
     /// The id of the environment.
     ///
     /// Example: 56780428
@@ -32,12 +32,12 @@ public struct Environment: Codable {
     /// The type of deployment branch policy for this environment. To allow all branches to deploy, set to `null`.
     public var deploymentBranchPolicy: DeploymentBranchPolicy?
 
-    public struct ProtectionRule: Codable {
+    public struct ProtectionRule: Codable, Sendable {
         public var a: A?
         public var b: B?
         public var c: C?
 
-        public struct A: Codable {
+        public struct A: Codable, Sendable {
             /// Example: 3515
             public var id: Int
             /// Example: "MDQ6R2F0ZTM1MTU="
@@ -73,7 +73,7 @@ public struct Environment: Codable {
             }
         }
 
-        public struct B: Codable {
+        public struct B: Codable, Sendable {
             /// Example: 3755
             public var id: Int
             /// Example: "MDQ6R2F0ZTM3NTU="
@@ -83,14 +83,14 @@ public struct Environment: Codable {
             /// The people or teams that may approve jobs that reference the environment. You can list up to six users or teams as reviewers. The reviewers must have at least read access to the repository. Only one of the required reviewers needs to approve the job for it to proceed.
             public var reviewers: [Reviewer]?
 
-            public struct Reviewer: Codable {
+            public struct Reviewer: Codable, Sendable {
                 /// The type of reviewer. Must be one of: `User` or `Team`
                 ///
                 /// Example: "User"
                 public var type: DeploymentReviewerType?
                 public var reviewer: Reviewer?
 
-                public struct Reviewer: Codable {
+                public struct Reviewer: Codable, Sendable {
                     public var simpleUser: SimpleUser?
                     /// Groups of organization members that gives permissions on specified repositories.
                     public var team: Team?
@@ -155,7 +155,7 @@ public struct Environment: Codable {
             }
         }
 
-        public struct C: Codable {
+        public struct C: Codable, Sendable {
             /// Example: 3515
             public var id: Int
             /// Example: "MDQ6R2F0ZTM1MTU="

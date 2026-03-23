@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PagesHTTPSCertificate: Codable {
+public struct PagesHTTPSCertificate: Codable, Sendable {
     /// Example: "approved"
     public var state: State
     /// Example: "Certificate is approved"

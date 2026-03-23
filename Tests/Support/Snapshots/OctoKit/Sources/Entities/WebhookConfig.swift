@@ -7,7 +7,7 @@ import NaiveDate
 /// Webhook Configuration
 ///
 /// Configuration object of the webhook
-public struct WebhookConfig: Codable {
+public struct WebhookConfig: Codable, Sendable {
     /// The URL to which the payloads will be delivered.
     ///
     /// Example: "https://example.com/webhook"

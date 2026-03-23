@@ -55,7 +55,7 @@ extension Paths.Authorizations.Clients {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The OAuth app client secret for which to create the token.
             public var clientSecret: String
             /// A list of scopes that this authorization is in.

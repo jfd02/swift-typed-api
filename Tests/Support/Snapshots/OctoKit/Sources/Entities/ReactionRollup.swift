@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ReactionRollup: Codable {
+public struct ReactionRollup: Codable, Sendable {
     public var url: URL
     public var totalCount: Int
     public var plus1: Int

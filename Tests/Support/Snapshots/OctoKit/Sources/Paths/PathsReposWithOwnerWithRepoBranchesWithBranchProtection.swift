@@ -67,7 +67,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Require status checks to pass before merging. Set to `null` to disable.
             public var requiredStatusChecks: RequiredStatusChecks?
             /// Enforce all configured restrictions for administrators. Set to `true` to enforce required status checks for repository administrators. Set to `null` to disable.
@@ -86,7 +86,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
             public var isRequiredConversationResolution: Bool?
 
             /// Require status checks to pass before merging. Set to `null` to disable.
-            public struct RequiredStatusChecks: Encodable {
+            public struct RequiredStatusChecks: Encodable, Sendable {
                 /// Require branches to be up to date before merging.
                 public var isStrict: Bool
                 /// **Deprecated**: The list of status checks to require in order to merge into this branch. If any of these checks have recently been set by a particular GitHub App, they will be required to come from that app in future for the branch to merge. Use `checks` instead of `contexts` for more fine-grained control.
@@ -96,7 +96,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
                 /// The list of status checks to require in order to merge into this branch.
                 public var checks: [Check]?
 
-                public struct Check: Encodable {
+                public struct Check: Encodable, Sendable {
                     /// The name of the required check
                     public var context: String
                     /// The ID of the GitHub App that must provide this check. Omit this field to automatically select the GitHub App that has recently provided this check, or any app if it was not set by a GitHub App. Pass -1 to explicitly allow any app to set the status.
@@ -129,7 +129,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
             }
 
             /// Require at least one approving review on a pull request, before merging. Set to `null` to disable.
-            public struct RequiredPullRequestReviews: Encodable {
+            public struct RequiredPullRequestReviews: Encodable, Sendable {
                 /// Specify which users and teams can dismiss pull request reviews. Pass an empty `dismissal_restrictions` object to disable. User and team `dismissal_restrictions` are only available for organization-owned repositories. Omit this parameter for personal repositories.
                 public var dismissalRestrictions: DismissalRestrictions?
                 /// Set to `true` if you want to automatically dismiss approving reviews when someone pushes a new commit.
@@ -140,7 +140,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
                 public var requiredApprovingReviewCount: Int?
 
                 /// Specify which users and teams can dismiss pull request reviews. Pass an empty `dismissal_restrictions` object to disable. User and team `dismissal_restrictions` are only available for organization-owned repositories. Omit this parameter for personal repositories.
-                public struct DismissalRestrictions: Encodable {
+                public struct DismissalRestrictions: Encodable, Sendable {
                     /// The list of user `login`s with dismissal access
                     public var users: [String]?
                     /// The list of team `slug`s with dismissal access
@@ -175,7 +175,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
             }
 
             /// Restrict who can push to the protected branch. User, app, and team `restrictions` are only available for organization-owned repositories. Set to `null` to disable.
-            public struct Restrictions: Encodable {
+            public struct Restrictions: Encodable, Sendable {
                 /// The list of user `login`s with push access
                 public var users: [String]
                 /// The list of team `slug`s with push access

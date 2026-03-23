@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct OrgHook: Codable {
+public struct OrgHook: Codable, Sendable {
     public var id: Int
     /// Example: "https://api.github.com/orgs/octocat/hooks/1"
     public var url: URL
@@ -25,7 +25,7 @@ public struct OrgHook: Codable {
     public var createdAt: Date
     public var type: String
 
-    public struct Config: Codable {
+    public struct Config: Codable, Sendable {
         /// Example: "http://example.com/2"
         public var url: String?
         /// Example: "0"

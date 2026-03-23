@@ -72,7 +72,7 @@ extension Paths.Orgs.WithOrg {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Must be passed as "web".
             public var name: String
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/orgs#create-hook-config-params).
@@ -83,7 +83,7 @@ extension Paths.Orgs.WithOrg {
             public var isActive: Bool
 
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/orgs#create-hook-config-params).
-            public struct Config: Encodable {
+            public struct Config: Encodable, Sendable {
                 /// The URL to which the payloads will be delivered.
                 ///
                 /// Example: "https://example.com/webhook"

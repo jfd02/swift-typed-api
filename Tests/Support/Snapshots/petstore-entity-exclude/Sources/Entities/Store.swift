@@ -3,6 +3,6 @@
 
 import Foundation
 
-public struct Store: Codable {
+public struct Store: Codable, Sendable {
     public init() {}
 }

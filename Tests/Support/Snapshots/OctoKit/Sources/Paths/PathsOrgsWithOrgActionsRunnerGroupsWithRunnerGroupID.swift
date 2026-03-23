@@ -41,7 +41,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups {
             Request(path: path, method: "PATCH", body: body, id: "actions/update-self-hosted-runner-group-for-org")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Name of the runner group.
             public var name: String
             /// Visibility of a runner group. You can select all repositories, select individual repositories, or all private repositories. Can be one of: `all`, `selected`, or `private`.

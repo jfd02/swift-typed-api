@@ -58,14 +58,14 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise {
             Request(path: path, method: "POST", body: body, id: "enterprise-admin/provision-and-invite-enterprise-group")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The SCIM schema URIs.
             public var schemas: [String]
             /// The name of the SCIM group. This must match the GitHub organization that the group maps to.
             public var displayName: String
             public var members: [Member]?
 
-            public struct Member: Encodable {
+            public struct Member: Encodable, Sendable {
                 /// The SCIM user ID for a user.
                 public var value: String
 

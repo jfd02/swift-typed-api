@@ -125,7 +125,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The title of the new pull request.
             public var title: String?
             /// The name of the branch where your changes are implemented. For cross-repository pull requests in the same network, namespace `head` with a user like this: `username:branch`.

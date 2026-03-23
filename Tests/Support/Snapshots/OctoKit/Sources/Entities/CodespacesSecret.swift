@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Secrets for a GitHub Codespace.
-public struct CodespacesSecret: Codable {
+public struct CodespacesSecret: Codable, Sendable {
     /// The name of the secret.
     ///
     /// Example: "SECRET_NAME"

@@ -3,7 +3,7 @@
 
 import Foundation
 
-public final class Store: NSObject, Codable {
+public final class Store: NSObject, Codable, Sendable {
     public let pets: [Pet]
 
     public init(pets: [Pet]) {

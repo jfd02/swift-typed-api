@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ContentTree: Codable {
+public struct ContentTree: Codable, Sendable {
     public var type: String
     public var size: Int
     public var name: String
@@ -19,7 +19,7 @@ public struct ContentTree: Codable {
     public var content: AnyJSON
     public var encoding: AnyJSON
 
-    public struct Entry: Codable {
+    public struct Entry: Codable, Sendable {
         public var type: String
         public var size: Int
         public var name: String
@@ -32,7 +32,7 @@ public struct ContentTree: Codable {
         public var downloadURL: URL?
         public var links: Links
 
-        public struct Links: Codable {
+        public struct Links: Codable, Sendable {
             public var git: URL?
             public var html: URL?
             public var this: URL
@@ -103,7 +103,7 @@ public struct ContentTree: Codable {
         }
     }
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var git: URL?
         public var html: URL?
         public var this: URL

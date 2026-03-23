@@ -46,7 +46,7 @@ extension Paths.User.Installations.WithInstallationID {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var repositorySelection: String?
             public var repositories: [OctoKit.Repository]

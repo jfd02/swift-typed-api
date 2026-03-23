@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PullRequestMergeResult: Codable {
+public struct PullRequestMergeResult: Codable, Sendable {
     public var sha: String
     public var isMerged: Bool
     public var message: String

@@ -71,7 +71,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             }
         }
 
-        public enum GetResponse: Decodable {
+        public enum GetResponse: Decodable, Sendable {
             case contentDirectoryItems([ContentDirectoryItem])
             case contentFile(OctoKit.ContentFile)
             case contentSymlink(OctoKit.ContentSymlink)
@@ -127,7 +127,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The commit message.
             public var message: String
             /// The new file content, using Base64 encoding.
@@ -142,7 +142,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             public var author: Author?
 
             /// The person that committed the file. Default: the authenticated user.
-            public struct Committer: Encodable {
+            public struct Committer: Encodable, Sendable {
                 /// The name of the author or committer of the commit. You'll receive a `422` status code if `name` is omitted.
                 public var name: String
                 /// The email of the author or committer of the commit. You'll receive a `422` status code if `email` is omitted.
@@ -165,7 +165,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             }
 
             /// The author of the file. Default: The `committer` or the authenticated user if you omit `committer`.
-            public struct Author: Encodable {
+            public struct Author: Encodable, Sendable {
                 /// The name of the author or committer of the commit. You'll receive a `422` status code if `name` is omitted.
                 public var name: String
                 /// The email of the author or committer of the commit. You'll receive a `422` status code if `email` is omitted.
@@ -240,7 +240,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             }
         }
 
-        public struct DeleteServiceUnavailableBody: Decodable {
+        public struct DeleteServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
@@ -259,7 +259,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             }
         }
 
-        public struct DeleteRequest: Encodable {
+        public struct DeleteRequest: Encodable, Sendable {
             /// The commit message.
             public var message: String
             /// The blob SHA of the file being replaced.
@@ -272,7 +272,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             public var author: Author?
 
             /// Object containing information about the committer.
-            public struct Committer: Encodable {
+            public struct Committer: Encodable, Sendable {
                 /// The name of the author (or committer) of the commit
                 public var name: String?
                 /// The email of the author (or committer) of the commit
@@ -291,7 +291,7 @@ extension Paths.Repos.WithOwner.WithRepo.Contents {
             }
 
             /// Object containing information about the author.
-            public struct Author: Encodable {
+            public struct Author: Encodable, Sendable {
                 /// The name of the author (or committer) of the commit
                 public var name: String?
                 /// The email of the author (or committer) of the commit

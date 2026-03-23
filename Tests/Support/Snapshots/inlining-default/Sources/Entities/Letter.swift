@@ -3,7 +3,7 @@
 
 import Foundation
 
-public final class Letter: Codable {
+public final class Letter: Codable, Sendable {
     public let weight: Int
     public let address: String
     public let size: Size

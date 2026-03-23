@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ScimEnterpriseUser: Codable {
+public struct ScimEnterpriseUser: Codable, Sendable {
     public var schemas: [String]
     public var id: String
     public var externalID: String?
@@ -15,7 +15,7 @@ public struct ScimEnterpriseUser: Codable {
     public var isActive: Bool?
     public var meta: Meta?
 
-    public struct Name: Codable {
+    public struct Name: Codable, Sendable {
         public var givenName: String?
         public var familyName: String?
 
@@ -37,7 +37,7 @@ public struct ScimEnterpriseUser: Codable {
         }
     }
 
-    public struct Email: Codable {
+    public struct Email: Codable, Sendable {
         public var value: String?
         public var type: String?
         public var isPrimary: Bool?
@@ -63,7 +63,7 @@ public struct ScimEnterpriseUser: Codable {
         }
     }
 
-    public struct Group: Codable {
+    public struct Group: Codable, Sendable {
         public var value: String?
 
         public init(value: String? = nil) {
@@ -81,7 +81,7 @@ public struct ScimEnterpriseUser: Codable {
         }
     }
 
-    public struct Meta: Codable {
+    public struct Meta: Codable, Sendable {
         public var resourceType: String?
         public var created: String?
         public var lastModified: String?

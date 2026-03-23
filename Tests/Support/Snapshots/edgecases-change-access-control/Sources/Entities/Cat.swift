@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct Cat: Codable {
+struct Cat: Codable, Sendable {
     var className: String
     var color: String?
     var isDeclawed: Bool?

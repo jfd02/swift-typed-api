@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeScanningAnalysis: Codable {
+public struct CodeScanningAnalysis: Codable, Sendable {
     /// The full Git reference, formatted as `refs/heads/<branch name>`,
     /// `refs/pull/<number>/merge`, or `refs/pull/<number>/head`.
     public var ref: String

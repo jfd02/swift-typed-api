@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Model for testing model with "_class" property
-struct ClassModel: Codable {
+struct ClassModel: Codable, Sendable {
     var `class`: String?
 
     init(`class`: String? = nil) {

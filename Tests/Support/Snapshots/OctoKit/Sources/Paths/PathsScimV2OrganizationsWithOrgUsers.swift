@@ -108,7 +108,7 @@ extension Paths.Scim.V2.Organizations.WithOrg {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Configured by the admin. Could be an email, login, or username
             ///
             /// Example: "someone@example.com"
@@ -150,7 +150,7 @@ extension Paths.Scim.V2.Organizations.WithOrg {
             ///   "familyName" : "User",
             ///   "givenName" : "Jane"
             /// }
-            public struct Name: Encodable {
+            public struct Name: Encodable, Sendable {
                 public var givenName: String
                 public var familyName: String
                 public var formatted: String?
@@ -169,7 +169,7 @@ extension Paths.Scim.V2.Organizations.WithOrg {
                 }
             }
 
-            public struct Email: Encodable {
+            public struct Email: Encodable, Sendable {
                 public var value: String
                 public var isPrimary: Bool?
                 public var type: String?

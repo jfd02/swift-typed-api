@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The public key used for setting user Codespaces' Secrets.
-public struct CodespacesUserPublicKey: Codable {
+public struct CodespacesUserPublicKey: Codable, Sendable {
     /// The identifier for the key.
     ///
     /// Example: "1234567"

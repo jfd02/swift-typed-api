@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct RepoSearchResultItem: Codable {
+public struct RepoSearchResultItem: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var name: String
@@ -98,7 +98,7 @@ public struct RepoSearchResultItem: Codable {
     public var allowForking: Bool?
     public var isTemplate: Bool?
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isAdmin: Bool
         public var isMaintain: Bool?
         public var isPush: Bool

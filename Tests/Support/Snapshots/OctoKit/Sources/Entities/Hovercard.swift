@@ -4,10 +4,10 @@
 import Foundation
 import NaiveDate
 
-public struct Hovercard: Codable {
+public struct Hovercard: Codable, Sendable {
     public var contexts: [Context]
 
-    public struct Context: Codable {
+    public struct Context: Codable, Sendable {
         public var message: String
         public var octicon: String
 

@@ -37,7 +37,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups {
             Request(path: path, method: "PATCH", body: body, id: "enterprise-admin/update-self-hosted-runner-group-for-enterprise")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Name of the runner group.
             public var name: String?
             /// Visibility of a runner group. You can select all organizations or select individual organizations. Can be one of: `all` or `selected`

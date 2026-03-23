@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct AdvancedSecurityActiveCommittersUser: Codable {
+public struct AdvancedSecurityActiveCommittersUser: Codable, Sendable {
     public var userLogin: String
     /// Example: "2021-11-03"
     public var lastPushedDate: String

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Branch protections protect branches
-public struct ProtectedBranch: Codable {
+public struct ProtectedBranch: Codable, Sendable {
     public var url: URL
     /// Status Check Policy
     public var requiredStatusChecks: StatusCheckPolicy?
@@ -19,14 +19,14 @@ public struct ProtectedBranch: Codable {
     public var restrictions: BranchRestrictionPolicy?
     public var requiredConversationResolution: RequiredConversationResolution?
 
-    public struct RequiredPullRequestReviews: Codable {
+    public struct RequiredPullRequestReviews: Codable, Sendable {
         public var url: URL
         public var dismissStaleReviews: Bool?
         public var requireCodeOwnerReviews: Bool?
         public var requiredApprovingReviewCount: Int?
         public var dismissalRestrictions: DismissalRestrictions?
 
-        public struct DismissalRestrictions: Codable {
+        public struct DismissalRestrictions: Codable, Sendable {
             public var url: URL
             public var usersURL: URL
             public var teamsURL: URL
@@ -87,7 +87,7 @@ public struct ProtectedBranch: Codable {
         }
     }
 
-    public struct RequiredSignatures: Codable {
+    public struct RequiredSignatures: Codable, Sendable {
         /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/required_signatures"
         public var url: URL
         /// Example: true
@@ -111,7 +111,7 @@ public struct ProtectedBranch: Codable {
         }
     }
 
-    public struct EnforceAdmins: Codable {
+    public struct EnforceAdmins: Codable, Sendable {
         public var url: URL
         public var isEnabled: Bool
 
@@ -133,7 +133,7 @@ public struct ProtectedBranch: Codable {
         }
     }
 
-    public struct RequiredLinearHistory: Codable {
+    public struct RequiredLinearHistory: Codable, Sendable {
         public var isEnabled: Bool
 
         public init(isEnabled: Bool) {
@@ -151,7 +151,7 @@ public struct ProtectedBranch: Codable {
         }
     }
 
-    public struct AllowForcePushes: Codable {
+    public struct AllowForcePushes: Codable, Sendable {
         public var isEnabled: Bool
 
         public init(isEnabled: Bool) {
@@ -169,7 +169,7 @@ public struct ProtectedBranch: Codable {
         }
     }
 
-    public struct AllowDeletions: Codable {
+    public struct AllowDeletions: Codable, Sendable {
         public var isEnabled: Bool
 
         public init(isEnabled: Bool) {
@@ -187,7 +187,7 @@ public struct ProtectedBranch: Codable {
         }
     }
 
-    public struct RequiredConversationResolution: Codable {
+    public struct RequiredConversationResolution: Codable, Sendable {
         public var isEnabled: Bool?
 
         public init(isEnabled: Bool? = nil) {

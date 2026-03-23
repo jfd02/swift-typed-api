@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct OrgMembership: Codable {
+public struct OrgMembership: Codable, Sendable {
     /// Example: "https://api.github.com/orgs/octocat/memberships/defunkt"
     public var url: URL
     /// The state of the member in the organization. The `pending` state indicates the user has not yet accepted an invitation.
@@ -40,7 +40,7 @@ public struct OrgMembership: Codable {
         case billingManager = "billing_manager"
     }
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var canCreateRepository: Bool
 
         public init(canCreateRepository: Bool) {

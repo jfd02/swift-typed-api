@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PrivateUser: Codable {
+public struct PrivateUser: Codable, Sendable {
     /// Example: "octocat"
     public var login: String
     public var id: Int
@@ -79,7 +79,7 @@ public struct PrivateUser: Codable {
     public var isBusinessPlus: Bool?
     public var ldapDn: String?
 
-    public struct Plan: Codable {
+    public struct Plan: Codable, Sendable {
         public var collaborators: Int
         public var name: String
         public var space: Int

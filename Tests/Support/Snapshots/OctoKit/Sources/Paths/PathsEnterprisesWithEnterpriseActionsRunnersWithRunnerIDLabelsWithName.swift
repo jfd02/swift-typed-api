@@ -44,7 +44,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Runners.WithRunnerID.Labels {
             }
         }
 
-        public struct DeleteResponse: Decodable {
+        public struct DeleteResponse: Decodable, Sendable {
             public var totalCount: Int
             public var labels: [OctoKit.RunnerLabel]
 

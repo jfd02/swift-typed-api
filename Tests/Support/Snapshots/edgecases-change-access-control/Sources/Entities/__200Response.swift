@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Model for testing model name starting with number
-struct __200Response: Codable {
+struct __200Response: Codable, Sendable {
     var name: Int32?
     var `class`: String?
 

@@ -71,13 +71,13 @@ extension Paths.Teams.WithTeamID.TeamSync {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The IdP groups you want to connect to a GitHub team. When updating, the new `groups` object will replace the original one. You must include any existing groups that you don't want to remove.
             public var groups: [Group]
             /// Example: "I am not a timestamp"
             public var syncedAt: String?
 
-            public struct Group: Encodable {
+            public struct Group: Encodable, Sendable {
                 /// ID of the IdP group.
                 public var groupID: String
                 /// Name of the IdP group.

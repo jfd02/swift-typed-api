@@ -28,7 +28,7 @@ extension Paths.Orgs.WithOrg.Actions.RunnerGroups.WithRunnerGroupID {
             Request(path: path, method: "GET", query: makeGetQuery(page, perPage), id: "actions/list-repo-access-to-self-hosted-runner-group-in-org")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Double
             public var repositories: [OctoKit.MinimalRepository]
 

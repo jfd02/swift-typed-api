@@ -59,7 +59,7 @@ extension Paths.Orgs.WithOrg.Hooks {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/orgs#update-hook-config-params).
             public var config: Config?
             /// Determines what [events](https://docs.github.com/webhooks/event-payloads) the hook is triggered for.
@@ -70,7 +70,7 @@ extension Paths.Orgs.WithOrg.Hooks {
             public var name: String?
 
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/orgs#update-hook-config-params).
-            public struct Config: Encodable {
+            public struct Config: Encodable, Sendable {
                 /// The URL to which the payloads will be delivered.
                 ///
                 /// Example: "https://example.com/webhook"

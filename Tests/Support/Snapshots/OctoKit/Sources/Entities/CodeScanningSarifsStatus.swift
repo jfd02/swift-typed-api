@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeScanningSarifsStatus: Codable {
+public struct CodeScanningSarifsStatus: Codable, Sendable {
     /// `pending` files have not yet been processed, while `complete` means results from the SARIF have been stored. `failed` files have either not been processed at all, or could only be partially processed.
     public var processingStatus: ProcessingStatus?
     /// The REST API URL for getting the analyses associated with the upload.

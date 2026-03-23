@@ -39,7 +39,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Users {
             Request(path: path, method: "PUT", body: body, id: "enterprise-admin/set-information-for-provisioned-enterprise-user")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The SCIM schema URIs.
             public var schemas: [String]
             /// The username for the user.
@@ -50,7 +50,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Users {
             /// List of SCIM group IDs the user is a member of.
             public var groups: [Group]?
 
-            public struct Name: Encodable {
+            public struct Name: Encodable, Sendable {
                 /// The first name of the user.
                 public var givenName: String
                 /// The last name of the user.
@@ -68,7 +68,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Users {
                 }
             }
 
-            public struct Email: Encodable {
+            public struct Email: Encodable, Sendable {
                 /// The email address.
                 public var value: String
                 /// The type of email address.
@@ -90,7 +90,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Users {
                 }
             }
 
-            public struct Group: Encodable {
+            public struct Group: Encodable, Sendable {
                 public var value: String?
 
                 public init(value: String? = nil) {
@@ -147,7 +147,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Users {
             Request(path: path, method: "PATCH", body: body, id: "enterprise-admin/update-attribute-for-enterprise-user")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The SCIM schema URIs.
             public var schemas: [String]
             /// Array of [SCIM operations](https://tools.ietf.org/html/rfc7644#section-3.5.2).

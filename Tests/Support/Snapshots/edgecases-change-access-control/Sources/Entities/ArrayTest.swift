@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct ArrayTest: Codable {
+struct ArrayTest: Codable, Sendable {
     var arrayOfString: [String]?
     var arrayArrayOfInteger: [[Int64]]?
     var arrayArrayOfModel: [[ReadOnlyFirst]]?

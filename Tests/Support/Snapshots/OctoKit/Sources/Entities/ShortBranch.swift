@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ShortBranch: Codable {
+public struct ShortBranch: Codable, Sendable {
     public var name: String
     public var commit: Commit
     public var isProtected: Bool
@@ -12,7 +12,7 @@ public struct ShortBranch: Codable {
     public var protection: BranchProtection?
     public var protectionURL: URL?
 
-    public struct Commit: Codable {
+    public struct Commit: Codable, Sendable {
         public var sha: String
         public var url: URL
 

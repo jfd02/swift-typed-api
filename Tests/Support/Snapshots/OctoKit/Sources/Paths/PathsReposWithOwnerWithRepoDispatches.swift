@@ -45,7 +45,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// A custom webhook event name.
             public var eventType: String
             /// JSON payload with extra information about the webhook event that your action or worklow may use.

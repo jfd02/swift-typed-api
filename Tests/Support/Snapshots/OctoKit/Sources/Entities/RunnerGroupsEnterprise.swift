@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct RunnerGroupsEnterprise: Codable {
+public struct RunnerGroupsEnterprise: Codable, Sendable {
     public var id: Double
     public var name: String
     public var visibility: String

@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct ContainerB: Codable {
+public struct ContainerB: Codable, Sendable {
     public var b: String?
 
     public init(b: String? = nil) {

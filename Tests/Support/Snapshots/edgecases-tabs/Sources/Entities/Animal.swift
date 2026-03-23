@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Animal: Codable {
+public struct Animal: Codable, Sendable {
 	public var className: String
 	public var color: String?
 

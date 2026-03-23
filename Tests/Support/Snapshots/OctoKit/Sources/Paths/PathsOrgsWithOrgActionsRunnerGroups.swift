@@ -28,7 +28,7 @@ extension Paths.Orgs.WithOrg.Actions {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-self-hosted-runner-groups-for-org")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Double
             public var runnerGroups: [OctoKit.RunnerGroupsOrg]
 
@@ -64,7 +64,7 @@ extension Paths.Orgs.WithOrg.Actions {
             Request(path: path, method: "POST", body: body, id: "actions/create-self-hosted-runner-group-for-org")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Name of the runner group.
             public var name: String
             /// Visibility of a runner group. You can select all repositories, select individual repositories, or limit access to private repositories. Can be one of: `all`, `selected`, or `private`.

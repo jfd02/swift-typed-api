@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct BaseGist: Codable {
+public struct BaseGist: Codable, Sendable {
     public var url: URL
     public var forksURL: URL
     public var commitsURL: URL
@@ -28,7 +28,7 @@ public struct BaseGist: Codable {
     public var forks: [AnyJSON]?
     public var history: [AnyJSON]?
 
-    public struct File: Codable {
+    public struct File: Codable, Sendable {
         public var filename: String?
         public var type: String?
         public var language: String?

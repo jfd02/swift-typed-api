@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A git repository
-public struct Repository: Codable {
+public struct Repository: Codable, Sendable {
     /// Unique identifier of the repository
     ///
     /// Example: 42
@@ -198,7 +198,7 @@ public struct Repository: Codable {
     /// Example: "2020-07-09T00:17:42Z"
     public var starredAt: String?
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isAdmin: Bool
         public var isPull: Bool
         public var isTriage: Bool?
@@ -232,7 +232,7 @@ public struct Repository: Codable {
         }
     }
 
-    public struct TemplateRepository: Codable {
+    public struct TemplateRepository: Codable, Sendable {
         public var id: Int?
         public var nodeID: String?
         public var name: String?
@@ -316,7 +316,7 @@ public struct Repository: Codable {
         public var subscribersCount: Int?
         public var networkCount: Int?
 
-        public struct Owner: Codable {
+        public struct Owner: Codable, Sendable {
             public var login: String?
             public var id: Int?
             public var nodeID: String?
@@ -402,7 +402,7 @@ public struct Repository: Codable {
             }
         }
 
-        public struct Permissions: Codable {
+        public struct Permissions: Codable, Sendable {
             public var isAdmin: Bool?
             public var isMaintain: Bool?
             public var isPush: Bool?

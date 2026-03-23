@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct MarketplaceListingPlan: Codable {
+public struct MarketplaceListingPlan: Codable, Sendable {
     /// Example: "https://api.github.com/marketplace_listing/plans/1313"
     public var url: URL
     /// Example: "https://api.github.com/marketplace_listing/plans/1313/accounts"

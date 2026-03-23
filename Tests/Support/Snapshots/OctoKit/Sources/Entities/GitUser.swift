@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Metaproperties for Git author/committer information.
-public struct GitUser: Codable {
+public struct GitUser: Codable, Sendable {
     /// Example: "Chris Wanstrath"
     public var name: String?
     /// Example: "chris@ozmm.org"

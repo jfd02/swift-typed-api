@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct LabelSearchResultItem: Codable {
+public struct LabelSearchResultItem: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var url: URL

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PorterLargeFile: Codable {
+public struct PorterLargeFile: Codable, Sendable {
     public var refName: String
     public var path: String
     public var oid: String

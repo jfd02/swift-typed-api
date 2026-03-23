@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct GistCommit: Codable {
+public struct GistCommit: Codable, Sendable {
     /// Example: "https://api.github.com/gists/aa5a315d61ae9438b18d/57a7f021a713b1c5a6a199b54cc514735d2d462f"
     public var url: URL
     /// Example: "57a7f021a713b1c5a6a199b54cc514735d2d462f"
@@ -15,7 +15,7 @@ public struct GistCommit: Codable {
     /// Example: "2010-04-14T02:15:15Z"
     public var committedAt: Date
 
-    public struct ChangeStatus: Codable {
+    public struct ChangeStatus: Codable, Sendable {
         public var total: Int?
         public var additions: Int?
         public var deletions: Int?

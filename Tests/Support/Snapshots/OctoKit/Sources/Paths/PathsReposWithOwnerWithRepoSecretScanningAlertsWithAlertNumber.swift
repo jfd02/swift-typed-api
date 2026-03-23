@@ -42,7 +42,7 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
             }
         }
 
-        public struct GetServiceUnavailableBody: Decodable {
+        public struct GetServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
@@ -88,7 +88,7 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
             }
         }
 
-        public struct PatchServiceUnavailableBody: Decodable {
+        public struct PatchServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
@@ -107,7 +107,7 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Sets the state of the secret scanning alert. Can be either `open` or `resolved`. You must provide `resolution` when you set the state to `resolved`.
             public var state: OctoKit.SecretScanningAlertState
             /// **Required when the `state` is `resolved`.** The reason for resolving the alert. Can be one of `false_positive`, `wont_fix`, `revoked`, or `used_in_tests`.

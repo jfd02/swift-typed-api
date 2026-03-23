@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Metadata for a Git tag
-public struct GitTag: Codable {
+public struct GitTag: Codable, Sendable {
     /// Example: "MDM6VGFnOTQwYmQzMzYyNDhlZmFlMGY5ZWU1YmM3YjJkNWM5ODU4ODdiMTZhYw=="
     public var nodeID: String
     /// Name of the tag
@@ -26,7 +26,7 @@ public struct GitTag: Codable {
     public var object: Object
     public var verification: Verification?
 
-    public struct Tagger: Codable {
+    public struct Tagger: Codable, Sendable {
         public var date: String
         public var email: String
         public var name: String
@@ -52,7 +52,7 @@ public struct GitTag: Codable {
         }
     }
 
-    public struct Object: Codable {
+    public struct Object: Codable, Sendable {
         public var sha: String
         public var type: String
         public var url: URL

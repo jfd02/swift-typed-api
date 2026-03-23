@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Pull requests let you tell others about changes you've pushed to a repository on GitHub. Once a pull request is sent, interested parties can review the set of changes, discuss potential modifications, and even push follow-up commits if necessary.
-public struct PullRequest: Codable {
+public struct PullRequest: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/pulls/1347"
     public var url: URL
     public var id: Int
@@ -112,7 +112,7 @@ public struct PullRequest: Codable {
         case closed
     }
 
-    public struct Label: Codable {
+    public struct Label: Codable, Sendable {
         public var id: Int64
         public var nodeID: String
         public var url: String
@@ -154,14 +154,14 @@ public struct PullRequest: Codable {
         }
     }
 
-    public struct Head: Codable {
+    public struct Head: Codable, Sendable {
         public var label: String
         public var ref: String
         public var repo: Repo?
         public var sha: String
         public var user: User
 
-        public struct Repo: Codable {
+        public struct Repo: Codable, Sendable {
             public var archiveURL: String
             public var assigneesURL: String
             public var blobsURL: String
@@ -247,7 +247,7 @@ public struct PullRequest: Codable {
             public var allowForking: Bool?
             public var isTemplate: Bool?
 
-            public struct Owner: Codable {
+            public struct Owner: Codable, Sendable {
                 public var avatarURL: URL
                 public var eventsURL: String
                 public var followersURL: URL
@@ -333,7 +333,7 @@ public struct PullRequest: Codable {
                 }
             }
 
-            public struct Permissions: Codable {
+            public struct Permissions: Codable, Sendable {
                 public var isAdmin: Bool
                 public var isMaintain: Bool?
                 public var isPush: Bool
@@ -367,7 +367,7 @@ public struct PullRequest: Codable {
                 }
             }
 
-            public struct License: Codable {
+            public struct License: Codable, Sendable {
                 public var key: String
                 public var name: String
                 public var url: URL?
@@ -662,7 +662,7 @@ public struct PullRequest: Codable {
             }
         }
 
-        public struct User: Codable {
+        public struct User: Codable, Sendable {
             public var avatarURL: URL
             public var eventsURL: String
             public var followersURL: URL
@@ -775,14 +775,14 @@ public struct PullRequest: Codable {
         }
     }
 
-    public struct Base: Codable {
+    public struct Base: Codable, Sendable {
         public var label: String
         public var ref: String
         public var repo: Repo
         public var sha: String
         public var user: User
 
-        public struct Repo: Codable {
+        public struct Repo: Codable, Sendable {
             public var archiveURL: String
             public var assigneesURL: String
             public var blobsURL: String
@@ -869,7 +869,7 @@ public struct PullRequest: Codable {
             public var updatedAt: Date
             public var allowForking: Bool?
 
-            public struct Owner: Codable {
+            public struct Owner: Codable, Sendable {
                 public var avatarURL: URL
                 public var eventsURL: String
                 public var followersURL: URL
@@ -955,7 +955,7 @@ public struct PullRequest: Codable {
                 }
             }
 
-            public struct Permissions: Codable {
+            public struct Permissions: Codable, Sendable {
                 public var isAdmin: Bool
                 public var isMaintain: Bool?
                 public var isPush: Bool
@@ -1250,7 +1250,7 @@ public struct PullRequest: Codable {
             }
         }
 
-        public struct User: Codable {
+        public struct User: Codable, Sendable {
             public var avatarURL: URL
             public var eventsURL: String
             public var followersURL: URL
@@ -1363,7 +1363,7 @@ public struct PullRequest: Codable {
         }
     }
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         /// Link
         ///
         /// Hypermedia Link

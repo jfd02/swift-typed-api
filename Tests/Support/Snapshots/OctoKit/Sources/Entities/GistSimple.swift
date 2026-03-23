@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct GistSimple: Codable {
+public struct GistSimple: Codable, Sendable {
     /// - warning: Deprecated.
     public var forks: [Fork]?
     /// - warning: Deprecated.
@@ -31,7 +31,7 @@ public struct GistSimple: Codable {
     public var owner: SimpleUser?
     public var isTruncated: Bool?
 
-    public struct Fork: Codable {
+    public struct Fork: Codable, Sendable {
         public var id: String?
         public var url: URL?
         /// Public User
@@ -67,7 +67,7 @@ public struct GistSimple: Codable {
     }
 
     /// Gist
-    public struct ForkOf: Codable {
+    public struct ForkOf: Codable, Sendable {
         public var url: URL
         public var forksURL: URL
         public var commitsURL: URL
@@ -91,7 +91,7 @@ public struct GistSimple: Codable {
         public var forks: [AnyJSON]?
         public var history: [AnyJSON]?
 
-        public struct File: Codable {
+        public struct File: Codable, Sendable {
             public var filename: String?
             public var type: String?
             public var language: String?
@@ -197,7 +197,7 @@ public struct GistSimple: Codable {
         }
     }
 
-    public struct File: Codable {
+    public struct File: Codable, Sendable {
         public var filename: String?
         public var type: String?
         public var language: String?

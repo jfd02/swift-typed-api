@@ -36,7 +36,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The tag name for the release. This can be an existing tag or a new one.
             public var tagName: String
             /// Specifies the commitish value that will be the target for the release's tag. Required if the supplied tag_name does not reference an existing tag. Ignored if the tag_name already exists.

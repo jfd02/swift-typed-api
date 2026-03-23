@@ -37,7 +37,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
             Request(path: path, method: "PATCH", body: body, id: "checks/update")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The name of the check. For example, "code-coverage".
             public var name: String?
             /// The URL of the integrator's site that has the full details of the check.
@@ -79,7 +79,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
             }
 
             /// Check runs can accept a variety of data in the `output` object, including a `title` and `summary` and can optionally provide descriptive details about the run. See the [`output` object](https://docs.github.com/rest/reference/checks#output-object-1) description.
-            public struct Output: Encodable {
+            public struct Output: Encodable, Sendable {
                 /// **Required**.
                 public var title: String?
                 /// Can contain Markdown.
@@ -91,7 +91,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
                 /// Adds images to the output displayed in the GitHub pull request UI. See the [`images` object](https://docs.github.com/rest/reference/checks#annotations-object-1) description for details.
                 public var images: [Image]?
 
-                public struct Annotation: Encodable {
+                public struct Annotation: Encodable, Sendable {
                     /// The path of the file to add an annotation to. For example, `assets/css/main.css`.
                     public var path: String
                     /// The start line of the annotation.
@@ -144,7 +144,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
                     }
                 }
 
-                public struct Image: Encodable {
+                public struct Image: Encodable, Sendable {
                     /// The alternative text for the image.
                     public var alt: String
                     /// The full URL of the image.
@@ -184,7 +184,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckRuns {
                 }
             }
 
-            public struct Action: Encodable {
+            public struct Action: Encodable, Sendable {
                 /// The text to be displayed on a button in the web UI. The maximum size is 20 characters.
                 public var label: String
                 /// A short explanation of what this action would do. The maximum size is 40 characters.

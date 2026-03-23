@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The public key used for setting Actions Secrets.
-public struct ActionsPublicKey: Codable {
+public struct ActionsPublicKey: Codable, Sendable {
     /// The identifier for the key.
     ///
     /// Example: "1234567"

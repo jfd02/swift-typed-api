@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A software package
-public struct Package: Codable {
+public struct Package: Codable, Sendable {
     /// Unique identifier of the package.
     public var id: Int
     /// The name of the package.

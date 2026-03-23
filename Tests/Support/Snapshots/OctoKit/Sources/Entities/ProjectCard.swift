@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Project cards represent a scope of work.
-public struct ProjectCard: Codable {
+public struct ProjectCard: Codable, Sendable {
     /// Example: "https://api.github.com/projects/columns/cards/1478"
     public var url: URL
     /// The project card's ID

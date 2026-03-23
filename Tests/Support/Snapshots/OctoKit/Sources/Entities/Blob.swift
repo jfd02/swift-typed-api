@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Blob: Codable {
+public struct Blob: Codable, Sendable {
     public var content: String
     public var encoding: String
     public var url: URL

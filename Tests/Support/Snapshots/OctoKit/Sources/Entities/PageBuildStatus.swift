@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PageBuildStatus: Codable {
+public struct PageBuildStatus: Codable, Sendable {
     /// Example: "https://api.github.com/repos/github/hello-world/pages/builds/latest"
     public var url: URL
     /// Example: "queued"

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ContentTraffic: Codable {
+public struct ContentTraffic: Codable, Sendable {
     /// Example: "/github/hubot"
     public var path: String
     /// Example: "github/hubot: A customizable life embetterment robot."

@@ -61,7 +61,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
             }
         }
 
-        public struct PutForbiddenBody: Decodable {
+        public struct PutForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
 
@@ -77,7 +77,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Projects {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The permission to grant to the team for this project. Can be one of:  
             /// \* `read` - team members can read, but not write to or administer this project.  
             /// \* `write` - team members can read and write, but not administer this project.  

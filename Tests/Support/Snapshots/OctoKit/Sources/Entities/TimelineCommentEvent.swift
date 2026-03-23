@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TimelineCommentEvent: Codable {
+public struct TimelineCommentEvent: Codable, Sendable {
     public var event: String
     /// Simple User
     public var actor: SimpleUser

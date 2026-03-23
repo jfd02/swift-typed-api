@@ -3,7 +3,7 @@
 
 import Foundation
 
-public final class Store: Codable {
+public final class Store: Codable, Sendable {
     public var pets: [Pet]
 
     public init(pets: [Pet]) {

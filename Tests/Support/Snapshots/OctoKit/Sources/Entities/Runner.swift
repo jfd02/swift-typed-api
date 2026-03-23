@@ -7,7 +7,7 @@ import NaiveDate
 /// Self hosted runners
 ///
 /// A self hosted runner
-public struct Runner: Codable {
+public struct Runner: Codable, Sendable {
     /// The id of the runner.
     public var id: Int
     /// The name of the runner.

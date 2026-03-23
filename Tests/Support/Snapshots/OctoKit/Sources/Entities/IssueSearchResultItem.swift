@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueSearchResultItem: Codable {
+public struct IssueSearchResultItem: Codable, Sendable {
     public var url: URL
     public var repositoryURL: URL
     public var labelsURL: String
@@ -54,7 +54,7 @@ public struct IssueSearchResultItem: Codable {
     /// Reaction Rollup
     public var reactions: ReactionRollup?
 
-    public struct Label: Codable {
+    public struct Label: Codable, Sendable {
         public var id: Int64?
         public var nodeID: String?
         public var url: String?
@@ -96,7 +96,7 @@ public struct IssueSearchResultItem: Codable {
         }
     }
 
-    public struct PullRequest: Codable {
+    public struct PullRequest: Codable, Sendable {
         public var mergedAt: Date?
         public var diffURL: URL?
         public var htmlURL: URL?

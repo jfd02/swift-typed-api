@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A codespace.
-public struct Codespace: Codable {
+public struct Codespace: Codable, Sendable {
     public var id: Int
     /// Automatically generated name of this codespace.
     ///
@@ -90,7 +90,7 @@ public struct Codespace: Codable {
     }
 
     /// Details about the codespace's git repository.
-    public struct GitStatus: Codable {
+    public struct GitStatus: Codable, Sendable {
         /// The number of commits the local repository is ahead of the remote.
         public var ahead: Int?
         /// The number of commits the local repository is behind the remote.
@@ -141,7 +141,7 @@ public struct Codespace: Codable {
         case westUs2 = "WestUs2"
     }
 
-    public struct RuntimeConstraints: Codable {
+    public struct RuntimeConstraints: Codable, Sendable {
         /// The privacy settings a user can select from when forwarding a port.
         public var allowedPortPrivacySettings: [String]?
 

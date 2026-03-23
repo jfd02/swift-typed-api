@@ -41,7 +41,7 @@ extension Paths.Repos.WithOwner.WithRepo.Milestones {
             Request(path: path, method: "PATCH", body: body, id: "issues/update-milestone")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The title of the milestone.
             public var title: String?
             /// The state of the milestone. Either `open` or `closed`.

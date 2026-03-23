@@ -40,7 +40,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Assets {
             }
         }
 
-        public struct GetUnsupportedMediaTypeBody: Decodable {
+        public struct GetUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 
@@ -65,7 +65,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.Assets {
             Request(path: path, method: "PATCH", body: body, id: "repos/update-release-asset")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The file name of the asset.
             public var name: String?
             /// An alternate short description of the asset. Used in place of the filename.

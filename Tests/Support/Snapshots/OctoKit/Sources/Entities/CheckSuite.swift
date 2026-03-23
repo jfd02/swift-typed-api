@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A suite of checks performed on the code of a given code change
-public struct CheckSuite: Codable {
+public struct CheckSuite: Codable, Sendable {
     public var id: Int
     /// Example: "MDEwOkNoZWNrU3VpdGU1"
     public var nodeID: String

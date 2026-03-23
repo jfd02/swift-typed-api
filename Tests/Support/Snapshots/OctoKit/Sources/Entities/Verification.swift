@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Verification: Codable {
+public struct Verification: Codable, Sendable {
     public var isVerified: Bool
     public var reason: String
     public var payload: String?

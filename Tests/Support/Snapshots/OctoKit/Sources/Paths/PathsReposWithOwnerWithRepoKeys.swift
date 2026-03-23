@@ -58,7 +58,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// A name for the key.
             public var title: String?
             /// The contents of the key.

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeOfConduct: Codable {
+public struct CodeOfConduct: Codable, Sendable {
     /// Example: "contributor_covenant"
     public var key: String
     /// Example: "Contributor Covenant"

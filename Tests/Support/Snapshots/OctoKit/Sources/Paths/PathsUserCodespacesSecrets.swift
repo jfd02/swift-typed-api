@@ -26,7 +26,7 @@ extension Paths.User.Codespaces {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "codespaces/list-secrets-for-authenticated-user")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var secrets: [OctoKit.CodespacesSecret]
 

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A collection of related issues and pull requests.
-public struct Milestone: Codable {
+public struct Milestone: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/milestones/1"
     public var url: URL
     /// Example: "https://github.com/octocat/Hello-World/milestones/v1.0"

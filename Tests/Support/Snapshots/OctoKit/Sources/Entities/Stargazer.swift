@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Stargazer: Codable {
+public struct Stargazer: Codable, Sendable {
     public var starredAt: Date
     /// Simple User
     public var user: SimpleUser?

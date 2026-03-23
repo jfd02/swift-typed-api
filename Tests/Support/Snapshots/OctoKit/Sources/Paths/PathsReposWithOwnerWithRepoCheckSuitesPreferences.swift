@@ -24,11 +24,11 @@ extension Paths.Repos.WithOwner.WithRepo.CheckSuites {
             Request(path: path, method: "PATCH", body: PatchRequest(autoTriggerChecks: autoTriggerChecks), id: "checks/set-suites-preferences")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Enables or disables automatic creation of CheckSuite events upon pushes to the repository. Enabled by default. See the [`auto_trigger_checks` object](https://docs.github.com/rest/reference/checks#auto_trigger_checks-object) description for details.
             public var autoTriggerChecks: [AutoTriggerCheck]?
 
-            public struct AutoTriggerCheck: Encodable {
+            public struct AutoTriggerCheck: Encodable, Sendable {
                 /// The `id` of the GitHub App.
                 public var appID: Int
                 /// Set to `true` to enable automatic creation of CheckSuite events upon pushes to the repository, or `false` to disable them.

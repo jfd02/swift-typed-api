@@ -7,7 +7,7 @@ import NaiveDate
 /// Analysis deletion
 ///
 /// Successful deletion of a code scanning analysis
-public struct CodeScanningAnalysisDeletion: Codable {
+public struct CodeScanningAnalysisDeletion: Codable, Sendable {
     /// Next deletable analysis in chain, without last analysis deletion confirmation
     public var nextAnalysisURL: URL?
     /// Next deletable analysis in chain, with last analysis deletion confirmation

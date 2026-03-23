@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEvent: Codable {
+public struct IssueEvent: Codable, Sendable {
     public var id: Int
     /// Example: "MDEwOklzc3VlRXZlbnQx"
     public var nodeID: String

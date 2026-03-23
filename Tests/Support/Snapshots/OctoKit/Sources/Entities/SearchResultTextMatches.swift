@@ -4,14 +4,14 @@
 import Foundation
 import NaiveDate
 
-public struct SearchResultTextMatch: Codable {
+public struct SearchResultTextMatch: Codable, Sendable {
     public var objectURL: String?
     public var objectType: String?
     public var property: String?
     public var fragment: String?
     public var matches: [Match]?
 
-    public struct Match: Codable {
+    public struct Match: Codable, Sendable {
         public var text: String?
         public var indices: [Int]?
 

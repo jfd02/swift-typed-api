@@ -7,13 +7,13 @@ import NaiveDate
 /// Git Reference
 ///
 /// Git references within a repository
-public struct GitRef: Codable {
+public struct GitRef: Codable, Sendable {
     public var ref: String
     public var nodeID: String
     public var url: URL
     public var object: Object
 
-    public struct Object: Codable {
+    public struct Object: Codable, Sendable {
         public var type: String
         /// SHA for the reference
         ///

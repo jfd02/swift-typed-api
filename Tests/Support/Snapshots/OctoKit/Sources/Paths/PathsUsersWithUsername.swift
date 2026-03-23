@@ -42,7 +42,7 @@ extension Paths.Users {
             }
         }
 
-        public enum GetResponse: Decodable {
+        public enum GetResponse: Decodable, Sendable {
             case privateUser(OctoKit.PrivateUser)
             case publicUser(OctoKit.PublicUser)
 

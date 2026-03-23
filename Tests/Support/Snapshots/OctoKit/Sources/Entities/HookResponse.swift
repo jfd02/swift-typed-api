@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct HookResponse: Codable {
+public struct HookResponse: Codable, Sendable {
     public var code: Int?
     public var status: String?
     public var message: String?

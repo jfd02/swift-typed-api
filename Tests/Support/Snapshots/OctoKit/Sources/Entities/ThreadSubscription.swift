@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ThreadSubscription: Codable {
+public struct ThreadSubscription: Codable, Sendable {
     /// Example: true
     public var isSubscribed: Bool
     public var isIgnored: Bool

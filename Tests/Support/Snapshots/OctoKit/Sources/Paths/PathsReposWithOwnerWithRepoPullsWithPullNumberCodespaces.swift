@@ -42,7 +42,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Location for this codespace
             public var location: String
             /// Machine type to use for this codespace

@@ -46,7 +46,7 @@ extension Paths.User {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var codespaces: [OctoKit.Codespace]
 
@@ -111,11 +111,11 @@ extension Paths.User {
             }
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case a(A)
             case b(B)
 
-            public struct A: Encodable {
+            public struct A: Encodable, Sendable {
                 /// Repository id for this codespace
                 public var repositoryID: Int
                 /// Git ref (typically a branch name) for this codespace
@@ -149,7 +149,7 @@ extension Paths.User {
                 }
             }
 
-            public struct B: Encodable {
+            public struct B: Encodable, Sendable {
                 /// Pull request number for this codespace
                 public var pullRequest: PullRequest
                 /// Location for this codespace
@@ -162,7 +162,7 @@ extension Paths.User {
                 public var idleTimeoutMinutes: Int?
 
                 /// Pull request number for this codespace
-                public struct PullRequest: Encodable {
+                public struct PullRequest: Encodable, Sendable {
                     /// Pull request number
                     public var pullRequestNumber: Int
                     /// Repository id for this codespace

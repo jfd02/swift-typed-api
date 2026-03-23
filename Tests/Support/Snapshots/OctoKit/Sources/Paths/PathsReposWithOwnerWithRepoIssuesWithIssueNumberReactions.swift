@@ -94,7 +94,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The [reaction type](https://docs.github.com/rest/reference/reactions#reaction-types) to add to the issue.
             public var content: Content
 

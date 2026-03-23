@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct RateLimit: Codable {
+public struct RateLimit: Codable, Sendable {
     public var limit: Int
     public var remaining: Int
     public var reset: Int

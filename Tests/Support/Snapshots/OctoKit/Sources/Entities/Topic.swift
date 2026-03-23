@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A topic aggregates entities that are related to a subject.
-public struct Topic: Codable {
+public struct Topic: Codable, Sendable {
     public var names: [String]
 
     public init(names: [String]) {

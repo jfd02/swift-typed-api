@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public enum WebhookConfigInsecureSSL: Codable, Hashable {
+public enum WebhookConfigInsecureSSL: Codable, Hashable, Sendable {
     case string(String)
     case double(Double)
 

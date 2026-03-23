@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Collection: Codable {
+public struct Collection: Codable, Sendable {
     /// The unique collection identifier.
     public var id: Int
     /// The title of the collection.

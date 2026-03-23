@@ -46,7 +46,7 @@ extension Paths.User.Codespaces.WithCodespaceName {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var machines: [OctoKit.CodespaceMachine]
 

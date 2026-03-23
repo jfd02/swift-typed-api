@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-workflow-run-artifacts")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var artifacts: [OctoKit.Artifact]
 

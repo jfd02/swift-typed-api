@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PagesSourceHash: Codable {
+public struct PagesSourceHash: Codable, Sendable {
     public var branch: String
     public var path: String
 

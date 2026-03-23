@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Legacy Review Comment
-public struct ReviewComment: Codable {
+public struct ReviewComment: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/pulls/comments/1"
     public var url: URL
     /// Example: 42
@@ -61,7 +61,7 @@ public struct ReviewComment: Codable {
     /// The original first line of the range for a multi-line comment.
     public var originalStartLine: Int?
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         /// Link
         ///
         /// Hypermedia Link

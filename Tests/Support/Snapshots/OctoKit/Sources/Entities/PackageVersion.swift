@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A version of a software package
-public struct PackageVersion: Codable {
+public struct PackageVersion: Codable, Sendable {
     /// Unique identifier of the package version.
     public var id: Int
     /// The name of the package version.
@@ -31,7 +31,7 @@ public struct PackageVersion: Codable {
     public var metadata: Metadata?
 
     /// Package Version Metadata
-    public struct Metadata: Codable {
+    public struct Metadata: Codable, Sendable {
         /// Example: "docker"
         public var packageType: PackageType
         /// Container Metadata
@@ -50,7 +50,7 @@ public struct PackageVersion: Codable {
         }
 
         /// Container Metadata
-        public struct Container: Codable {
+        public struct Container: Codable, Sendable {
             public var tags: [String]
 
             public init(tags: [String]) {
@@ -69,7 +69,7 @@ public struct PackageVersion: Codable {
         }
 
         /// Docker Metadata
-        public struct Docker: Codable {
+        public struct Docker: Codable, Sendable {
             public var tag: [String]?
             public var tags: AnyJSON
 

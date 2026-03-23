@@ -7,7 +7,7 @@ import NaiveDate
 /// Self hosted runner label
 ///
 /// A label for a self hosted runner
-public struct RunnerLabel: Codable {
+public struct RunnerLabel: Codable, Sendable {
     /// Unique identifier of the label.
     public var id: Int?
     /// Name of the label.

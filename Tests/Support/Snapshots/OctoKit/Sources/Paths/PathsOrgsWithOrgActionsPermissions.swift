@@ -39,7 +39,7 @@ extension Paths.Orgs.WithOrg.Actions {
             Request(path: path, method: "PUT", body: body, id: "actions/set-github-actions-permissions-organization")
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The policy that controls the repositories in the organization that are allowed to run GitHub Actions. Can be one of: `all`, `none`, or `selected`.
             public var enabledRepositories: OctoKit.EnabledRepositories
             /// The permissions policy that controls the actions that are allowed to run. Can be one of: `all`, `local_only`, or `selected`.

@@ -141,7 +141,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PostServiceUnavailableBody: Decodable {
+        public struct PostServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
@@ -164,7 +164,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The title of the issue.
             public var title: Title
             /// The contents of the issue.
@@ -178,7 +178,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public var assignees: [String]?
 
             /// The title of the issue.
-            public enum Title: Encodable, Hashable {
+            public enum Title: Encodable, Hashable, Sendable {
                 case string(String)
                 case int(Int)
 
@@ -191,7 +191,7 @@ extension Paths.Repos.WithOwner.WithRepo {
                 }
             }
 
-            public enum Milestone: Encodable, Hashable {
+            public enum Milestone: Encodable, Hashable, Sendable {
                 case string(String)
                 case int(Int)
 
@@ -204,11 +204,11 @@ extension Paths.Repos.WithOwner.WithRepo {
                 }
             }
 
-            public enum Label: Encodable {
+            public enum Label: Encodable, Sendable {
                 case string(String)
                 case object(Object)
 
-                public struct Object: Encodable {
+                public struct Object: Encodable, Sendable {
                     public var id: Int?
                     public var name: String?
                     public var description: String?

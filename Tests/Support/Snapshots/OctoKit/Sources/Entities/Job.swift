@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Information of a job execution in a workflow run
-public struct Job: Codable {
+public struct Job: Codable, Sendable {
     /// The id of the job.
     ///
     /// Example: 21
@@ -76,7 +76,7 @@ public struct Job: Codable {
         case completed
     }
 
-    public struct Step: Codable {
+    public struct Step: Codable, Sendable {
         /// The phase of the lifecycle that the job is currently in.
         ///
         /// Example: "queued"

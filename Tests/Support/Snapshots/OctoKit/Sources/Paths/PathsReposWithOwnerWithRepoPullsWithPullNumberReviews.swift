@@ -64,7 +64,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The SHA of the commit that needs a review. Not using the latest commit SHA may render your review comment outdated if a subsequent commit modifies the line you specify as the `position`. Defaults to the most recent commit in the pull request when you do not specify a value.
             public var commitID: String?
             /// **Required** when using `REQUEST_CHANGES` or `COMMENT` for the `event` parameter. The body text of the pull request review.
@@ -81,7 +81,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
                 case comment = "COMMENT"
             }
 
-            public struct Commants: Encodable {
+            public struct Commants: Encodable, Sendable {
                 /// The relative path to the file that necessitates a review comment.
                 public var path: String
                 /// The position in the diff where you want to add a review comment. Note this value is not the same as the line number in the file. For help finding the position value, read the note below.

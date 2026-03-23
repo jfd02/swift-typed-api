@@ -26,7 +26,7 @@ extension Paths.Repos.WithOwner.WithRepo.CheckSuites.WithCheckSuiteID {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "checks/list-for-suite")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var checkRuns: [OctoKit.CheckRun]
 

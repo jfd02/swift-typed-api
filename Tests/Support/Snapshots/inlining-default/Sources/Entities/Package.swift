@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Package: Codable {
+public struct Package: Codable, Sendable {
     public var weight: Int
     public var address: String
     public var receivedBy: Person?

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Model for testing model name same as property name
-struct Name: Codable {
+struct Name: Codable, Sendable {
     var name: Int32
     var snakeCase: Int32?
     var property: String?

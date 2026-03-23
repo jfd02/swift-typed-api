@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// An artifact
-public struct Artifact: Codable {
+public struct Artifact: Codable, Sendable {
     public var id: Int
     /// Example: "MDEwOkNoZWNrU3VpdGU1"
     public var nodeID: String

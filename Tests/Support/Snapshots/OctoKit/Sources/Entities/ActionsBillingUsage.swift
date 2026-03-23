@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ActionsBillingUsage: Codable {
+public struct ActionsBillingUsage: Codable, Sendable {
     /// The sum of the free and paid GitHub Actions minutes used.
     public var totalMinutesUsed: Int
     /// The total paid GitHub Actions minutes used.
@@ -13,7 +13,7 @@ public struct ActionsBillingUsage: Codable {
     public var includedMinutes: Int
     public var minutesUsedBreakdown: MinutesUsedBreakdown
 
-    public struct MinutesUsedBreakdown: Codable {
+    public struct MinutesUsedBreakdown: Codable, Sendable {
         /// Total minutes used on Ubuntu runner machines.
         public var ubuntu: Int?
         /// Total minutes used on macOS runner machines.

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct APIOverview: Codable {
+public struct APIOverview: Codable, Sendable {
     /// Example: true
     public var isVerifiablePasswordAuthentication: Bool
     public var sshKeyFingerprints: SshKeyFingerprints?
@@ -27,7 +27,7 @@ public struct APIOverview: Codable {
     /// Example: ["192.168.7.15/32", "192.168.7.16/32"]
     public var dependabot: [String]?
 
-    public struct SshKeyFingerprints: Codable {
+    public struct SshKeyFingerprints: Codable, Sendable {
         public var sha256Rsa: String?
         public var sha256Dsa: String?
         public var sha256Ecdsa: String?

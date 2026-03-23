@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct EnumArrays: Codable {
+public struct EnumArrays: Codable, Sendable {
     public var justSymbol: String?
     public var arrayEnum: [String]?
 

@@ -24,7 +24,7 @@ extension Paths.Repositories.WithRepositoryID.Environments.WithEnvironmentName {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "actions/list-environment-secrets")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var secrets: [OctoKit.ActionsSecret]
 

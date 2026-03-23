@@ -63,7 +63,7 @@ extension Paths.Orgs {
             }
         }
 
-        public enum PatchUnprocessableEntityBody: Decodable {
+        public enum PatchUnprocessableEntityBody: Decodable, Sendable {
             case validationError(OctoKit.ValidationError)
             case validationErrorSimple(OctoKit.ValidationErrorSimple)
 
@@ -82,7 +82,7 @@ extension Paths.Orgs {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Billing email address. This address is not publicized.
             public var billingEmail: String?
             /// The company name.

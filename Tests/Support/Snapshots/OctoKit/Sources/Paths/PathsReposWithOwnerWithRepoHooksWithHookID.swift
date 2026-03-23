@@ -59,7 +59,7 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/repos#create-hook-config-params).
             public var config: Config?
             /// Determines what [events](https://docs.github.com/webhooks/event-payloads) the hook is triggered for. This replaces the entire array of events.
@@ -72,7 +72,7 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks {
             public var isActive: Bool
 
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/repos#create-hook-config-params).
-            public struct Config: Encodable {
+            public struct Config: Encodable, Sendable {
                 /// The URL to which the payloads will be delivered.
                 ///
                 /// Example: "https://example.com/webhook"

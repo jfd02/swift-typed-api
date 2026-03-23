@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct SelectedActions: Codable {
+public struct SelectedActions: Codable, Sendable {
     /// Whether GitHub-owned actions are allowed. For example, this includes the actions in the `actions` organization.
     public var isGithubOwnedAllowed: Bool?
     /// Whether actions in GitHub Marketplace from verified creators are allowed. Set to `true` to allow all GitHub Marketplace actions by verified creators.

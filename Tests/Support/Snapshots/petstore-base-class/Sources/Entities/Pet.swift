@@ -6,7 +6,7 @@ import Foundation
 /// A pet title
 ///
 /// A pet description
-public final class Pet: NSObject, Codable {
+public final class Pet: NSObject, Codable, Sendable {
     public let id: Int64
     /// Example: "Buddy"
     public let name: String

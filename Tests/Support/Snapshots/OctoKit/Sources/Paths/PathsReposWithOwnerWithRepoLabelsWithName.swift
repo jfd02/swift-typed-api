@@ -41,7 +41,7 @@ extension Paths.Repos.WithOwner.WithRepo.Labels {
             Request(path: path, method: "PATCH", body: body, id: "issues/update-label")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The new name of the label. Emoji can be added to label names, using either native emoji or colon-style markup. For example, typing `:strawberry:` will render the emoji ![:strawberry:](https://github.githubassets.com/images/icons/emoji/unicode/1f353.png ":strawberry:"). For a full list of available emoji and codes, see "[Emoji cheat sheet](https://github.com/ikatyang/emoji-cheat-sheet)."
             public var newName: String?
             /// The [hexadecimal color code](http://www.color-hex.com/) for the label, without the leading `#`.

@@ -24,7 +24,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
             Request(path: path, method: "GET", query: parameters?.asQuery, id: "actions/list-jobs-for-workflow-run")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var jobs: [OctoKit.Job]
 

@@ -60,7 +60,7 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
             }
         }
 
-        public struct PostServiceUnavailableBody: Decodable {
+        public struct PostServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?
@@ -79,7 +79,7 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The SHA of the commit to which the analysis you are uploading relates.
             public var commitSha: String
             /// The full Git reference, formatted as `refs/heads/<branch name>`,

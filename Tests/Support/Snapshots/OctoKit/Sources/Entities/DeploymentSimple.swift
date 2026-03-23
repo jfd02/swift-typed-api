@@ -7,7 +7,7 @@ import NaiveDate
 /// Deployment
 ///
 /// A deployment created as the result of an Actions check run from a workflow that references an environment
-public struct DeploymentSimple: Codable {
+public struct DeploymentSimple: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/example/deployments/1"
     public var url: URL
     /// Unique identifier of the deployment

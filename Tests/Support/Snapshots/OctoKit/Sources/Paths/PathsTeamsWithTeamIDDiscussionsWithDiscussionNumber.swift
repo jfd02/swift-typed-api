@@ -39,7 +39,7 @@ extension Paths.Teams.WithTeamID.Discussions {
             Request(path: path, method: "PATCH", body: body, id: "teams/update-discussion-legacy")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The discussion post's title.
             public var title: String?
             /// The discussion post's body text.

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PullRequestSimple: Codable {
+public struct PullRequestSimple: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/pulls/1347"
     public var url: URL
     public var id: Int
@@ -76,7 +76,7 @@ public struct PullRequestSimple: Codable {
     /// Example: false
     public var isDraft: Bool?
 
-    public struct Label: Codable {
+    public struct Label: Codable, Sendable {
         public var id: Int64
         public var nodeID: String
         public var url: String
@@ -118,7 +118,7 @@ public struct PullRequestSimple: Codable {
         }
     }
 
-    public struct Head: Codable {
+    public struct Head: Codable, Sendable {
         public var label: String
         public var ref: String
         /// Repository
@@ -156,7 +156,7 @@ public struct PullRequestSimple: Codable {
         }
     }
 
-    public struct Base: Codable {
+    public struct Base: Codable, Sendable {
         public var label: String
         public var ref: String
         /// Repository
@@ -194,7 +194,7 @@ public struct PullRequestSimple: Codable {
         }
     }
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         /// Link
         ///
         /// Hypermedia Link

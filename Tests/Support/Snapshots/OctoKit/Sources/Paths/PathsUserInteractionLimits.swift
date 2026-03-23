@@ -24,7 +24,7 @@ extension Paths.User {
             Request(path: path, method: "GET", id: "interactions/get-restrictions-for-authenticated-user")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             /// Interaction Limits
             ///
             /// Interaction limit settings.

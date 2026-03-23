@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Installation: Codable {
+public struct Installation: Codable, Sendable {
     /// The ID of the installation.
     public var id: Int
     public var account: Account?
@@ -51,7 +51,7 @@ public struct Installation: Codable {
     /// Example: "test_13f1e99741e3e004@d7e1eb0bc0a1ba12.com"
     public var contactEmail: String?
 
-    public struct Account: Codable {
+    public struct Account: Codable, Sendable {
         public var simpleUser: SimpleUser?
         /// An enterprise account
         public var enterprise: Enterprise?

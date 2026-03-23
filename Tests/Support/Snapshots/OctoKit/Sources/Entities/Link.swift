@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Hypermedia Link
-public struct Link: Codable {
+public struct Link: Codable, Sendable {
     public var href: String
 
     public init(href: String) {

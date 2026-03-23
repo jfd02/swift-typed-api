@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct AdvancedSecurityActiveCommittersRepository: Codable {
+public struct AdvancedSecurityActiveCommittersRepository: Codable, Sendable {
     /// Example: "octocat/Hello-World"
     public var name: String
     /// Example: 25

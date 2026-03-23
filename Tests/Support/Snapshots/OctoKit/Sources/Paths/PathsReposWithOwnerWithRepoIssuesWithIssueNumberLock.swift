@@ -44,7 +44,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The reason for locking the issue or pull request conversation. Lock will fail if you don't use one of these reasons:  
             /// \* `off-topic`  
             /// \* `too heated`  

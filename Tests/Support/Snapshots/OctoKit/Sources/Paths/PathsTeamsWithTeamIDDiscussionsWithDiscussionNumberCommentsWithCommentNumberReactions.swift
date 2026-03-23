@@ -74,7 +74,7 @@ extension Paths.Teams.WithTeamID.Discussions.WithDiscussionNumber.Comments.WithC
             Request(path: path, method: "POST", body: PostRequest(content: content), id: "reactions/create-for-team-discussion-comment-legacy")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The [reaction type](https://docs.github.com/rest/reference/reactions#reaction-types) to add to the team discussion comment.
             public var content: Content
 

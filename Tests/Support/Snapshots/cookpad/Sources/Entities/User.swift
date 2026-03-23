@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct User: Codable {
+public struct User: Codable, Sendable {
     /// The name of the user.
     ///
     /// Example: "Liam Nichols"

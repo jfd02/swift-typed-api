@@ -4,10 +4,10 @@
 import Foundation
 import NaiveDate
 
-struct ContainerC: Codable {
+struct ContainerC: Codable, Sendable {
     var child: Child
 
-    struct Child: Codable {
+    struct Child: Codable, Sendable {
         var `enum`: Enum
         var renameMe: String
 

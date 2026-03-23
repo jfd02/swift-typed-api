@@ -97,7 +97,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The text of the review comment.
             public var body: String
             /// The SHA of the commit needing a comment. Not using the latest commit SHA may render your comment outdated if a subsequent commit modifies the line you specify as the `position`.

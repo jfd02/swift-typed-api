@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Store: Codable {
+public struct Store: Codable, Sendable {
     public var pets: Pets
 
     public init(pets: Pets) {

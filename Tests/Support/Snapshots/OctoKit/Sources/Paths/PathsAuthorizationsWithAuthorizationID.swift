@@ -67,7 +67,7 @@ extension Paths.Authorizations {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// A list of scopes that this authorization is in.
             ///
             /// Example: ["public_repo", "user"]

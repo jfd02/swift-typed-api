@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct BasicError: Codable {
+public struct BasicError: Codable, Sendable {
     public var message: String?
     public var documentationURL: String?
     public var url: String?

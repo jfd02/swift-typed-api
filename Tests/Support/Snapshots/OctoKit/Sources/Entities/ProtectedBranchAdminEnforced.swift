@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ProtectedBranchAdminEnforced: Codable {
+public struct ProtectedBranchAdminEnforced: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/enforce_admins"
     public var url: URL
     /// Example: true

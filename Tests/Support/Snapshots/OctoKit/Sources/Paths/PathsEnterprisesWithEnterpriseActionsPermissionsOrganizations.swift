@@ -26,7 +26,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.Permissions {
             Request(path: path, method: "GET", query: makeGetQuery(perPage, page), id: "enterprise-admin/list-selected-organizations-enabled-github-actions-enterprise")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Double
             public var organizations: [OctoKit.OrganizationSimple]
 

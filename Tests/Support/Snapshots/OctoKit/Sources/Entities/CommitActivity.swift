@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CommitActivity: Codable {
+public struct CommitActivity: Codable, Sendable {
     /// Example: [0, 3, 26, 20, 39, 1, 0]
     public var days: [Int]
     /// Example: 89

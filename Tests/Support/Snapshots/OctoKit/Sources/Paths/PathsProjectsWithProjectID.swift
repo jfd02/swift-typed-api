@@ -71,7 +71,7 @@ extension Paths.Projects {
             }
         }
 
-        public struct PatchForbiddenBody: Decodable {
+        public struct PatchForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
             public var errors: [String]?
@@ -90,7 +90,7 @@ extension Paths.Projects {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Name of the project
             ///
             /// Example: "Week One Sprint"
@@ -163,7 +163,7 @@ extension Paths.Projects {
             }
         }
 
-        public struct DeleteForbiddenBody: Decodable {
+        public struct DeleteForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
             public var errors: [String]?

@@ -71,7 +71,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
             Request(path: path, method: "POST", body: body, id: "teams/create-discussion-in-org")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The discussion post's title.
             public var title: String
             /// The discussion post's body text.

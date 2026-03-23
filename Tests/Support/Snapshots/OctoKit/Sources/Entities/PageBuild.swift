@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PageBuild: Codable {
+public struct PageBuild: Codable, Sendable {
     public var url: URL
     public var status: String
     public var error: Error
@@ -15,7 +15,7 @@ public struct PageBuild: Codable {
     public var createdAt: Date
     public var updatedAt: Date
 
-    public struct Error: Codable {
+    public struct Error: Codable, Sendable {
         public var message: String?
 
         public init(message: String? = nil) {

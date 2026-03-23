@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct OrganizationFull: Codable {
+public struct OrganizationFull: Codable, Sendable {
     /// Example: "github"
     public var login: String
     public var id: Int
@@ -92,7 +92,7 @@ public struct OrganizationFull: Codable {
     public var membersCanForkPrivateRepositories: Bool?
     public var updatedAt: Date
 
-    public struct Plan: Codable {
+    public struct Plan: Codable, Sendable {
         public var name: String
         public var space: Int
         public var privateRepos: Int

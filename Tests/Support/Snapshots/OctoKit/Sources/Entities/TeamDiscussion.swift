@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A team discussion is a persistent record of a free-form conversation within a team.
-public struct TeamDiscussion: Codable {
+public struct TeamDiscussion: Codable, Sendable {
     /// Simple User
     public var author: SimpleUser?
     /// The main text of the discussion.

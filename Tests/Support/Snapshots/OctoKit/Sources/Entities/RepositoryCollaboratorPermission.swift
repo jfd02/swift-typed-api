@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct RepositoryCollaboratorPermission: Codable {
+public struct RepositoryCollaboratorPermission: Codable, Sendable {
     public var permission: String
     /// Example: "admin"
     public var roleName: String

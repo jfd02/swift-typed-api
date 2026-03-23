@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct Feed: Codable {
+public struct Feed: Codable, Sendable {
     /// Example: "https://github.com/timeline"
     public var timelineURL: String
     /// Example: "https://github.com/{user}"
@@ -23,7 +23,7 @@ public struct Feed: Codable {
     public var securityAdvisoriesURL: String?
     public var links: Links
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         /// Link With Type
         ///
         /// Hypermedia Link with Type

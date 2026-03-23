@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Model for testing reserved words
-struct Return: Codable {
+struct Return: Codable, Sendable {
     var `return`: Int32?
 
     init(`return`: Int32? = nil) {

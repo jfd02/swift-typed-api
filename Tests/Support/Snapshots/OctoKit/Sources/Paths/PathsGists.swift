@@ -95,7 +95,7 @@ extension Paths {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Description of the gist
             ///
             /// Example: "Example Ruby script"
@@ -112,7 +112,7 @@ extension Paths {
             public var files: [String: File]
             public var `public`: Public?
 
-            public struct File: Encodable {
+            public struct File: Encodable, Sendable {
                 /// Content of the file
                 public var content: String
 
@@ -126,7 +126,7 @@ extension Paths {
                 }
             }
 
-            public enum Public: Encodable {
+            public enum Public: Encodable, Sendable {
                 case bool(Bool)
                 case object(Object)
 

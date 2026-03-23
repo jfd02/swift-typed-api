@@ -65,7 +65,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
             }
         }
 
-        public enum PostRequest: Encodable {
+        public enum PostRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
 
@@ -76,7 +76,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
             ///     "my-team"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Teams parameter
                 public var teams: [String]
 
@@ -126,7 +126,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
             }
         }
 
-        public enum PutRequest: Encodable {
+        public enum PutRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
 
@@ -137,7 +137,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
             ///     "my-team"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Teams parameter
                 public var teams: [String]
 
@@ -187,7 +187,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
             }
         }
 
-        public enum DeleteRequest: Encodable {
+        public enum DeleteRequest: Encodable, Sendable {
             case object(Object)
             case strings([String])
 
@@ -198,7 +198,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection.Restrict
             ///     "my-team"
             ///   ]
             /// }
-            public struct Object: Encodable {
+            public struct Object: Encodable, Sendable {
                 /// Teams parameter
                 public var teams: [String]
 

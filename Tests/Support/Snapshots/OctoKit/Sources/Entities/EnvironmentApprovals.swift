@@ -7,7 +7,7 @@ import NaiveDate
 /// Environment Approval
 ///
 /// An entry in the reviews log for environment deployments
-public struct EnvironmentApprovals: Codable {
+public struct EnvironmentApprovals: Codable, Sendable {
     /// The list of environments that were approved or rejected
     public var environments: [Environment]
     /// Whether deployment to the environment(s) was approved or rejected
@@ -21,7 +21,7 @@ public struct EnvironmentApprovals: Codable {
     /// Example: "Ship it!"
     public var comment: String
 
-    public struct Environment: Codable {
+    public struct Environment: Codable, Sendable {
         /// The id of the environment.
         ///
         /// Example: 56780428

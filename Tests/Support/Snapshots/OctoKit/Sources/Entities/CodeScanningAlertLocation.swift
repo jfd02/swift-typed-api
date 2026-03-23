@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Describe a region within a file for the alert.
-public struct CodeScanningAlertLocation: Codable {
+public struct CodeScanningAlertLocation: Codable, Sendable {
     public var path: String?
     public var startLine: Int?
     public var endLine: Int?

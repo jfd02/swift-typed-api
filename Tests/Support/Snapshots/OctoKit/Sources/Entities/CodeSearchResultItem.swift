@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CodeSearchResultItem: Codable {
+public struct CodeSearchResultItem: Codable, Sendable {
     public var name: String
     public var path: String
     public var sha: String

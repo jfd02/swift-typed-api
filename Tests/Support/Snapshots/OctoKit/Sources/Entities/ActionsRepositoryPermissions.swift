@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ActionsRepositoryPermissions: Codable {
+public struct ActionsRepositoryPermissions: Codable, Sendable {
     /// Whether GitHub Actions is enabled on the repository.
     public var isEnabled: Bool
     /// The permissions policy that controls the actions that are allowed to run. Can be one of: `all`, `local_only`, or `selected`.

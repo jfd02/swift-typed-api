@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Timeline Event
-public struct TimelineIssueEvents: Codable {
+public struct TimelineIssueEvents: Codable, Sendable {
     public var labeledIssueEvent: LabeledIssueEvent?
     public var unlabeledIssueEvent: UnlabeledIssueEvent?
     public var milestonedIssueEvent: MilestonedIssueEvent?

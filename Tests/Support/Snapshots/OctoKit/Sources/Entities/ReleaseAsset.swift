@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Data related to a release.
-public struct ReleaseAsset: Codable {
+public struct ReleaseAsset: Codable, Sendable {
     public var url: URL
     public var browserDownloadURL: URL
     public var id: Int

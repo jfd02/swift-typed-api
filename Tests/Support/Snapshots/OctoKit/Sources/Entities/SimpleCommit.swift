@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct SimpleCommit: Codable {
+public struct SimpleCommit: Codable, Sendable {
     public var id: String
     public var treeID: String
     public var message: String
@@ -12,7 +12,7 @@ public struct SimpleCommit: Codable {
     public var author: Author?
     public var committer: Committer?
 
-    public struct Author: Codable {
+    public struct Author: Codable, Sendable {
         public var name: String
         public var email: String
 
@@ -34,7 +34,7 @@ public struct SimpleCommit: Codable {
         }
     }
 
-    public struct Committer: Codable {
+    public struct Committer: Codable, Sendable {
         public var name: String
         public var email: String
 

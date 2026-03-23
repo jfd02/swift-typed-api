@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A unique encryption key
-public struct GpgKey: Codable {
+public struct GpgKey: Codable, Sendable {
     public var id: Int
     public var primaryKeyID: Int?
     /// Example: "3262EFF25BA0D270"
@@ -55,7 +55,7 @@ public struct GpgKey: Codable {
     public var expiresAt: Date?
     public var rawKey: String?
 
-    public struct Email: Codable {
+    public struct Email: Codable, Sendable {
         public var email: String?
         public var isVerified: Bool?
 
@@ -77,7 +77,7 @@ public struct GpgKey: Codable {
         }
     }
 
-    public struct Subkey: Codable {
+    public struct Subkey: Codable, Sendable {
         public var id: Int?
         public var primaryKeyID: Int?
         public var keyID: String?

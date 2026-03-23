@@ -56,7 +56,7 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning {
             }
         }
 
-        public struct GetServiceUnavailableBody: Decodable {
+        public struct GetServiceUnavailableBody: Decodable, Sendable {
             public var code: String?
             public var message: String?
             public var documentationURL: String?

@@ -7,7 +7,7 @@ import NaiveDate
 /// Autolink reference
 ///
 /// An autolink reference.
-public struct Autolink: Codable {
+public struct Autolink: Codable, Sendable {
     public var id: Int
     /// The prefix of a key that is linkified.
     ///

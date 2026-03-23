@@ -40,7 +40,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The name of the fully qualified reference (ie: `refs/heads/master`). If it doesn't start with 'refs' and have at least two slashes, it will be rejected.
             public var ref: String
             /// The SHA1 value for this reference.

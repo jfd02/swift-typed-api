@@ -4,21 +4,21 @@
 import Foundation
 import NaiveDate
 
-public struct WorkflowRunUsage: Codable {
+public struct WorkflowRunUsage: Codable, Sendable {
     public var billable: Billable
     public var runDurationMs: Int?
 
-    public struct Billable: Codable {
+    public struct Billable: Codable, Sendable {
         public var ubuntu: Ubuntu?
         public var macos: Macos?
         public var windows: Windows?
 
-        public struct Ubuntu: Codable {
+        public struct Ubuntu: Codable, Sendable {
             public var totalMs: Int
             public var jobs: Int
             public var jobRuns: [JobRun]?
 
-            public struct JobRun: Codable {
+            public struct JobRun: Codable, Sendable {
                 public var jobID: Int
                 public var durationMs: Int
 
@@ -61,12 +61,12 @@ public struct WorkflowRunUsage: Codable {
             }
         }
 
-        public struct Macos: Codable {
+        public struct Macos: Codable, Sendable {
             public var totalMs: Int
             public var jobs: Int
             public var jobRuns: [JobRun]?
 
-            public struct JobRun: Codable {
+            public struct JobRun: Codable, Sendable {
                 public var jobID: Int
                 public var durationMs: Int
 
@@ -109,12 +109,12 @@ public struct WorkflowRunUsage: Codable {
             }
         }
 
-        public struct Windows: Codable {
+        public struct Windows: Codable, Sendable {
             public var totalMs: Int
             public var jobs: Int
             public var jobRuns: [JobRun]?
 
-            public struct JobRun: Codable {
+            public struct JobRun: Codable, Sendable {
                 public var jobID: Int
                 public var durationMs: Int
 

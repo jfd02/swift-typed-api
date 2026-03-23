@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct StoreGenerated: Codable {
+public struct StoreGenerated: Codable, Sendable {
     public var pets: [PetGenerated]
 
     public init(pets: [PetGenerated]) {

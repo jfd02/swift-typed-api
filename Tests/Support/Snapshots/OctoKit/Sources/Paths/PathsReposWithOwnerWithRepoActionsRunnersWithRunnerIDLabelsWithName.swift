@@ -45,7 +45,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runners.WithRunnerID.Labels {
             }
         }
 
-        public struct DeleteResponse: Decodable {
+        public struct DeleteResponse: Decodable, Sendable {
             public var totalCount: Int
             public var labels: [OctoKit.RunnerLabel]
 

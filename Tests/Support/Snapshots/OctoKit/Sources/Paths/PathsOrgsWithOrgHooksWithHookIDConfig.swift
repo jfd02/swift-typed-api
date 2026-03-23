@@ -45,7 +45,7 @@ extension Paths.Orgs.WithOrg.Hooks.WithHookID {
         ///   "secret" : "********",
         ///   "url" : "https:\/\/example.com\/webhook"
         /// }
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The URL to which the payloads will be delivered.
             ///
             /// Example: "https://example.com/webhook"

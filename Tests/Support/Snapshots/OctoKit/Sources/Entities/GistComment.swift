@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A comment made to a gist.
-public struct GistComment: Codable {
+public struct GistComment: Codable, Sendable {
     public var id: Int
     /// Example: "MDExOkdpc3RDb21tZW50MQ=="
     public var nodeID: String

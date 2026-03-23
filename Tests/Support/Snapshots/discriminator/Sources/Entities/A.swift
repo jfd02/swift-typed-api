@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct A: Codable {
+public struct A: Codable, Sendable {
     public var kind: String
 
     public init(kind: String) {

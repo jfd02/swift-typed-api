@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct B: Codable {
+public struct B: Codable, Sendable {
     /// This is a description
     /// And it should be on multiple lines
     public var kind: String

@@ -110,7 +110,7 @@ extension Paths.Orgs.WithOrg {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The name of the repository.
             public var name: String
             /// A short description of the repository.

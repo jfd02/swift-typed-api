@@ -72,7 +72,7 @@ extension Paths.Orgs.WithOrg {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// **Required unless you provide `email`**. GitHub user ID for the person you are inviting.
             public var inviteeID: Int?
             /// **Required unless you provide `invitee_id`**. Email address of the person you are inviting, which can be an existing GitHub user.

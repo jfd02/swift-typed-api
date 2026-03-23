@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ScimUserList: Codable {
+public struct ScimUserList: Codable, Sendable {
     /// SCIM schema used.
     public var schemas: [String]
     public var totalResults: Int

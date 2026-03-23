@@ -36,7 +36,7 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Can be one of `opt_in` (large files will be stored using Git LFS) or `opt_out` (large files will be removed during the import).
             public var useLfs: UseLfs
 

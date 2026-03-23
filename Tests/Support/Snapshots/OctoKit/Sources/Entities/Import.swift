@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A repository import from an external source.
-public struct Import: Codable {
+public struct Import: Codable, Sendable {
     public var vcs: String?
     public var useLfs: Bool?
     /// The URL of the originating repository.
@@ -50,7 +50,7 @@ public struct Import: Codable {
         case detectionNeedsAuth = "detection_needs_auth"
     }
 
-    public struct ProjectChoice: Codable {
+    public struct ProjectChoice: Codable, Sendable {
         public var vcs: String?
         public var tfvcProject: String?
         public var humanName: String?

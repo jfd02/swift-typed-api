@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct IssueEventForIssue: Codable {
+public struct IssueEventForIssue: Codable, Sendable {
     public var labeledIssueEvent: LabeledIssueEvent?
     public var unlabeledIssueEvent: UnlabeledIssueEvent?
     public var assignedIssueEvent: AssignedIssueEvent?

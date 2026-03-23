@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct Client: Codable {
+struct Client: Codable, Sendable {
     var client: String?
 
     init(client: String? = nil) {

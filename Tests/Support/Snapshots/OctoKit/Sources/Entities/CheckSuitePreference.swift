@@ -5,15 +5,15 @@ import Foundation
 import NaiveDate
 
 /// Check suite configuration preferences for a repository.
-public struct CheckSuitePreference: Codable {
+public struct CheckSuitePreference: Codable, Sendable {
     public var preferences: Preferences
     /// Minimal Repository
     public var repository: MinimalRepository
 
-    public struct Preferences: Codable {
+    public struct Preferences: Codable, Sendable {
         public var autoTriggerChecks: [AutoTriggerCheck]?
 
-        public struct AutoTriggerCheck: Codable {
+        public struct AutoTriggerCheck: Codable, Sendable {
             public var appID: Int
             public var isSetting: Bool
 

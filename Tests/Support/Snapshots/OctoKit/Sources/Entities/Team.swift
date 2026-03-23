@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Groups of organization members that gives permissions on specified repositories.
-public struct Team: Codable {
+public struct Team: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var name: String
@@ -24,7 +24,7 @@ public struct Team: Codable {
     /// Groups of organization members that gives permissions on specified repositories.
     public var parent: TeamSimple?
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isPull: Bool
         public var isTriage: Bool
         public var isPush: Bool

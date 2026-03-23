@@ -63,7 +63,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PutMethodNotAllowedBody: Decodable {
+        public struct PutMethodNotAllowedBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
 
@@ -79,7 +79,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PutConflictBody: Decodable {
+        public struct PutConflictBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
 
@@ -95,7 +95,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// Title for the automatic commit message.
             public var commitTitle: String?
             /// Extra detail to append to automatic commit message.

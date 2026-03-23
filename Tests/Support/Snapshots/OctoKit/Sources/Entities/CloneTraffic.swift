@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CloneTraffic: Codable {
+public struct CloneTraffic: Codable, Sendable {
     /// Example: 173
     public var count: Int
     /// Example: 128

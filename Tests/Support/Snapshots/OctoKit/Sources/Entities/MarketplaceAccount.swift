@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct MarketplaceAccount: Codable {
+public struct MarketplaceAccount: Codable, Sendable {
     public var url: URL
     public var id: Int
     public var type: String

@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Represents a 'commit' secret scanning location type. This location type shows that a secret was detected inside a commit to a repository.
-public struct SecretScanningLocationCommit: Codable {
+public struct SecretScanningLocationCommit: Codable, Sendable {
     /// The file path in the repository
     ///
     /// Example: "/example/secrets.txt"

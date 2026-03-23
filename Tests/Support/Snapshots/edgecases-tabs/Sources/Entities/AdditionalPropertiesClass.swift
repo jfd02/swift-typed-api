@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct AdditionalPropertiesClass: Codable {
+public struct AdditionalPropertiesClass: Codable, Sendable {
 	public var mapProperty: [String: String]?
 	public var mapOfMapProperty: [String: [String: String]]?
 

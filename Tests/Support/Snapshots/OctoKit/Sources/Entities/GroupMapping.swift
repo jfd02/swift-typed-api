@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// External Groups to be mapped to a team for membership
-public struct GroupMapping: Codable {
+public struct GroupMapping: Codable, Sendable {
     /// Array of groups to be mapped to this team
     ///
     /// Example:
@@ -24,7 +24,7 @@ public struct GroupMapping: Codable {
     /// ]
     public var groups: [Group]?
 
-    public struct Group: Codable {
+    public struct Group: Codable, Sendable {
         /// The ID of the group
         ///
         /// Example: "111a1a11-aaa1-1aaa-11a1-a1a1a1a1a1aa"

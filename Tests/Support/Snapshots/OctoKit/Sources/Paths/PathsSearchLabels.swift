@@ -50,7 +50,7 @@ extension Paths.Search {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var isIncompleteResults: Bool
             public var items: [OctoKit.LabelSearchResultItem]

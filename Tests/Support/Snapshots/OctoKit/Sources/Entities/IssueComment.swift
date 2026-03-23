@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Comments provide a way for people to collaborate on an issue.
-public struct IssueComment: Codable {
+public struct IssueComment: Codable, Sendable {
     /// Unique identifier of the issue comment
     ///
     /// Example: 42

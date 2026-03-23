@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Details of a deployment that is waiting for protection rules to pass
-public struct PendingDeployment: Codable {
+public struct PendingDeployment: Codable, Sendable {
     public var environment: Environment
     /// The set duration of the wait timer
     ///
@@ -22,7 +22,7 @@ public struct PendingDeployment: Codable {
     /// The people or teams that may approve jobs that reference the environment. You can list up to six users or teams as reviewers. The reviewers must have at least read access to the repository. Only one of the required reviewers needs to approve the job for it to proceed.
     public var reviewers: [Reviewer]
 
-    public struct Environment: Codable {
+    public struct Environment: Codable, Sendable {
         /// The id of the environment.
         ///
         /// Example: 56780428
@@ -65,14 +65,14 @@ public struct PendingDeployment: Codable {
         }
     }
 
-    public struct Reviewer: Codable {
+    public struct Reviewer: Codable, Sendable {
         /// The type of reviewer. Must be one of: `User` or `Team`
         ///
         /// Example: "User"
         public var type: DeploymentReviewerType?
         public var reviewer: Reviewer?
 
-        public struct Reviewer: Codable {
+        public struct Reviewer: Codable, Sendable {
             public var simpleUser: SimpleUser?
             /// Groups of organization members that gives permissions on specified repositories.
             public var team: Team?

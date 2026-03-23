@@ -42,7 +42,7 @@ extension Paths {
             }
         }
 
-        public enum GetResponse: Decodable {
+        public enum GetResponse: Decodable, Sendable {
             case privateUser(OctoKit.PrivateUser)
             case publicUser(OctoKit.PublicUser)
 
@@ -90,7 +90,7 @@ extension Paths {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The new name of the user.
             ///
             /// Example: "Omar Jahandar"

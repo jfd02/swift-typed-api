@@ -3,10 +3,10 @@
 
 import Foundation
 
-public struct Container: Codable {
+public struct Container: Codable, Sendable {
     public var content: Content
 
-    public enum Content: Codable {
+    public enum Content: Codable, Sendable {
         case containerA(ContainerA)
         case containerB(ContainerB)
         case containerC(ContainerC)

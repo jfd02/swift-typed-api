@@ -75,7 +75,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Use `web` to create a webhook. Default: `web`. This parameter only accepts the value `web`.
             public var name: String?
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/repos#create-hook-config-params).
@@ -86,7 +86,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public var isActive: Bool
 
             /// Key/value pairs to provide settings for this webhook. [These are defined below](https://docs.github.com/rest/reference/repos#create-hook-config-params).
-            public struct Config: Encodable {
+            public struct Config: Encodable, Sendable {
                 /// The URL to which the payloads will be delivered.
                 ///
                 /// Example: "https://example.com/webhook"

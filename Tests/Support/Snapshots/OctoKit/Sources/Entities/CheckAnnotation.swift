@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct CheckAnnotation: Codable {
+public struct CheckAnnotation: Codable, Sendable {
     /// Example: "README.md"
     public var path: String
     public var startLine: Int

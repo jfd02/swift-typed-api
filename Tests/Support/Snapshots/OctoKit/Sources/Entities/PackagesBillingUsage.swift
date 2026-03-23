@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PackagesBillingUsage: Codable {
+public struct PackagesBillingUsage: Codable, Sendable {
     /// Sum of the free and paid storage space (GB) for GitHuub Packages.
     public var totalGigabytesBandwidthUsed: Int
     /// Total paid storage space (GB) for GitHuub Packages.

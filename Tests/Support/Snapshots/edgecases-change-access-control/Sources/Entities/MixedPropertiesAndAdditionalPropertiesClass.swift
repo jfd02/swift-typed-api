@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct MixedPropertiesAndAdditionalPropertiesClass: Codable {
+struct MixedPropertiesAndAdditionalPropertiesClass: Codable, Sendable {
     var uuid: UUID?
     var dateTime: Date?
     var map: [String: Animal]?

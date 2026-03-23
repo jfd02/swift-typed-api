@@ -4,12 +4,12 @@
 import Foundation
 import NaiveDate
 
-public struct RateLimitOverview: Codable {
+public struct RateLimitOverview: Codable, Sendable {
     public var resources: Resources
     /// Rate Limit
     public var rate: RateLimit
 
-    public struct Resources: Codable {
+    public struct Resources: Codable, Sendable {
         /// Rate Limit
         public var core: RateLimit
         /// Rate Limit

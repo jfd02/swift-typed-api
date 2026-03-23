@@ -3,7 +3,7 @@
 
 import Foundation
 
-public final class Error: NSObject, Codable {
+public final class Error: NSObject, Codable, Sendable {
     public let code: Int32
     public let message: String
 

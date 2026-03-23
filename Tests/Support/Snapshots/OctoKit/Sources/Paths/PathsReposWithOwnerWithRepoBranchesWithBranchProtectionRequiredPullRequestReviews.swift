@@ -49,7 +49,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// Specify which users and teams can dismiss pull request reviews. Pass an empty `dismissal_restrictions` object to disable. User and team `dismissal_restrictions` are only available for organization-owned repositories. Omit this parameter for personal repositories.
             public var dismissalRestrictions: DismissalRestrictions?
             /// Set to `true` if you want to automatically dismiss approving reviews when someone pushes a new commit.
@@ -60,7 +60,7 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch.Protection {
             public var requiredApprovingReviewCount: Int?
 
             /// Specify which users and teams can dismiss pull request reviews. Pass an empty `dismissal_restrictions` object to disable. User and team `dismissal_restrictions` are only available for organization-owned repositories. Omit this parameter for personal repositories.
-            public struct DismissalRestrictions: Encodable {
+            public struct DismissalRestrictions: Encodable, Sendable {
                 /// The list of user `login`s with dismissal access
                 public var users: [String]?
                 /// The list of team `slug`s with dismissal access

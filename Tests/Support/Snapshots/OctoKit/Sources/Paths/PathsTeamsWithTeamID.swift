@@ -67,7 +67,7 @@ extension Paths.Teams {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The name of the team.
             public var name: String
             /// The description of the team.

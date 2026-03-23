@@ -38,7 +38,7 @@ extension Paths.Repos.WithOwner.WithRepo.Import.Authors {
             }
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The new Git author email.
             public var email: String?
             /// The new Git author name.

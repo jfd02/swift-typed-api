@@ -30,7 +30,7 @@ extension Paths.Repos.WithOwner.WithRepo.Statuses {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The state of the status. Can be one of `error`, `failure`, `pending`, or `success`.
             public var state: State
             /// The target URL to associate with this status. This URL will be linked from the GitHub UI to allow users to easily see the source of the status.  

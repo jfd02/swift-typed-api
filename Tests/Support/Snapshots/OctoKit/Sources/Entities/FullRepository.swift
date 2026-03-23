@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct FullRepository: Codable {
+public struct FullRepository: Codable, Sendable {
     /// Example: 1296269
     public var id: Int
     /// Example: "MDEwOlJlcG9zaXRvcnkxMjk2MjY5"
@@ -189,7 +189,7 @@ public struct FullRepository: Codable {
     public var codeOfConduct: CodeOfConductSimple?
     public var securityAndAnalysis: SecurityAndAnalysis?
 
-    public struct Permissions: Codable {
+    public struct Permissions: Codable, Sendable {
         public var isAdmin: Bool
         public var isMaintain: Bool?
         public var isPush: Bool
@@ -223,11 +223,11 @@ public struct FullRepository: Codable {
         }
     }
 
-    public struct SecurityAndAnalysis: Codable {
+    public struct SecurityAndAnalysis: Codable, Sendable {
         public var advancedSecurity: AdvancedSecurity?
         public var secretScanning: SecretScanning?
 
-        public struct AdvancedSecurity: Codable {
+        public struct AdvancedSecurity: Codable, Sendable {
             public var status: Status?
 
             public enum Status: String, Codable, CaseIterable {
@@ -250,7 +250,7 @@ public struct FullRepository: Codable {
             }
         }
 
-        public struct SecretScanning: Codable {
+        public struct SecretScanning: Codable, Sendable {
             public var status: Status?
 
             public enum Status: String, Codable, CaseIterable {

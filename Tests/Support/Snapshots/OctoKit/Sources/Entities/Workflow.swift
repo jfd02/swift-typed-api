@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A GitHub Actions workflow
-public struct Workflow: Codable {
+public struct Workflow: Codable, Sendable {
     public var id: Int
     /// Example: "MDg6V29ya2Zsb3cxMg=="
     public var nodeID: String

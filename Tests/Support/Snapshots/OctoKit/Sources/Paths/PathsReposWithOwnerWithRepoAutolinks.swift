@@ -57,7 +57,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The prefix appended by a number will generate a link any time it is found in an issue, pull request, or commit.
             public var keyPrefix: String
             /// The URL must contain <num> for the reference number.

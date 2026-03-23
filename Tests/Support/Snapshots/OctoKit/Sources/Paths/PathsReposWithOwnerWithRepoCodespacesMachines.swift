@@ -48,7 +48,7 @@ extension Paths.Repos.WithOwner.WithRepo.Codespaces {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var machines: [OctoKit.CodespaceMachine]
 

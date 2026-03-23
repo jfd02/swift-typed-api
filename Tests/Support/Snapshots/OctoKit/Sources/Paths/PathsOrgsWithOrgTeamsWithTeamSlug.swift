@@ -49,7 +49,7 @@ extension Paths.Orgs.WithOrg.Teams {
             Request(path: path, method: "PATCH", body: body, id: "teams/update-in-org")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The name of the team.
             public var name: String?
             /// The description of the team.

@@ -21,7 +21,7 @@ extension Paths.Pet.WithPetID {
             Request(path: path, method: "POST", body: body, id: "uploadFile")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Additional data to pass to server
             public var additionalMetadata: String?
             /// File to upload

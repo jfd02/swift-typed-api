@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Recipe: Codable {
+public struct Recipe: Codable, Sendable {
     /// The unique recipe identifier.
     ///
     /// Example: 2380570

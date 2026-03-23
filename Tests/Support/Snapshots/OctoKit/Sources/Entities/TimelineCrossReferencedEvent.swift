@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TimelineCrossReferencedEvent: Codable {
+public struct TimelineCrossReferencedEvent: Codable, Sendable {
     public var event: String
     /// Simple User
     public var actor: SimpleUser?
@@ -12,7 +12,7 @@ public struct TimelineCrossReferencedEvent: Codable {
     public var updatedAt: Date
     public var source: Source
 
-    public struct Source: Codable {
+    public struct Source: Codable, Sendable {
         public var type: String?
         /// Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
         public var issue: Issue?

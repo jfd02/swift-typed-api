@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ReviewDismissedIssueEvent: Codable {
+public struct ReviewDismissedIssueEvent: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var url: String
@@ -20,7 +20,7 @@ public struct ReviewDismissedIssueEvent: Codable {
     public var performedViaGithubApp: Integration?
     public var dismissedReview: DismissedReview
 
-    public struct DismissedReview: Codable {
+    public struct DismissedReview: Codable, Sendable {
         public var state: String
         public var reviewID: Int
         public var dismissalMessage: String?

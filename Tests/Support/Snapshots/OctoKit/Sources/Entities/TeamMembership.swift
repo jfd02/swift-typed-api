@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct TeamMembership: Codable {
+public struct TeamMembership: Codable, Sendable {
     public var url: URL
     /// The role of the user in the team.
     ///

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct DemilestonedIssueEvent: Codable {
+public struct DemilestonedIssueEvent: Codable, Sendable {
     public var id: Int
     public var nodeID: String
     public var url: String
@@ -20,7 +20,7 @@ public struct DemilestonedIssueEvent: Codable {
     public var performedViaGithubApp: Integration?
     public var milestone: Milestone
 
-    public struct Milestone: Codable {
+    public struct Milestone: Codable, Sendable {
         public var title: String
 
         public init(title: String) {

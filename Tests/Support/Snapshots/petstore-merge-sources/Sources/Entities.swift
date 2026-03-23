@@ -32,7 +32,7 @@ struct StringCodingKey: CodingKey, ExpressibleByStringLiteral {
 /// A pet title
 ///
 /// A pet description
-public struct Pet: Codable {
+public struct Pet: Codable, Sendable {
     public var id: Int64
     /// Example: "Buddy"
     public var name: String
@@ -59,7 +59,7 @@ public struct Pet: Codable {
     }
 }
 
-public struct Store: Codable {
+public struct Store: Codable, Sendable {
     public var pets: [Pet]
 
     public init(pets: [Pet]) {
@@ -77,7 +77,7 @@ public struct Store: Codable {
     }
 }
 
-public struct Error: Codable {
+public struct Error: Codable, Sendable {
     public var code: Int32
     public var message: String
 

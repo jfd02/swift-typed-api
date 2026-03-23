@@ -22,7 +22,7 @@ extension Paths.Repos.WithOwner.WithRepo.Invitations {
             Request(path: path, method: "PATCH", body: PatchRequest(permissions: permissions), id: "repos/update-invitation")
         }
 
-        public struct PatchRequest: Encodable {
+        public struct PatchRequest: Encodable, Sendable {
             /// The permissions that the associated user will have on the repository. Valid values are `read`, `write`, `maintain`, `triage`, and `admin`.
             public var permissions: Permissions?
 

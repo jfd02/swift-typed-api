@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct DiffEntry: Codable {
+public struct DiffEntry: Codable, Sendable {
     /// Example: "bbcd538c8e72b8c175046e27cc8f907076331401"
     public var sha: String
     /// Example: "file1.txt"

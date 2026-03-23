@@ -150,7 +150,7 @@ extension Paths.User {
             public static let location = HTTPHeader<String>(field: "Location")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The name of the repository.
             ///
             /// Example: "Team Environment"

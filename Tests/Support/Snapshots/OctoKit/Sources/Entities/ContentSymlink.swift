@@ -7,7 +7,7 @@ import NaiveDate
 /// Symlink Content
 ///
 /// An object describing a symlink
-public struct ContentSymlink: Codable {
+public struct ContentSymlink: Codable, Sendable {
     public var type: String
     public var target: String
     public var size: Int
@@ -20,7 +20,7 @@ public struct ContentSymlink: Codable {
     public var downloadURL: URL?
     public var links: Links
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var git: URL?
         public var html: URL?
         public var this: URL

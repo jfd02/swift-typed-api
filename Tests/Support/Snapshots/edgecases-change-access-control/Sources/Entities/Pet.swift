@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-struct Pet: Codable {
+struct Pet: Codable, Sendable {
     var id: Int64?
     var category: Category?
     /// Example: "doggie"

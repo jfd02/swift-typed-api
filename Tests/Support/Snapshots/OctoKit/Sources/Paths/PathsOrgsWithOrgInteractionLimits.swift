@@ -24,7 +24,7 @@ extension Paths.Orgs.WithOrg {
             Request(path: path, method: "GET", id: "interactions/get-restrictions-for-org")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             /// Interaction Limits
             ///
             /// Interaction limit settings.

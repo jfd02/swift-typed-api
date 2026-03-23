@@ -24,7 +24,7 @@ extension Paths {
             Request(path: path, method: "GET", id: "meta/root")
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var currentUserURL: String
             public var currentUserAuthorizationsHTMLURL: String
             public var authorizationsURL: String

@@ -48,7 +48,7 @@ extension Paths.User {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var installations: [OctoKit.Installation]
 
@@ -64,7 +64,7 @@ extension Paths.User {
             }
         }
 
-        public struct GetUnsupportedMediaTypeBody: Decodable {
+        public struct GetUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 

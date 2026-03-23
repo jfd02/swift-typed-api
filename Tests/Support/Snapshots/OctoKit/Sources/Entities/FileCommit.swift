@@ -4,11 +4,11 @@
 import Foundation
 import NaiveDate
 
-public struct FileCommit: Codable {
+public struct FileCommit: Codable, Sendable {
     public var content: Content?
     public var commit: Commit
 
-    public struct Content: Codable {
+    public struct Content: Codable, Sendable {
         public var name: String?
         public var path: String?
         public var sha: String?
@@ -20,7 +20,7 @@ public struct FileCommit: Codable {
         public var type: String?
         public var links: Links?
 
-        public struct Links: Codable {
+        public struct Links: Codable, Sendable {
             public var this: String?
             public var git: String?
             public var html: String?
@@ -88,7 +88,7 @@ public struct FileCommit: Codable {
         }
     }
 
-    public struct Commit: Codable {
+    public struct Commit: Codable, Sendable {
         public var sha: String?
         public var nodeID: String?
         public var url: String?
@@ -100,7 +100,7 @@ public struct FileCommit: Codable {
         public var parents: [Parent]?
         public var verification: Verification?
 
-        public struct Author: Codable {
+        public struct Author: Codable, Sendable {
             public var date: String?
             public var name: String?
             public var email: String?
@@ -126,7 +126,7 @@ public struct FileCommit: Codable {
             }
         }
 
-        public struct Committer: Codable {
+        public struct Committer: Codable, Sendable {
             public var date: String?
             public var name: String?
             public var email: String?
@@ -152,7 +152,7 @@ public struct FileCommit: Codable {
             }
         }
 
-        public struct Tree: Codable {
+        public struct Tree: Codable, Sendable {
             public var url: String?
             public var sha: String?
 
@@ -174,7 +174,7 @@ public struct FileCommit: Codable {
             }
         }
 
-        public struct Parent: Codable {
+        public struct Parent: Codable, Sendable {
             public var url: String?
             public var htmlURL: String?
             public var sha: String?
@@ -200,7 +200,7 @@ public struct FileCommit: Codable {
             }
         }
 
-        public struct Verification: Codable {
+        public struct Verification: Codable, Sendable {
             public var isVerified: Bool?
             public var reason: String?
             public var signature: String?

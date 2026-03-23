@@ -43,7 +43,7 @@ extension Paths.User.Codespaces.Secrets.WithSecretName {
             }
         }
 
-        public struct GetResponse: Decodable {
+        public struct GetResponse: Decodable, Sendable {
             public var totalCount: Int
             public var repositories: [OctoKit.MinimalRepository]
 

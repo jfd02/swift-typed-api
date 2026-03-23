@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct APIResponse: Codable {
+public struct APIResponse: Codable, Sendable {
     public var code: Double?
     public var type: String?
     public var message: String?

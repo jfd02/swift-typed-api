@@ -7,7 +7,7 @@ import NaiveDate
 /// GitHub app
 ///
 /// GitHub apps are a new way to extend GitHub. They can be installed directly on organizations and user accounts and granted access to specific repositories. They come with granular permissions and built-in webhooks. GitHub apps are first class actors within GitHub.
-public struct Integration: Codable {
+public struct Integration: Codable, Sendable {
     /// Unique identifier of the GitHub app
     ///
     /// Example: 37

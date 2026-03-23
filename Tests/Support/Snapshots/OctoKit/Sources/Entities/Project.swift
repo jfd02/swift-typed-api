@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// Projects are a way to organize columns and cards of work.
-public struct Project: Codable {
+public struct Project: Codable, Sendable {
     /// Example: "https://api.github.com/repos/api-playground/projects-test"
     public var ownerURL: URL
     /// Example: "https://api.github.com/projects/1002604"

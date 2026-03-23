@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ProjectCollaboratorPermission: Codable {
+public struct ProjectCollaboratorPermission: Codable, Sendable {
     public var permission: String
     /// Simple User
     public var user: SimpleUser?

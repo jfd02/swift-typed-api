@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// A list of external groups available to be connected to a team
-public struct ExternalGroups: Codable {
+public struct ExternalGroups: Codable, Sendable {
     /// An array of external groups available to be mapped to a team
     ///
     /// Example:
@@ -24,7 +24,7 @@ public struct ExternalGroups: Codable {
     /// ]
     public var groups: [Group]?
 
-    public struct Group: Codable {
+    public struct Group: Codable, Sendable {
         /// The internal ID of the group
         public var groupID: Int
         /// The display name of the group

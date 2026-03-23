@@ -5,7 +5,7 @@ import Foundation
 import NaiveDate
 
 /// The hierarchy between files in a Git repository.
-public struct GitTree: Codable {
+public struct GitTree: Codable, Sendable {
     public var sha: String
     public var url: URL
     public var isTruncated: Bool
@@ -53,7 +53,7 @@ public struct GitTree: Codable {
     /// ]
     public var tree: [TreeItem]
 
-    public struct TreeItem: Codable {
+    public struct TreeItem: Codable, Sendable {
         /// Example: "test/file.rb"
         public var path: String?
         /// Example: "040000"

@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Pet: Codable {
+public struct Pet: Codable, Sendable {
     public var id: Int64
     public var name: String
     public var tag: String?

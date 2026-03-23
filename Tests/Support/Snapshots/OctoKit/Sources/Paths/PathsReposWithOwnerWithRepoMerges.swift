@@ -40,7 +40,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The name of the base branch that the head will be merged into.
             public var base: String
             /// The head to merge. This can be a branch name or a commit SHA1.

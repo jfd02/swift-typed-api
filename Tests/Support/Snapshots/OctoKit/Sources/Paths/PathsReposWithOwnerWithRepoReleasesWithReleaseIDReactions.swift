@@ -36,7 +36,7 @@ extension Paths.Repos.WithOwner.WithRepo.Releases.WithReleaseID {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The [reaction type](https://docs.github.com/rest/reference/reactions#reaction-types) to add to the release.
             public var content: Content
 

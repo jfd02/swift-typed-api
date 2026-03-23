@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct PorterAuthor: Codable {
+public struct PorterAuthor: Codable, Sendable {
     public var id: Int
     public var remoteID: String
     public var remoteName: String

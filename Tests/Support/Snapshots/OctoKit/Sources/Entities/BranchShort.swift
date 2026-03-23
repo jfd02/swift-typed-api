@@ -4,12 +4,12 @@
 import Foundation
 import NaiveDate
 
-public struct BranchShort: Codable {
+public struct BranchShort: Codable, Sendable {
     public var name: String
     public var commit: Commit
     public var isProtected: Bool
 
-    public struct Commit: Codable {
+    public struct Commit: Codable, Sendable {
         public var sha: String
         public var url: String
 

@@ -4,12 +4,12 @@
 import Foundation
 import NaiveDate
 
-public struct ValidationError: Codable {
+public struct ValidationError: Codable, Sendable {
     public var message: String
     public var documentationURL: String
     public var errors: [Error]?
 
-    public struct Error: Codable {
+    public struct Error: Codable, Sendable {
         public var resource: String?
         public var field: String?
         public var message: String?
@@ -17,7 +17,7 @@ public struct ValidationError: Codable {
         public var index: Int?
         public var value: Value?
 
-        public enum Value: Codable {
+        public enum Value: Codable, Sendable {
             case string(String)
             case int(Int)
             case strings([String])

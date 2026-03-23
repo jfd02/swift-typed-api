@@ -67,7 +67,7 @@ extension Paths.Teams.WithTeamID.Projects {
             }
         }
 
-        public struct PutForbiddenBody: Decodable {
+        public struct PutForbiddenBody: Decodable, Sendable {
             public var message: String?
             public var documentationURL: String?
 
@@ -83,7 +83,7 @@ extension Paths.Teams.WithTeamID.Projects {
             }
         }
 
-        public struct PutRequest: Encodable {
+        public struct PutRequest: Encodable, Sendable {
             /// The permission to grant to the team for this project. Can be one of:  
             /// \* `read` - team members can read, but not write to or administer this project.  
             /// \* `write` - team members can read and write, but not administer this project.  
@@ -140,7 +140,7 @@ extension Paths.Teams.WithTeamID.Projects {
             }
         }
 
-        public struct DeleteUnsupportedMediaTypeBody: Decodable {
+        public struct DeleteUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 

@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct StatusCheckPolicy: Codable {
+public struct StatusCheckPolicy: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/required_status_checks"
     public var url: URL
     /// Example: true
@@ -15,7 +15,7 @@ public struct StatusCheckPolicy: Codable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/required_status_checks/contexts"
     public var contextsURL: URL
 
-    public struct Check: Codable {
+    public struct Check: Codable, Sendable {
         /// Example: "continuous-integration/travis-ci"
         public var context: String
         public var appID: Int?

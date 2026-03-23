@@ -4,7 +4,7 @@
 import Foundation
 import CoreLocation
 
-public struct Store: Codable {
+public struct Store: Codable, Sendable {
     public var pets: [Pet]
 
     public init(pets: [Pet]) {

@@ -40,7 +40,7 @@ extension Paths {
             public static let commonMarkerVersion = HTTPHeader<String>(field: "X-CommonMarker-Version")
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// The Markdown text to render in HTML.
             public var text: String
             /// The rendering mode. Can be either `markdown` or `gfm`.

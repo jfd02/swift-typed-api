@@ -82,7 +82,7 @@ extension Paths.User {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// A descriptive name for the new key.
             ///
             /// Example: "Personal MacBook Air"

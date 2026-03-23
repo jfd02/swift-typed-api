@@ -3,7 +3,7 @@
 
 import Foundation
 
-public struct Error: Codable {
+public struct Error: Codable, Sendable {
     public let code: Int32
     public let message: String
 

@@ -7,7 +7,7 @@ import NaiveDate
 /// Webhook delivery
 ///
 /// Delivery made by a webhook.
-public struct HookDelivery: Codable {
+public struct HookDelivery: Codable, Sendable {
     /// Unique identifier of the delivery.
     ///
     /// Example: 42
@@ -59,7 +59,7 @@ public struct HookDelivery: Codable {
     public var request: Request
     public var response: Response
 
-    public struct Request: Codable {
+    public struct Request: Codable, Sendable {
         /// The request headers sent with the webhook delivery.
         public var headers: [String: AnyJSON]?
         /// The webhook payload.
@@ -83,7 +83,7 @@ public struct HookDelivery: Codable {
         }
     }
 
-    public struct Response: Codable {
+    public struct Response: Codable, Sendable {
         /// The response headers received when the delivery was made.
         public var headers: [String: AnyJSON]?
         /// The response payload received.

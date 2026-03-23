@@ -40,7 +40,7 @@ extension Paths.App.Installations {
             }
         }
 
-        public struct GetUnsupportedMediaTypeBody: Decodable {
+        public struct GetUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 

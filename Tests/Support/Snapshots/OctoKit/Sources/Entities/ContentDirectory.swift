@@ -4,7 +4,7 @@
 import Foundation
 import NaiveDate
 
-public struct ContentDirectoryItem: Codable {
+public struct ContentDirectoryItem: Codable, Sendable {
     public var type: String
     public var size: Int
     public var name: String
@@ -17,7 +17,7 @@ public struct ContentDirectoryItem: Codable {
     public var downloadURL: URL?
     public var links: Links
 
-    public struct Links: Codable {
+    public struct Links: Codable, Sendable {
         public var git: URL?
         public var html: URL?
         public var this: URL

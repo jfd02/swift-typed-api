@@ -38,7 +38,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             }
         }
 
-        public struct PutResponse: Decodable {
+        public struct PutResponse: Decodable, Sendable {
             public var message: String?
             public var url: String?
 

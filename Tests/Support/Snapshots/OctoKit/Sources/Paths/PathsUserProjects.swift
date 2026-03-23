@@ -42,7 +42,7 @@ extension Paths.User {
             }
         }
 
-        public struct PostUnsupportedMediaTypeBody: Decodable {
+        public struct PostUnsupportedMediaTypeBody: Decodable, Sendable {
             public var message: String
             public var documentationURL: String
 
@@ -58,7 +58,7 @@ extension Paths.User {
             }
         }
 
-        public struct PostRequest: Encodable {
+        public struct PostRequest: Encodable, Sendable {
             /// Name of the project
             ///
             /// Example: "Week One Sprint"
