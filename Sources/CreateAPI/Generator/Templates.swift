@@ -659,9 +659,17 @@ final class Templates {
         }
         """
 
+        let underlyingErrorMethod = """
+        \(access)var underlyingError: (any Error)? {
+            if case .unhandled(let error) = self { return error }
+            return nil
+        }
+        """
+
         let contents = [
             caseDecls.joined(separator: "\n"),
-            decodeMethod
+            decodeMethod,
+            underlyingErrorMethod
         ].joined(separator: "\n\n")
 
         return """

@@ -17,6 +17,9 @@ public protocol RequestError: Error {
 
     /// Wraps a non-API error (network failure, decoding error, etc.).
     static func unhandled(_ error: any Error) -> Self
+
+    /// Returns the wrapped error if this is an ``unhandled`` case, otherwise `nil`.
+    var underlyingError: (any Error)? { get }
 }
 
 /// Default error type for requests without documented error responses.
@@ -29,5 +32,11 @@ public enum DefaultRequestError: RequestError {
 
     public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
         .unhandled(APIError.unacceptableStatusCode(statusCode))
+    }
+
+    public var underlyingError: (any Error)? {
+        switch self {
+        case .unhandled(let error): return error
+        }
     }
 }
