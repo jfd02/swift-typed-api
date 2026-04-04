@@ -600,6 +600,8 @@ extension Generator {
                 }
                 
                 return QueryItemType(type: stringType(for: info.format))
+            case .any(let schemas, _) where Self.nonNullSchemas(in: schemas)?.count == 1:
+                return try getQueryItemType(for: Self.nonNullSchemas(in: schemas)![0], isTopLevel: isTopLevel)
             case .object, .all, .one, .any:
                 let type = makeTypeName(parameter.name)
                 let nested = try _makeDeclaration(name: type, schema: schema, context: context)

@@ -191,6 +191,13 @@ extension Generator {
              .one(let schemas, _) where schemas.count == 1,
              .any(let schemas, _) where schemas.count == 1:
             return try _makeDeclaration(name: name, schema: schemas[0], context: context)
+        case .any(let schemas, let info) where Self.nonNullSchemas(in: schemas) != nil:
+            let nonNull = Self.nonNullSchemas(in: schemas)!
+            if nonNull.count == 1 {
+                return try _makeDeclaration(name: name, schema: nonNull[0], context: context)
+            } else {
+                return try makeOneOf(name: name, schemas: nonNull, info: info, context: context)
+            }
         case .all(let schemas, let info):
             return try makeAllOf(name: name, schemas: schemas, info: info, context: context)
         case .one(let schemas, let info):
@@ -276,6 +283,19 @@ extension Generator {
         }
         name = Template(options.entities.nameTemplate).substitute(name)
         return .userDefined(name: makeTypeName(name).namespace(context.namespace))
+    }
+
+    /// If `schemas` contains a null variant, returns the non-null schemas.
+    /// Otherwise returns nil (not a nullable anyOf pattern).
+    static func nonNullSchemas(in schemas: [JSONSchema]) -> [JSONSchema]? {
+        var nonNull: [JSONSchema] = []
+        var hasNull = false
+        for s in schemas {
+            if case .null = s.value { hasNull = true }
+            else { nonNull.append(s) }
+        }
+        guard hasNull, !nonNull.isEmpty else { return nil }
+        return nonNull
     }
 
     // MARK: - Object
@@ -678,7 +698,11 @@ extension Generator {
         let propertyName = makePropertyName(rename(key: propertyIdentifier))
 
         func property(type: TypeIdentifier, info: JSONSchemaContext?, nested: Declaration? = nil) -> Property {
-            let nullable = info?.nullable ?? false
+            let isNullableAnyOf: Bool = {
+                guard case .any(let schemas, _) = schema.value else { return false }
+                return Self.nonNullSchemas(in: schemas) != nil
+            }()
+            let nullable = (info?.nullable ?? false) || isNullableAnyOf
             let isOptional = !isRequired || nullable
             var type = type
             if context.isPatch && isOptional && options.paths.makeOptionalPatchParametersDoubleOptional {
