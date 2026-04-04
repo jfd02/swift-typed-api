@@ -523,6 +523,69 @@ final class OpenAPI31GenerationTests: XCTestCase {
         }
     }
 
+    /// Tests that anyOf with null (Pydantic-style nullable) generates a simple optional property.
+    func testAnyOfWithNullGeneratesOptional() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths: {}
+        components:
+          schemas:
+            Profile:
+              type: object
+              required:
+                - name
+                - bio
+              properties:
+                name:
+                  type: string
+                bio:
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                nickname:
+                  anyOf:
+                    - type: string
+                    - type: "null"
+                avatar:
+                  anyOf:
+                    - $ref: "#/components/schemas/Image"
+                    - type: "null"
+            Image:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  format: uri
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = GenerateOptions.default
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.schemas()
+        let profileFile = output.files.first { $0.name == "Profile" }
+        XCTAssertNotNil(profileFile, "Should generate a Profile entity")
+
+        if let contents = profileFile?.contents {
+            // bio is required + anyOf with null → should be String? (not a wrapper struct)
+            XCTAssertTrue(contents.contains("bio: String?"), "Required anyOf-with-null property should be optional String, got:\n\(contents)")
+            // nickname is not required + anyOf with null → should also be String?
+            XCTAssertTrue(contents.contains("nickname: String?"), "Non-required anyOf-with-null property should be optional String, got:\n\(contents)")
+            // avatar is a $ref + null → should be Image?
+            XCTAssertTrue(contents.contains("avatar: Image?"), "anyOf-with-null $ref should be optional reference type, got:\n\(contents)")
+            // Should NOT generate a Bio/Nickname/Avatar wrapper entity
+            XCTAssertFalse(output.files.contains(where: { $0.name == "Bio" }), "Should not generate wrapper entity for nullable string")
+            XCTAssertFalse(output.files.contains(where: { $0.name == "Nickname" }), "Should not generate wrapper entity for nullable string")
+        }
+    }
+
     /// Tests that nullable properties via type arrays generate optional types.
     func testNullableTypeArrayGeneratesOptional() throws {
         let yaml = """
