@@ -96,7 +96,7 @@ final class Templates {
 
     func enumOfStrings(name: TypeName, contents: String) -> String {
         return """
-        \(access)enum \(name): String, Codable, CaseIterable {
+        \(access)enum \(name): String, Codable, CaseIterable, Sendable {
         \(contents.indented)
         }
         """
