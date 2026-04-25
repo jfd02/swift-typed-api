@@ -33,6 +33,13 @@ extension Paths.Pet {
 				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
 				}
 			}
+
+			public var underlyingError: (any Swift.Error)? {
+				switch self {
+				case .unhandled(let error): return error
+				default: return nil
+				}
+			}
 		}
 
 		private func makeGetQuery(_ tags: [String]) -> [(String, String?)] {

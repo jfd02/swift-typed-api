@@ -30,6 +30,13 @@ extension Paths {
                 default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_custom_imports.Error.self, from: data))
                 }
             }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -55,6 +62,13 @@ extension Paths {
             public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
                 switch statusCode {
                 default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_custom_imports.Error.self, from: data))
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

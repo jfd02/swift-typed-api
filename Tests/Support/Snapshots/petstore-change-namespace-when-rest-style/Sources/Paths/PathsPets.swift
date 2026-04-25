@@ -29,6 +29,13 @@ extension Namespace {
                 default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_change_namespace_when_rest_style.Error.self, from: data))
                 }
             }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -54,6 +61,13 @@ extension Namespace {
             public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
                 switch statusCode {
                 default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_change_namespace_when_rest_style.Error.self, from: data))
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

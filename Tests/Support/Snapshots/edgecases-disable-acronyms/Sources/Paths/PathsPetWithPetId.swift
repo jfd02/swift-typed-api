@@ -8,7 +8,7 @@ import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Pet {
-    public func petId(_ petId: Int) -> WithPetId {
+    public func petId(_ petId: Int64) -> WithPetId {
         WithPetId(path: "\(path)/\(petId)")
     }
 
@@ -35,6 +35,13 @@ extension Paths.Pet {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Updates a pet in the store with form data
@@ -50,6 +57,13 @@ extension Paths.Pet {
                 switch statusCode {
                 case 405: return .methodNotAllowed
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -86,6 +100,13 @@ extension Paths.Pet {
                 switch statusCode {
                 case 400: return .badRequest
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

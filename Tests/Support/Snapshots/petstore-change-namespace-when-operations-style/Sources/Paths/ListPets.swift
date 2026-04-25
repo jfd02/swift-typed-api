@@ -21,6 +21,13 @@ extension Namespace {
             default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_change_namespace_when_operations_style.Error.self, from: data))
             }
         }
+
+        public var underlyingError: (any Swift.Error)? {
+            switch self {
+            case .unhandled(let error): return error
+            default: return nil
+            }
+        }
     }
 
     public enum ListPetsResponseHeaders {

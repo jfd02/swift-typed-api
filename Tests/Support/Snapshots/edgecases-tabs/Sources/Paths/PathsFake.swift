@@ -33,6 +33,13 @@ extension Paths {
 				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
 				}
 			}
+
+			public var underlyingError: (any Swift.Error)? {
+				switch self {
+				case .unhandled(let error): return error
+				default: return nil
+				}
+			}
 		}
 
 		public struct GetParameters {
@@ -81,6 +88,13 @@ extension Paths {
 				case 400: return .badRequest
 				case 404: return .notFound
 				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+				}
+			}
+
+			public var underlyingError: (any Swift.Error)? {
+				switch self {
+				case .unhandled(let error): return error
+				default: return nil
 				}
 			}
 		}

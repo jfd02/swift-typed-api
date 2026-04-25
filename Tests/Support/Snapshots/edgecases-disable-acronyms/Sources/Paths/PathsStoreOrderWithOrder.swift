@@ -8,7 +8,7 @@ import TypedAPI
 import URLQueryEncoder
 
 extension Paths.Store.Order {
-    public func orderId(_ orderId: Int) -> WithOrder {
+    public func orderId(_ orderId: Int64) -> WithOrder {
         WithOrder(path: "\(path)/order-\(orderId)")
     }
 
@@ -35,6 +35,13 @@ extension Paths.Store.Order {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Delete purchase order by ID
@@ -54,6 +61,13 @@ extension Paths.Store.Order {
                 case 400: return .badRequest
                 case 404: return .notFound
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

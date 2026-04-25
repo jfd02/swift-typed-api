@@ -29,6 +29,13 @@ extension Paths.Pets {
                 default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_default.Error.self, from: data))
                 }
             }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
     }
 }

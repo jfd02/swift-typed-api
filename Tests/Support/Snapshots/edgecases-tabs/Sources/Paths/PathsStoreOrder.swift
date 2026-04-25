@@ -31,6 +31,13 @@ extension Paths.Store {
 				default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
 				}
 			}
+
+			public var underlyingError: (any Swift.Error)? {
+				switch self {
+				case .unhandled(let error): return error
+				default: return nil
+				}
+			}
 		}
 	}
 }
