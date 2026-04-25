@@ -320,35 +320,32 @@ final class Templates {
     }
 
     func initFromDecoderOneOfWithDiscriminator(properties: [Property], discriminator: Discriminator) -> String {
-        var expectedValues: [String] = []
+        var enumCases: [String] = []
         var statements = ""
+        var discriminatorCaseNameDeduplicator = NameDeduplicator()
         for property in properties {
             let correspondingMappings = discriminator.correspondingMappings(for: property)
             for mapping in correspondingMappings {
-                expectedValues.append(mapping.key)
+                let discriminatorCaseName = discriminatorCaseNameDeduplicator.add(
+                    name: PropertyName(processing: mapping.key, options: options).rawValue
+                )
+                enumCases.append(self.case(name: discriminatorCaseName, value: mapping.key))
                 statements += """
-                case \"\(mapping.key)\": self = .\(property.name)(try container.decode(\(property.type).self))
+                case .\(discriminatorCaseName): self = .\(property.name)(try container.decode(\(property.type).self))
 
                 """
             }
         }
 
-        let valuesList = expectedValues.joined(separator: ", ")
-        statements += #"""
-
-        default:
-            throw DecodingError.dataCorruptedError(
-                in: container,
-                debugDescription: "Discriminator value '\(discriminatorValue)' does not match any expected values (\#(valuesList))."
-            )
-        }
-        """#
-
         return """
         \(access)init(from decoder: Decoder) throws {
 
+            enum DiscriminatorValue: String, Decodable {
+        \(enumCases.joined(separator: "\n").indented(count: 2))
+            }
+
             struct Discriminator: Decodable {
-                let \(discriminator.propertyName): String
+                let \(discriminator.propertyName): DiscriminatorValue
             }
 
             let container = try decoder.singleValueContainer()
@@ -356,6 +353,7 @@ final class Templates {
 
             switch discriminatorValue {
         \(statements.indented)
+            }
         }
         """
     }
@@ -659,9 +657,19 @@ final class Templates {
         }
         """
 
+        let underlyingError = """
+        \(access)var underlyingError: (any Swift.Error)? {
+            switch self {
+            case .unhandled(let error): return error
+            default: return nil
+            }
+        }
+        """
+
         let contents = [
             caseDecls.joined(separator: "\n"),
-            decodeMethod
+            decodeMethod,
+            underlyingError
         ].joined(separator: "\n\n")
 
         return """

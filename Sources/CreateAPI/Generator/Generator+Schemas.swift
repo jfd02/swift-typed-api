@@ -170,6 +170,10 @@ extension Generator {
 
     /// Recursively a type declaration: struct, class, enum, typealias, etc.
     func _makeDeclaration(name: TypeName, schema: JSONSchema, context: Context) throws -> Declaration {
+        if let schema = schema.singleNonNullCompositionSchema {
+            return try _makeDeclaration(name: name, schema: schema, context: context)
+        }
+
         switch schema.value {
         case .boolean:
             return TypealiasDeclaration(name: name, type: .builtin("Bool"))
@@ -679,7 +683,7 @@ extension Generator {
 
         func property(type: TypeIdentifier, info: JSONSchemaContext?, nested: Declaration? = nil) -> Property {
             let nullable = info?.nullable ?? false
-            let isOptional = !isRequired || nullable
+            let isOptional = !isRequired || nullable || schema.isNullableComposition
             var type = type
             if context.isPatch && isOptional && options.paths.makeOptionalPatchParametersDoubleOptional {
                 type = type.asPatchParameter()

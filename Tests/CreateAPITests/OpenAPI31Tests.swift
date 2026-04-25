@@ -661,6 +661,103 @@ final class OpenAPI31GenerationTests: XCTestCase {
         }
     }
 
+    func testNullableAnyOfQueryParametersUseOptionalScalarTypes() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /balances:
+            get:
+              operationId: listBalances
+              parameters:
+                - name: start_date
+                  in: query
+                  required: false
+                  schema:
+                    anyOf:
+                      - type: string
+                        format: date
+                      - type: "null"
+                - name: end_date
+                  in: query
+                  required: false
+                  schema:
+                    anyOf:
+                      - type: string
+                        format: date
+                      - type: "null"
+                - name: account_ids
+                  in: query
+                  required: false
+                  schema:
+                    anyOf:
+                      - type: array
+                        items:
+                          type: string
+                      - type: "null"
+              responses:
+                '200':
+                  description: OK
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = GenerateOptions.default
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = output.files.first { $0.name == "PathsBalances" }
+        XCTAssertNotNil(pathFile)
+
+        if let contents = pathFile?.contents {
+            XCTAssertTrue(contents.contains("public var startDate: NaiveDate?"), "Nullable date query params should use NaiveDate?")
+            XCTAssertTrue(contents.contains("public var endDate: NaiveDate?"), "Nullable date query params should use NaiveDate?")
+            XCTAssertTrue(contents.contains("public var accountIDs: [String]?"), "Nullable array query params should use [String]?")
+            XCTAssertFalse(contents.contains("struct StartDate"), "Nullable scalar query params should not generate wrapper structs")
+            XCTAssertFalse(contents.contains("struct AccountIDs"), "Nullable array query params should not generate wrapper structs")
+        }
+    }
+
+    func testNullableAnyOfObjectPropertiesUseOptionalScalarTypes() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths: {}
+        components:
+          schemas:
+            Reminder:
+              type: object
+              required:
+                - start_date
+              properties:
+                start_date:
+                  anyOf:
+                    - type: string
+                      format: date
+                    - type: "null"
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+
+        let options = GenerateOptions.default
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.schemas()
+        let reminderFile = output.files.first { $0.name == "Reminder" }
+        XCTAssertNotNil(reminderFile)
+
+        if let contents = reminderFile?.contents {
+            XCTAssertTrue(contents.contains("public var startDate: NaiveDate?"), "Required nullable anyOf date properties should use NaiveDate?")
+            XCTAssertFalse(contents.contains("struct StartDate"), "Nullable scalar properties should not generate wrapper structs")
+        }
+    }
+
     func testScalarJSONBodiesUseTypedScalars() throws {
         let yaml = """
         openapi: "3.1.0"
@@ -926,6 +1023,10 @@ final class TypedErrorGenerationTests: XCTestCase {
 
             // Should have unhandled case
             XCTAssertTrue(contents.contains("case unhandled(any Swift.Error)"), "Should have unhandled case")
+
+            // Should expose the wrapped transport/decoding error required by RequestError
+            XCTAssertTrue(contents.contains("var underlyingError: (any Swift.Error)?"), "Should expose underlyingError")
+            XCTAssertTrue(contents.contains("case .unhandled(let error): return error"), "Should return wrapped unhandled error")
         }
     }
 

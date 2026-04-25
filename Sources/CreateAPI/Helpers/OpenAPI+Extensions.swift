@@ -100,6 +100,33 @@ extension JSONSchema {
     var isOptional: Bool {
         !self.required || self.nullable
     }
+
+    var singleNonNullCompositionSchema: JSONSchema? {
+        let schemas: [JSONSchema]
+        switch value {
+        case .one(let values, _), .any(let values, _):
+            schemas = values
+        default:
+            return nil
+        }
+
+        let nonNullSchemas = schemas.filter { !$0.isNull }
+        guard nonNullSchemas.count == 1, nonNullSchemas.count < schemas.count else {
+            return nil
+        }
+        return nonNullSchemas[0]
+    }
+
+    var isNullableComposition: Bool {
+        singleNonNullCompositionSchema != nil
+    }
+
+    private var isNull: Bool {
+        if case .null = value {
+            return true
+        }
+        return false
+    }
 }
 
 // Helper to resolve Either<OpenAPI.Reference<PathItem>, PathItem> to PathItem

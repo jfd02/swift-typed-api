@@ -13,24 +13,25 @@ public struct AnotherContainer: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
 
+            enum DiscriminatorValue: String, Decodable {
+                case one
+                case two
+                case three
+                case four
+            }
+
             struct Discriminator: Decodable {
-                let kind: String
+                let kind: DiscriminatorValue
             }
 
             let container = try decoder.singleValueContainer()
             let discriminatorValue = try container.decode(Discriminator.self).kind
 
             switch discriminatorValue {
-            case "one": self = .a(try container.decode(A.self))
-            case "two": self = .a(try container.decode(A.self))
-            case "three": self = .three(try container.decode(Three.self))
-            case "four": self = .four(try container.decode(Four.self))
-
-            default:
-                throw DecodingError.dataCorruptedError(
-                    in: container,
-                    debugDescription: "Discriminator value '\(discriminatorValue)' does not match any expected values (one, two, three, four)."
-                )
+            case .one: self = .a(try container.decode(A.self))
+            case .two: self = .a(try container.decode(A.self))
+            case .three: self = .three(try container.decode(Three.self))
+            case .four: self = .four(try container.decode(Four.self))
             }
         }
 

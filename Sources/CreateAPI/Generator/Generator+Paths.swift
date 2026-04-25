@@ -586,6 +586,10 @@ extension Generator {
         }
 
         func getQueryItemType(for schema: JSONSchema, isTopLevel: Bool) throws -> QueryItemType? {
+            if let schema = schema.singleNonNullCompositionSchema {
+                return try getQueryItemType(for: schema, isTopLevel: isTopLevel)
+            }
+
             switch schema.value {
             case .boolean: return QueryItemType("Bool")
             case .number(let info, _):
@@ -647,7 +651,7 @@ extension Generator {
         }
 
         let name = getPropertyName(for: makePropertyName(parameter.name), type: type.type)
-        return Property(name: name, type: type.type, isOptional: !parameter.required, key: parameter.name, explode: schemaContext.explode, style: schemaContext.style, metadata: .init(schema.coreContext), nested: type.nested)
+        return Property(name: name, type: type.type, isOptional: !parameter.required || schema.isNullableComposition, key: parameter.name, explode: schemaContext.explode, style: schemaContext.style, metadata: .init(schema.coreContext), nested: type.nested)
     }
 
     // MARK: - Request Body
