@@ -17,6 +17,18 @@ public protocol RequestError: Error {
 
     /// Wraps a non-API error (network failure, decoding error, etc.).
     static func unhandled(_ error: any Error) -> Self
+
+    /// Returns the wrapped error if this is an ``unhandled`` case, otherwise `nil`.
+    var underlyingError: (any Error)? { get }
+}
+
+extension RequestError {
+    public var underlyingError: (any Error)? {
+        let mirror = Mirror(reflecting: self)
+        guard let child = mirror.children.first,
+              child.label == "unhandled" else { return nil }
+        return child.value as? any Error
+    }
 }
 
 /// Default error type for requests without documented error responses.
