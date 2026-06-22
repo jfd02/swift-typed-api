@@ -184,6 +184,6 @@ Congratulations for making it though this tutorial. Using CreateAPI to generate 
 - [Configuration Options](./ConfigOptions.md)
 - [Swift Package Plugins](./SwiftPackagePlugins.md)
 - [Advanced Setup](./AdvancedSetup.md)
-- [TypedAPI](https://github.com/0xff8c00/swift-typed-api)
+- [TypedAPI](https://github.com/jfd02/swift-typed-api)
 
-If you have any questions or feedback, you are always welcome to [Submit an Issue](https://github.com/CreateAPI/CreateAPI/issues/new).
+If you have any questions or feedback, you are always welcome to [Submit an Issue](https://github.com/jfd02/swift-typed-api/issues/new).

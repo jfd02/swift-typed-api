@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "cookpad", targets: ["cookpad"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0")
+        .package(url: "https://github.com/jfd02/swift-typed-api", from: "0.3.0")
     ],
     targets: [
         .target(name: "cookpad", dependencies: [

@@ -10,7 +10,7 @@ extension Generator {
 
     func makePackageFile(name: String) -> String {
         let allPackages = options.package.dependencies
-            .appending(.get)
+            .appending(.typedAPI)
             .appending(.httpHeaders, if: isHTTPHeadersDependencyNeeded)
             .appending(.naiveDate, if: isNaiveDateNeeded)
             .appending(.urlQueryEncoder, if: isQueryEncoderNeeded)

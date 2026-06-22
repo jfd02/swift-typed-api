@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "petstore-filename-template", targets: ["petstore-filename-template"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
+        .package(url: "https://github.com/jfd02/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/HTTPHeaders", from: "0.1.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
     ],

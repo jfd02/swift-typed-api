@@ -1,3 +1,20 @@
+# swift-typed-api Changelog
+
+This project is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps CreateAPI's OpenAPI-to-Swift generator and replaces the runtime: generated code depends on the bundled `TypedAPI` module — a typed-error adaptation of [Get](https://github.com/kean/Get) — instead of `Get`.
+
+## 0.3.0
+
+- **Typed errors.** Every generated operation now returns `Request<Success, Failure>`, where `Failure` is a generated enum conforming to `RequestError` with one case per documented response status code plus an `unhandled` catch-all. Replaces Get's untyped `Request<Response>`.
+- **Typed throws.** `APIClient.send(_:)` is declared `async throws(E)`, so the concrete error type is known at the call site and individual status codes can be caught exhaustively.
+- **`TypedAPI` runtime.** Generated packages depend on `TypedAPI` (vendored in this repository) rather than `Get`. The client/runtime design is adapted from Get by Alexander Grebenyuk.
+- **Swift 6.** Generated `Package.swift` manifests target `swift-tools-version:6.0`.
+
+---
+
+## Upstream CreateAPI history
+
+The entries below are inherited from CreateAPI prior to the fork.
+
 # CreateAPI 0.x
 
 ## 0.2.0

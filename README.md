@@ -11,6 +11,15 @@ Delightful code generation for OpenAPI specs for Swift written in Swift.
 
 > Powered by [OpenAPIKit](https://github.com/mattpolzin/OpenAPIKit)
 
+## How this differs from CreateAPI
+
+This is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps CreateAPI's OpenAPI-to-Swift generator and swaps the runtime: generated clients depend on the bundled **`TypedAPI`** module instead of [Get](https://github.com/kean/Get). The headline difference is **typed errors**:
+
+- Each operation returns `Request<Success, Failure>`, where `Failure` is a generated enum conforming to `RequestError` — one case per documented response status code, plus an `unhandled` catch-all.
+- `APIClient.send(_:)` uses Swift 6 **typed throws** (`async throws(E)`), so the concrete error type is known at the call site and you can exhaustively `catch` individual API errors.
+
+See the [Example](#example) below for what this looks like in practice, and the [CHANGELOG](./CHANGELOG.md) for the full list of fork changes.
+
 ## Installation
 
 ### [Mint](https://github.com/yonaskolb/Mint)

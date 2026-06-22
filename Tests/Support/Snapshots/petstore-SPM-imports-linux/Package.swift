@@ -12,7 +12,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-log", .branch("main")),
         .package(url: "https://github.com/apple/swift-numerics", .revision("7f2d022d3d9b55bf812814f5d01896cbfa0fd4da")),
-        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
+        .package(url: "https://github.com/jfd02/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/HTTPHeaders", from: "0.1.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
     ],

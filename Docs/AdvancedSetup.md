@@ -7,7 +7,7 @@ Looking for examples that push CreateAPI to it's limits? Well look no further.
 
 ## Using a different API Client
 
-While using [TypedAPI](https://github.com/0xff8c00/swift-typed-api) is the easiest way to get started with CreateAPI, you might want to integrate CreateAPI with a different client instead.
+While using [TypedAPI](https://github.com/jfd02/swift-typed-api) is the easiest way to get started with CreateAPI, you might want to integrate CreateAPI with a different client instead.
 
 To do this, there are two important steps that need following:
 
@@ -29,7 +29,7 @@ paths:
 
 The generated code needs to initialize a type called `Request` to define all of the path parameters and response type. When importing `TypedAPI`, `Request` is already available to the generated code, but after removing the import this will no longer be the case.
 
-You should either add a new `Request` type to the module of the generated code, or import one from a different module (be sure to update `paths.imports` if so). The type should be compatible with [`TypedAPI.Request`](https://github.com/0xff8c00/swift-typed-api):
+You should either add a new `Request` type to the module of the generated code, or import one from a different module (be sure to update `paths.imports` if so). The type should be compatible with [`TypedAPI.Request`](https://github.com/jfd02/swift-typed-api):
 
 ```swift
 struct Request<Success, Failure: Error> {

@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "edgecases-data-types", targets: ["edgecases-data-types"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
+        .package(url: "https://github.com/jfd02/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/NaiveDate", from: "1.0.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
     ],

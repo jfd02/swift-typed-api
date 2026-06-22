@@ -135,7 +135,7 @@ extension Generator {
             }
         }
 
-        addGetPrefixIfNeeded(for: jobs)
+        addTypedAPIPrefixIfNeeded(for: jobs)
 
         return jobs
     }
@@ -150,9 +150,9 @@ extension Generator {
         return true
     }
 
-    // Add `Get.Request` instead of just `Request` in paths that themselve
+    // Add `TypedAPI.Request` instead of just `Request` in paths that themselves
     // define a `Request` type (to avoid conflicts).
-    private func addGetPrefixIfNeeded(for jobs: [JobGenerateRest]) {
+    private func addTypedAPIPrefixIfNeeded(for jobs: [JobGenerateRest]) {
         // Figure out what subpaths contain "Request" type
         for job in jobs where job.type.rawValue == "Request" {
             let path = job.components.dropLast().joined(separator: "/")
@@ -160,7 +160,7 @@ extension Generator {
         }
     }
 
-    private func needsGetPrefix(for path: OpenAPI.Path) -> Bool {
+    private func needsTypedAPIPrefix(for path: OpenAPI.Path) -> Bool {
         pathsContainingRequestType.contains {
             path.components.joined(separator: "/").hasPrefix($0)
         }
@@ -524,7 +524,7 @@ extension Generator {
 
         var output = templates.comments(for: .init(task.operation), name: "")
         let methodName = style == .operations ? makePropertyName(task.operationId).rawValue : task.method
-        let prefix = needsGetPrefix(for: task.path) ? "Get." : ""
+        let prefix = needsTypedAPIPrefix(for: task.path) ? "TypedAPI." : ""
 
         let errorType = typedResponse.errorCases.isEmpty ? "DefaultRequestError" : typedResponse.errorEnumName
         let returnType = "\(prefix)Request<\(response.type), \(errorType)>"

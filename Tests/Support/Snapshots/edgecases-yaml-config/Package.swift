@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "edgecases-yaml-config", targets: ["edgecases-yaml-config"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/0xff8c00/swift-typed-api", from: "0.3.0"),
+        .package(url: "https://github.com/jfd02/swift-typed-api", from: "0.3.0"),
         .package(url: "https://github.com/CreateAPI/HTTPHeaders", from: "0.1.0"),
         .package(url: "https://github.com/CreateAPI/NaiveDate", from: "1.0.0"),
         .package(url: "https://github.com/CreateAPI/URLQueryEncoder", from: "0.2.0")
