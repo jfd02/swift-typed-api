@@ -47,14 +47,14 @@ If you can predict that there might be questions/confusion/concern about anythin
 When releasing a new version of CreateAPI, be sure to follow the steps outlined below:
 
 - [ ] Ensure that the `main` branch checks are passing.
-- [ ] Update the [version number](https://github.com/CreateAPI/CreateAPI/blob/main/Sources/CreateAPI/CreateAPI.swift#L8).
+- [ ] Update the [version number](https://github.com/jfd02/swift-typed-api/blob/main/Sources/CreateAPI/CreateAPI.swift#L8).
 - [ ] Update the `create-api generate --help` output in **README.md** if it has changed.
 - [ ] Update [CHANGELOG.md](./CHANGELOG.md).
   - Use the GitHub generated release notes as a base. Be sure to cleanup the PR links.
 - [ ] Create a GitHub Release.
   - Create a new tag using semantic versioning.
   - Use the generated release notes.
-- [ ] From the [Release Workflow](https://github.com/CreateAPI/CreateAPI/actions/workflows/release.yml), get the artifactbundle SHA and add an Artifact Bundle section to the release page. For example:
+- [ ] From the [Release Workflow](https://github.com/jfd02/swift-typed-api/actions/workflows/release.yml), get the artifactbundle SHA and add an Artifact Bundle section to the release page. For example:
     > ## Artifact Bundle
     >
     > Checksum: `89c75ec3b2938d08b961b94e70e6dd6fa0ff52a90037304d41718cd5fb58bd24`
@@ -62,11 +62,10 @@ When releasing a new version of CreateAPI, be sure to follow the steps outlined 
     > ```swift
     > .binaryTarget(
     >     name: "create-api",
-    >     url: "https://github.com/CreateAPI/CreateAPI/releases/download/0.0.5/create-api.artifactbundle.zip",
+    >     url: "https://github.com/jfd02/swift-typed-api/releases/download/x.x.x/create-api.artifactbundle.zip",
     >     checksum: "89c75ec3b2938d08b961b94e70e6dd6fa0ff52a90037304d41718cd5fb58bd24"
     > )
     > ```
-- [ ] Push the release to Homebrew with `brew bump-formula-pr create-api`.
 
 
 ---

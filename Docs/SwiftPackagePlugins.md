@@ -15,7 +15,7 @@ If you want to learn how to use Swift Package plugins with CreateAPI, we've expl
 
 While there are different types of plugins, you are always going to need the `create-api` cli as a dependency.
 
-You can do this by adding the CreateAPI package as a dependency just like you would with any other library but this means that you need to compile it each time, which isn't ideal.
+You can do this by adding the `swift-typed-api` package as a dependency just like you would with any other library but this means that you need to compile it each time, which isn't ideal.
 
 Instead, you can add your own target that links to our published Artifact Bundle to bring in a precompiled version of the tool.
 
@@ -26,14 +26,14 @@ To add a new `binaryTarget` to your package, you need two pieces of information:
 1. The url to the artifact bundle
 2. The checksum of the bundle
 
-You can find all of this in the [release notes](https://github.com/CreateAPI/CreateAPI/releases/latest).
+You can find all of this in the [release notes](https://github.com/jfd02/swift-typed-api/releases/latest).
 
 In your **Package.swift**, add the following to your `targets` array:
 
 ```swift
 .binaryTarget(
     name: "create-api",
-    url: "https://github.com/CreateAPI/CreateAPI/releases/download/x.x.x/create-api.artifactbundle.zip",
+    url: "https://github.com/jfd02/swift-typed-api/releases/download/x.x.x/create-api.artifactbundle.zip",
     checksum: "ffffffffff"
 )
 ```
@@ -99,8 +99,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "create-api",
-            url: "https://github.com/CreateAPI/CreateAPI/releases/download/0.0.5/create-api.artifactbundle.zip",
-            checksum: "89c75ec3b2938d08b961b94e70e6dd6fa0ff52a90037304d41718cd5fb58bd24"
+            url: "https://github.com/jfd02/swift-typed-api/releases/download/x.x.x/create-api.artifactbundle.zip",
+            checksum: "<checksum from the release notes>"
         ),
         .plugin(
             name: "CreateAPI",
@@ -195,8 +195,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "create-api",
-            url: "https://github.com/CreateAPI/CreateAPI/releases/download/0.0.5/create-api.artifactbundle.zip",
-            checksum: "89c75ec3b2938d08b961b94e70e6dd6fa0ff52a90037304d41718cd5fb58bd24"
+            url: "https://github.com/jfd02/swift-typed-api/releases/download/x.x.x/create-api.artifactbundle.zip",
+            checksum: "<checksum from the release notes>"
         ),
         .plugin(
             name: "GenerateAPI",

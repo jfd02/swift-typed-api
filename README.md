@@ -22,29 +22,32 @@ See the [Example](#example) below for what this looks like in practice, and the 
 
 ## Installation
 
+### Build from source
+
+```bash
+$ git clone https://github.com/jfd02/swift-typed-api.git
+$ cd swift-typed-api
+$ make install   # builds and installs the `create-api` binary into /usr/local/bin
+```
+
+You can also run the generator straight from a clone without installing it:
+
+```bash
+$ swift run create-api generate <schema> --output <output-dir>
+```
+
 ### [Mint](https://github.com/yonaskolb/Mint)
 
 ```bash
-$ mint install CreateAPI/CreateAPI
-```
-
-### [Homebrew](https://formulae.brew.sh/formula/create-api)
-
-```bash
-$ brew install create-api
+$ mint install jfd02/swift-typed-api
 ```
 
 ### Swift Package Plugins
 
 - [Creating a Swift Package Plugin](./Docs/SwiftPackagePlugins.md)
 
-### Make
-
-```bash
-$ git clone https://github.com/CreateAPI/CreateAPI.git
-$ cd CreateAPI
-$ make install
-```
+> [!NOTE]
+> This is a fork. `brew install create-api` and `mint install CreateAPI/CreateAPI` install the **upstream** CreateAPI, which uses [Get](https://github.com/kean/Get) rather than `TypedAPI` and has no typed errors. Use the commands above to install this fork.
 
 ## Getting Started
 
