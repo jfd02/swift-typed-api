@@ -736,13 +736,21 @@ extension Generator {
             return SuccessfulResponseCandidate(
                 statusCode: statusCode,
                 body: body,
-                contentSignature: String(describing: response.content)
+                // Compare only the schemas (not examples, descriptions, or other
+                // metadata) since those are all that determine the generated type.
+                // This keeps responses like 200/201 that share a schema compatible.
+                contentSignature: String(describing: response.content.values.map { $0.schema })
             )
         }
 
-        if let first = successCandidates.first {
+        // Responses without a body (e.g. 204 No Content, 205 Reset Content) don't
+        // constrain the decoded success type, so only content-bearing responses
+        // need to agree. This lets an operation mix, say, a 200 with a body and a
+        // 205 without one.
+        let bodyCandidates = successCandidates.filter { $0.body.type.rawValue != "Void" }
+        if let first = bodyCandidates.first {
             successType = first.body
-            let incompatible = successCandidates.dropFirst().first {
+            let incompatible = bodyCandidates.dropFirst().first {
                 $0.body.type.rawValue != first.body.type.rawValue ||
                 $0.body.isOptional != first.body.isOptional ||
                 $0.contentSignature != first.contentSignature

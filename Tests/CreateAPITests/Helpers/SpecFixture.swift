@@ -14,6 +14,7 @@ struct SpecFixture {
     static let testQueryParameters = SpecFixture(name: "test-query-parameters", ext: "yaml")
     static let petstore31 = SpecFixture(name: "petstore-3.1", ext: "yaml")
     static let openapi31Features = SpecFixture(name: "openapi31-features", ext: "yaml")
+    static let multipleSuccessResponses = SpecFixture(name: "multiple-success-responses", ext: "yaml")
 
     var path: String {
         URL(fileURLWithPath: #filePath)

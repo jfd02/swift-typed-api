@@ -1,0 +1,20 @@
+// swift-tools-version:6.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "multiple-success-responses",
+    platforms: [.iOS(.v13), .macCatalyst(.v13), .macOS(.v10_15), .watchOS(.v6), .tvOS(.v13)],
+    products: [
+        .library(name: "multiple-success-responses", targets: ["multiple-success-responses"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/jfd02/swift-typed-api", from: "0.3.0")
+    ],
+    targets: [
+        .target(name: "multiple-success-responses", dependencies: [
+            .product(name: "TypedAPI", package: "swift-typed-api")
+        ], path: "Sources")
+    ]
+)

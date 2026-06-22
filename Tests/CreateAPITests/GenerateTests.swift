@@ -16,6 +16,13 @@ final class GenerateTests: GenerateTestCase {
         )
     }
 
+    func testMultipleSuccessResponses() throws {
+        try snapshot(
+            spec: .multipleSuccessResponses,
+            name: "multiple-success-responses"
+        )
+    }
+
     func testInlining() throws {
         try snapshot(
             spec: .inlining,
