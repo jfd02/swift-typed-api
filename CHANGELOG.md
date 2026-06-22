@@ -2,7 +2,7 @@
 
 This project is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps CreateAPI's OpenAPI-to-Swift generator and replaces the runtime: generated code depends on the bundled `TypedAPI` module — a typed-error adaptation of [Get](https://github.com/kean/Get) — instead of `Get`.
 
-## Unreleased
+## 0.4.0
 
 - **Error introspection.** Every generated `RequestError` now exposes `statusCode` (the documented HTTP status for each case, recovered from the wrapped `APIError` for `.unhandled`). `DefaultRequestError` and `APIError` print useful messages via `CustomStringConvertible`/`LocalizedError`.
 - **Compatible multi-success responses.** Operations whose `2xx` responses share a schema, or mix a content-bearing response with a no-body one (e.g. `204`/`205`), now generate a single success type instead of failing generation.
