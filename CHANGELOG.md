@@ -2,12 +2,18 @@
 
 This project is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps CreateAPI's OpenAPI-to-Swift generator and replaces the runtime: generated code depends on the bundled `TypedAPI` module — a typed-error adaptation of [Get](https://github.com/kean/Get) — instead of `Get`.
 
+## 0.3.2
+
+- **Error introspection.** Every generated `RequestError` now exposes `statusCode` (the documented HTTP status for each case, recovered from the wrapped `APIError` for `.unhandled`). `DefaultRequestError` and `APIError` print useful messages via `CustomStringConvertible`/`LocalizedError`.
+- **Compatible multi-success responses.** Operations whose `2xx` responses share a schema, or mix a content-bearing response with a no-body one (e.g. `204`/`205`), now generate a single success type instead of failing generation.
+- **Correct fork wiring.** Generated packages, the default file-header comment, and the documentation all point at `jfd02/swift-typed-api`, and the install instructions target this fork instead of upstream CreateAPI.
+- **Runtime tests.** Added a `TypedAPI` test suite covering response decoding, typed-error decoding, transport/decoding `unhandled` wrapping, delegate retry, and request building.
+
 ## 0.3.0
 
-- **Typed errors.** Every generated operation now returns `Request<Success, Failure>`, where `Failure` is a generated enum conforming to `RequestError` with one case per documented response status code plus an `unhandled` catch-all. Replaces Get's untyped `Request<Response>`.
+- **Typed errors.** Every generated operation returns `Request<Success, Failure>`, where `Failure` is a generated enum conforming to `RequestError` with one case per documented response status code plus an `unhandled` catch-all. Replaces Get's untyped `Request<Response>`.
 - **Typed throws.** `APIClient.send(_:)` is declared `async throws(E)`, so the concrete error type is known at the call site and individual status codes can be caught exhaustively.
 - **`TypedAPI` runtime.** Generated packages depend on `TypedAPI` (vendored in this repository) rather than `Get`. The client/runtime design is adapted from Get by Alexander Grebenyuk.
-- **Error introspection.** Every generated `RequestError` exposes `statusCode` (the documented HTTP status for each case, recovered from the wrapped `APIError` for `.unhandled`) and `underlyingError` (the wrapped transport/decoding failure). `DefaultRequestError` and `APIError` print useful messages via `CustomStringConvertible`/`LocalizedError`.
 - **Swift 6.** Generated `Package.swift` manifests target `swift-tools-version:6.0`.
 
 ---
