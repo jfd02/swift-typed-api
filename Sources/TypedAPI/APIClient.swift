@@ -356,6 +356,13 @@ public actor APIClient {
 public enum APIError: Error, LocalizedError {
     case unacceptableStatusCode(Int)
 
+    /// The HTTP status code that triggered the error, if applicable.
+    public var statusCode: Int? {
+        switch self {
+        case .unacceptableStatusCode(let statusCode): return statusCode
+        }
+    }
+
     /// Returns the debug description.
     public var errorDescription: String? {
         switch self {
@@ -363,4 +370,8 @@ public enum APIError: Error, LocalizedError {
             return "Response status code was unacceptable: \(statusCode)."
         }
     }
+}
+
+extension APIError: CustomStringConvertible {
+    public var description: String { errorDescription ?? "APIError" }
 }

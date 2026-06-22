@@ -42,4 +42,27 @@ public enum DefaultRequestError: RequestError {
     public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
         .unhandled(APIError.unacceptableStatusCode(statusCode))
     }
+
+    public var underlyingError: (any Error)? {
+        switch self {
+        case .unhandled(let error): return error
+        }
+    }
+}
+
+extension DefaultRequestError: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .unhandled(let error): return "unhandled(\(error))"
+        }
+    }
+}
+
+extension DefaultRequestError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .unhandled(let error):
+            return (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+    }
 }
