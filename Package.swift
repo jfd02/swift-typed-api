@@ -57,6 +57,11 @@ let package = Package(
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
         .testTarget(
+            name: "TypedAPITests",
+            dependencies: ["TypedAPI"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
             name: "CreateOptionsTests",
             dependencies: ["CreateOptions"],
             swiftSettings: [.swiftLanguageMode(.v5)]
