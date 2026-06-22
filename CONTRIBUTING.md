@@ -36,6 +36,10 @@ If you are making a change, ether to fix/reproduce a bug, or to add a new featur
 
 If you want to add a new spec or configuration to the tests, you can add the schema to **Tests/Support/Specs/** and then write a new test, with the desired configuration in **GenerateTests.swift**. Be sure to use the record mode on your first run.
 
+> **Note:** Record mode rebuilds the **entire** `Tests/Support/Snapshots/` directory and only re-records the snapshots for tests that actually run. Always re-record with the full suite (not a `--filter` subset), or you will delete the snapshots for the tests you skipped. Because `testGitHub` currently fails (see below), its `OctoKit` snapshot is not regenerated during a record run — restore it with `git checkout -- Tests/Support/Snapshots/OctoKit` afterwards.
+
+> **Known limitation:** The `testGitHub` snapshot test currently fails. The bundled GitHub spec has operations whose successful responses return genuinely different body types (for example `repos/create-deployment` returns different shapes for `201` and `202`) and path parameters with union schemas. Generating these under `--strict` requires per-operation response overrides. This is a pre-existing, spec-specific limitation; the rest of the suite passes.
+
 ### Writeup
 
 When submitting a Pull Request, please be sure to include plenty of details for the reviewers. The amount of information you should include varies by the size of the change, but please explain the motivation for your changes and provide a summary of how you have achieved that.
