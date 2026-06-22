@@ -31,6 +31,13 @@ extension Paths {
                 }
             }
 
+            public var statusCode: Int? {
+                switch self {
+                case .methodNotAllowed: return 405
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
             public var underlyingError: (any Swift.Error)? {
                 switch self {
                 case .unhandled(let error): return error
@@ -56,6 +63,15 @@ extension Paths {
                 case 404: return .notFound
                 case 405: return .methodNotAllowed
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .badRequest: return 400
+                case .notFound: return 404
+                case .methodNotAllowed: return 405
+                case .unhandled(let error): return (error as? APIError)?.statusCode
                 }
             }
 

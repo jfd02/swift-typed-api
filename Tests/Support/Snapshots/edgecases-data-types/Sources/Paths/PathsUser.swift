@@ -32,6 +32,13 @@ extension Paths {
                 }
             }
 
+            public var statusCode: Int? {
+                switch self {
+                case .`default`(let statusCode): return statusCode
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
             public var underlyingError: (any Swift.Error)? {
                 switch self {
                 case .unhandled(let error): return error

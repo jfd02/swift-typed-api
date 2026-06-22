@@ -56,6 +56,7 @@ final class APIClientTests: XCTestCase {
                 return XCTFail("Expected .conflict, got \(error)")
             }
             XCTAssertEqual(decoded, body)
+            XCTAssertEqual(error.statusCode, 409)
         }
     }
 

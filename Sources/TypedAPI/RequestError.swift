@@ -20,6 +20,11 @@ public protocol RequestError: Error {
 
     /// Returns the wrapped error if this is an ``unhandled`` case, otherwise `nil`.
     var underlyingError: (any Error)? { get }
+
+    /// The HTTP status code associated with this error, when known.
+    ///
+    /// Generated conformances return the documented status code for each case.
+    var statusCode: Int? { get }
 }
 
 extension RequestError {
@@ -28,6 +33,13 @@ extension RequestError {
         guard let child = mirror.children.first,
               child.label == "unhandled" else { return nil }
         return child.value as? any Error
+    }
+
+    /// Recovers the status code from an ``unhandled`` error that wraps
+    /// ``APIError/unacceptableStatusCode(_:)``. Generated conformances override
+    /// this to return the documented status code for each case.
+    public var statusCode: Int? {
+        (underlyingError as? APIError)?.statusCode
     }
 }
 

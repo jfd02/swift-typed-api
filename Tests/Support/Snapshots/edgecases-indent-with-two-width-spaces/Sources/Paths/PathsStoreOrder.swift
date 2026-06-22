@@ -32,6 +32,13 @@ extension Paths.Store {
         }
       }
 
+      public var statusCode: Int? {
+        switch self {
+        case .badRequest: return 400
+        case .unhandled(let error): return (error as? APIError)?.statusCode
+        }
+      }
+
       public var underlyingError: (any Swift.Error)? {
         switch self {
         case .unhandled(let error): return error

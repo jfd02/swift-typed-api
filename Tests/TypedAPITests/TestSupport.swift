@@ -121,6 +121,14 @@ enum PetError: RequestError {
         }
     }
 
+    var statusCode: Int? {
+        switch self {
+        case .conflict: return 409
+        case .notFound: return 404
+        case .unhandled(let error): return (error as? APIError)?.statusCode
+        }
+    }
+
     var underlyingError: (any Error)? {
         switch self {
         case .unhandled(let error): return error

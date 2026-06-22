@@ -29,6 +29,13 @@ extension Paths.Pets {
                 }
             }
 
+            public var statusCode: Int? {
+                switch self {
+                case .`default`(let statusCode, _): return statusCode
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
             public var underlyingError: (any Swift.Error)? {
                 switch self {
                 case .unhandled(let error): return error

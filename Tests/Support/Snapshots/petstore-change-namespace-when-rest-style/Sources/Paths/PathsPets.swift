@@ -30,6 +30,13 @@ extension Namespace {
                 }
             }
 
+            public var statusCode: Int? {
+                switch self {
+                case .`default`(let statusCode, _): return statusCode
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
             public var underlyingError: (any Swift.Error)? {
                 switch self {
                 case .unhandled(let error): return error
@@ -61,6 +68,13 @@ extension Namespace {
             public static func decode(statusCode: Int, data: Data, decoder: JSONDecoder) throws -> Self {
                 switch statusCode {
                 default: return .`default`(statusCode: statusCode, try decoder.decode(petstore_change_namespace_when_rest_style.Error.self, from: data))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .`default`(let statusCode, _): return statusCode
+                case .unhandled(let error): return (error as? APIError)?.statusCode
                 }
             }
 

@@ -17,6 +17,7 @@ This is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps 
 
 - Each operation returns `Request<Success, Failure>`, where `Failure` is a generated enum conforming to `RequestError` — one case per documented response status code, plus an `unhandled` catch-all.
 - `APIClient.send(_:)` uses Swift 6 **typed throws** (`async throws(E)`), so the concrete error type is known at the call site and you can exhaustively `catch` individual API errors.
+- Every error exposes `statusCode` and `underlyingError`, so even a catch-all handler can log the HTTP status and the underlying transport/decoding failure.
 
 See the [Example](#example) below for what this looks like in practice, and the [CHANGELOG](./CHANGELOG.md) for the full list of fork changes.
 

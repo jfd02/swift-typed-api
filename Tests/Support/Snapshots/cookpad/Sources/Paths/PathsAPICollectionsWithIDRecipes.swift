@@ -31,6 +31,13 @@ extension Paths.Collections.WithID {
                 }
             }
 
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
             public var underlyingError: (any Swift.Error)? {
                 switch self {
                 case .unhandled(let error): return error

@@ -666,9 +666,20 @@ final class Templates {
         }
         """
 
+        var statusCodeCases = cases.compactMap { errorStatusCodeCase($0) }
+        statusCodeCases.append("case .unhandled(let error): return (error as? APIError)?.statusCode")
+        let statusCode = """
+        \(access)var statusCode: Int? {
+            switch self {
+        \(statusCodeCases.map { "    \($0)" }.joined(separator: "\n"))
+            }
+        }
+        """
+
         let contents = [
             caseDecls.joined(separator: "\n"),
             decodeMethod,
+            statusCode,
             underlyingError
         ].joined(separator: "\n\n")
 
@@ -686,6 +697,19 @@ final class Templates {
             return "case \(c.name)(statusCode: Int\(bodyPart))"
         }
         return "case \(c.name)\(bodyParam)"
+    }
+
+    /// Generates a `statusCode` switch case mapping each error case to its
+    /// documented HTTP status code.
+    private func errorStatusCodeCase(_ c: ErrorEnumCase) -> String? {
+        if c.isDefault || c.isRange {
+            let binding = c.bodyType == nil ? "(let statusCode)" : "(let statusCode, _)"
+            return "case .\(c.name)\(binding): return statusCode"
+        }
+        if let statusCode = c.statusCode {
+            return "case .\(c.name): return \(statusCode)"
+        }
+        return nil
     }
 
     private func errorDecodeCase(_ c: ErrorEnumCase) -> String {
