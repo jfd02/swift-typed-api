@@ -162,6 +162,57 @@ final class APIClientTests: XCTestCase {
         XCTAssertEqual(attempts.value, 2, "Expected exactly one retry")
     }
 
+    // MARK: Error-response hook
+
+    func testDelegateReceivesErrorResponseBodyOnTerminalFailure() async throws {
+        let body = APIErrorBody(message: "already exists")
+        MockURLProtocol.responder = { _ in .success(.init(statusCode: 409, data: jsonData(body))) }
+
+        let delegate = RecordingErrorResponseDelegate(retryOn401: false)
+        let client = MockURLProtocol.makeClient(delegate: delegate)
+        let request = Request<Pet, PetError>(path: "/pets", method: .post)
+
+        do {
+            _ = try await client.send(request)
+            XCTFail("Expected a typed error to be thrown")
+        } catch is PetError {
+            // The hook is observational — the typed error is still thrown.
+        }
+
+        XCTAssertEqual(delegate.received.count, 1, "Expected the hook to fire exactly once")
+        let received = try XCTUnwrap(delegate.received.first)
+        XCTAssertEqual(received.statusCode, 409)
+        XCTAssertEqual(try JSONDecoder().decode(APIErrorBody.self, from: received.data), body)
+    }
+
+    func testDelegateDoesNotReceiveErrorResponseOnSuccess() async throws {
+        MockURLProtocol.responder = { _ in .success(.init(statusCode: 200, data: jsonData(Pet(id: 1, name: "Fido")))) }
+
+        let delegate = RecordingErrorResponseDelegate(retryOn401: false)
+        let client = MockURLProtocol.makeClient(delegate: delegate)
+        _ = try await client.send(Request<Pet, PetError>(path: "/pets/1"))
+
+        XCTAssertTrue(delegate.received.isEmpty, "The hook must not fire on a 2xx response")
+    }
+
+    func testDelegateDoesNotReceiveErrorResponseForRetriedThenSucceeded() async throws {
+        let attempts = Counter()
+        MockURLProtocol.responder = { _ in
+            let n = attempts.increment()
+            if n == 1 {
+                return .success(.init(statusCode: 401))
+            }
+            return .success(.init(statusCode: 200, data: jsonData(Pet(id: 7, name: "Rex"))))
+        }
+
+        let delegate = RecordingErrorResponseDelegate(retryOn401: true)
+        let client = MockURLProtocol.makeClient(delegate: delegate)
+        let response = try await client.send(Request<Pet, PetError>(path: "/pets/7"))
+
+        XCTAssertEqual(response.value, Pet(id: 7, name: "Rex"))
+        XCTAssertTrue(delegate.received.isEmpty, "An intermediate retried 401 must not fire the error-response hook")
+    }
+
     // MARK: Request building
 
     func testRequestIsBuiltFromBaseURLPathQueryAndHeaders() async throws {
@@ -238,5 +289,29 @@ final class RetryOn401Delegate: APIClientDelegate {
 final class AuthHeaderDelegate: APIClientDelegate {
     func client(_ client: APIClient, willSendRequest request: inout URLRequest) async throws {
         request.setValue("Bearer token", forHTTPHeaderField: "Authorization")
+    }
+}
+
+final class RecordingErrorResponseDelegate: APIClientDelegate, @unchecked Sendable {
+    struct Received { let statusCode: Int?; let data: Data }
+
+    private let retryOn401: Bool
+    private let lock = NSLock()
+    private var _received: [Received] = []
+
+    init(retryOn401: Bool) { self.retryOn401 = retryOn401 }
+
+    var received: [Received] {
+        lock.lock(); defer { lock.unlock() }
+        return _received
+    }
+
+    func client(_ client: APIClient, shouldRetry task: URLSessionTask, response: HTTPURLResponse?, error: Error, attempts: Int) async throws -> Bool {
+        retryOn401 && response?.statusCode == 401 && attempts == 1
+    }
+
+    func client(_ client: APIClient, didReceiveErrorResponse response: HTTPURLResponse?, data: Data, for request: URLRequest?) async {
+        lock.lock(); defer { lock.unlock() }
+        _received.append(Received(statusCode: response?.statusCode, data: data))
     }
 }
