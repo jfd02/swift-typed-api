@@ -133,6 +133,10 @@ public actor APIClient {
             return try await sendData(for: request, attempts: attempts + 1, delegate: delegate, configure: configure)
         }
 
+        // Terminal non-2xx — hand the delegate the raw body once (for cross-cutting
+        // reactions to error codes) before decoding it into the typed error.
+        await self.delegate.client(self, didReceiveErrorResponse: httpResponse, data: response.data, for: response.originalRequest)
+
         // No retry — decode into the typed error
         let decoder = self.delegate.client(self, decoderForRequest: request) ?? self.decoder
         throw try E.decode(statusCode: statusCode, data: response.data, decoder: decoder)

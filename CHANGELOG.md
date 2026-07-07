@@ -2,6 +2,10 @@
 
 This project is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps CreateAPI's OpenAPI-to-Swift generator and replaces the runtime: generated code depends on the bundled `TypedAPI` module — a typed-error adaptation of [Get](https://github.com/kean/Get) — instead of `Get`.
 
+## 0.5.0
+
+- **Error-response delegate hook.** `APIClientDelegate` gains `client(_:didReceiveErrorResponse:data:for:)`, called once on a terminal non-2xx response (after any retry is declined/exhausted) with the raw response body, right before it is decoded into the typed error and thrown. Unlike `shouldRetry`, it receives the response `data`, so a delegate can inspect an error payload (e.g. a discriminator `code`) to drive cross-cutting reactions. Purely observational — the typed error is still thrown to the caller. Has a default no-op implementation, so existing conformers are unaffected.
+
 ## 0.4.0
 
 - **Error introspection.** Every generated `RequestError` now exposes `statusCode` (the documented HTTP status for each case, recovered from the wrapped `APIError` for `.unhandled`). `DefaultRequestError` and `APIError` print useful messages via `CustomStringConvertible`/`LocalizedError`.
