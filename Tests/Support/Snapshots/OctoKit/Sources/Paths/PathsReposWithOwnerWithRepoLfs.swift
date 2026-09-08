@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -18,7 +18,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Enable Git LFS for a repository
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#enable-git-lfs-for-a-repository)
-        public var put: Request<[String: AnyJSON], PutError> {
+        public var put: Request<Void, PutError> {
             Request(path: path, method: "PUT", id: "repos/enable-lfs-for-repo")
         }
 
@@ -30,6 +30,20 @@ extension Paths.Repos.WithOwner.WithRepo {
                 switch statusCode {
                 case 403: return .forbidden
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

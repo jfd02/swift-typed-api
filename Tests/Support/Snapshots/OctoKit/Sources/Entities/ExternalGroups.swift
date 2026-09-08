@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A list of external groups available to be connected to a team
 public struct ExternalGroups: Codable, Sendable {

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -36,6 +36,22 @@ extension Paths.Projects.Columns.WithColumnID {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -47,7 +63,7 @@ extension Paths.Projects.Columns.WithColumnID {
             public var perPage: Int?
             public var page: Int?
 
-            public enum ArchivedState: String, Codable, CaseIterable {
+            public enum ArchivedState: String, Codable, CaseIterable, Sendable {
                 case all
                 case archived
                 case notArchived = "not_archived"
@@ -91,6 +107,24 @@ extension Paths.Projects.Columns.WithColumnID {
                 case 422: return .unprocessableEntity(try decoder.decode(PostUnprocessableEntityBody.self, from: data))
                 case 503: return .serviceUnavailable(try decoder.decode(PostServiceUnavailableBody.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unprocessableEntity: return 422
+                case .serviceUnavailable: return 503
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

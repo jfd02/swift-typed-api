@@ -2,12 +2,12 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The duration of the interaction restriction. Can be one of: `one_day`, `three_days`, `one_week`, `one_month`, `six_months`. Default: `one_day`.
 ///
 /// Example: "one_month"
-public enum InteractionExpiry: String, Codable, CaseIterable {
+public enum InteractionExpiry: String, Codable, CaseIterable, Sendable {
     case oneDay = "one_day"
     case threeDays = "three_days"
     case oneWeek = "one_week"

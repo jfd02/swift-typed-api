@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The policy that controls the repositories in the organization that are allowed to run GitHub Actions. Can be one of: `all`, `none`, or `selected`.
-public enum EnabledRepositories: String, Codable, CaseIterable {
+public enum EnabledRepositories: String, Codable, CaseIterable, Sendable {
     case all
     case `none`
     case selected

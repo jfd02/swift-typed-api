@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -32,6 +32,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Merge a pull request
@@ -59,6 +73,24 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
                 case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .methodNotAllowed: return 405
+                case .conflict: return 409
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -106,7 +138,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
             public var mergeMethod: MergeMethod?
 
             /// Merge method to use. Possible values are `merge`, `squash` or `rebase`. Default is `merge`.
-            public enum MergeMethod: String, Codable, CaseIterable {
+            public enum MergeMethod: String, Codable, CaseIterable, Sendable {
                 case merge
                 case squash
                 case rebase

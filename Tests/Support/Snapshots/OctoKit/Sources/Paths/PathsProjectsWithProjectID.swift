@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -38,6 +38,22 @@ extension Paths.Projects {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Update a project
@@ -67,6 +83,25 @@ extension Paths.Projects {
                 case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationErrorSimple.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .gone: return 410
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -109,7 +144,7 @@ extension Paths.Projects {
             public var isPrivate: Bool?
 
             /// The baseline permission that all organization members have on this project
-            public enum OrganizationPermission: String, Codable, CaseIterable {
+            public enum OrganizationPermission: String, Codable, CaseIterable, Sendable {
                 case read
                 case write
                 case admin
@@ -159,6 +194,24 @@ extension Paths.Projects {
                 case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .gone: return 410
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A codespace.
 public struct Codespace: Codable, Sendable {
@@ -69,7 +69,7 @@ public struct Codespace: Codable, Sendable {
     /// State of this codespace.
     ///
     /// Example: "Available"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case `none` = "None"
         case created = "Created"
         case queued = "Queued"
@@ -134,7 +134,7 @@ public struct Codespace: Codable, Sendable {
     /// The Azure region where this codespace is located.
     ///
     /// Example: "WestUs2"
-    public enum Location: String, Codable, CaseIterable {
+    public enum Location: String, Codable, CaseIterable, Sendable {
         case eastUs = "EastUs"
         case southEastAsia = "SouthEastAsia"
         case westEurope = "WestEurope"

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -99,7 +99,7 @@ extension Paths.Scim.V2.Enterprises.WithEnterprise.Groups {
                 /// Can be any value - string, number, array or object.
                 public var value: AnyJSON?
 
-                public enum Op: String, Codable, CaseIterable {
+                public enum Op: String, Codable, CaseIterable, Sendable {
                     case add
                     case add2 = "Add"
                     case remove

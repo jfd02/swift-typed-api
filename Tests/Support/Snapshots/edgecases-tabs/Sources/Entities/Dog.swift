@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct Dog: Codable, Sendable {
 	public var className: String
@@ -10,7 +10,7 @@ public struct Dog: Codable, Sendable {
 	public var breed: Breed?
 	public var image: Image?
 
-	public enum Breed: String, Codable, CaseIterable {
+	public enum Breed: String, Codable, CaseIterable, Sendable {
 		case large = "Large"
 		case medium = "Medium"
 		case small = "Small"

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct PackagesBillingUsage: Codable, Sendable {
     /// Sum of the free and paid storage space (GB) for GitHuub Packages.

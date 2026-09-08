@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct Installation: Codable, Sendable {
     /// The ID of the installation.
@@ -68,6 +68,13 @@ public struct Installation: Codable, Sendable {
         }
 
         public func encode(to encoder: Encoder) throws {
+            let encodedValueCount = [simpleUser != nil, enterprise != nil].filter { $0 }.count
+            guard encodedValueCount == 1 else {
+                throw EncodingError.invalidValue(
+                    self,
+                    .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
+                )
+            }
             var container = encoder.singleValueContainer()
             if let value = simpleUser { try container.encode(value) }
             if let value = enterprise { try container.encode(value) }
@@ -75,7 +82,7 @@ public struct Installation: Codable, Sendable {
     }
 
     /// Describe whether all repositories have been selected or there's a selection involved
-    public enum RepositorySelection: String, Codable, CaseIterable {
+    public enum RepositorySelection: String, Codable, CaseIterable, Sendable {
         case all
         case selected
     }

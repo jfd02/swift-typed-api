@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct PagesHTTPSCertificate: Codable, Sendable {
     /// Example: "approved"
@@ -16,7 +16,7 @@ public struct PagesHTTPSCertificate: Codable, Sendable {
     public var expiresAt: NaiveDate?
 
     /// Example: "approved"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case new
         case authorizationCreated = "authorization_created"
         case authorizationPending = "authorization_pending"

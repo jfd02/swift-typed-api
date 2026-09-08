@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct CommitComparison: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/compare/master...topic"
@@ -28,7 +28,7 @@ public struct CommitComparison: Codable, Sendable {
     public var files: [DiffEntry]?
 
     /// Example: "ahead"
-    public enum Status: String, Codable, CaseIterable {
+    public enum Status: String, Codable, CaseIterable, Sendable {
         case diverged
         case ahead
         case behind

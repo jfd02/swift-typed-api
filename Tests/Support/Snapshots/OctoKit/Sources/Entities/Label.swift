@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Color-coded labels help you categorize and filter your issues (just like labels in Gmail).
 public struct Label: Codable, Sendable {

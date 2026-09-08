@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -48,6 +48,27 @@ extension Paths.User.Codespaces.WithCodespaceName {
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 409: return .conflict(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .internalServerError: return 500
+                case .badRequest: return 400
+                case .unauthorized: return 401
+                case .status402: return 402
+                case .forbidden: return 403
+                case .notFound: return 404
+                case .conflict: return 409
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

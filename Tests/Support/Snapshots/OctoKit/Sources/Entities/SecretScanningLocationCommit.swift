@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Represents a 'commit' secret scanning location type. This location type shows that a secret was detected inside a commit to a repository.
 public struct SecretScanningLocationCommit: Codable, Sendable {

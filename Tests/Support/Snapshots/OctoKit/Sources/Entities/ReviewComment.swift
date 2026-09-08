@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Legacy Review Comment
 public struct ReviewComment: Codable, Sendable {
@@ -97,13 +97,13 @@ public struct ReviewComment: Codable, Sendable {
     }
 
     /// The side of the first line of the range for a multi-line comment.
-    public enum Side: String, Codable, CaseIterable {
+    public enum Side: String, Codable, CaseIterable, Sendable {
         case left = "LEFT"
         case right = "RIGHT"
     }
 
     /// The side of the first line of the range for a multi-line comment.
-    public enum StartSide: String, Codable, CaseIterable {
+    public enum StartSide: String, Codable, CaseIterable, Sendable {
         case left = "LEFT"
         case right = "RIGHT"
     }

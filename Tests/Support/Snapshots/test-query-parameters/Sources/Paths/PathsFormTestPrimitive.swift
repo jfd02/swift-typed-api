@@ -55,7 +55,7 @@ extension Paths.Form {
             return encoder.items
         }
 
-        public enum `Type`: String, Codable, CaseIterable {
+        public enum `Type`: String, Codable, CaseIterable, Sendable {
             case cat
             case dog
         }

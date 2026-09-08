@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Sets the state of the code scanning alert. Can be one of `open` or `dismissed`. You must provide `dismissed_reason` when you set the state to `dismissed`.
-public enum CodeScanningAlertSetState: String, Codable, CaseIterable {
+public enum CodeScanningAlertSetState: String, Codable, CaseIterable, Sendable {
     case `open`
     case dismissed
 }

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -37,6 +37,20 @@ extension Paths.Teams.WithTeamID.Members {
                 switch statusCode {
                 case 404: return .notFound
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -75,6 +89,22 @@ extension Paths.Teams.WithTeamID.Members {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Remove team member (Legacy)
@@ -103,6 +133,20 @@ extension Paths.Teams.WithTeamID.Members {
                 switch statusCode {
                 case 404: return .notFound
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

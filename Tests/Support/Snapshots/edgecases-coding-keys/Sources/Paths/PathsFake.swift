@@ -2,8 +2,8 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
-import HTTPHeaders
+@preconcurrency import NaiveDate
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -55,12 +55,12 @@ extension Paths {
             public var enumQueryString: EnumQueryString?
             public var enumQueryInteger: Int32?
 
-            public enum EnumQueryStringArray: String, Codable, CaseIterable {
+            public enum EnumQueryStringArray: String, Codable, CaseIterable, Sendable {
                 case greaterThan = ">"
                 case dollar = "$"
             }
 
-            public enum EnumQueryString: String, Codable, CaseIterable {
+            public enum EnumQueryString: String, Codable, CaseIterable, Sendable {
                 case abc = "_abc"
                 case minusefg = "-efg"
                 case xyz = "(xyz)"

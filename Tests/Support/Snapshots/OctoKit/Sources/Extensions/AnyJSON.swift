@@ -2,9 +2,9 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
-public enum AnyJSON: Equatable, Codable {
+public enum AnyJSON: Equatable, Codable, Sendable {
     case string(String)
     case number(Double)
     case object([String: AnyJSON])

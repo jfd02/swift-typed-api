@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -38,6 +38,20 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Repos.WithOwner {
                 switch statusCode {
                 case 404: return .notFound
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -76,7 +90,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug.Repos.WithOwner {
             /// \* custom repository role name - A custom repository role if the owning organization has defined any.  
             ///   
             /// If no permission is specified, the team's `permission` attribute will be used to determine what permission to grant the team on this repository.
-            public enum Permission: String, Codable, CaseIterable {
+            public enum Permission: String, Codable, CaseIterable, Sendable {
                 case pull
                 case push
                 case admin

@@ -2,18 +2,18 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct EnumArrays: Codable, Sendable {
     public var justSymbol: JustSymbol?
     public var arrayEnum: [ArrayEnumItem]?
 
-    public enum JustSymbol: String, Codable, CaseIterable {
+    public enum JustSymbol: String, Codable, CaseIterable, Sendable {
         case greaterThanOrEqualTo = ">="
         case dollar = "$"
     }
 
-    public enum ArrayEnumItem: String, Codable, CaseIterable {
+    public enum ArrayEnumItem: String, Codable, CaseIterable, Sendable {
         case fish
         case crab
     }

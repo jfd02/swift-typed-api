@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -43,7 +43,7 @@ extension Paths.Repos.WithOwner.WithRepo.Statuses {
             public var context: String?
 
             /// The state of the status. Can be one of `error`, `failure`, `pending`, or `success`.
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case error
                 case failure
                 case pending

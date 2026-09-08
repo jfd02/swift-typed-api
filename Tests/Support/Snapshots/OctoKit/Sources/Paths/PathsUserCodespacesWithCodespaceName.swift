@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -44,6 +44,24 @@ extension Paths.User.Codespaces {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .internalServerError: return 500
+                case .unauthorized: return 401
+                case .forbidden: return 403
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Update a codespace for the authenticated user
@@ -73,6 +91,22 @@ extension Paths.User.Codespaces {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unauthorized: return 401
+                case .forbidden: return 403
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Delete a codespace for the authenticated user
@@ -82,7 +116,7 @@ extension Paths.User.Codespaces {
         /// You must authenticate using an access token with the `codespace` scope to use this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/codespaces#delete-a-codespace-for-the-authenticated-user)
-        public var delete: Request<[String: AnyJSON], DeleteError> {
+        public var delete: Request<Void, DeleteError> {
             Request(path: path, method: "DELETE", id: "codespaces/delete-for-authenticated-user")
         }
 
@@ -102,6 +136,24 @@ extension Paths.User.Codespaces {
                 case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .internalServerError: return 500
+                case .unauthorized: return 401
+                case .forbidden: return 403
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

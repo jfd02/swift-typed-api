@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -39,6 +39,20 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Add or update team repository permissions (Legacy)
@@ -67,6 +81,21 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .forbidden: return 403
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PutRequest: Encodable, Sendable {
@@ -84,7 +113,7 @@ extension Paths.Teams.WithTeamID.Repos.WithOwner {
             /// \* `admin` - team members can pull, push and administer this repository.  
             ///   
             /// If no permission is specified, the team's `permission` attribute will be used to determine what permission to grant the team on this repository.
-            public enum Permission: String, Codable, CaseIterable {
+            public enum Permission: String, Codable, CaseIterable, Sendable {
                 case pull
                 case push
                 case admin

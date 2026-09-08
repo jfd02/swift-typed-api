@@ -2,9 +2,9 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
-public enum EnumClass: String, Codable, CaseIterable {
+public enum EnumClass: String, Codable, CaseIterable, Sendable {
     case abc = "_abc"
     case minusefg = "-efg"
     case xyz = "(xyz)"

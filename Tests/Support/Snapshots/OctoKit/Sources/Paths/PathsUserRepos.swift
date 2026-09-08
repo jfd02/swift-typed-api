@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -42,6 +42,23 @@ extension Paths.User {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct GetParameters {
@@ -55,13 +72,13 @@ extension Paths.User {
             public var since: Date?
             public var before: Date?
 
-            public enum Visibility: String, Codable, CaseIterable {
+            public enum Visibility: String, Codable, CaseIterable, Sendable {
                 case all
                 case `public`
                 case `private`
             }
 
-            public enum `Type`: String, Codable, CaseIterable {
+            public enum `Type`: String, Codable, CaseIterable, Sendable {
                 case all
                 case owner
                 case `public`
@@ -69,14 +86,14 @@ extension Paths.User {
                 case member
             }
 
-            public enum Sort: String, Codable, CaseIterable {
+            public enum Sort: String, Codable, CaseIterable, Sendable {
                 case created
                 case updated
                 case pushed
                 case fullName = "full_name"
             }
 
-            public enum Direction: String, Codable, CaseIterable {
+            public enum Direction: String, Codable, CaseIterable, Sendable {
                 case asc
                 case desc
             }
@@ -142,6 +159,25 @@ extension Paths.User {
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unauthorized: return 401
+                case .notModified: return 304
+                case .notFound: return 404
+                case .forbidden: return 403
+                case .unprocessableEntity: return 422
+                case .badRequest: return 400
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

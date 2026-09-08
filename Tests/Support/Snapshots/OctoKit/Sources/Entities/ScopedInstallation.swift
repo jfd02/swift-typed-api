@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct ScopedInstallation: Codable, Sendable {
     /// App Permissions
@@ -32,7 +32,7 @@ public struct ScopedInstallation: Codable, Sendable {
     public var account: SimpleUser
 
     /// Describe whether all repositories have been selected or there's a selection involved
-    public enum RepositorySelection: String, Codable, CaseIterable {
+    public enum RepositorySelection: String, Codable, CaseIterable, Sendable {
         case all
         case selected
     }

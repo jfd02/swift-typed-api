@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A check performed on the code of a given code change
 public struct CheckRun: Codable, Sendable {
@@ -51,14 +51,14 @@ public struct CheckRun: Codable, Sendable {
     /// The phase of the lifecycle that the check is currently in.
     ///
     /// Example: "queued"
-    public enum Status: String, Codable, CaseIterable {
+    public enum Status: String, Codable, CaseIterable, Sendable {
         case queued
         case inProgress = "in_progress"
         case completed
     }
 
     /// Example: "neutral"
-    public enum Conclusion: String, Codable, CaseIterable {
+    public enum Conclusion: String, Codable, CaseIterable, Sendable {
         case success
         case failure
         case neutral

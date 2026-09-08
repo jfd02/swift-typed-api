@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 struct Order: Codable, Sendable {
     var id: Int64?
@@ -14,7 +14,7 @@ struct Order: Codable, Sendable {
     var isComplete: Bool
 
     /// Order Status
-    enum Status: String, Codable, CaseIterable {
+    enum Status: String, Codable, CaseIterable, Sendable {
         case placed
         case approved
         case delivered

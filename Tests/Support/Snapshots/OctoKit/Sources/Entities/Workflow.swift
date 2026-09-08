@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A GitHub Actions workflow
 public struct Workflow: Codable, Sendable {
@@ -29,7 +29,7 @@ public struct Workflow: Codable, Sendable {
     public var deletedAt: Date?
 
     /// Example: "active"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case active
         case deleted
         case disabledFork = "disabled_fork"

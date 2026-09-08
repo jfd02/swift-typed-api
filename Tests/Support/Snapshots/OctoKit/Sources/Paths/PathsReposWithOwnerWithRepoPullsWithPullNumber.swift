@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -52,6 +52,22 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .internalServerError: return 500
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Update a pull request
@@ -77,6 +93,21 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PatchRequest: Encodable, Sendable {
@@ -92,7 +123,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls {
             public var maintainerCanModify: Bool?
 
             /// State of this Pull Request. Either `open` or `closed`.
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case `open`
                 case closed
             }

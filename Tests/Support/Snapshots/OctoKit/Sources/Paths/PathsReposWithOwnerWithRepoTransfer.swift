@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// A transfer request will need to be accepted by the new owner when transferring a personal repository to another user. The response will contain the original `owner`, and the transfer will continue asynchronously. For more details on the requirements to transfer personal and organization-owned repositories, see [about repository transfers](https://help.github.com/articles/about-repository-transfers/).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#transfer-a-repository)
-        public func post(_ body: PostRequest) -> Request<OctoKit.MinimalRepository, DefaultRequestError> {
+        public func post(_ body: PostRequest) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "POST", body: body, id: "repos/transfer")
         }
 

@@ -3,7 +3,7 @@
 
 import Foundation
 import CoreData
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 

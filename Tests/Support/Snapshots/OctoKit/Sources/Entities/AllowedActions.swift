@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The permissions policy that controls the actions that are allowed to run. Can be one of: `all`, `local_only`, or `selected`.
-public enum AllowedActions: String, Codable, CaseIterable {
+public enum AllowedActions: String, Codable, CaseIterable, Sendable {
     case all
     case localOnly = "local_only"
     case selected

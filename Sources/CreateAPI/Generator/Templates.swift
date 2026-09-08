@@ -96,7 +96,7 @@ final class Templates {
 
     func enumOfStrings(name: TypeName, contents: String) -> String {
         return """
-        \(access)enum \(name): String, Codable, CaseIterable {
+        \(access)enum \(name): String, Codable, CaseIterable, Sendable {
         \(contents.indented)
         }
         """
@@ -109,7 +109,7 @@ final class Templates {
     /// the documented cases; `.unknown` carries the value the server actually sent.
     func openEnumOfStrings(name: TypeName, cases: [(name: String, key: String)], protocols: Protocols) -> String {
         let conformances = protocols.rawValue
-            .union(["CaseIterable", "Hashable", "RawRepresentable"])
+            .union(["CaseIterable", "Hashable", "RawRepresentable", "Sendable"])
             .sorted()
             .joined(separator: ", ")
         func literal(_ value: String) -> String {
@@ -808,7 +808,7 @@ final class Templates {
 
     var anyJSON: String {
         """
-        \(access)enum AnyJSON: Equatable, Codable {
+        \(access)enum AnyJSON: Equatable, Codable, Sendable {
             case string(String)
             case number(Double)
             case object([String: AnyJSON])

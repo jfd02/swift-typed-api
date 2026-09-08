@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct CommitActivity: Codable, Sendable {
     /// Example: [0, 3, 26, 20, 39, 1, 0]

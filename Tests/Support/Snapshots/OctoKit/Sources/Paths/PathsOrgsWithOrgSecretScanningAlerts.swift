@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -39,6 +39,21 @@ extension Paths.Orgs.WithOrg.SecretScanning {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .serviceUnavailable: return 503
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct GetServiceUnavailableBody: Decodable, Sendable {
@@ -71,7 +86,7 @@ extension Paths.Orgs.WithOrg.SecretScanning {
             public var page: Int?
             public var perPage: Int?
 
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case `open`
                 case resolved
             }

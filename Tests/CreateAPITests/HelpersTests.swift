@@ -143,4 +143,13 @@ final class HelpersTests: XCTestCase {
         // Uppercasing
         XCTAssertEqual(asBoolean("httpsEnforced"), "isHTTPSEnforced")
     }
+
+    func testURLContainmentUsesWholePathComponents() {
+        let output = URL(fileURLWithPath: "/tmp/Output")
+
+        XCTAssertTrue(output.isSameOrDescendant(of: output))
+        XCTAssertTrue(URL(fileURLWithPath: "/tmp/Output/Sources/API.swift").isSameOrDescendant(of: output))
+        XCTAssertFalse(URL(fileURLWithPath: "/tmp/OutputBackup/spec.yaml").isSameOrDescendant(of: output))
+        XCTAssertFalse(URL(fileURLWithPath: "/tmp").isSameOrDescendant(of: output))
+    }
 }

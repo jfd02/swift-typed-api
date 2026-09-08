@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -63,6 +63,20 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum PostResponseHeaders {
@@ -82,7 +96,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
             public var tagger: Tagger?
 
             /// The type of the object we're tagging. Normally this is a `commit` but it can also be a `tree` or a `blob`.
-            public enum `Type`: String, Codable, CaseIterable {
+            public enum `Type`: String, Codable, CaseIterable, Sendable {
                 case commit
                 case tree
                 case blob

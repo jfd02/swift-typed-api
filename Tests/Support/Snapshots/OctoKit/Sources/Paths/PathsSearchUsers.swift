@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -44,6 +44,22 @@ extension Paths.Search {
                 case 503: return .serviceUnavailable(try decoder.decode(GetServiceUnavailableBody.self, from: data))
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .serviceUnavailable: return 503
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -93,13 +109,13 @@ extension Paths.Search {
             public var perPage: Int?
             public var page: Int?
 
-            public enum Sort: String, Codable, CaseIterable {
+            public enum Sort: String, Codable, CaseIterable, Sendable {
                 case followers
                 case repositories
                 case joined
             }
 
-            public enum Order: String, Codable, CaseIterable {
+            public enum Order: String, Codable, CaseIterable, Sendable {
                 case desc
                 case asc
             }

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 import TypedAPI
 import URLQueryEncoder
 
@@ -28,7 +28,7 @@ extension Paths.Pet {
             return encoder.items
         }
 
-        public enum Status: String, Codable, CaseIterable {
+        public enum Status: String, Codable, CaseIterable, Sendable {
             case available
             case pending
             case sold

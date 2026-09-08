@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -56,7 +56,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Workflows.WithWorkflowID {
             public var created: Date?
             public var excludePullRequests: Bool?
 
-            public enum Status: String, Codable, CaseIterable {
+            public enum Status: String, Codable, CaseIterable, Sendable {
                 case completed
                 case actionRequired = "action_required"
                 case cancelled

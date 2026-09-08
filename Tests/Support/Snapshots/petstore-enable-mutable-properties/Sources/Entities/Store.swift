@@ -3,7 +3,7 @@
 
 import Foundation
 
-public final class Store: Codable, Sendable {
+public final class Store: @unchecked Sendable, Codable {
     public var pets: [Pet]
 
     public init(pets: [Pet]) {

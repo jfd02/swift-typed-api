@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -39,6 +39,20 @@ extension Paths.Orgs.WithOrg {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -55,7 +69,7 @@ extension Paths.Orgs.WithOrg {
             public var perPage: Int?
             public var page: Int?
 
-            public enum Filter: String, Codable, CaseIterable {
+            public enum Filter: String, Codable, CaseIterable, Sendable {
                 case assigned
                 case created
                 case mentioned
@@ -64,19 +78,19 @@ extension Paths.Orgs.WithOrg {
                 case all
             }
 
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case `open`
                 case closed
                 case all
             }
 
-            public enum Sort: String, Codable, CaseIterable {
+            public enum Sort: String, Codable, CaseIterable, Sendable {
                 case created
                 case updated
                 case comments
             }
 
-            public enum Direction: String, Codable, CaseIterable {
+            public enum Direction: String, Codable, CaseIterable, Sendable {
                 case asc
                 case desc
             }

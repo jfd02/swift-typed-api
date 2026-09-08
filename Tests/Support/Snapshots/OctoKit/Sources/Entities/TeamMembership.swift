@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct TeamMembership: Codable, Sendable {
     public var url: URL
@@ -16,13 +16,13 @@ public struct TeamMembership: Codable, Sendable {
     /// The role of the user in the team.
     ///
     /// Example: "member"
-    public enum Role: String, Codable, CaseIterable {
+    public enum Role: String, Codable, CaseIterable, Sendable {
         case member
         case maintainer
     }
 
     /// The state of the user's membership in the team.
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case active
         case pending
     }

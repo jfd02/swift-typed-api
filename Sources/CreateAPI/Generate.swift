@@ -103,7 +103,9 @@ struct Generate: ParsableCommand {
         let outputURL = URL(filePath: output)
         let output = Output(paths: paths, entities: schemas, package: package, options: options)
 
-        if clean { try? FileManager.default.removeItem(at: outputURL) }
+        if clean, FileManager.default.fileExists(atPath: outputURL.path) {
+            try FileManager.default.removeItem(at: outputURL)
+        }
 
         let benchmark = Benchmark(name: "Write output files")
         try output.write(to: outputURL)
@@ -111,11 +113,11 @@ struct Generate: ParsableCommand {
     }
 
     private func validateOptions(options: GenerateOptions) throws {
-        let outputPath = URL(fileURLWithPath: output).resolvingSymlinksInPath().path
-        if clean, let configPath = try config.fileURL?.resolvingSymlinksInPath().path, configPath.hasPrefix(outputPath) {
+        let outputURL = URL(filePath: output)
+        if clean, let configURL = try config.fileURL, configURL.isSameOrDescendant(of: outputURL) {
             throw GeneratorError("Unable to clean because your config file is in the output directory")
         }
-        if clean, URL(fileURLWithPath: input).resolvingSymlinksInPath().path.hasPrefix(outputPath) {
+        if clean, URL(filePath: input).isSameOrDescendant(of: outputURL) {
             throw GeneratorError("Unable to clean because your input spec is in the output directory")
         }
         if options.module.rawValue.isEmpty {

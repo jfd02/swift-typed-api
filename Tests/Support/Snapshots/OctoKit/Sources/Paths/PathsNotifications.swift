@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -38,6 +38,23 @@ extension Paths {
                 case 401: return .unauthorized(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -80,7 +97,7 @@ extension Paths {
         /// Marks all notifications as "read" removes it from the [default view on GitHub](https://github.com/notifications). If the number of notifications is too large to complete in one request, you will receive a `202 Accepted` status and GitHub will run an asynchronous process to mark notifications as "read." To check whether any "unread" notifications remain, you can use the [List notifications for the authenticated user](https://docs.github.com/rest/reference/activity#list-notifications-for-the-authenticated-user) endpoint and pass the query parameter `all=false`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#mark-notifications-as-read)
-        public func put(_ body: PutRequest? = nil) -> Request<PutResponse, PutError> {
+        public func put(_ body: PutRequest? = nil) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: body, id: "activity/mark-notifications-as-read")
         }
 
@@ -98,18 +115,21 @@ extension Paths {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
-        }
 
-        public struct PutResponse: Decodable, Sendable {
-            public var message: String?
-
-            public init(message: String? = nil) {
-                self.message = message
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
             }
 
-            public init(from decoder: Decoder) throws {
-                let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.message = try values.decodeIfPresent(String.self, forKey: "message")
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
             }
         }
 

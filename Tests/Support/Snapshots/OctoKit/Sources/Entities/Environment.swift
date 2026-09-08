@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Details of a deployment environment
 public struct Environment: Codable, Sendable {
@@ -107,6 +107,13 @@ public struct Environment: Codable, Sendable {
                     }
 
                     public func encode(to encoder: Encoder) throws {
+                        let encodedValueCount = [simpleUser != nil, team != nil].filter { $0 }.count
+                        guard encodedValueCount == 1 else {
+                            throw EncodingError.invalidValue(
+                                self,
+                                .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
+                            )
+                        }
                         var container = encoder.singleValueContainer()
                         if let value = simpleUser { try container.encode(value) }
                         if let value = team { try container.encode(value) }
@@ -198,6 +205,13 @@ public struct Environment: Codable, Sendable {
         }
 
         public func encode(to encoder: Encoder) throws {
+            let encodedValueCount = [a != nil, b != nil, c != nil].filter { $0 }.count
+            guard encodedValueCount == 1 else {
+                throw EncodingError.invalidValue(
+                    self,
+                    .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
+                )
+            }
             var container = encoder.singleValueContainer()
             if let value = a { try container.encode(value) }
             if let value = b { try container.encode(value) }

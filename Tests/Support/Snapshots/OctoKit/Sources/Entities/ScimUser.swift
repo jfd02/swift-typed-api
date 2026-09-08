@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// SCIM /Users
 ///
@@ -164,7 +164,7 @@ public struct ScimUser: Codable, Sendable {
         public var path: String?
         public var value: Value?
 
-        public enum Op: String, Codable, CaseIterable {
+        public enum Op: String, Codable, CaseIterable, Sendable {
             case add
             case remove
             case replace

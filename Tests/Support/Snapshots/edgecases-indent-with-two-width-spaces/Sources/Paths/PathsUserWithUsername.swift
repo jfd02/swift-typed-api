@@ -2,8 +2,8 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
-import HTTPHeaders
+@preconcurrency import NaiveDate
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 

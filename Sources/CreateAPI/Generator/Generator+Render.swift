@@ -121,10 +121,12 @@ extension Generator {
             }
         }
 
-        // TODO: Refactor
         var protocols = decl.protocols
-        if decl.isForm {
-            protocols.removeEncodable()
+        if case .class(let isFinal) = type,
+           (!isFinal || !isReadOnly),
+           protocols.rawValue.contains("Sendable") {
+            protocols.rawValue.remove("Sendable")
+            protocols.insert("@unchecked Sendable")
         }
 
         let entity: String
@@ -134,7 +136,7 @@ extension Generator {
         case .struct:
             entity = templates.struct(name: decl.name, contents: contents, protocols: decl.protocols)
         case .class(let isFinal):
-            entity = templates.class(name: decl.name, isFinal: isFinal, contents: contents, protocols: decl.protocols)
+            entity = templates.class(name: decl.name, isFinal: isFinal, contents: contents, protocols: protocols)
         }
 
         return templates.comments(for: decl.metadata, name: decl.name.rawValue) + entity

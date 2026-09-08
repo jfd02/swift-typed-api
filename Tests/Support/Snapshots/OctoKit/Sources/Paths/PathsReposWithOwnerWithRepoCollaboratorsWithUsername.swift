@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -34,6 +34,20 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators {
                 switch statusCode {
                 case 404: return .notFound
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -73,6 +87,21 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PutRequest: Encodable, Sendable {
@@ -94,7 +123,7 @@ extension Paths.Repos.WithOwner.WithRepo.Collaborators {
             /// \* `maintain` - Recommended for project managers who need to manage the repository without access to sensitive or destructive actions.  
             /// \* `triage` - Recommended for contributors who need to proactively manage issues and pull requests without write access.  
             /// \* custom repository role name - A custom repository role, if the owning organization has defined any.
-            public enum Permission: String, Codable, CaseIterable {
+            public enum Permission: String, Codable, CaseIterable, Sendable {
                 case pull
                 case push
                 case admin

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A version of a software package
 public struct PackageVersion: Codable, Sendable {
@@ -40,7 +40,7 @@ public struct PackageVersion: Codable, Sendable {
         public var docker: Docker?
 
         /// Example: "docker"
-        public enum PackageType: String, Codable, CaseIterable {
+        public enum PackageType: String, Codable, CaseIterable, Sendable {
             case npm
             case maven
             case rubygems

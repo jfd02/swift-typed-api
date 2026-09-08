@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -46,7 +46,7 @@ extension Paths.Enterprises.WithEnterprise.Actions.RunnerGroups {
             public var allowsPublicRepositories: Bool
 
             /// Visibility of a runner group. You can select all organizations or select individual organizations. Can be one of: `all` or `selected`
-            public enum Visibility: String, Codable, CaseIterable {
+            public enum Visibility: String, Codable, CaseIterable, Sendable {
                 case selected
                 case all
             }

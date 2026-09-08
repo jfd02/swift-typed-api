@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Pull Request Review Comments are comments on a portion of the Pull Request's diff.
 public struct PullRequestReviewComment: Codable, Sendable {
@@ -170,13 +170,13 @@ public struct PullRequestReviewComment: Codable, Sendable {
     }
 
     /// The side of the first line of the range for a multi-line comment.
-    public enum StartSide: String, Codable, CaseIterable {
+    public enum StartSide: String, Codable, CaseIterable, Sendable {
         case left = "LEFT"
         case right = "RIGHT"
     }
 
     /// The side of the diff to which the comment applies. The side of the last line of the range for a multi-line comment
-    public enum Side: String, Codable, CaseIterable {
+    public enum Side: String, Codable, CaseIterable, Sendable {
         case left = "LEFT"
         case right = "RIGHT"
     }

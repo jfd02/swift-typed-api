@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -44,6 +44,20 @@ extension Paths.Teams.WithTeamID.Memberships {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Add or update team membership for a user (Legacy)
@@ -80,6 +94,22 @@ extension Paths.Teams.WithTeamID.Memberships {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .forbidden: return 403
+                case .unprocessableEntity: return 422
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PutRequest: Encodable, Sendable {
@@ -91,7 +121,7 @@ extension Paths.Teams.WithTeamID.Memberships {
             /// The role that this user should have in the team. Can be one of:  
             /// \* `member` - a normal member of the team.  
             /// \* `maintainer` - a team maintainer. Able to add/remove other team members, promote other team members to team maintainer, and edit the team's name and description.
-            public enum Role: String, Codable, CaseIterable {
+            public enum Role: String, Codable, CaseIterable, Sendable {
                 case member
                 case maintainer
             }
@@ -130,6 +160,20 @@ extension Paths.Teams.WithTeamID.Memberships {
                 switch statusCode {
                 case 403: return .forbidden
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

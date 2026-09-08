@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Pull Request Reviews are reviews on pull requests.
 public struct PullRequestReview: Codable, Sendable {

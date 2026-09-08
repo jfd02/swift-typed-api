@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -32,6 +32,20 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
                 switch statusCode {
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -68,6 +82,20 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum PostResponseHeaders {
@@ -91,7 +119,7 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
             public var isAutoInactive: Bool?
 
             /// The state of the status. Can be one of `error`, `failure`, `inactive`, `in_progress`, `queued`, `pending`, or `success`. When you set a transient deployment to `inactive`, the deployment will be shown as `destroyed` in GitHub.
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case error
                 case failure
                 case inactive
@@ -102,7 +130,7 @@ extension Paths.Repos.WithOwner.WithRepo.Deployments.WithDeploymentID {
             }
 
             /// Name for the target deployment environment, which can be changed when setting a deploy status. For example, `production`, `staging`, or `qa`.
-            public enum Environment: String, Codable, CaseIterable {
+            public enum Environment: String, Codable, CaseIterable, Sendable {
                 case production
                 case staging
                 case qa

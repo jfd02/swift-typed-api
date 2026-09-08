@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -54,13 +54,13 @@ extension Paths.Repos.WithOwner.WithRepo.Commits.WithRef {
             public var page: Int?
             public var appID: Int?
 
-            public enum Status: String, Codable, CaseIterable {
+            public enum Status: String, Codable, CaseIterable, Sendable {
                 case queued
                 case inProgress = "in_progress"
                 case completed
             }
 
-            public enum Filter: String, Codable, CaseIterable {
+            public enum Filter: String, Codable, CaseIterable, Sendable {
                 case latest
                 case all
             }

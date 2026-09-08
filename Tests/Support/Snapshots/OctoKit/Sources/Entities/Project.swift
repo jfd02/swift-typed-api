@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Projects are a way to organize columns and cards of work.
 public struct Project: Codable, Sendable {
@@ -43,7 +43,7 @@ public struct Project: Codable, Sendable {
     public var isPrivate: Bool?
 
     /// The baseline permission that all organization members have on this project. Only present if owner is an organization.
-    public enum OrganizationPermission: String, Codable, CaseIterable {
+    public enum OrganizationPermission: String, Codable, CaseIterable, Sendable {
         case read
         case write
         case admin

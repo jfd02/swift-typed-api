@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct CodeScanningAnalysisTool: Codable, Sendable {
     /// The name of the tool used to generate the code scanning analysis.

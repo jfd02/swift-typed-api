@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct CodeScanningAnalysis: Codable, Sendable {
     /// The full Git reference, formatted as `refs/heads/<branch name>`,

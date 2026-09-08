@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The status of a deployment.
 public struct DeploymentStatus: Codable, Sendable {
@@ -53,7 +53,7 @@ public struct DeploymentStatus: Codable, Sendable {
     /// The state of the status.
     ///
     /// Example: "success"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case error
         case failure
         case inactive

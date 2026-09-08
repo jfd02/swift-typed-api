@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
 public struct Issue: Codable, Sendable {

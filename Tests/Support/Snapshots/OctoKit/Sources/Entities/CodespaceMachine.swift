@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A description of the machine powering a codespace.
 public struct CodespaceMachine: Codable, Sendable {
@@ -36,7 +36,7 @@ public struct CodespaceMachine: Codable, Sendable {
     /// Whether a prebuild is currently available when creating a codespace for this machine and repository. If a branch was not specified as a ref, the default branch will be assumed. Value will be "null" if prebuilds are not supported or prebuild availability could not be determined. Value is the type of prebuild available, or "none" if none are available.
     ///
     /// Example: "blob"
-    public enum PrebuildAvailability: String, Codable, CaseIterable {
+    public enum PrebuildAvailability: String, Codable, CaseIterable, Sendable {
         case `none`
         case blob
         case pool

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A team discussion is a persistent record of a free-form conversation within a team.
 public struct TeamDiscussion: Codable, Sendable {

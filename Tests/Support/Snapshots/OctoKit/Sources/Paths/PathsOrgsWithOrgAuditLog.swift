@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -34,13 +34,13 @@ extension Paths.Orgs.WithOrg {
             public var order: Order?
             public var perPage: Int?
 
-            public enum Include: String, Codable, CaseIterable {
+            public enum Include: String, Codable, CaseIterable, Sendable {
                 case web
                 case git
                 case all
             }
 
-            public enum Order: String, Codable, CaseIterable {
+            public enum Order: String, Codable, CaseIterable, Sendable {
                 case desc
                 case asc
             }

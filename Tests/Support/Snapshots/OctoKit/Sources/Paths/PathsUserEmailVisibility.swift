@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -42,6 +42,24 @@ extension Paths.User.Email {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .notFound: return 404
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PatchRequest: Encodable, Sendable {
@@ -49,7 +67,7 @@ extension Paths.User.Email {
             public var visibility: Visibility
 
             /// Denotes whether an email is publicly visible.
-            public enum Visibility: String, Codable, CaseIterable {
+            public enum Visibility: String, Codable, CaseIterable, Sendable {
                 case `public`
                 case `private`
             }

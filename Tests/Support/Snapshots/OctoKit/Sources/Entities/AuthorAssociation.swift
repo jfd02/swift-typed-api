@@ -2,14 +2,14 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Author_association
 ///
 /// How the author is associated with the repository.
 ///
 /// Example: "OWNER"
-public enum AuthorAssociation: String, Codable, CaseIterable {
+public enum AuthorAssociation: String, Codable, CaseIterable, Sendable {
     case collaborator = "COLLABORATOR"
     case contributor = "CONTRIBUTOR"
     case firstTimer = "FIRST_TIMER"

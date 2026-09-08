@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Full Team
 ///
@@ -61,7 +61,7 @@ public struct TeamFull: Codable, Sendable {
     /// The level of privacy this team should have
     ///
     /// Example: "closed"
-    public enum Privacy: String, Codable, CaseIterable {
+    public enum Privacy: String, Codable, CaseIterable, Sendable {
         case closed
         case secret
     }

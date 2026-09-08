@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -50,6 +50,23 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .movedPermanently: return 301
+                case .notFound: return 404
+                case .gone: return 410
+                case .notModified: return 304
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Update an issue
@@ -79,6 +96,25 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 410: return .gone(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .serviceUnavailable: return 503
+                case .forbidden: return 403
+                case .movedPermanently: return 301
+                case .notFound: return 404
+                case .gone: return 410
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -132,7 +168,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
             }
 
             /// State of the issue. Either `open` or `closed`.
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case `open`
                 case closed
             }

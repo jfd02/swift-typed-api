@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct IssueEventForIssue: Codable, Sendable {
     public var labeledIssueEvent: LabeledIssueEvent?
@@ -59,6 +59,13 @@ public struct IssueEventForIssue: Codable, Sendable {
     }
 
     public func encode(to encoder: Encoder) throws {
+        let encodedValueCount = [labeledIssueEvent != nil, unlabeledIssueEvent != nil, assignedIssueEvent != nil, unassignedIssueEvent != nil, milestonedIssueEvent != nil, demilestonedIssueEvent != nil, renamedIssueEvent != nil, reviewRequestedIssueEvent != nil, reviewRequestRemovedIssueEvent != nil, reviewDismissedIssueEvent != nil, lockedIssueEvent != nil, addedToProjectIssueEvent != nil, movedColumnInProjectIssueEvent != nil, removedFromProjectIssueEvent != nil, convertedNoteToIssueIssueEvent != nil].filter { $0 }.count
+        guard encodedValueCount == 1 else {
+            throw EncodingError.invalidValue(
+                self,
+                .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
+            )
+        }
         var container = encoder.singleValueContainer()
         if let value = labeledIssueEvent { try container.encode(value) }
         if let value = unlabeledIssueEvent { try container.encode(value) }

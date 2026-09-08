@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct FullRepository: Codable, Sendable {
     /// Example: 1296269
@@ -230,7 +230,7 @@ public struct FullRepository: Codable, Sendable {
         public struct AdvancedSecurity: Codable, Sendable {
             public var status: Status?
 
-            public enum Status: String, Codable, CaseIterable {
+            public enum Status: String, Codable, CaseIterable, Sendable {
                 case enabled
                 case disabled
             }
@@ -253,7 +253,7 @@ public struct FullRepository: Codable, Sendable {
         public struct SecretScanning: Codable, Sendable {
             public var status: Status?
 
-            public enum Status: String, Codable, CaseIterable {
+            public enum Status: String, Codable, CaseIterable, Sendable {
                 case enabled
                 case disabled
             }

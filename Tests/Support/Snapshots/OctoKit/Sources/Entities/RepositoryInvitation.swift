@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Repository invitations let you manage who you collaborate with.
 public struct RepositoryInvitation: Codable, Sendable {
@@ -35,7 +35,7 @@ public struct RepositoryInvitation: Codable, Sendable {
     /// The permission associated with the invitation.
     ///
     /// Example: "read"
-    public enum Permissions: String, Codable, CaseIterable {
+    public enum Permissions: String, Codable, CaseIterable, Sendable {
         case read
         case write
         case admin

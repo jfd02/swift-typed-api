@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -36,6 +36,21 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .gone: return 410
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -47,7 +62,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
             public var perPage: Int?
             public var page: Int?
 
-            public enum Content: String, Codable, CaseIterable {
+            public enum Content: String, Codable, CaseIterable, Sendable {
                 case plus1 = "+1"
                 case minus1 = "-1"
                 case laugh
@@ -92,6 +107,20 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PostRequest: Encodable, Sendable {
@@ -99,7 +128,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues.WithIssueNumber {
             public var content: Content
 
             /// The [reaction type](https://docs.github.com/rest/reference/reactions#reaction-types) to add to the issue.
-            public enum Content: String, Codable, CaseIterable {
+            public enum Content: String, Codable, CaseIterable, Sendable {
                 case plus1 = "+1"
                 case minus1 = "-1"
                 case laugh

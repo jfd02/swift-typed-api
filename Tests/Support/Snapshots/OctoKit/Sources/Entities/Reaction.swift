@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Reactions to conversations provide a way to help people express their feelings more simply and effectively.
 public struct Reaction: Codable, Sendable {
@@ -21,7 +21,7 @@ public struct Reaction: Codable, Sendable {
     /// The reaction to use
     ///
     /// Example: "heart"
-    public enum Content: String, Codable, CaseIterable {
+    public enum Content: String, Codable, CaseIterable, Sendable {
         case plus1 = "+1"
         case minus1 = "-1"
         case laugh

@@ -294,7 +294,7 @@ public struct ConfigOptions: ParsableConfiguration {
         ///     - ArgumentParser
         ///     requirement:
         ///       exact:
-        ///         version: 1.1.1
+        ///         version: 1.1.3
         ///   - url: https://github.com/apple/swift-algorithms
         ///     products:
         ///     - Algorithms
@@ -622,7 +622,7 @@ public struct ConfigOptions: ParsableConfiguration {
         /// Modules to be imported within the source files for generated requests
         @Option public var imports: Set<String> = ["TypedAPI"]
 
-        /// Allows you to override mapping of specific response types to a custom (or generated) type instead.
+        /// Allows you to override mapping of specific response types or response status codes to a custom (or generated) type instead.
         ///
         /// For example:
         ///
@@ -630,6 +630,8 @@ public struct ConfigOptions: ParsableConfiguration {
         /// paths:
         ///   overriddenResponses:
         ///     MyApiResponseType: MyCustomDecodableType
+        ///     accepted: Void # All 202 responses
+        ///     "204": Void
         /// ```
         @Option public var overriddenResponses: [String: String] = [:]
 

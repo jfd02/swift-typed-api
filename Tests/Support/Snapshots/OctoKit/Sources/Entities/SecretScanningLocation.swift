@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct SecretScanningLocation: Codable, Sendable {
     /// The location type. Because secrets may be found in different types of resources (ie. code, comments, issues), this field identifies the type of resource where the secret was found.
@@ -14,7 +14,7 @@ public struct SecretScanningLocation: Codable, Sendable {
     /// The location type. Because secrets may be found in different types of resources (ie. code, comments, issues), this field identifies the type of resource where the secret was found.
     ///
     /// Example: "commit"
-    public enum `Type`: String, Codable, CaseIterable {
+    public enum `Type`: String, Codable, CaseIterable, Sendable {
         case commit
     }
 

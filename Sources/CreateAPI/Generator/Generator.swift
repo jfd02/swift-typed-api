@@ -43,9 +43,18 @@ final class Generator {
     func makeHeader(imports: Set<String>) -> String {
         var header = fileHeader
         for value in imports.sorted() {
-            header += "\nimport \(value)"
+            header += "\n\(importStatement(for: value))"
         }
         return header
+    }
+
+    private func importStatement(for module: String) -> String {
+        switch module {
+        case "HTTPHeaders", "NaiveDate":
+            return "@preconcurrency import \(module)"
+        default:
+            return "import \(module)"
+        }
     }
 
     // MARK: State
@@ -87,7 +96,7 @@ final class Generator {
         ].compactMap { $0 }
 
         output += "\n\n"
-        output += imports.map { "import \($0)" }.joined(separator: "\n")
+        output += imports.map(importStatement).joined(separator: "\n")
 
         return output
     }

@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// State of a code scanning alert.
-public enum CodeScanningAlertState: String, Codable, CaseIterable {
+public enum CodeScanningAlertState: String, Codable, CaseIterable, Sendable {
     case `open`
     case closed
     case dismissed

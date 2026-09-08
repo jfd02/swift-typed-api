@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -34,7 +34,7 @@ extension Paths.User {
             return encoder.items
         }
 
-        public enum PackageType: String, Codable, CaseIterable {
+        public enum PackageType: String, Codable, CaseIterable, Sendable {
             case npm
             case maven
             case rubygems
@@ -43,7 +43,7 @@ extension Paths.User {
             case container
         }
 
-        public enum Visibility: String, Codable, CaseIterable {
+        public enum Visibility: String, Codable, CaseIterable, Sendable {
             case `public`
             case `private`
             case `internal`

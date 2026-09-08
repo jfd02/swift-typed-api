@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -32,6 +32,20 @@ extension Paths.Repos.WithOwner.WithRepo {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Create a GitHub Pages site
@@ -55,6 +69,21 @@ extension Paths.Repos.WithOwner.WithRepo {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .conflict: return 409
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// The source branch and directory used to publish your Pages site.
@@ -70,7 +99,7 @@ extension Paths.Repos.WithOwner.WithRepo {
                 public var path: Path?
 
                 /// The repository directory that includes the source files for the Pages site. Allowed paths are `/` or `/docs`. Default: `/`
-                public enum Path: String, Codable, CaseIterable {
+                public enum Path: String, Codable, CaseIterable, Sendable {
                     case slash = "/"
                     case docs = "/docs"
                 }
@@ -118,6 +147,21 @@ extension Paths.Repos.WithOwner.WithRepo {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .badRequest: return 400
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PutRequest: Encodable, Sendable {
@@ -136,7 +180,7 @@ extension Paths.Repos.WithOwner.WithRepo {
                 public var b: B?
 
                 /// Update the source for the repository. Must include the branch name, and may optionally specify the subdirectory `/docs`. Possible values are `"gh-pages"`, `"master"`, and `"master /docs"`.
-                public enum A: String, Codable, CaseIterable {
+                public enum A: String, Codable, CaseIterable, Sendable {
                     case ghPages = "gh-pages"
                     case master
                     case masterDocs = "master /docs"
@@ -150,7 +194,7 @@ extension Paths.Repos.WithOwner.WithRepo {
                     public var path: Path
 
                     /// The repository directory that includes the source files for the Pages site. Allowed paths are `/` or `/docs`.
-                    public enum Path: String, Codable, CaseIterable {
+                    public enum Path: String, Codable, CaseIterable, Sendable {
                         case slash = "/"
                         case docs = "/docs"
                     }
@@ -173,6 +217,13 @@ extension Paths.Repos.WithOwner.WithRepo {
                 }
 
                 public func encode(to encoder: Encoder) throws {
+                    let encodedValueCount = [a != nil, b != nil].filter { $0 }.count
+                    guard encodedValueCount == 1 else {
+                        throw EncodingError.invalidValue(
+                            self,
+                            .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
+                        )
+                    }
                     var container = encoder.singleValueContainer()
                     if let value = a { try container.encode(value) }
                     if let value = b { try container.encode(value) }
@@ -212,6 +263,21 @@ extension Paths.Repos.WithOwner.WithRepo {
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

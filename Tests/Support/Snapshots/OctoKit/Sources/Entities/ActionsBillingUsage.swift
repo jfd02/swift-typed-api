@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct ActionsBillingUsage: Codable, Sendable {
     /// The sum of the free and paid GitHub Actions minutes used.

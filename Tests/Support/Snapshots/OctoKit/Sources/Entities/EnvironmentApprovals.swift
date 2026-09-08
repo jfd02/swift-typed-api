@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Environment Approval
 ///
@@ -81,7 +81,7 @@ public struct EnvironmentApprovals: Codable, Sendable {
     /// Whether deployment to the environment(s) was approved or rejected
     ///
     /// Example: "approved"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case approved
         case rejected
     }

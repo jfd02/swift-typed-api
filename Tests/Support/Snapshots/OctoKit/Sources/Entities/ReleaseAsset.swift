@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Data related to a release.
 public struct ReleaseAsset: Codable, Sendable {
@@ -26,7 +26,7 @@ public struct ReleaseAsset: Codable, Sendable {
     public var uploader: SimpleUser?
 
     /// State of the release asset.
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case uploaded
         case `open`
     }

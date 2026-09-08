@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Results of a successful merge upstream request
 public struct MergedUpstream: Codable, Sendable {
@@ -10,7 +10,7 @@ public struct MergedUpstream: Codable, Sendable {
     public var mergeType: MergeType?
     public var baseBranch: String?
 
-    public enum MergeType: String, Codable, CaseIterable {
+    public enum MergeType: String, Codable, CaseIterable, Sendable {
         case merge
         case fastForward = "fast-forward"
         case `none`

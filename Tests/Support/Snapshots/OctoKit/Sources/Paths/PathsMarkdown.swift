@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -32,6 +32,20 @@ extension Paths {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notModified: return 304
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum PostResponseHeaders {
@@ -53,7 +67,7 @@ extension Paths {
             /// The rendering mode. Can be either `markdown` or `gfm`.
             ///
             /// Example: "markdown"
-            public enum Mode: String, Codable, CaseIterable {
+            public enum Mode: String, Codable, CaseIterable, Sendable {
                 case markdown
                 case gfm
             }

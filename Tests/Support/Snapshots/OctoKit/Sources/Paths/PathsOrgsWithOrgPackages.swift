@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -39,6 +39,21 @@ extension Paths.Orgs.WithOrg {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .forbidden: return 403
+                case .unauthorized: return 401
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         private func makeGetQuery(_ packageType: PackageType, _ visibility: Visibility?) -> [(String, String?)] {
@@ -48,7 +63,7 @@ extension Paths.Orgs.WithOrg {
             return encoder.items
         }
 
-        public enum PackageType: String, Codable, CaseIterable {
+        public enum PackageType: String, Codable, CaseIterable, Sendable {
             case npm
             case maven
             case rubygems
@@ -57,7 +72,7 @@ extension Paths.Orgs.WithOrg {
             case container
         }
 
-        public enum Visibility: String, Codable, CaseIterable {
+        public enum Visibility: String, Codable, CaseIterable, Sendable {
             case `public`
             case `private`
             case `internal`

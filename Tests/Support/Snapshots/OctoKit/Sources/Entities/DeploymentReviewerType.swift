@@ -2,12 +2,12 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The type of reviewer. Must be one of: `User` or `Team`
 ///
 /// Example: "User"
-public enum DeploymentReviewerType: String, Codable, CaseIterable {
+public enum DeploymentReviewerType: String, Codable, CaseIterable, Sendable {
     case user = "User"
     case team = "Team"
 }

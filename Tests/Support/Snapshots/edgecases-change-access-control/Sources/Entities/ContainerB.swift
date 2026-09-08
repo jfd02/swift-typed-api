@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 struct ContainerB: Codable, Sendable {
     var child: Child
@@ -12,7 +12,7 @@ struct ContainerB: Codable, Sendable {
         var renameMe: String
         var child: Child
 
-        enum Enum: String, Codable, CaseIterable {
+        enum Enum: String, Codable, CaseIterable, Sendable {
             case a
             case b
         }
@@ -21,7 +21,7 @@ struct ContainerB: Codable, Sendable {
             var `enum`: Enum
             var renameMe: String
 
-            enum Enum: String, Codable, CaseIterable {
+            enum Enum: String, Codable, CaseIterable, Sendable {
                 case a
                 case b
             }

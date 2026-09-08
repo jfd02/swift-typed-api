@@ -30,4 +30,17 @@ extension URL {
         guard !FileManager.default.fileExists(atPath: path) else { return }
         try FileManager.default.createDirectory(at: self, withIntermediateDirectories: true, attributes: nil)
     }
+
+    /// Returns whether this URL is the same as, or is contained by, `directory`.
+    /// Comparing path components avoids treating siblings such as `OutputBackup`
+    /// as children of `Output`.
+    func isSameOrDescendant(of directory: URL) -> Bool {
+        let candidateComponents = resolvingSymlinksInPath().standardizedFileURL.pathComponents
+        let directoryComponents = directory.resolvingSymlinksInPath().standardizedFileURL.pathComponents
+
+        guard candidateComponents.count >= directoryComponents.count else {
+            return false
+        }
+        return candidateComponents.prefix(directoryComponents.count).elementsEqual(directoryComponents)
+    }
 }

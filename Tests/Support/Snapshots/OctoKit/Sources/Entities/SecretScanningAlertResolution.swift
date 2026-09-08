@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// **Required when the `state` is `resolved`.** The reason for resolving the alert. Can be one of `false_positive`, `wont_fix`, `revoked`, or `used_in_tests`.
-public enum SecretScanningAlertResolution: String, Codable, CaseIterable {
+public enum SecretScanningAlertResolution: String, Codable, CaseIterable, Sendable {
     case falsePositive = "false_positive"
     case wontFix = "wont_fix"
     case revoked

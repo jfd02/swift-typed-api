@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Actions Secret for an Organization
 ///
@@ -20,7 +20,7 @@ public struct OrganizationActionsSecret: Codable, Sendable {
     public var selectedRepositoriesURL: URL?
 
     /// Visibility of a secret
-    public enum Visibility: String, Codable, CaseIterable {
+    public enum Visibility: String, Codable, CaseIterable, Sendable {
         case all
         case `private`
         case selected

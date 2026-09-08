@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public enum WebhookConfigInsecureSSL: Codable, Hashable, Sendable {
     case string(String)

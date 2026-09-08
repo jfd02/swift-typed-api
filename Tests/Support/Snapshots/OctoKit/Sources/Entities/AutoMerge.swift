@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The status of auto merging a pull request.
 public struct AutoMerge: Codable, Sendable {
@@ -16,7 +16,7 @@ public struct AutoMerge: Codable, Sendable {
     public var commitMessage: String
 
     /// The merge method to use.
-    public enum MergeMethod: String, Codable, CaseIterable {
+    public enum MergeMethod: String, Codable, CaseIterable, Sendable {
         case merge
         case squash
         case rebase

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -32,6 +32,20 @@ extension Paths.Orgs.WithOrg {
                 switch statusCode {
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }
@@ -70,6 +84,21 @@ extension Paths.Orgs.WithOrg {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PostRequest: Encodable, Sendable {
@@ -89,7 +118,7 @@ extension Paths.Orgs.WithOrg {
             /// \* `admin` - Organization owners with full administrative rights to the organization and complete access to all repositories and teams.  
             /// \* `direct_member` - Non-owner organization members with ability to see other members and join teams by invitation.  
             /// \* `billing_manager` - Non-owner organization members with ability to manage the billing settings of your organization.
-            public enum Role: String, Codable, CaseIterable {
+            public enum Role: String, Codable, CaseIterable, Sendable {
                 case admin
                 case directMember = "direct_member"
                 case billingManager = "billing_manager"

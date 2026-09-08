@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Self hosted runner label
 ///
@@ -16,7 +16,7 @@ public struct RunnerLabel: Codable, Sendable {
     public var type: `Type`?
 
     /// The type of label. Read-only labels are applied automatically when the runner is configured.
-    public enum `Type`: String, Codable, CaseIterable {
+    public enum `Type`: String, Codable, CaseIterable, Sendable {
         case readOnly = "read-only"
         case custom
     }

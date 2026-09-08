@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 struct EnumTest: Codable, Sendable {
     var enumString: EnumString?
@@ -10,7 +10,7 @@ struct EnumTest: Codable, Sendable {
     var enumNumber: Double?
     var outerEnum: OuterEnum?
 
-    enum EnumString: String, Codable, CaseIterable {
+    enum EnumString: String, Codable, CaseIterable, Sendable {
         case upper = "UPPER"
         case lower
         case empty = ""

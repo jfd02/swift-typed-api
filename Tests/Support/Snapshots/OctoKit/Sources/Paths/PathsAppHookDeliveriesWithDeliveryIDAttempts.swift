@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -22,7 +22,7 @@ extension Paths.App.Hook.Deliveries.WithDeliveryID {
         /// You must use a [JWT](https://docs.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app) to access this endpoint.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/apps#redeliver-a-delivery-for-an-app-webhook)
-        public var post: Request<[String: AnyJSON], PostError> {
+        public var post: Request<Void, PostError> {
             Request(path: path, method: "POST", id: "apps/redeliver-webhook-delivery")
         }
 
@@ -36,6 +36,21 @@ extension Paths.App.Hook.Deliveries.WithDeliveryID {
                 case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .badRequest: return 400
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

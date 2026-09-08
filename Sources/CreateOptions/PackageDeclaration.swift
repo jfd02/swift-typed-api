@@ -51,15 +51,15 @@ public struct PackageDeclaration: Decodable {
         var declaration: String {
             switch self {
             case .exact(version: let version):
-                return ".exact(\"\(version)\")"
+                return "exact: \"\(version)\""
             case .range(from: let min, to: let max):
                 return "\"\(min)\"..<\"\(max)\""
             case .closedRange(from: let min, to: let max):
                 return "\"\(min)\"...\"\(max)\""
             case .branch(name: let name):
-                return ".branch(\"\(name)\")"
+                return "branch: \"\(name)\""
             case .commit(hash: let hash):
-                return ".revision(\"\(hash)\")"
+                return "revision: \"\(hash)\""
             case .from(let version):
                 return "from: \"\(version)\""
             }

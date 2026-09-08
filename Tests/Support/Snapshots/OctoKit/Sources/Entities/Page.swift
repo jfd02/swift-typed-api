@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// GitHub Pages
 ///
@@ -50,7 +50,7 @@ public struct Page: Codable, Sendable {
     /// The status of the most recent build of the Page.
     ///
     /// Example: "built"
-    public enum Status: String, Codable, CaseIterable {
+    public enum Status: String, Codable, CaseIterable, Sendable {
         case built
         case building
         case errored
@@ -59,7 +59,7 @@ public struct Page: Codable, Sendable {
     /// The state if the domain is verified
     ///
     /// Example: "pending"
-    public enum ProtectedDomainState: String, Codable, CaseIterable {
+    public enum ProtectedDomainState: String, Codable, CaseIterable, Sendable {
         case pending
         case verified
         case unverified

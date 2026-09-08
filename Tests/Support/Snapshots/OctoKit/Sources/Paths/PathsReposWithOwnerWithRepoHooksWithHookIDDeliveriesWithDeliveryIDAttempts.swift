@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID.Deliveries.WithDeliver
         /// Redeliver a webhook delivery for a webhook configured in a repository.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#redeliver-a-delivery-for-a-repository-webhook)
-        public var post: Request<[String: AnyJSON], PostError> {
+        public var post: Request<Void, PostError> {
             Request(path: path, method: "POST", id: "repos/redeliver-webhook-delivery")
         }
 
@@ -34,6 +34,21 @@ extension Paths.Repos.WithOwner.WithRepo.Hooks.WithHookID.Deliveries.WithDeliver
                 case 400: return .badRequest(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .badRequest: return 400
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

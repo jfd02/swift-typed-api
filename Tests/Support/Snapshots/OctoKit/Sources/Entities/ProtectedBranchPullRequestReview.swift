@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct ProtectedBranchPullRequestReview: Codable, Sendable {
     /// Example: "https://api.github.com/repos/octocat/Hello-World/branches/master/protection/dismissal_restrictions"

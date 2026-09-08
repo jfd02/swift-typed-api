@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Pull requests let you tell others about changes you've pushed to a repository on GitHub. Once a pull request is sent, interested parties can review the set of changes, discuss potential modifications, and even push follow-up commits if necessary.
 public struct PullRequest: Codable, Sendable {
@@ -107,7 +107,7 @@ public struct PullRequest: Codable, Sendable {
     /// State of this Pull Request. Either `open` or `closed`.
     ///
     /// Example: "open"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case `open`
         case closed
     }

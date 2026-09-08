@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -20,7 +20,7 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
         /// Updates the pull request branch with the latest upstream changes by merging HEAD from the base branch into the pull request branch.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/pulls#update-a-pull-request-branch)
-        public func put(expectedHeadSha: String? = nil) -> Request<PutResponse, PutError> {
+        public func put(expectedHeadSha: String? = nil) -> Request<Void, PutError> {
             Request(path: path, method: "PUT", body: ["expected_head_sha": expectedHeadSha], id: "pulls/update-branch")
         }
 
@@ -36,21 +36,20 @@ extension Paths.Repos.WithOwner.WithRepo.Pulls.WithPullNumber {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
-        }
 
-        public struct PutResponse: Decodable, Sendable {
-            public var message: String?
-            public var url: String?
-
-            public init(message: String? = nil, url: String? = nil) {
-                self.message = message
-                self.url = url
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
             }
 
-            public init(from decoder: Decoder) throws {
-                let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.message = try values.decodeIfPresent(String.self, forKey: "message")
-                self.url = try values.decodeIfPresent(String.self, forKey: "url")
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
             }
         }
     }

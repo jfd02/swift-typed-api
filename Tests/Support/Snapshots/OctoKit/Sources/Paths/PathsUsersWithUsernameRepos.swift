@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -35,20 +35,20 @@ extension Paths.Users.WithUsername {
             public var perPage: Int?
             public var page: Int?
 
-            public enum `Type`: String, Codable, CaseIterable {
+            public enum `Type`: String, Codable, CaseIterable, Sendable {
                 case all
                 case owner
                 case member
             }
 
-            public enum Sort: String, Codable, CaseIterable {
+            public enum Sort: String, Codable, CaseIterable, Sendable {
                 case created
                 case updated
                 case pushed
                 case fullName = "full_name"
             }
 
-            public enum Direction: String, Codable, CaseIterable {
+            public enum Direction: String, Codable, CaseIterable, Sendable {
                 case asc
                 case desc
             }

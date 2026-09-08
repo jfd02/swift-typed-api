@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A repository import from an external source.
 public struct Import: Codable, Sendable {
@@ -31,7 +31,7 @@ public struct Import: Codable, Sendable {
     public var repositoryURL: URL
     public var svnRoot: String?
 
-    public enum Status: String, Codable, CaseIterable {
+    public enum Status: String, Codable, CaseIterable, Sendable {
         case auth
         case error
         case `none`

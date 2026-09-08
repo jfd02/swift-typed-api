@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -40,6 +40,22 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .notFound: return 404
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum PostResponseHeaders {
@@ -70,7 +86,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
                 public var content: String?
 
                 /// The file mode; one of `100644` for file (blob), `100755` for executable (blob), `040000` for subdirectory (tree), `160000` for submodule (commit), or `120000` for a blob that specifies the path of a symlink.
-                public enum Mode: String, Codable, CaseIterable {
+                public enum Mode: String, Codable, CaseIterable, Sendable {
                     case _100644 = "100644"
                     case _100755 = "100755"
                     case _040000 = "040000"
@@ -79,7 +95,7 @@ extension Paths.Repos.WithOwner.WithRepo.Git {
                 }
 
                 /// Either `blob`, `tree`, or `commit`.
-                public enum `Type`: String, Codable, CaseIterable {
+                public enum `Type`: String, Codable, CaseIterable, Sendable {
                     case blob
                     case tree
                     case commit

@@ -767,7 +767,7 @@ package:
     - ArgumentParser
     requirement:
       exact:
-        version: 1.1.1
+        version: 1.1.3
   - url: https://github.com/apple/swift-algorithms
     products:
     - Algorithms
@@ -875,7 +875,7 @@ Modules to be imported within the source files for generated requests
 **Type:** [String: String]<br />
 **Default:** `[:]`
 
-Allows you to override mapping of specific response types to a custom (or generated) type instead.
+Allows you to override mapping of specific response types or response status codes to a custom (or generated) type instead.
 
 For example:
 
@@ -883,6 +883,8 @@ For example:
 paths:
   overriddenResponses:
     MyApiResponseType: MyCustomDecodableType
+    accepted: Void # All 202 responses
+    "204": Void
 ```
 
 <br/>

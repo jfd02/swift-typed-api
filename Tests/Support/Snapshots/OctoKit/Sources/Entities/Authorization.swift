@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The authorization for an OAuth app, GitHub App, or a Personal Access Token.
 public struct Authorization: Codable, Sendable {

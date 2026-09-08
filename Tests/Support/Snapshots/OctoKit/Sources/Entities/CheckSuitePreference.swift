@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Check suite configuration preferences for a repository.
 public struct CheckSuitePreference: Codable, Sendable {

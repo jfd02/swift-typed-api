@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -35,6 +35,20 @@ extension Paths.Teams {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         /// Update a team (Legacy)
@@ -65,6 +79,22 @@ extension Paths.Teams {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PatchRequest: Encodable, Sendable {
@@ -93,7 +123,7 @@ extension Paths.Teams {
             /// \* `closed` - visible to all members of this organization.  
             /// **For a parent or child team:**  
             /// \* `closed` - visible to all members of this organization.
-            public enum Privacy: String, Codable, CaseIterable {
+            public enum Privacy: String, Codable, CaseIterable, Sendable {
                 case secret
                 case closed
             }
@@ -102,7 +132,7 @@ extension Paths.Teams {
             /// \* `pull` - team members can pull, but not push to or administer newly-added repositories.  
             /// \* `push` - team members can pull and push, but not administer newly-added repositories.  
             /// \* `admin` - team members can pull, push and administer newly-added repositories.
-            public enum Permission: String, Codable, CaseIterable {
+            public enum Permission: String, Codable, CaseIterable, Sendable {
                 case pull
                 case push
                 case admin
@@ -150,6 +180,21 @@ extension Paths.Teams {
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 422: return .unprocessableEntity(try decoder.decode(OctoKit.ValidationError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .notFound: return 404
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Information of a job execution in a workflow run
 public struct Job: Codable, Sendable {
@@ -70,7 +70,7 @@ public struct Job: Codable, Sendable {
     /// The phase of the lifecycle that the job is currently in.
     ///
     /// Example: "queued"
-    public enum Status: String, Codable, CaseIterable {
+    public enum Status: String, Codable, CaseIterable, Sendable {
         case queued
         case inProgress = "in_progress"
         case completed
@@ -102,7 +102,7 @@ public struct Job: Codable, Sendable {
         /// The phase of the lifecycle that the job is currently in.
         ///
         /// Example: "queued"
-        public enum Status: String, Codable, CaseIterable {
+        public enum Status: String, Codable, CaseIterable, Sendable {
             case queued
             case inProgress = "in_progress"
             case completed

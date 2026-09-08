@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// An SSH key granting access to a single repository.
 public struct DeployKey: Codable, Sendable {

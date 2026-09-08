@@ -533,7 +533,7 @@ final class GenerateOptionsTests: GenerateTestCase {
                   - ArgumentParser
                   requirement:
                       exact:
-                          version: 1.1.1
+                          version: 1.1.3
                 - url: https://github.com/apple/swift-algorithms
                   products:
                   - Algorithms

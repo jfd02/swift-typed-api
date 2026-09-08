@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -62,24 +62,8 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// Marks all notifications in a repository as "read" removes them from the [default view on GitHub](https://github.com/notifications). If the number of notifications is too large to complete in one request, you will receive a `202 Accepted` status and GitHub will run an asynchronous process to mark notifications as "read." To check whether any "unread" notifications remain, you can use the [List repository notifications for the authenticated user](https://docs.github.com/rest/reference/activity#list-repository-notifications-for-the-authenticated-user) endpoint and pass the query parameter `all=false`.
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/activity#mark-repository-notifications-as-read)
-        public func put(lastReadAt: Date? = nil) -> Request<PutResponse, DefaultRequestError> {
+        public func put(lastReadAt: Date? = nil) -> Request<Void, DefaultRequestError> {
             Request(path: path, method: "PUT", body: ["last_read_at": lastReadAt], id: "activity/mark-repo-notifications-as-read")
-        }
-
-        public struct PutResponse: Decodable, Sendable {
-            public var message: String?
-            public var url: String?
-
-            public init(message: String? = nil, url: String? = nil) {
-                self.message = message
-                self.url = url
-            }
-
-            public init(from decoder: Decoder) throws {
-                let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.message = try values.decodeIfPresent(String.self, forKey: "message")
-                self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            }
         }
     }
 }

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct ActionsRepositoryPermissions: Codable, Sendable {
     /// Whether GitHub Actions is enabled on the repository.

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -32,6 +32,20 @@ extension Paths.Repos.WithOwner.WithRepo {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .badRequest: return 400
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public enum GetResponseHeaders {
@@ -43,7 +57,7 @@ extension Paths.Repos.WithOwner.WithRepo {
             public var perPage: Int?
             public var page: Int?
 
-            public enum Sort: String, Codable, CaseIterable {
+            public enum Sort: String, Codable, CaseIterable, Sendable {
                 case newest
                 case oldest
                 case stargazers
@@ -72,7 +86,7 @@ extension Paths.Repos.WithOwner.WithRepo {
         /// **Note**: Forking a Repository happens asynchronously. You may have to wait a short period of time before you can access the git objects. If this takes longer than 5 minutes, be sure to contact [GitHub Support](https://support.github.com/contact?tags=dotcom-rest-api).
         ///
         /// [API method documentation](https://docs.github.com/rest/reference/repos#create-a-fork)
-        public func post(organization: String? = nil) -> Request<OctoKit.FullRepository, PostError> {
+        public func post(organization: String? = nil) -> Request<Void, PostError> {
             Request(path: path, method: "POST", body: ["organization": organization], id: "repos/create-fork")
         }
 
@@ -90,6 +104,23 @@ extension Paths.Repos.WithOwner.WithRepo {
                 case 403: return .forbidden(try decoder.decode(OctoKit.BasicError.self, from: data))
                 case 404: return .notFound(try decoder.decode(OctoKit.BasicError.self, from: data))
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
+                }
+            }
+
+            public var statusCode: Int? {
+                switch self {
+                case .badRequest: return 400
+                case .unprocessableEntity: return 422
+                case .forbidden: return 403
+                case .notFound: return 404
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
                 }
             }
         }

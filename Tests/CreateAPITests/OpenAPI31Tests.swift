@@ -430,7 +430,44 @@ final class OpenAPI31GenerationTests: XCTestCase {
             XCTAssertTrue(contents.contains("active"), "Should contain 'active' case")
             XCTAssertTrue(contents.contains("inactive"), "Should contain 'inactive' case")
             XCTAssertTrue(contents.contains("pending"), "Should contain 'pending' case")
+            XCTAssertTrue(contents.contains("Sendable"), "String enums should be safe to use in Sendable entities")
         }
+
+        let openOptions = try GenerateOptions(data: nil) {
+            $0.entities.openEnums = true
+        }
+        let openGenerator = Generator(spec: doc, options: openOptions, arguments: arguments)
+        let openStatus = try openGenerator.schemas().files.first { $0.name == "Status" }?.contents
+        XCTAssertTrue(openStatus?.contains("case unknown(String)") == true)
+        XCTAssertTrue(openStatus?.contains("Sendable") == true, "Open string enums should also be Sendable")
+    }
+
+    func testMutableClassesUseUncheckedSendable() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths: {}
+        components:
+          schemas:
+            User:
+              type: object
+              properties:
+                name:
+                  type: string
+        """
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: Data(yaml.utf8))
+        let options = try GenerateOptions(data: nil) {
+            $0.entities.typeOverrides["User"] = .finalClass
+            $0.entities.mutableProperties.insert(.classes)
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let user = try XCTUnwrap(generator.schemas().files.first { $0.name == "User" })
+        XCTAssertTrue(user.contents.contains("final class User: @unchecked Sendable"))
+        XCTAssertTrue(user.contents.contains("public var name: String?"))
     }
 
     /// Tests generation of allOf composition from 3.1 specs.
@@ -512,6 +549,7 @@ final class OpenAPI31GenerationTests: XCTestCase {
         let output = try generator.schemas()
         let contactFile = output.files.first { $0.name == "Contact" }
         XCTAssertNotNil(contactFile, "Should generate a Contact entity")
+        XCTAssertTrue(output.header.contains("@preconcurrency import NaiveDate"))
 
         if let contents = contactFile?.contents {
             // uri format should map to URL
@@ -890,6 +928,7 @@ final class OpenAPI31GenerationTests: XCTestCase {
         let output = try generator.paths()
         let pathFile = output.files.first { $0.name == "ListItems" }
         XCTAssertNotNil(pathFile)
+        XCTAssertTrue(output.header.contains("@preconcurrency import HTTPHeaders"))
 
         if let contents = pathFile?.contents {
             XCTAssertTrue(contents.contains("enum ListItemsResponseHeaders"), "Referenced success responses should still generate response headers")
@@ -945,6 +984,154 @@ final class OpenAPI31GenerationTests: XCTestCase {
         XCTAssertThrowsError(try generator.paths()) { error in
             XCTAssertTrue(error.localizedDescription.contains("multiple successful responses with incompatible body types"))
         }
+    }
+
+    func testSuccessResponseOverrideCanTargetStatusName() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /items:
+            post:
+              operationId: createItem
+              responses:
+                '201':
+                  description: Created
+                  content:
+                    application/json:
+                      schema:
+                        type: string
+                '202':
+                  description: Accepted
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+            $0.paths.overriddenResponses["accepted"] = "Void"
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: true, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = try XCTUnwrap(output.files.first { $0.name == "CreateItem" })
+
+        XCTAssertTrue(pathFile.contents.contains("Request<String, DefaultRequestError>"))
+        XCTAssertFalse(pathFile.contents.contains("CreateItemResponse"))
+    }
+
+    func testOperationsStyleGeneratesReferencedPathItems() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /pets:
+            $ref: "#/components/pathItems/Pets"
+        components:
+          pathItems:
+            Pets:
+              get:
+                operationId: listPets
+                responses:
+                  '200':
+                    description: OK
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+        let options = try GenerateOptions(data: nil) {
+            $0.paths.style = .operations
+        }
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: options, arguments: arguments)
+
+        let output = try generator.paths()
+
+        XCTAssertEqual(output.files.map(\.name), ["ListPets"])
+        XCTAssertTrue(
+            output.files[0].contents.contains("var listPets: Request<Void, DefaultRequestError>"),
+            "Generated contents:\n\(output.files[0].contents)"
+        )
+    }
+
+    func testRestStyleFindsOperationPathParameterAlongsidePathLevelParameters() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /pets/{pet_id}:
+            parameters:
+              - name: locale
+                in: query
+                schema:
+                  type: string
+            get:
+              operationId: getPet
+              parameters:
+                - name: pet_id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+              responses:
+                '200':
+                  description: OK
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: false, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: .default, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = try XCTUnwrap(output.files.first { $0.name == "PathsPetsWithPetID" })
+
+        XCTAssertTrue(pathFile.contents.contains("func petID(_ petID: Int64)"))
+    }
+
+    func testMixedScalarPathParameterUsesStringInStrictMode() throws {
+        let yaml = """
+        openapi: "3.1.0"
+        info:
+          title: TestAPI
+          version: "1.0.0"
+        paths:
+          /workflows/{workflow_id}:
+            get:
+              operationId: getWorkflow
+              parameters:
+                - name: workflow_id
+                  in: path
+                  required: true
+                  schema:
+                    oneOf:
+                      - type: integer
+                      - type: string
+              responses:
+                '200':
+                  description: OK
+        """
+        let data = yaml.data(using: .utf8)!
+        let doc = try YAMLDecoder().decode(OpenAPI.Document.self, from: data)
+        let arguments = GenerateArguments(isVerbose: false, isParallel: false, isStrict: true, isIgnoringErrors: false)
+        let generator = Generator(spec: doc, options: .default, arguments: arguments)
+
+        let output = try generator.paths()
+        let pathFile = try XCTUnwrap(output.files.first { $0.name == "PathsWorkflowsWithWorkflowID" })
+
+        XCTAssertTrue(pathFile.contents.contains("func workflowID(_ workflowID: String)"))
     }
 }
 

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The public key used for setting Actions Secrets.
 public struct ActionsPublicKey: Codable, Sendable {

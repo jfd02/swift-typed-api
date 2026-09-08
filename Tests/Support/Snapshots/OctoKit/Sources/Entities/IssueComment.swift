@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Comments provide a way for people to collaborate on an issue.
 public struct IssueComment: Codable, Sendable {

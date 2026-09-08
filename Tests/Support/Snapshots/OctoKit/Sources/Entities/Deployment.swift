@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A request for a specific ref(branch,sha,tag) to be deployed
 public struct Deployment: Codable, Sendable {

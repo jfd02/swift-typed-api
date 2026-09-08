@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -34,6 +34,20 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .unprocessableEntity: return 422
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         public struct PatchRequest: Encodable, Sendable {
@@ -41,7 +55,7 @@ extension Paths.Repos.WithOwner.WithRepo.Import {
             public var useLfs: UseLfs
 
             /// Can be one of `opt_in` (large files will be stored using Git LFS) or `opt_out` (large files will be removed during the import).
-            public enum UseLfs: String, Codable, CaseIterable {
+            public enum UseLfs: String, Codable, CaseIterable, Sendable {
                 case optIn = "opt_in"
                 case optOut = "opt_out"
             }

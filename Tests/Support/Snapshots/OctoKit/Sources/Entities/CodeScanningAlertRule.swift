@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct CodeScanningAlertRule: Codable, Sendable {
     /// A unique identifier for the rule used to detect the alert.
@@ -23,7 +23,7 @@ public struct CodeScanningAlertRule: Codable, Sendable {
     public var help: String?
 
     /// The severity of the alert.
-    public enum Severity: String, Codable, CaseIterable {
+    public enum Severity: String, Codable, CaseIterable, Sendable {
         case `none`
         case note
         case warning
@@ -31,7 +31,7 @@ public struct CodeScanningAlertRule: Codable, Sendable {
     }
 
     /// The security severity of the alert.
-    public enum SecuritySeverityLevel: String, Codable, CaseIterable {
+    public enum SecuritySeverityLevel: String, Codable, CaseIterable, Sendable {
         case low
         case medium
         case high

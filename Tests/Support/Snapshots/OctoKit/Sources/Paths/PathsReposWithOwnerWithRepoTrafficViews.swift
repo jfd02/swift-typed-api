@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -34,6 +34,20 @@ extension Paths.Repos.WithOwner.WithRepo.Traffic {
                 default: return .unhandled(APIError.unacceptableStatusCode(statusCode))
                 }
             }
+
+            public var statusCode: Int? {
+                switch self {
+                case .forbidden: return 403
+                case .unhandled(let error): return (error as? APIError)?.statusCode
+                }
+            }
+
+            public var underlyingError: (any Swift.Error)? {
+                switch self {
+                case .unhandled(let error): return error
+                default: return nil
+                }
+            }
         }
 
         private func makeGetQuery(_ per: Per?) -> [(String, String?)] {
@@ -42,7 +56,7 @@ extension Paths.Repos.WithOwner.WithRepo.Traffic {
             return encoder.items
         }
 
-        public enum Per: String, Codable, CaseIterable {
+        public enum Per: String, Codable, CaseIterable, Sendable {
             case empty = ""
             case day
             case week

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -49,7 +49,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
             public var perPage: Int?
             public var page: Int?
 
-            public enum Filter: String, Codable, CaseIterable {
+            public enum Filter: String, Codable, CaseIterable, Sendable {
                 case latest
                 case all
             }

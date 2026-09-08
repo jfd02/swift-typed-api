@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Metaproperties for Git author/committer information.
 public struct GitUser: Codable, Sendable {

@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Authentication token for a GitHub App installed on a user or org.
 public struct InstallationToken: Codable, Sendable {
@@ -30,7 +30,7 @@ public struct InstallationToken: Codable, Sendable {
     /// Example: ["config.yml", ".github/issue_TEMPLATE.md"]
     public var singleFilePaths: [String]?
 
-    public enum RepositorySelection: String, Codable, CaseIterable {
+    public enum RepositorySelection: String, Codable, CaseIterable, Sendable {
         case all
         case selected
     }

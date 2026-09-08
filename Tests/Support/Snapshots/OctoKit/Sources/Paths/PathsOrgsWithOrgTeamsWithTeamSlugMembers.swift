@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -35,7 +35,7 @@ extension Paths.Orgs.WithOrg.Teams.WithTeamSlug {
             public var perPage: Int?
             public var page: Int?
 
-            public enum Role: String, Codable, CaseIterable {
+            public enum Role: String, Codable, CaseIterable, Sendable {
                 case member
                 case maintainer
                 case all

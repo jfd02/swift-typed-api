@@ -2,9 +2,9 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
-public enum OuterEnum: String, Codable, CaseIterable {
+public enum OuterEnum: String, Codable, CaseIterable, Sendable {
     case placed
     case approved
     case delivered

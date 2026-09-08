@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct Pet: Codable, Sendable {
   public var id: Int64?
@@ -15,7 +15,7 @@ public struct Pet: Codable, Sendable {
   public var status: Status?
 
   /// Pet status in the store
-  public enum Status: String, Codable, CaseIterable {
+  public enum Status: String, Codable, CaseIterable, Sendable {
     case available
     case pending
     case sold

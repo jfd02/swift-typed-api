@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import HTTPHeaders
+@preconcurrency import HTTPHeaders
 import TypedAPI
 import URLQueryEncoder
 
@@ -54,7 +54,7 @@ extension Paths.Repos.WithOwner.WithRepo.Actions.Runs.WithRunID {
             /// Whether to approve or reject deployment to the specified environments. Must be one of: `approved` or `rejected`
             ///
             /// Example: "approved"
-            public enum State: String, Codable, CaseIterable {
+            public enum State: String, Codable, CaseIterable, Sendable {
                 case approved
                 case rejected
             }

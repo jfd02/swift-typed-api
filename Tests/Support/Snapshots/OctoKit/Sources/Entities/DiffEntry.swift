@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct DiffEntry: Codable, Sendable {
     /// Example: "bbcd538c8e72b8c175046e27cc8f907076331401"
@@ -29,7 +29,7 @@ public struct DiffEntry: Codable, Sendable {
     public var previousFilename: String?
 
     /// Example: "added"
-    public enum Status: String, Codable, CaseIterable {
+    public enum Status: String, Codable, CaseIterable, Sendable {
         case added
         case removed
         case modified

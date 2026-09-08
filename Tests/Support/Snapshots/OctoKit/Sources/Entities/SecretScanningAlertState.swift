@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// Sets the state of the secret scanning alert. Can be either `open` or `resolved`. You must provide `resolution` when you set the state to `resolved`.
-public enum SecretScanningAlertState: String, Codable, CaseIterable {
+public enum SecretScanningAlertState: String, Codable, CaseIterable, Sendable {
     case `open`
     case resolved
 }

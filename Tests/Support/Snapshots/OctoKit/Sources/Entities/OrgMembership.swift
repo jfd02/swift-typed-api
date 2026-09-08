@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct OrgMembership: Codable, Sendable {
     /// Example: "https://api.github.com/orgs/octocat/memberships/defunkt"
@@ -26,7 +26,7 @@ public struct OrgMembership: Codable, Sendable {
     /// The state of the member in the organization. The `pending` state indicates the user has not yet accepted an invitation.
     ///
     /// Example: "active"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case active
         case pending
     }
@@ -34,7 +34,7 @@ public struct OrgMembership: Codable, Sendable {
     /// The user's membership type in the organization.
     ///
     /// Example: "admin"
-    public enum Role: String, Codable, CaseIterable {
+    public enum Role: String, Codable, CaseIterable, Sendable {
         case admin
         case member
         case billingManager = "billing_manager"

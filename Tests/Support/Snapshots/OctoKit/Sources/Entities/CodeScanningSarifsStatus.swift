@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct CodeScanningSarifsStatus: Codable, Sendable {
     /// `pending` files have not yet been processed, while `complete` means results from the SARIF have been stored. `failed` files have either not been processed at all, or could only be partially processed.
@@ -13,7 +13,7 @@ public struct CodeScanningSarifsStatus: Codable, Sendable {
     public var errors: [String]?
 
     /// `pending` files have not yet been processed, while `complete` means results from the SARIF have been stored. `failed` files have either not been processed at all, or could only be partially processed.
-    public enum ProcessingStatus: String, Codable, CaseIterable {
+    public enum ProcessingStatus: String, Codable, CaseIterable, Sendable {
         case pending
         case complete
         case failed

@@ -2,10 +2,10 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A classification of the file. For example to identify it as generated.
-public enum CodeScanningAlertClassification: String, Codable, CaseIterable {
+public enum CodeScanningAlertClassification: String, Codable, CaseIterable, Sendable {
     case source
     case generated
     case test

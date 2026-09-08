@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// A collection of related issues and pull requests.
 public struct Milestone: Codable, Sendable {
@@ -46,7 +46,7 @@ public struct Milestone: Codable, Sendable {
     /// The state of the milestone.
     ///
     /// Example: "open"
-    public enum State: String, Codable, CaseIterable {
+    public enum State: String, Codable, CaseIterable, Sendable {
         case `open`
         case closed
     }

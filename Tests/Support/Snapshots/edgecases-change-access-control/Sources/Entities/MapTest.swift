@@ -2,13 +2,13 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 struct MapTest: Codable, Sendable {
     var mapMapOfString: [String: [String: String]]?
     var mapOfEnumString: [String: MapOfEnumStringItem]?
 
-    enum MapOfEnumStringItem: String, Codable, CaseIterable {
+    enum MapOfEnumStringItem: String, Codable, CaseIterable, Sendable {
         case upper = "UPPER"
         case lower
     }

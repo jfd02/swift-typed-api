@@ -17,7 +17,7 @@ extension Generator {
     }
 
     private func _paths() throws -> GeneratorOutput {
-        let jobs = makeJobs()
+        let jobs = try makeJobs()
         var generated = [Result<GeneratedFile, Error>?](repeating: nil, count: jobs.count)
         let lock = NSLock()
         concurrentPerform(on: jobs, parallel: arguments.isParallel) { index, job in
@@ -40,10 +40,10 @@ extension Generator {
         )
     }
 
-    private func makeJobs() -> [Job] {
+    private func makeJobs() throws -> [Job] {
         switch options.paths.style {
-        case .rest: return makeJobsRest()
-        case .operations: return makeJobsOperations()
+        case .rest: return try makeJobsRest()
+        case .operations: return try makeJobsOperations()
         }
     }
 
@@ -83,7 +83,7 @@ extension Generator {
     }
 
     // Make all jobs upfront so we could then parallelize code generation
-    private func makeJobsRest() -> [JobGenerateRest] {
+    private func makeJobsRest() throws -> [JobGenerateRest] {
         guard !spec.paths.isEmpty else { return [] }
 
         let commonIndices = findCommonIndiciesCount()
@@ -94,6 +94,9 @@ extension Generator {
         for path in spec.paths {
             guard shouldGenerate(path: path.key.rawValue) else {
                 verbose("Skipping path: \(path.key.rawValue)")
+                continue
+            }
+            guard let resolvedItem = try resolvePathItem(path.value, at: path.key) else {
                 continue
             }
             let components = path.key.components.isEmpty ? [""] : path.key.components
@@ -123,13 +126,6 @@ extension Generator {
                     generatedNames[typesKey] = 1
                 }
 
-                let resolvedItem: OpenAPI.PathItem
-                do {
-                    resolvedItem = try path.value.resolvedPathItem(in: spec)
-                } catch {
-                    print("WARNING: Failed to resolve path item for \(path.key): \(error)")
-                    continue
-                }
                 let job = JobGenerateRest(types: types, component: components[index], path: subpath, components: Array(components[commonIndices...index]), isSubpath: isSubpath, item: resolvedItem, commonIndices: commonIndices)
                 jobs.append(job)
             }
@@ -211,19 +207,30 @@ extension Generator {
         return operation.operationId ?? ""
     }
 
-    private func makeJobsOperations() -> [JobGenerateOperation] {
-        spec.paths.compactMap { path, eitherItem -> [JobGenerateOperation]? in
+    private func makeJobsOperations() throws -> [JobGenerateOperation] {
+        try spec.paths.compactMap { path, eitherItem -> [JobGenerateOperation]? in
             guard shouldGenerate(path: path.rawValue) else {
                 verbose("Skipping path: \(path.rawValue)")
                 return nil
             }
-            guard let item = eitherItem.pathItemValue else {
+            guard let item = try resolvePathItem(eitherItem, at: path) else {
                 return nil
             }
             return item.allOperations.map { method, operation in
                 JobGenerateOperation(path: path, item: item, method: method, operation: operation, filename: getOperationId(for: operation))
             }
         }.flatMap { $0 }
+    }
+
+    private func resolvePathItem(
+        _ item: Either<OpenAPI.Reference<OpenAPI.PathItem>, OpenAPI.PathItem>,
+        at path: OpenAPI.Path
+    ) throws -> OpenAPI.PathItem? {
+        do {
+            return try item.resolvedPathItem(in: spec)
+        } catch {
+            return try handle(error: "Failed to resolve path item for \(path.rawValue). \(error)")
+        }
     }
 
     // MARK: - Misc
@@ -277,7 +284,7 @@ extension Generator {
     // MARK: - Path Parameters
 
     private func getPathParameter(item: OpenAPI.PathItem, name: String) throws -> PathParameter {
-        let parameters = item.parameters.isEmpty ? (item.allOperations.first?.1.parameters ?? []) : item.parameters
+        let parameters = item.parameters + item.allOperations.flatMap { $0.1.parameters }
         let parameter = try parameters
             .map { try $0.unwrapped(in: spec) }
             .first { $0.context.inPath && $0.name == name }
@@ -317,10 +324,20 @@ extension Generator {
                 return .builtin("String")
             }
             return try getPathParameterType(for: name, schema: schema)
-        case .all(let schemas, _) where schemas.count == 1,
-             .one(let schemas, _) where schemas.count == 1,
-             .any(let schemas, _) where schemas.count == 1:
-            return try getPathParameterType(for: name, schema: schemas[0])
+        case .all(let schemas, _), .one(let schemas, _), .any(let schemas, _):
+            let types = try schemas.compactMap { schema -> TypeIdentifier? in
+                if case .null = schema.value {
+                    return nil
+                }
+                return try getPathParameterType(for: name, schema: schema)
+            }
+            guard let first = types.first,
+                  types.dropFirst().allSatisfy({ $0 == first }) else {
+                // A URL path segment can represent mixed scalar unions (for
+                // example, an integer ID or a filename) without a wrapper type.
+                return .builtin("String")
+            }
+            return first
         default:
             try handle(warning: "Unsupported schema for path parameter \"\(name)\". Defaulting to String.")
             return .builtin("String")
@@ -674,40 +691,6 @@ extension Generator {
 
     private typealias Response = Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>
 
-    private func makeResponse(for task: GenerateOperationTask, context: Context) throws -> BodyType {
-        guard let response = task.operation.firstSuccessfulResponse else {
-            return BodyType("Void")
-        }
-
-        var context = context
-        context.isEncodableNeeded = false
-
-        let schema: OpenAPI.Response
-        switch response {
-        case .a(let reference):
-            switch reference.jsonReference {
-            case .internal(let internalRef):
-                guard let name = internalRef.name else {
-                    throw GeneratorError("Response reference name is missing")
-                }
-                if let rename = options.paths.overriddenResponses[name] {
-                    return BodyType(type: TypeName(rename))
-                }
-                guard let key = OpenAPI.ComponentKey(rawValue: name), let value = spec.components.responses[key] else {
-                    throw GeneratorError("Failed to find a response body")
-                }
-                schema = value
-            case .external:
-                throw GeneratorError("External references are not supported")
-            }
-        case .b(let value):
-            schema = value
-        }
-
-        let type = task.makeNestedTypeName("Response")
-        return try makeBodyType(for: schema.content, nestedTypeName: type, context: context)
-    }
-
     // MARK: - Typed Response with Error Enum
 
     private struct TypedResponse {
@@ -730,6 +713,13 @@ extension Generator {
         var errorCases: [ErrorEnumCase] = []
 
         let successCandidates = try task.operation.successfulResponses.map { statusCode, responseRef in
+            if let override = overriddenResponseType(for: responseRef, statusCode: statusCode) {
+                return SuccessfulResponseCandidate(
+                    statusCode: statusCode,
+                    body: BodyType(override),
+                    contentSignature: "override:\(override)"
+                )
+            }
             let response = try resolveResponse(responseRef)
             let typeName = task.makeNestedTypeName("Response")
             let body = try makeBodyType(for: response.content, nestedTypeName: typeName, context: context)
@@ -777,6 +767,28 @@ extension Generator {
 
         let errorEnumName = task.makeNestedTypeName("Error").rawValue
         return TypedResponse(successType: successType, errorEnumName: errorEnumName, errorCases: errorCases)
+    }
+
+    private func overriddenResponseType(
+        for responseRef: Either<OpenAPI.Reference<OpenAPI.Response>, OpenAPI.Response>,
+        statusCode: OpenAPI.Response.StatusCode
+    ) -> String? {
+        if case .a(let reference) = responseRef,
+           case .internal(let internalRef) = reference.jsonReference,
+           let name = internalRef.name,
+           let override = options.paths.overriddenResponses[name] {
+            return override
+        }
+
+        let statusName: String
+        switch statusCode.value {
+        case .status(let code): statusName = httpStatusCaseName(for: code)
+        case .default: statusName = "default"
+        case .range(let range): statusName = rangeCaseName(for: range)
+        }
+
+        return options.paths.overriddenResponses[statusName]
+            ?? options.paths.overriddenResponses[statusCodeLabel(statusCode)]
     }
 
     private func makeErrorCase(statusCode: OpenAPI.Response.StatusCode, response: OpenAPI.Response, task: GenerateOperationTask, context: Context) throws -> ErrorEnumCase {
@@ -895,7 +907,6 @@ extension Generator {
         case .redirect: return "redirect"
         case .clientError: return "clientError"
         case .serverError: return "serverError"
-        default: return "statusRange"
         }
     }
 

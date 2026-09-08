@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 public struct PageBuildStatus: Codable, Sendable {
     /// Example: "https://api.github.com/repos/github/hello-world/pages/builds/latest"

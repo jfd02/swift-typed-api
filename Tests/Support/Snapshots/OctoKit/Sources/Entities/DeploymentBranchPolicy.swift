@@ -2,7 +2,7 @@
 // https://github.com/jfd02/swift-typed-api
 
 import Foundation
-import NaiveDate
+@preconcurrency import NaiveDate
 
 /// The type of deployment branch policy for this environment. To allow all branches to deploy, set to `null`.
 public struct DeploymentBranchPolicy: Codable, Sendable {
