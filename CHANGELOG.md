@@ -2,6 +2,10 @@
 
 This project is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). It keeps CreateAPI's OpenAPI-to-Swift generator and replaces the runtime: generated code depends on the bundled `TypedAPI` module — a typed-error adaptation of [Get](https://github.com/kean/Get) — instead of `Get`.
 
+## Unreleased
+
+- **Open string enums.** New `entities.openEnums` option (default `false`). When enabled, string enums gain an `unknown(String)` case and decode through it instead of throwing, so a value added to the API after generation no longer fails the whole response. Documented cases still exist, so typos and newly documented cases remain compile-time errors. Open enums also adopt `entities.protocols`, which string enums otherwise ignore; the closed form is unchanged.
+
 ## 0.5.0
 
 - **Error-response delegate hook.** `APIClientDelegate` gains `client(_:didReceiveErrorResponse:data:for:)`, called once on a terminal non-2xx response (after any retry is declined/exhausted) with the raw response body, right before it is decoded into the typed error and thrown. Unlike `shouldRetry`, it receives the response `data`, so a delegate can inspect an error payload (e.g. a discriminator `code`) to drive cross-cutting reactions. Purely observational — the typed error is still thrown to the caller. Has a default no-op implementation, so existing conformers are unaffected.

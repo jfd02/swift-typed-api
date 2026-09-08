@@ -430,6 +430,14 @@ public struct ConfigOptions: ParsableConfiguration {
         /// Protocols to be adopted by each generated entity
         @Option public var protocols: Set<String> = ["Codable"]
 
+        /// Generate string enums with an `unknown(String)` case instead of a closed enum.
+        ///
+        /// A closed enum fails to decode — and takes the whole response down with it —
+        /// the first time the API returns a value added after the client was generated.
+        /// An open enum keeps the documented cases (so typos and new cases are still
+        /// caught at compile time) and carries anything else through as `.unknown`.
+        @Option public var openEnums: Bool = false
+
         /// Automatically generate `Identifiable` conformance for entities that include an `id` property.
         @Option public var includeIdentifiableConformance: Bool = false
 

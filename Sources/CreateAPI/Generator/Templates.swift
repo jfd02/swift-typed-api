@@ -102,6 +102,60 @@ final class Templates {
         """
     }
 
+    /// A string enum that survives values added to the API after generation.
+    ///
+    /// `RawRepresentable` is satisfied by a non-failable `init(rawValue:)`, so callers
+    /// keep `Type(rawValue:)` and `.rawValue` but never get `nil`. `allCases` lists only
+    /// the documented cases; `.unknown` carries the value the server actually sent.
+    func openEnumOfStrings(name: TypeName, cases: [(name: String, key: String)], protocols: Protocols) -> String {
+        let conformances = protocols.rawValue
+            .union(["CaseIterable", "Hashable", "RawRepresentable"])
+            .sorted()
+            .joined(separator: ", ")
+        func literal(_ value: String) -> String {
+            value.isEscapingNeeded ? "#\"\(value)\"#" : "\"\(value)\""
+        }
+        var lines: [String] = ["\(access)enum \(name): \(conformances) {"]
+        lines += cases.map { "    case \($0.name)" }
+        lines += [
+            "    /// A value added to the API after this client was generated.",
+            "    case unknown(String)",
+            "",
+            "    \(access)init(rawValue: String) {",
+            "        switch rawValue {",
+        ]
+        lines += cases.map { "        case \(literal($0.key)): self = .\($0.name)" }
+        lines += [
+            "        default: self = .unknown(rawValue)",
+            "        }",
+            "    }",
+            "",
+            "    \(access)var rawValue: String {",
+            "        switch self {",
+        ]
+        lines += cases.map { "        case .\($0.name): return \(literal($0.key))" }
+        lines += [
+            "        case .unknown(let value): return value",
+            "        }",
+            "    }",
+            "",
+            "    \(access)static var allCases: [\(name)] {",
+            "        [\(cases.map { ".\($0.name)" }.joined(separator: ", "))]",
+            "    }",
+            "",
+            "    \(access)init(from decoder: Decoder) throws {",
+            "        self.init(rawValue: try decoder.singleValueContainer().decode(String.self))",
+            "    }",
+            "",
+            "    \(access)func encode(to encoder: Encoder) throws {",
+            "        var container = encoder.singleValueContainer()",
+            "        try container.encode(rawValue)",
+            "    }",
+            "}",
+        ]
+        return lines.joined(separator: "\n")
+    }
+
     // MARK: Query Parameters
 
     func asQuery(properties: [Property]) -> String {

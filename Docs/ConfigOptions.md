@@ -68,6 +68,7 @@ Below you can find the complete documentation for all available options.
   - [mutableProperties](#entitiesmutableproperties)
   - [baseClass](#entitiesbaseclass)
   - [protocols](#entitiesprotocols)
+  - [openEnums](#entitiesopenenums)
   - [includeIdentifiableConformance](#entitiesincludeidentifiableconformance)
   - [skipRedundantProtocols](#entitiesskipredundantprotocols)
   - [includeInitializer](#entitiesincludeinitializer)
@@ -505,6 +506,22 @@ Base class used when generating `class` types
 **Default:** `["Codable"]`
 
 Protocols to be adopted by each generated entity
+
+<br/>
+
+## entities.openEnums
+
+**Type:** Bool<br />
+**Default:** `false`
+
+Generate string enums with an `unknown(String)` case instead of a closed enum.
+
+A closed enum fails to decode — and takes the whole response down with it — the first
+time the API returns a value added after the client was generated. An open enum keeps
+the documented cases, so typos and newly documented cases are still caught at compile
+time, and carries anything else through as `.unknown`, preserving the raw value.
+
+`init(rawValue:)` becomes non-failable, and `allCases` lists only the documented cases.
 
 <br/>
 

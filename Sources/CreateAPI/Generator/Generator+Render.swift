@@ -15,6 +15,14 @@ extension Generator {
 
     private func render(_ decl: EnumOfStringsDeclaration) -> String {
         let comments = templates.comments(for: decl.metadata, name: decl.name.rawValue)
+        if options.entities.openEnums {
+            let cases = decl.cases.map { (name: $0.name, key: $0.key) }
+            return comments + templates.openEnumOfStrings(
+                name: decl.name,
+                cases: cases,
+                protocols: Protocols(options.entities.protocols)
+            )
+        }
         let cases = decl.cases.map {
             templates.case(name: $0.name, value: $0.key)
         }.joined(separator: "\n")
