@@ -20,9 +20,9 @@ public struct SelectedActions: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.isGithubOwnedAllowed = try values.decodeIfPresent(Bool.self, forKey: "github_owned_allowed")
-        self.isVerifiedAllowed = try values.decodeIfPresent(Bool.self, forKey: "verified_allowed")
-        self.patternsAllowed = try values.decodeIfPresent([String].self, forKey: "patterns_allowed")
+        self.isGithubOwnedAllowed = values.contains("github_owned_allowed") ? Optional.some(try values.decode(Bool.self, forKey: "github_owned_allowed")) : nil
+        self.isVerifiedAllowed = values.contains("verified_allowed") ? Optional.some(try values.decode(Bool.self, forKey: "verified_allowed")) : nil
+        self.patternsAllowed = values.contains("patterns_allowed") ? Optional.some(try values.decode([String].self, forKey: "patterns_allowed")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

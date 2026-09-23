@@ -70,12 +70,12 @@ public struct Event: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.pageName = try values.decodeIfPresent(String.self, forKey: "page_name")
-                self.title = try values.decodeIfPresent(String.self, forKey: "title")
+                self.pageName = values.contains("page_name") ? Optional.some(try values.decode(String.self, forKey: "page_name")) : nil
+                self.title = values.contains("title") ? Optional.some(try values.decode(String.self, forKey: "title")) : nil
                 self.summary = try values.decodeIfPresent(String.self, forKey: "summary")
-                self.action = try values.decodeIfPresent(String.self, forKey: "action")
-                self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
-                self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
+                self.action = values.contains("action") ? Optional.some(try values.decode(String.self, forKey: "action")) : nil
+                self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
+                self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -98,10 +98,10 @@ public struct Event: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.action = try values.decodeIfPresent(String.self, forKey: "action")
-            self.issue = try values.decodeIfPresent(Issue.self, forKey: "issue")
-            self.comment = try values.decodeIfPresent(IssueComment.self, forKey: "comment")
-            self.pages = try values.decodeIfPresent([Page].self, forKey: "pages")
+            self.action = values.contains("action") ? Optional.some(try values.decode(String.self, forKey: "action")) : nil
+            self.issue = values.contains("issue") ? Optional.some(try values.decode(Issue.self, forKey: "issue")) : nil
+            self.comment = values.contains("comment") ? Optional.some(try values.decode(IssueComment.self, forKey: "comment")) : nil
+            self.pages = values.contains("pages") ? Optional.some(try values.decode([Page].self, forKey: "pages")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -127,24 +127,24 @@ public struct Event: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(String.self, forKey: "id")
-        self.type = try values.decodeIfPresent(String.self, forKey: "type")
+        self.type = try values.decode(String?.self, forKey: "type")
         self.actor = try values.decode(Actor.self, forKey: "actor")
         self.repo = try values.decode(Repo.self, forKey: "repo")
-        self.org = try values.decodeIfPresent(Actor.self, forKey: "org")
+        self.org = values.contains("org") ? Optional.some(try values.decode(Actor.self, forKey: "org")) : nil
         self.payload = try values.decode(Payload.self, forKey: "payload")
         self.isPublic = try values.decode(Bool.self, forKey: "public")
-        self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
+        self.createdAt = try values.decode(Date?.self, forKey: "created_at")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(id, forKey: "id")
-        try values.encodeIfPresent(type, forKey: "type")
+        try values.encode(type, forKey: "type")
         try values.encode(actor, forKey: "actor")
         try values.encode(repo, forKey: "repo")
         try values.encodeIfPresent(org, forKey: "org")
         try values.encode(payload, forKey: "payload")
         try values.encode(isPublic, forKey: "public")
-        try values.encodeIfPresent(createdAt, forKey: "created_at")
+        try values.encode(createdAt, forKey: "created_at")
     }
 }

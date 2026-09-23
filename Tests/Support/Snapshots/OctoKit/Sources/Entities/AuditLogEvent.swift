@@ -68,7 +68,7 @@ public struct AuditLogEvent: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.countryName = try values.decodeIfPresent(String.self, forKey: "country_name")
+            self.countryName = values.contains("country_name") ? Optional.some(try values.decode(String.self, forKey: "country_name")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -122,46 +122,46 @@ public struct AuditLogEvent: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.timestamp = try values.decodeIfPresent(Int.self, forKey: "@timestamp")
-        self.action = try values.decodeIfPresent(String.self, forKey: "action")
-        self.isActive = try values.decodeIfPresent(Bool.self, forKey: "active")
-        self.activeWas = try values.decodeIfPresent(Bool.self, forKey: "active_was")
-        self.actor = try values.decodeIfPresent(String.self, forKey: "actor")
-        self.actorID = try values.decodeIfPresent(Int.self, forKey: "actor_id")
-        self.actorLocation = try values.decodeIfPresent(ActorLocation.self, forKey: "actor_location")
-        self.data = try values.decodeIfPresent([String: AnyJSON].self, forKey: "data")
-        self.orgID = try values.decodeIfPresent(Int.self, forKey: "org_id")
-        self.blockedUser = try values.decodeIfPresent(String.self, forKey: "blocked_user")
-        self.business = try values.decodeIfPresent(String.self, forKey: "business")
-        self.config = try values.decodeIfPresent([[String: AnyJSON]].self, forKey: "config")
-        self.configWas = try values.decodeIfPresent([[String: AnyJSON]].self, forKey: "config_was")
-        self.contentType = try values.decodeIfPresent(String.self, forKey: "content_type")
-        self.createdAt = try values.decodeIfPresent(Int.self, forKey: "created_at")
-        self.deployKeyFingerprint = try values.decodeIfPresent(String.self, forKey: "deploy_key_fingerprint")
-        self.documentID = try values.decodeIfPresent(String.self, forKey: "_document_id")
-        self.emoji = try values.decodeIfPresent(String.self, forKey: "emoji")
-        self.events = try values.decodeIfPresent([[String: AnyJSON]].self, forKey: "events")
-        self.eventsWere = try values.decodeIfPresent([[String: AnyJSON]].self, forKey: "events_were")
-        self.explanation = try values.decodeIfPresent(String.self, forKey: "explanation")
-        self.fingerprint = try values.decodeIfPresent(String.self, forKey: "fingerprint")
-        self.hookID = try values.decodeIfPresent(Int.self, forKey: "hook_id")
-        self.isLimitedAvailability = try values.decodeIfPresent(Bool.self, forKey: "limited_availability")
-        self.message = try values.decodeIfPresent(String.self, forKey: "message")
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
-        self.oldUser = try values.decodeIfPresent(String.self, forKey: "old_user")
-        self.opensshPublicKey = try values.decodeIfPresent(String.self, forKey: "openssh_public_key")
-        self.org = try values.decodeIfPresent(String.self, forKey: "org")
-        self.previousVisibility = try values.decodeIfPresent(String.self, forKey: "previous_visibility")
-        self.isReadOnly = try values.decodeIfPresent(Bool.self, forKey: "read_only")
-        self.repo = try values.decodeIfPresent(String.self, forKey: "repo")
-        self.repository = try values.decodeIfPresent(String.self, forKey: "repository")
-        self.isRepositoryPublic = try values.decodeIfPresent(Bool.self, forKey: "repository_public")
-        self.targetLogin = try values.decodeIfPresent(String.self, forKey: "target_login")
-        self.team = try values.decodeIfPresent(String.self, forKey: "team")
-        self.transportProtocol = try values.decodeIfPresent(Int.self, forKey: "transport_protocol")
-        self.transportProtocolName = try values.decodeIfPresent(String.self, forKey: "transport_protocol_name")
-        self.user = try values.decodeIfPresent(String.self, forKey: "user")
-        self.visibility = try values.decodeIfPresent(String.self, forKey: "visibility")
+        self.timestamp = values.contains("@timestamp") ? Optional.some(try values.decode(Int.self, forKey: "@timestamp")) : nil
+        self.action = values.contains("action") ? Optional.some(try values.decode(String.self, forKey: "action")) : nil
+        self.isActive = values.contains("active") ? Optional.some(try values.decode(Bool.self, forKey: "active")) : nil
+        self.activeWas = values.contains("active_was") ? Optional.some(try values.decode(Bool.self, forKey: "active_was")) : nil
+        self.actor = values.contains("actor") ? Optional.some(try values.decode(String.self, forKey: "actor")) : nil
+        self.actorID = values.contains("actor_id") ? Optional.some(try values.decode(Int.self, forKey: "actor_id")) : nil
+        self.actorLocation = values.contains("actor_location") ? Optional.some(try values.decode(ActorLocation.self, forKey: "actor_location")) : nil
+        self.data = values.contains("data") ? Optional.some(try values.decode([String: AnyJSON].self, forKey: "data")) : nil
+        self.orgID = values.contains("org_id") ? Optional.some(try values.decode(Int.self, forKey: "org_id")) : nil
+        self.blockedUser = values.contains("blocked_user") ? Optional.some(try values.decode(String.self, forKey: "blocked_user")) : nil
+        self.business = values.contains("business") ? Optional.some(try values.decode(String.self, forKey: "business")) : nil
+        self.config = values.contains("config") ? Optional.some(try values.decode([[String: AnyJSON]].self, forKey: "config")) : nil
+        self.configWas = values.contains("config_was") ? Optional.some(try values.decode([[String: AnyJSON]].self, forKey: "config_was")) : nil
+        self.contentType = values.contains("content_type") ? Optional.some(try values.decode(String.self, forKey: "content_type")) : nil
+        self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(Int.self, forKey: "created_at")) : nil
+        self.deployKeyFingerprint = values.contains("deploy_key_fingerprint") ? Optional.some(try values.decode(String.self, forKey: "deploy_key_fingerprint")) : nil
+        self.documentID = values.contains("_document_id") ? Optional.some(try values.decode(String.self, forKey: "_document_id")) : nil
+        self.emoji = values.contains("emoji") ? Optional.some(try values.decode(String.self, forKey: "emoji")) : nil
+        self.events = values.contains("events") ? Optional.some(try values.decode([[String: AnyJSON]].self, forKey: "events")) : nil
+        self.eventsWere = values.contains("events_were") ? Optional.some(try values.decode([[String: AnyJSON]].self, forKey: "events_were")) : nil
+        self.explanation = values.contains("explanation") ? Optional.some(try values.decode(String.self, forKey: "explanation")) : nil
+        self.fingerprint = values.contains("fingerprint") ? Optional.some(try values.decode(String.self, forKey: "fingerprint")) : nil
+        self.hookID = values.contains("hook_id") ? Optional.some(try values.decode(Int.self, forKey: "hook_id")) : nil
+        self.isLimitedAvailability = values.contains("limited_availability") ? Optional.some(try values.decode(Bool.self, forKey: "limited_availability")) : nil
+        self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+        self.oldUser = values.contains("old_user") ? Optional.some(try values.decode(String.self, forKey: "old_user")) : nil
+        self.opensshPublicKey = values.contains("openssh_public_key") ? Optional.some(try values.decode(String.self, forKey: "openssh_public_key")) : nil
+        self.org = values.contains("org") ? Optional.some(try values.decode(String.self, forKey: "org")) : nil
+        self.previousVisibility = values.contains("previous_visibility") ? Optional.some(try values.decode(String.self, forKey: "previous_visibility")) : nil
+        self.isReadOnly = values.contains("read_only") ? Optional.some(try values.decode(Bool.self, forKey: "read_only")) : nil
+        self.repo = values.contains("repo") ? Optional.some(try values.decode(String.self, forKey: "repo")) : nil
+        self.repository = values.contains("repository") ? Optional.some(try values.decode(String.self, forKey: "repository")) : nil
+        self.isRepositoryPublic = values.contains("repository_public") ? Optional.some(try values.decode(Bool.self, forKey: "repository_public")) : nil
+        self.targetLogin = values.contains("target_login") ? Optional.some(try values.decode(String.self, forKey: "target_login")) : nil
+        self.team = values.contains("team") ? Optional.some(try values.decode(String.self, forKey: "team")) : nil
+        self.transportProtocol = values.contains("transport_protocol") ? Optional.some(try values.decode(Int.self, forKey: "transport_protocol")) : nil
+        self.transportProtocolName = values.contains("transport_protocol_name") ? Optional.some(try values.decode(String.self, forKey: "transport_protocol_name")) : nil
+        self.user = values.contains("user") ? Optional.some(try values.decode(String.self, forKey: "user")) : nil
+        self.visibility = values.contains("visibility") ? Optional.some(try values.decode(String.self, forKey: "visibility")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

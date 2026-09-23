@@ -69,12 +69,12 @@ public struct Feed: Codable, Sendable {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.timeline = try values.decode(LinkWithType.self, forKey: "timeline")
             self.user = try values.decode(LinkWithType.self, forKey: "user")
-            self.securityAdvisories = try values.decodeIfPresent(LinkWithType.self, forKey: "security_advisories")
-            self.currentUser = try values.decodeIfPresent(LinkWithType.self, forKey: "current_user")
-            self.currentUserPublic = try values.decodeIfPresent(LinkWithType.self, forKey: "current_user_public")
-            self.currentUserActor = try values.decodeIfPresent(LinkWithType.self, forKey: "current_user_actor")
-            self.currentUserOrganization = try values.decodeIfPresent(LinkWithType.self, forKey: "current_user_organization")
-            self.currentUserOrganizations = try values.decodeIfPresent([LinkWithType].self, forKey: "current_user_organizations")
+            self.securityAdvisories = values.contains("security_advisories") ? Optional.some(try values.decode(LinkWithType.self, forKey: "security_advisories")) : nil
+            self.currentUser = values.contains("current_user") ? Optional.some(try values.decode(LinkWithType.self, forKey: "current_user")) : nil
+            self.currentUserPublic = values.contains("current_user_public") ? Optional.some(try values.decode(LinkWithType.self, forKey: "current_user_public")) : nil
+            self.currentUserActor = values.contains("current_user_actor") ? Optional.some(try values.decode(LinkWithType.self, forKey: "current_user_actor")) : nil
+            self.currentUserOrganization = values.contains("current_user_organization") ? Optional.some(try values.decode(LinkWithType.self, forKey: "current_user_organization")) : nil
+            self.currentUserOrganizations = values.contains("current_user_organizations") ? Optional.some(try values.decode([LinkWithType].self, forKey: "current_user_organizations")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -106,12 +106,12 @@ public struct Feed: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.timelineURL = try values.decode(String.self, forKey: "timeline_url")
         self.userURL = try values.decode(String.self, forKey: "user_url")
-        self.currentUserPublicURL = try values.decodeIfPresent(String.self, forKey: "current_user_public_url")
-        self.currentUserURL = try values.decodeIfPresent(String.self, forKey: "current_user_url")
-        self.currentUserActorURL = try values.decodeIfPresent(String.self, forKey: "current_user_actor_url")
-        self.currentUserOrganizationURL = try values.decodeIfPresent(String.self, forKey: "current_user_organization_url")
-        self.currentUserOrganizationURLs = try values.decodeIfPresent([URL].self, forKey: "current_user_organization_urls")
-        self.securityAdvisoriesURL = try values.decodeIfPresent(String.self, forKey: "security_advisories_url")
+        self.currentUserPublicURL = values.contains("current_user_public_url") ? Optional.some(try values.decode(String.self, forKey: "current_user_public_url")) : nil
+        self.currentUserURL = values.contains("current_user_url") ? Optional.some(try values.decode(String.self, forKey: "current_user_url")) : nil
+        self.currentUserActorURL = values.contains("current_user_actor_url") ? Optional.some(try values.decode(String.self, forKey: "current_user_actor_url")) : nil
+        self.currentUserOrganizationURL = values.contains("current_user_organization_url") ? Optional.some(try values.decode(String.self, forKey: "current_user_organization_url")) : nil
+        self.currentUserOrganizationURLs = values.contains("current_user_organization_urls") ? Optional.some(try values.decode([URL].self, forKey: "current_user_organization_urls")) : nil
+        self.securityAdvisoriesURL = values.contains("security_advisories_url") ? Optional.some(try values.decode(String.self, forKey: "security_advisories_url")) : nil
         self.links = try values.decode(Links.self, forKey: "_links")
     }
 

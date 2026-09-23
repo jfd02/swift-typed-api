@@ -78,19 +78,19 @@ public struct Commit: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.url = try values.decode(URL.self, forKey: "url")
-            self.author = try values.decodeIfPresent(GitUser.self, forKey: "author")
-            self.committer = try values.decodeIfPresent(GitUser.self, forKey: "committer")
+            self.author = try values.decode(GitUser?.self, forKey: "author")
+            self.committer = try values.decode(GitUser?.self, forKey: "committer")
             self.message = try values.decode(String.self, forKey: "message")
             self.commentCount = try values.decode(Int.self, forKey: "comment_count")
             self.tree = try values.decode(Tree.self, forKey: "tree")
-            self.verification = try values.decodeIfPresent(Verification.self, forKey: "verification")
+            self.verification = values.contains("verification") ? Optional.some(try values.decode(Verification.self, forKey: "verification")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encode(url, forKey: "url")
-            try values.encodeIfPresent(author, forKey: "author")
-            try values.encodeIfPresent(committer, forKey: "committer")
+            try values.encode(author, forKey: "author")
+            try values.encode(committer, forKey: "committer")
             try values.encode(message, forKey: "message")
             try values.encode(commentCount, forKey: "comment_count")
             try values.encode(tree, forKey: "tree")
@@ -116,7 +116,7 @@ public struct Commit: Codable, Sendable {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.sha = try values.decode(String.self, forKey: "sha")
             self.url = try values.decode(URL.self, forKey: "url")
-            self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
+            self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(URL.self, forKey: "html_url")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -140,9 +140,9 @@ public struct Commit: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.additions = try values.decodeIfPresent(Int.self, forKey: "additions")
-            self.deletions = try values.decodeIfPresent(Int.self, forKey: "deletions")
-            self.total = try values.decodeIfPresent(Int.self, forKey: "total")
+            self.additions = values.contains("additions") ? Optional.some(try values.decode(Int.self, forKey: "additions")) : nil
+            self.deletions = values.contains("deletions") ? Optional.some(try values.decode(Int.self, forKey: "deletions")) : nil
+            self.total = values.contains("total") ? Optional.some(try values.decode(Int.self, forKey: "total")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -175,11 +175,11 @@ public struct Commit: Codable, Sendable {
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.commentsURL = try values.decode(URL.self, forKey: "comments_url")
         self.commit = try values.decode(Commit.self, forKey: "commit")
-        self.author = try values.decodeIfPresent(SimpleUser.self, forKey: "author")
-        self.committer = try values.decodeIfPresent(SimpleUser.self, forKey: "committer")
+        self.author = try values.decode(SimpleUser?.self, forKey: "author")
+        self.committer = try values.decode(SimpleUser?.self, forKey: "committer")
         self.parents = try values.decode([Parent].self, forKey: "parents")
-        self.stats = try values.decodeIfPresent(Stats.self, forKey: "stats")
-        self.files = try values.decodeIfPresent([DiffEntry].self, forKey: "files")
+        self.stats = values.contains("stats") ? Optional.some(try values.decode(Stats.self, forKey: "stats")) : nil
+        self.files = values.contains("files") ? Optional.some(try values.decode([DiffEntry].self, forKey: "files")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -190,8 +190,8 @@ public struct Commit: Codable, Sendable {
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(commentsURL, forKey: "comments_url")
         try values.encode(commit, forKey: "commit")
-        try values.encodeIfPresent(author, forKey: "author")
-        try values.encodeIfPresent(committer, forKey: "committer")
+        try values.encode(author, forKey: "author")
+        try values.encode(committer, forKey: "committer")
         try values.encode(parents, forKey: "parents")
         try values.encodeIfPresent(stats, forKey: "stats")
         try values.encodeIfPresent(files, forKey: "files")

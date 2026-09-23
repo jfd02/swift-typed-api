@@ -32,19 +32,19 @@ public struct ThreadSubscription: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.isSubscribed = try values.decode(Bool.self, forKey: "subscribed")
         self.isIgnored = try values.decode(Bool.self, forKey: "ignored")
-        self.reason = try values.decodeIfPresent(String.self, forKey: "reason")
-        self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
+        self.reason = try values.decode(String?.self, forKey: "reason")
+        self.createdAt = try values.decode(Date?.self, forKey: "created_at")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.threadURL = try values.decodeIfPresent(URL.self, forKey: "thread_url")
-        self.repositoryURL = try values.decodeIfPresent(URL.self, forKey: "repository_url")
+        self.threadURL = values.contains("thread_url") ? Optional.some(try values.decode(URL.self, forKey: "thread_url")) : nil
+        self.repositoryURL = values.contains("repository_url") ? Optional.some(try values.decode(URL.self, forKey: "repository_url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(isSubscribed, forKey: "subscribed")
         try values.encode(isIgnored, forKey: "ignored")
-        try values.encodeIfPresent(reason, forKey: "reason")
-        try values.encodeIfPresent(createdAt, forKey: "created_at")
+        try values.encode(reason, forKey: "reason")
+        try values.encode(createdAt, forKey: "created_at")
         try values.encode(url, forKey: "url")
         try values.encodeIfPresent(threadURL, forKey: "thread_url")
         try values.encodeIfPresent(repositoryURL, forKey: "repository_url")

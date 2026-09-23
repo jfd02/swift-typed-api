@@ -40,11 +40,11 @@ public struct Order: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.id = try values.decodeIfPresent(Int64.self, forKey: .id)
-        self.petID = try values.decodeIfPresent(Int64.self, forKey: .petID)
-        self.quantity = try values.decodeIfPresent(Int32.self, forKey: .quantity)
-        self.shipDate = try values.decodeIfPresent(Date.self, forKey: .shipDate)
-        self.status = try values.decodeIfPresent(Status.self, forKey: .status)
-        self.isComplete = try values.decodeIfPresent(Bool.self, forKey: .isComplete) ?? false
+        self.id = values.contains(.id) ? Optional.some(try values.decode(Int64.self, forKey: .id)) : nil
+        self.petID = values.contains(.petID) ? Optional.some(try values.decode(Int64.self, forKey: .petID)) : nil
+        self.quantity = values.contains(.quantity) ? Optional.some(try values.decode(Int32.self, forKey: .quantity)) : nil
+        self.shipDate = values.contains(.shipDate) ? Optional.some(try values.decode(Date.self, forKey: .shipDate)) : nil
+        self.status = values.contains(.status) ? Optional.some(try values.decode(Status.self, forKey: .status)) : nil
+        self.isComplete = values.contains(.isComplete) ? try values.decode(Bool.self, forKey: .isComplete) : false
     }
 }

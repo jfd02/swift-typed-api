@@ -15,12 +15,12 @@ public struct Person: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.name = try values.decode(String.self, forKey: "name")
-        self.address = try values.decodeIfPresent(String.self, forKey: "address")
+        self.address = try values.decode(String?.self, forKey: "address")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(address, forKey: "address")
+        try values.encode(address, forKey: "address")
     }
 }

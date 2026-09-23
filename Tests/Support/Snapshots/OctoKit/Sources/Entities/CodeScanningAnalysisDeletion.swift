@@ -20,13 +20,13 @@ public struct CodeScanningAnalysisDeletion: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.nextAnalysisURL = try values.decodeIfPresent(URL.self, forKey: "next_analysis_url")
-        self.confirmDeleteURL = try values.decodeIfPresent(URL.self, forKey: "confirm_delete_url")
+        self.nextAnalysisURL = try values.decode(URL?.self, forKey: "next_analysis_url")
+        self.confirmDeleteURL = try values.decode(URL?.self, forKey: "confirm_delete_url")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
-        try values.encodeIfPresent(nextAnalysisURL, forKey: "next_analysis_url")
-        try values.encodeIfPresent(confirmDeleteURL, forKey: "confirm_delete_url")
+        try values.encode(nextAnalysisURL, forKey: "next_analysis_url")
+        try values.encode(confirmDeleteURL, forKey: "confirm_delete_url")
     }
 }

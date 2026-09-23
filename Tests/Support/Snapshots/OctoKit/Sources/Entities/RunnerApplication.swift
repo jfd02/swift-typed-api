@@ -28,8 +28,8 @@ public struct RunnerApplication: Codable, Sendable {
         self.architecture = try values.decode(String.self, forKey: "architecture")
         self.downloadURL = try values.decode(String.self, forKey: "download_url")
         self.filename = try values.decode(String.self, forKey: "filename")
-        self.tempDownloadToken = try values.decodeIfPresent(String.self, forKey: "temp_download_token")
-        self.sha256Checksum = try values.decodeIfPresent(String.self, forKey: "sha256_checksum")
+        self.tempDownloadToken = values.contains("temp_download_token") ? Optional.some(try values.decode(String.self, forKey: "temp_download_token")) : nil
+        self.sha256Checksum = values.contains("sha256_checksum") ? Optional.some(try values.decode(String.self, forKey: "sha256_checksum")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

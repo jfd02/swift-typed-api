@@ -36,7 +36,7 @@ public struct Status: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.url = try values.decode(String.self, forKey: "url")
-        self.avatarURL = try values.decodeIfPresent(String.self, forKey: "avatar_url")
+        self.avatarURL = try values.decode(String?.self, forKey: "avatar_url")
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.state = try values.decode(String.self, forKey: "state")
@@ -45,13 +45,13 @@ public struct Status: Codable, Sendable {
         self.context = try values.decode(String.self, forKey: "context")
         self.createdAt = try values.decode(String.self, forKey: "created_at")
         self.updatedAt = try values.decode(String.self, forKey: "updated_at")
-        self.creator = try values.decodeIfPresent(SimpleUser.self, forKey: "creator")
+        self.creator = try values.decode(SimpleUser?.self, forKey: "creator")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(url, forKey: "url")
-        try values.encodeIfPresent(avatarURL, forKey: "avatar_url")
+        try values.encode(avatarURL, forKey: "avatar_url")
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(state, forKey: "state")
@@ -60,6 +60,6 @@ public struct Status: Codable, Sendable {
         try values.encode(context, forKey: "context")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
-        try values.encodeIfPresent(creator, forKey: "creator")
+        try values.encode(creator, forKey: "creator")
     }
 }

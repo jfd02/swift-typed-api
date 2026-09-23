@@ -27,7 +27,7 @@ public struct CodeScanningSarifsStatus: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.processingStatus = try values.decodeIfPresent(ProcessingStatus.self, forKey: "processing_status")
+        self.processingStatus = values.contains("processing_status") ? Optional.some(try values.decode(ProcessingStatus.self, forKey: "processing_status")) : nil
         self.analysesURL = try values.decodeIfPresent(URL.self, forKey: "analyses_url")
         self.errors = try values.decodeIfPresent([String].self, forKey: "errors")
     }

@@ -37,18 +37,18 @@ public struct FormatTest: Codable, Sendable {
 
 	public init(from decoder: Decoder) throws {
 		let values = try decoder.container(keyedBy: StringCodingKey.self)
-		self.integer = try values.decodeIfPresent(Int.self, forKey: "integer")
-		self.int32 = try values.decodeIfPresent(Int32.self, forKey: "int32")
-		self.int64 = try values.decodeIfPresent(Int64.self, forKey: "int64")
+		self.integer = values.contains("integer") ? Optional.some(try values.decode(Int.self, forKey: "integer")) : nil
+		self.int32 = values.contains("int32") ? Optional.some(try values.decode(Int32.self, forKey: "int32")) : nil
+		self.int64 = values.contains("int64") ? Optional.some(try values.decode(Int64.self, forKey: "int64")) : nil
 		self.number = try values.decode(Double.self, forKey: "number")
-		self.float = try values.decodeIfPresent(Float.self, forKey: "float")
-		self.double = try values.decodeIfPresent(Double.self, forKey: "double")
-		self.string = try values.decodeIfPresent(String.self, forKey: "string")
+		self.float = values.contains("float") ? Optional.some(try values.decode(Float.self, forKey: "float")) : nil
+		self.double = values.contains("double") ? Optional.some(try values.decode(Double.self, forKey: "double")) : nil
+		self.string = values.contains("string") ? Optional.some(try values.decode(String.self, forKey: "string")) : nil
 		self.byte = try values.decode(Data.self, forKey: "byte")
-		self.binary = try values.decodeIfPresent(Data.self, forKey: "binary")
+		self.binary = values.contains("binary") ? Optional.some(try values.decode(Data.self, forKey: "binary")) : nil
 		self.date = try values.decode(NaiveDate.self, forKey: "date")
-		self.dateTime = try values.decodeIfPresent(Date.self, forKey: "dateTime")
-		self.uuid = try values.decodeIfPresent(UUID.self, forKey: "uuid")
+		self.dateTime = values.contains("dateTime") ? Optional.some(try values.decode(Date.self, forKey: "dateTime")) : nil
+		self.uuid = values.contains("uuid") ? Optional.some(try values.decode(UUID.self, forKey: "uuid")) : nil
 		self.password = try values.decode(String.self, forKey: "password")
 	}
 

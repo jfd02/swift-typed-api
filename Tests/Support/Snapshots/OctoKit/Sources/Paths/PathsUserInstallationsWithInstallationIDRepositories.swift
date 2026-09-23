@@ -76,7 +76,7 @@ extension Paths.User.Installations.WithInstallationID {
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
                 self.totalCount = try values.decode(Int.self, forKey: "total_count")
-                self.repositorySelection = try values.decodeIfPresent(String.self, forKey: "repository_selection")
+                self.repositorySelection = values.contains("repository_selection") ? Optional.some(try values.decode(String.self, forKey: "repository_selection")) : nil
                 self.repositories = try values.decode([OctoKit.Repository].self, forKey: "repositories")
             }
         }

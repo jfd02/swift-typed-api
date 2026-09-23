@@ -25,8 +25,8 @@ public struct EnumArrays: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.justSymbol = try values.decodeIfPresent(JustSymbol.self, forKey: "just_symbol")
-        self.arrayEnum = try values.decodeIfPresent([ArrayEnumItem].self, forKey: "array_enum")
+        self.justSymbol = values.contains("just_symbol") ? Optional.some(try values.decode(JustSymbol.self, forKey: "just_symbol")) : nil
+        self.arrayEnum = values.contains("array_enum") ? Optional.some(try values.decode([ArrayEnumItem].self, forKey: "array_enum")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

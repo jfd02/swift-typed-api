@@ -48,11 +48,11 @@ public struct CodeSearchResultItem: Codable, Sendable {
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.repository = try values.decode(MinimalRepository.self, forKey: "repository")
         self.score = try values.decode(Double.self, forKey: "score")
-        self.fileSize = try values.decodeIfPresent(Int.self, forKey: "file_size")
+        self.fileSize = values.contains("file_size") ? Optional.some(try values.decode(Int.self, forKey: "file_size")) : nil
         self.language = try values.decodeIfPresent(String.self, forKey: "language")
-        self.lastModifiedAt = try values.decodeIfPresent(Date.self, forKey: "last_modified_at")
-        self.lineNumbers = try values.decodeIfPresent([String].self, forKey: "line_numbers")
-        self.textMatches = try values.decodeIfPresent([SearchResultTextMatch].self, forKey: "text_matches")
+        self.lastModifiedAt = values.contains("last_modified_at") ? Optional.some(try values.decode(Date.self, forKey: "last_modified_at")) : nil
+        self.lineNumbers = values.contains("line_numbers") ? Optional.some(try values.decode([String].self, forKey: "line_numbers")) : nil
+        self.textMatches = values.contains("text_matches") ? Optional.some(try values.decode([SearchResultTextMatch].self, forKey: "text_matches")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

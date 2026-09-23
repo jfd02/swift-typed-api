@@ -41,13 +41,13 @@ public struct RateLimitOverview: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.core = try values.decode(RateLimit.self, forKey: "core")
-            self.graphql = try values.decodeIfPresent(RateLimit.self, forKey: "graphql")
+            self.graphql = values.contains("graphql") ? Optional.some(try values.decode(RateLimit.self, forKey: "graphql")) : nil
             self.search = try values.decode(RateLimit.self, forKey: "search")
-            self.sourceImport = try values.decodeIfPresent(RateLimit.self, forKey: "source_import")
-            self.integrationManifest = try values.decodeIfPresent(RateLimit.self, forKey: "integration_manifest")
-            self.codeScanningUpload = try values.decodeIfPresent(RateLimit.self, forKey: "code_scanning_upload")
-            self.actionsRunnerRegistration = try values.decodeIfPresent(RateLimit.self, forKey: "actions_runner_registration")
-            self.scim = try values.decodeIfPresent(RateLimit.self, forKey: "scim")
+            self.sourceImport = values.contains("source_import") ? Optional.some(try values.decode(RateLimit.self, forKey: "source_import")) : nil
+            self.integrationManifest = values.contains("integration_manifest") ? Optional.some(try values.decode(RateLimit.self, forKey: "integration_manifest")) : nil
+            self.codeScanningUpload = values.contains("code_scanning_upload") ? Optional.some(try values.decode(RateLimit.self, forKey: "code_scanning_upload")) : nil
+            self.actionsRunnerRegistration = values.contains("actions_runner_registration") ? Optional.some(try values.decode(RateLimit.self, forKey: "actions_runner_registration")) : nil
+            self.scim = values.contains("scim") ? Optional.some(try values.decode(RateLimit.self, forKey: "scim")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {

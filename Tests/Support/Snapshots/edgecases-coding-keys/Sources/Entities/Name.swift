@@ -24,4 +24,12 @@ public struct Name: Codable, Sendable {
         case property
         case _123Number = "123Number"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try values.decode(Int32.self, forKey: .name)
+        self.snakeCase = values.contains(.snakeCase) ? Optional.some(try values.decode(Int32.self, forKey: .snakeCase)) : nil
+        self.property = values.contains(.property) ? Optional.some(try values.decode(String.self, forKey: .property)) : nil
+        self._123Number = values.contains(._123Number) ? Optional.some(try values.decode(Int.self, forKey: ._123Number)) : nil
+    }
 }

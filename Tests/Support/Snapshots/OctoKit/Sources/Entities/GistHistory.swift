@@ -25,9 +25,9 @@ public struct GistHistory: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.total = try values.decodeIfPresent(Int.self, forKey: "total")
-            self.additions = try values.decodeIfPresent(Int.self, forKey: "additions")
-            self.deletions = try values.decodeIfPresent(Int.self, forKey: "deletions")
+            self.total = values.contains("total") ? Optional.some(try values.decode(Int.self, forKey: "total")) : nil
+            self.additions = values.contains("additions") ? Optional.some(try values.decode(Int.self, forKey: "additions")) : nil
+            self.deletions = values.contains("deletions") ? Optional.some(try values.decode(Int.self, forKey: "deletions")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -49,10 +49,10 @@ public struct GistHistory: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
-        self.version = try values.decodeIfPresent(String.self, forKey: "version")
-        self.committedAt = try values.decodeIfPresent(Date.self, forKey: "committed_at")
-        self.changeStatus = try values.decodeIfPresent(ChangeStatus.self, forKey: "change_status")
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
+        self.version = values.contains("version") ? Optional.some(try values.decode(String.self, forKey: "version")) : nil
+        self.committedAt = values.contains("committed_at") ? Optional.some(try values.decode(Date.self, forKey: "committed_at")) : nil
+        self.changeStatus = values.contains("change_status") ? Optional.some(try values.decode(ChangeStatus.self, forKey: "change_status")) : nil
+        self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

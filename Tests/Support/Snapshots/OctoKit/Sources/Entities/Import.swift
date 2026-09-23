@@ -63,9 +63,9 @@ public struct Import: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.vcs = try values.decodeIfPresent(String.self, forKey: "vcs")
-            self.tfvcProject = try values.decodeIfPresent(String.self, forKey: "tfvc_project")
-            self.humanName = try values.decodeIfPresent(String.self, forKey: "human_name")
+            self.vcs = values.contains("vcs") ? Optional.some(try values.decode(String.self, forKey: "vcs")) : nil
+            self.tfvcProject = values.contains("tfvc_project") ? Optional.some(try values.decode(String.self, forKey: "tfvc_project")) : nil
+            self.humanName = values.contains("human_name") ? Optional.some(try values.decode(String.self, forKey: "human_name")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -104,11 +104,11 @@ public struct Import: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.vcs = try values.decodeIfPresent(String.self, forKey: "vcs")
-        self.useLfs = try values.decodeIfPresent(Bool.self, forKey: "use_lfs")
+        self.vcs = try values.decode(String?.self, forKey: "vcs")
+        self.useLfs = values.contains("use_lfs") ? Optional.some(try values.decode(Bool.self, forKey: "use_lfs")) : nil
         self.vcsURL = try values.decode(String.self, forKey: "vcs_url")
-        self.svcRoot = try values.decodeIfPresent(String.self, forKey: "svc_root")
-        self.tfvcProject = try values.decodeIfPresent(String.self, forKey: "tfvc_project")
+        self.svcRoot = values.contains("svc_root") ? Optional.some(try values.decode(String.self, forKey: "svc_root")) : nil
+        self.tfvcProject = values.contains("tfvc_project") ? Optional.some(try values.decode(String.self, forKey: "tfvc_project")) : nil
         self.status = try values.decode(Status.self, forKey: "status")
         self.statusText = try values.decodeIfPresent(String.self, forKey: "status_text")
         self.failedStep = try values.decodeIfPresent(String.self, forKey: "failed_step")
@@ -116,22 +116,22 @@ public struct Import: Codable, Sendable {
         self.importPercent = try values.decodeIfPresent(Int.self, forKey: "import_percent")
         self.commitCount = try values.decodeIfPresent(Int.self, forKey: "commit_count")
         self.pushPercent = try values.decodeIfPresent(Int.self, forKey: "push_percent")
-        self.hasLargeFiles = try values.decodeIfPresent(Bool.self, forKey: "has_large_files")
-        self.largeFilesSize = try values.decodeIfPresent(Int.self, forKey: "large_files_size")
-        self.largeFilesCount = try values.decodeIfPresent(Int.self, forKey: "large_files_count")
-        self.projectChoices = try values.decodeIfPresent([ProjectChoice].self, forKey: "project_choices")
-        self.message = try values.decodeIfPresent(String.self, forKey: "message")
+        self.hasLargeFiles = values.contains("has_large_files") ? Optional.some(try values.decode(Bool.self, forKey: "has_large_files")) : nil
+        self.largeFilesSize = values.contains("large_files_size") ? Optional.some(try values.decode(Int.self, forKey: "large_files_size")) : nil
+        self.largeFilesCount = values.contains("large_files_count") ? Optional.some(try values.decode(Int.self, forKey: "large_files_count")) : nil
+        self.projectChoices = values.contains("project_choices") ? Optional.some(try values.decode([ProjectChoice].self, forKey: "project_choices")) : nil
+        self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
         self.authorsCount = try values.decodeIfPresent(Int.self, forKey: "authors_count")
         self.url = try values.decode(URL.self, forKey: "url")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.authorsURL = try values.decode(URL.self, forKey: "authors_url")
         self.repositoryURL = try values.decode(URL.self, forKey: "repository_url")
-        self.svnRoot = try values.decodeIfPresent(String.self, forKey: "svn_root")
+        self.svnRoot = values.contains("svn_root") ? Optional.some(try values.decode(String.self, forKey: "svn_root")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
-        try values.encodeIfPresent(vcs, forKey: "vcs")
+        try values.encode(vcs, forKey: "vcs")
         try values.encodeIfPresent(useLfs, forKey: "use_lfs")
         try values.encode(vcsURL, forKey: "vcs_url")
         try values.encodeIfPresent(svcRoot, forKey: "svc_root")

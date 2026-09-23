@@ -18,4 +18,10 @@ public struct __200Response: Codable, Sendable {
         case name
         case `class`
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = values.contains(.name) ? Optional.some(try values.decode(Int32.self, forKey: .name)) : nil
+        self.class = values.contains(.`class`) ? Optional.some(try values.decode(String.self, forKey: .`class`)) : nil
+    }
 }

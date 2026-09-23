@@ -26,9 +26,9 @@ public struct ScimError: Codable, Sendable {
         self.message = try values.decodeIfPresent(String.self, forKey: "message")
         self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
         self.detail = try values.decodeIfPresent(String.self, forKey: "detail")
-        self.status = try values.decodeIfPresent(Int.self, forKey: "status")
+        self.status = values.contains("status") ? Optional.some(try values.decode(Int.self, forKey: "status")) : nil
         self.scimType = try values.decodeIfPresent(String.self, forKey: "scimType")
-        self.schemas = try values.decodeIfPresent([String].self, forKey: "schemas")
+        self.schemas = values.contains("schemas") ? Optional.some(try values.decode([String].self, forKey: "schemas")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

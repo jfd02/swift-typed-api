@@ -19,7 +19,7 @@ public struct ValidationErrorSimple: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.message = try values.decode(String.self, forKey: "message")
         self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
-        self.errors = try values.decodeIfPresent([String].self, forKey: "errors")
+        self.errors = values.contains("errors") ? Optional.some(try values.decode([String].self, forKey: "errors")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

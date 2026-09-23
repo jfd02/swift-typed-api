@@ -24,9 +24,9 @@ public struct ActionsEnterprisePermissions: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.enabledOrganizations = try values.decode(EnabledOrganizations.self, forKey: "enabled_organizations")
-        self.selectedOrganizationsURL = try values.decodeIfPresent(String.self, forKey: "selected_organizations_url")
-        self.allowedActions = try values.decodeIfPresent(AllowedActions.self, forKey: "allowed_actions")
-        self.selectedActionsURL = try values.decodeIfPresent(String.self, forKey: "selected_actions_url")
+        self.selectedOrganizationsURL = values.contains("selected_organizations_url") ? Optional.some(try values.decode(String.self, forKey: "selected_organizations_url")) : nil
+        self.allowedActions = values.contains("allowed_actions") ? Optional.some(try values.decode(AllowedActions.self, forKey: "allowed_actions")) : nil
+        self.selectedActionsURL = values.contains("selected_actions_url") ? Optional.some(try values.decode(String.self, forKey: "selected_actions_url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

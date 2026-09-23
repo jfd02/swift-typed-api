@@ -59,7 +59,7 @@ public struct GroupMapping: Codable, Sendable {
             self.groupID = try values.decode(String.self, forKey: "group_id")
             self.groupName = try values.decode(String.self, forKey: "group_name")
             self.groupDescription = try values.decode(String.self, forKey: "group_description")
-            self.status = try values.decodeIfPresent(String.self, forKey: "status")
+            self.status = values.contains("status") ? Optional.some(try values.decode(String.self, forKey: "status")) : nil
             self.syncedAt = try values.decodeIfPresent(String.self, forKey: "synced_at")
         }
 
@@ -79,7 +79,7 @@ public struct GroupMapping: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.groups = try values.decodeIfPresent([Group].self, forKey: "groups")
+        self.groups = values.contains("groups") ? Optional.some(try values.decode([Group].self, forKey: "groups")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -81,22 +81,22 @@ public struct Integration: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(Int.self, forKey: "id")
-        self.slug = try values.decodeIfPresent(String.self, forKey: "slug")
+        self.slug = values.contains("slug") ? Optional.some(try values.decode(String.self, forKey: "slug")) : nil
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.owner = try values.decodeIfPresent(SimpleUser.self, forKey: "owner")
+        self.owner = try values.decode(SimpleUser?.self, forKey: "owner")
         self.name = try values.decode(String.self, forKey: "name")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
         self.externalURL = try values.decode(URL.self, forKey: "external_url")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.permissions = try values.decode([String: String].self, forKey: "permissions")
         self.events = try values.decode([String].self, forKey: "events")
-        self.installationsCount = try values.decodeIfPresent(Int.self, forKey: "installations_count")
-        self.clientID = try values.decodeIfPresent(String.self, forKey: "client_id")
-        self.clientSecret = try values.decodeIfPresent(String.self, forKey: "client_secret")
+        self.installationsCount = values.contains("installations_count") ? Optional.some(try values.decode(Int.self, forKey: "installations_count")) : nil
+        self.clientID = values.contains("client_id") ? Optional.some(try values.decode(String.self, forKey: "client_id")) : nil
+        self.clientSecret = values.contains("client_secret") ? Optional.some(try values.decode(String.self, forKey: "client_secret")) : nil
         self.webhookSecret = try values.decodeIfPresent(String.self, forKey: "webhook_secret")
-        self.pem = try values.decodeIfPresent(String.self, forKey: "pem")
+        self.pem = values.contains("pem") ? Optional.some(try values.decode(String.self, forKey: "pem")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -104,9 +104,9 @@ public struct Integration: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encodeIfPresent(slug, forKey: "slug")
         try values.encode(nodeID, forKey: "node_id")
-        try values.encodeIfPresent(owner, forKey: "owner")
+        try values.encode(owner, forKey: "owner")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encode(externalURL, forKey: "external_url")
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(createdAt, forKey: "created_at")

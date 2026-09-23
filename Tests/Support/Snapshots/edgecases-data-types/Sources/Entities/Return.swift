@@ -14,7 +14,7 @@ public struct Return: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.return = try values.decodeIfPresent(Double.self, forKey: "return")
+        self.return = values.contains("return") ? Optional.some(try values.decode(Double.self, forKey: "return")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

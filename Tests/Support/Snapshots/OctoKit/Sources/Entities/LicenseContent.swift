@@ -33,15 +33,15 @@ public struct LicenseContent: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.git = try values.decodeIfPresent(URL.self, forKey: "git")
-            self.html = try values.decodeIfPresent(URL.self, forKey: "html")
+            self.git = try values.decode(URL?.self, forKey: "git")
+            self.html = try values.decode(URL?.self, forKey: "html")
             self.this = try values.decode(URL.self, forKey: "self")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
-            try values.encodeIfPresent(git, forKey: "git")
-            try values.encodeIfPresent(html, forKey: "html")
+            try values.encode(git, forKey: "git")
+            try values.encode(html, forKey: "html")
             try values.encode(this, forKey: "self")
         }
     }
@@ -69,14 +69,14 @@ public struct LicenseContent: Codable, Sendable {
         self.sha = try values.decode(String.self, forKey: "sha")
         self.size = try values.decode(Int.self, forKey: "size")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
-        self.gitURL = try values.decodeIfPresent(URL.self, forKey: "git_url")
-        self.downloadURL = try values.decodeIfPresent(URL.self, forKey: "download_url")
+        self.htmlURL = try values.decode(URL?.self, forKey: "html_url")
+        self.gitURL = try values.decode(URL?.self, forKey: "git_url")
+        self.downloadURL = try values.decode(URL?.self, forKey: "download_url")
         self.type = try values.decode(String.self, forKey: "type")
         self.content = try values.decode(String.self, forKey: "content")
         self.encoding = try values.decode(String.self, forKey: "encoding")
         self.links = try values.decode(Links.self, forKey: "_links")
-        self.license = try values.decodeIfPresent(LicenseSimple.self, forKey: "license")
+        self.license = try values.decode(LicenseSimple?.self, forKey: "license")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -86,13 +86,13 @@ public struct LicenseContent: Codable, Sendable {
         try values.encode(sha, forKey: "sha")
         try values.encode(size, forKey: "size")
         try values.encode(url, forKey: "url")
-        try values.encodeIfPresent(htmlURL, forKey: "html_url")
-        try values.encodeIfPresent(gitURL, forKey: "git_url")
-        try values.encodeIfPresent(downloadURL, forKey: "download_url")
+        try values.encode(htmlURL, forKey: "html_url")
+        try values.encode(gitURL, forKey: "git_url")
+        try values.encode(downloadURL, forKey: "download_url")
         try values.encode(type, forKey: "type")
         try values.encode(content, forKey: "content")
         try values.encode(encoding, forKey: "encoding")
         try values.encode(links, forKey: "_links")
-        try values.encodeIfPresent(license, forKey: "license")
+        try values.encode(license, forKey: "license")
     }
 }

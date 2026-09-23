@@ -98,7 +98,7 @@ public struct GitTag: Codable, Sendable {
         self.message = try values.decode(String.self, forKey: "message")
         self.tagger = try values.decode(Tagger.self, forKey: "tagger")
         self.object = try values.decode(Object.self, forKey: "object")
-        self.verification = try values.decodeIfPresent(Verification.self, forKey: "verification")
+        self.verification = values.contains("verification") ? Optional.some(try values.decode(Verification.self, forKey: "verification")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

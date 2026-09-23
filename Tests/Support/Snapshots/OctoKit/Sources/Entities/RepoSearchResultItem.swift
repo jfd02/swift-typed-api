@@ -116,9 +116,9 @@ public struct RepoSearchResultItem: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.isAdmin = try values.decode(Bool.self, forKey: "admin")
-            self.isMaintain = try values.decodeIfPresent(Bool.self, forKey: "maintain")
+            self.isMaintain = values.contains("maintain") ? Optional.some(try values.decode(Bool.self, forKey: "maintain")) : nil
             self.isPush = try values.decode(Bool.self, forKey: "push")
-            self.isTriage = try values.decodeIfPresent(Bool.self, forKey: "triage")
+            self.isTriage = values.contains("triage") ? Optional.some(try values.decode(Bool.self, forKey: "triage")) : nil
             self.isPull = try values.decode(Bool.self, forKey: "pull")
         }
 
@@ -228,23 +228,23 @@ public struct RepoSearchResultItem: Codable, Sendable {
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.name = try values.decode(String.self, forKey: "name")
         self.fullName = try values.decode(String.self, forKey: "full_name")
-        self.owner = try values.decodeIfPresent(SimpleUser.self, forKey: "owner")
+        self.owner = try values.decode(SimpleUser?.self, forKey: "owner")
         self.isPrivate = try values.decode(Bool.self, forKey: "private")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
         self.isFork = try values.decode(Bool.self, forKey: "fork")
         self.url = try values.decode(URL.self, forKey: "url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.pushedAt = try values.decode(Date.self, forKey: "pushed_at")
-        self.homepage = try values.decodeIfPresent(URL.self, forKey: "homepage")
+        self.homepage = try values.decode(URL?.self, forKey: "homepage")
         self.size = try values.decode(Int.self, forKey: "size")
         self.stargazersCount = try values.decode(Int.self, forKey: "stargazers_count")
         self.watchersCount = try values.decode(Int.self, forKey: "watchers_count")
-        self.language = try values.decodeIfPresent(String.self, forKey: "language")
+        self.language = try values.decode(String?.self, forKey: "language")
         self.forksCount = try values.decode(Int.self, forKey: "forks_count")
         self.openIssuesCount = try values.decode(Int.self, forKey: "open_issues_count")
-        self.masterBranch = try values.decodeIfPresent(String.self, forKey: "master_branch")
+        self.masterBranch = values.contains("master_branch") ? Optional.some(try values.decode(String.self, forKey: "master_branch")) : nil
         self.defaultBranch = try values.decode(String.self, forKey: "default_branch")
         self.score = try values.decode(Double.self, forKey: "score")
         self.forksURL = try values.decode(URL.self, forKey: "forks_url")
@@ -290,8 +290,8 @@ public struct RepoSearchResultItem: Codable, Sendable {
         self.forks = try values.decode(Int.self, forKey: "forks")
         self.openIssues = try values.decode(Int.self, forKey: "open_issues")
         self.watchers = try values.decode(Int.self, forKey: "watchers")
-        self.topics = try values.decodeIfPresent([String].self, forKey: "topics")
-        self.mirrorURL = try values.decodeIfPresent(URL.self, forKey: "mirror_url")
+        self.topics = values.contains("topics") ? Optional.some(try values.decode([String].self, forKey: "topics")) : nil
+        self.mirrorURL = try values.decode(URL?.self, forKey: "mirror_url")
         self.hasIssues = try values.decode(Bool.self, forKey: "has_issues")
         self.hasProjects = try values.decode(Bool.self, forKey: "has_projects")
         self.hasPages = try values.decode(Bool.self, forKey: "has_pages")
@@ -299,18 +299,18 @@ public struct RepoSearchResultItem: Codable, Sendable {
         self.hasDownloads = try values.decode(Bool.self, forKey: "has_downloads")
         self.isArchived = try values.decode(Bool.self, forKey: "archived")
         self.isDisabled = try values.decode(Bool.self, forKey: "disabled")
-        self.visibility = try values.decodeIfPresent(String.self, forKey: "visibility")
-        self.license = try values.decodeIfPresent(LicenseSimple.self, forKey: "license")
-        self.permissions = try values.decodeIfPresent(Permissions.self, forKey: "permissions")
-        self.textMatches = try values.decodeIfPresent([SearchResultTextMatch].self, forKey: "text_matches")
-        self.tempCloneToken = try values.decodeIfPresent(String.self, forKey: "temp_clone_token")
-        self.allowMergeCommit = try values.decodeIfPresent(Bool.self, forKey: "allow_merge_commit")
-        self.allowSquashMerge = try values.decodeIfPresent(Bool.self, forKey: "allow_squash_merge")
-        self.allowRebaseMerge = try values.decodeIfPresent(Bool.self, forKey: "allow_rebase_merge")
-        self.allowAutoMerge = try values.decodeIfPresent(Bool.self, forKey: "allow_auto_merge")
-        self.deleteBranchOnMerge = try values.decodeIfPresent(Bool.self, forKey: "delete_branch_on_merge")
-        self.allowForking = try values.decodeIfPresent(Bool.self, forKey: "allow_forking")
-        self.isTemplate = try values.decodeIfPresent(Bool.self, forKey: "is_template")
+        self.visibility = values.contains("visibility") ? Optional.some(try values.decode(String.self, forKey: "visibility")) : nil
+        self.license = try values.decode(LicenseSimple?.self, forKey: "license")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode(Permissions.self, forKey: "permissions")) : nil
+        self.textMatches = values.contains("text_matches") ? Optional.some(try values.decode([SearchResultTextMatch].self, forKey: "text_matches")) : nil
+        self.tempCloneToken = values.contains("temp_clone_token") ? Optional.some(try values.decode(String.self, forKey: "temp_clone_token")) : nil
+        self.allowMergeCommit = values.contains("allow_merge_commit") ? Optional.some(try values.decode(Bool.self, forKey: "allow_merge_commit")) : nil
+        self.allowSquashMerge = values.contains("allow_squash_merge") ? Optional.some(try values.decode(Bool.self, forKey: "allow_squash_merge")) : nil
+        self.allowRebaseMerge = values.contains("allow_rebase_merge") ? Optional.some(try values.decode(Bool.self, forKey: "allow_rebase_merge")) : nil
+        self.allowAutoMerge = values.contains("allow_auto_merge") ? Optional.some(try values.decode(Bool.self, forKey: "allow_auto_merge")) : nil
+        self.deleteBranchOnMerge = values.contains("delete_branch_on_merge") ? Optional.some(try values.decode(Bool.self, forKey: "delete_branch_on_merge")) : nil
+        self.allowForking = values.contains("allow_forking") ? Optional.some(try values.decode(Bool.self, forKey: "allow_forking")) : nil
+        self.isTemplate = values.contains("is_template") ? Optional.some(try values.decode(Bool.self, forKey: "is_template")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -319,20 +319,20 @@ public struct RepoSearchResultItem: Codable, Sendable {
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(name, forKey: "name")
         try values.encode(fullName, forKey: "full_name")
-        try values.encodeIfPresent(owner, forKey: "owner")
+        try values.encode(owner, forKey: "owner")
         try values.encode(isPrivate, forKey: "private")
         try values.encode(htmlURL, forKey: "html_url")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encode(isFork, forKey: "fork")
         try values.encode(url, forKey: "url")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
         try values.encode(pushedAt, forKey: "pushed_at")
-        try values.encodeIfPresent(homepage, forKey: "homepage")
+        try values.encode(homepage, forKey: "homepage")
         try values.encode(size, forKey: "size")
         try values.encode(stargazersCount, forKey: "stargazers_count")
         try values.encode(watchersCount, forKey: "watchers_count")
-        try values.encodeIfPresent(language, forKey: "language")
+        try values.encode(language, forKey: "language")
         try values.encode(forksCount, forKey: "forks_count")
         try values.encode(openIssuesCount, forKey: "open_issues_count")
         try values.encodeIfPresent(masterBranch, forKey: "master_branch")
@@ -382,7 +382,7 @@ public struct RepoSearchResultItem: Codable, Sendable {
         try values.encode(openIssues, forKey: "open_issues")
         try values.encode(watchers, forKey: "watchers")
         try values.encodeIfPresent(topics, forKey: "topics")
-        try values.encodeIfPresent(mirrorURL, forKey: "mirror_url")
+        try values.encode(mirrorURL, forKey: "mirror_url")
         try values.encode(hasIssues, forKey: "has_issues")
         try values.encode(hasProjects, forKey: "has_projects")
         try values.encode(hasPages, forKey: "has_pages")
@@ -391,7 +391,7 @@ public struct RepoSearchResultItem: Codable, Sendable {
         try values.encode(isArchived, forKey: "archived")
         try values.encode(isDisabled, forKey: "disabled")
         try values.encodeIfPresent(visibility, forKey: "visibility")
-        try values.encodeIfPresent(license, forKey: "license")
+        try values.encode(license, forKey: "license")
         try values.encodeIfPresent(permissions, forKey: "permissions")
         try values.encodeIfPresent(textMatches, forKey: "text_matches")
         try values.encodeIfPresent(tempCloneToken, forKey: "temp_clone_token")

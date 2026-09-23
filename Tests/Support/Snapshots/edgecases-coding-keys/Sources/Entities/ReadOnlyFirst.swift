@@ -12,4 +12,10 @@ public struct ReadOnlyFirst: Codable, Sendable {
         self.bar = bar
         self.baz = baz
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.bar = values.contains(.bar) ? Optional.some(try values.decode(String.self, forKey: .bar)) : nil
+        self.baz = values.contains(.baz) ? Optional.some(try values.decode(String.self, forKey: .baz)) : nil
+    }
 }

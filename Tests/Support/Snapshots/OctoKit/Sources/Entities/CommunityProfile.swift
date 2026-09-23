@@ -47,24 +47,24 @@ public struct CommunityProfile: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.codeOfConduct = try values.decodeIfPresent(CodeOfConductSimple.self, forKey: "code_of_conduct")
-            self.codeOfConductFile = try values.decodeIfPresent(CommunityHealthFile.self, forKey: "code_of_conduct_file")
-            self.license = try values.decodeIfPresent(LicenseSimple.self, forKey: "license")
-            self.contributing = try values.decodeIfPresent(CommunityHealthFile.self, forKey: "contributing")
-            self.readme = try values.decodeIfPresent(CommunityHealthFile.self, forKey: "readme")
-            self.issueTemplate = try values.decodeIfPresent(CommunityHealthFile.self, forKey: "issue_template")
-            self.pullRequestTemplate = try values.decodeIfPresent(CommunityHealthFile.self, forKey: "pull_request_template")
+            self.codeOfConduct = try values.decode(CodeOfConductSimple?.self, forKey: "code_of_conduct")
+            self.codeOfConductFile = try values.decode(CommunityHealthFile?.self, forKey: "code_of_conduct_file")
+            self.license = try values.decode(LicenseSimple?.self, forKey: "license")
+            self.contributing = try values.decode(CommunityHealthFile?.self, forKey: "contributing")
+            self.readme = try values.decode(CommunityHealthFile?.self, forKey: "readme")
+            self.issueTemplate = try values.decode(CommunityHealthFile?.self, forKey: "issue_template")
+            self.pullRequestTemplate = try values.decode(CommunityHealthFile?.self, forKey: "pull_request_template")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
-            try values.encodeIfPresent(codeOfConduct, forKey: "code_of_conduct")
-            try values.encodeIfPresent(codeOfConductFile, forKey: "code_of_conduct_file")
-            try values.encodeIfPresent(license, forKey: "license")
-            try values.encodeIfPresent(contributing, forKey: "contributing")
-            try values.encodeIfPresent(readme, forKey: "readme")
-            try values.encodeIfPresent(issueTemplate, forKey: "issue_template")
-            try values.encodeIfPresent(pullRequestTemplate, forKey: "pull_request_template")
+            try values.encode(codeOfConduct, forKey: "code_of_conduct")
+            try values.encode(codeOfConductFile, forKey: "code_of_conduct_file")
+            try values.encode(license, forKey: "license")
+            try values.encode(contributing, forKey: "contributing")
+            try values.encode(readme, forKey: "readme")
+            try values.encode(issueTemplate, forKey: "issue_template")
+            try values.encode(pullRequestTemplate, forKey: "pull_request_template")
         }
     }
 
@@ -80,20 +80,20 @@ public struct CommunityProfile: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.healthPercentage = try values.decode(Int.self, forKey: "health_percentage")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.documentation = try values.decodeIfPresent(String.self, forKey: "documentation")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.documentation = try values.decode(String?.self, forKey: "documentation")
         self.files = try values.decode(Files.self, forKey: "files")
-        self.updatedAt = try values.decodeIfPresent(Date.self, forKey: "updated_at")
-        self.isContentReportsEnabled = try values.decodeIfPresent(Bool.self, forKey: "content_reports_enabled")
+        self.updatedAt = try values.decode(Date?.self, forKey: "updated_at")
+        self.isContentReportsEnabled = values.contains("content_reports_enabled") ? Optional.some(try values.decode(Bool.self, forKey: "content_reports_enabled")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(healthPercentage, forKey: "health_percentage")
-        try values.encodeIfPresent(description, forKey: "description")
-        try values.encodeIfPresent(documentation, forKey: "documentation")
+        try values.encode(description, forKey: "description")
+        try values.encode(documentation, forKey: "documentation")
         try values.encode(files, forKey: "files")
-        try values.encodeIfPresent(updatedAt, forKey: "updated_at")
+        try values.encode(updatedAt, forKey: "updated_at")
         try values.encodeIfPresent(isContentReportsEnabled, forKey: "content_reports_enabled")
     }
 }

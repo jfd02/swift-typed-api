@@ -14,4 +14,9 @@ public struct NumberOnly: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case justNumber = "JustNumber"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.justNumber = values.contains(.justNumber) ? Optional.some(try values.decode(Double.self, forKey: .justNumber)) : nil
+    }
 }

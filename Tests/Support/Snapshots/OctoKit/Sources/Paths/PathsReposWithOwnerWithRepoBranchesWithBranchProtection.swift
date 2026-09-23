@@ -240,10 +240,10 @@ extension Paths.Repos.WithOwner.WithRepo.Branches.WithBranch {
 
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
-                try values.encodeIfPresent(requiredStatusChecks, forKey: "required_status_checks")
-                try values.encodeIfPresent(enforceAdmins, forKey: "enforce_admins")
-                try values.encodeIfPresent(requiredPullRequestReviews, forKey: "required_pull_request_reviews")
-                try values.encodeIfPresent(restrictions, forKey: "restrictions")
+                try values.encode(requiredStatusChecks, forKey: "required_status_checks")
+                try values.encode(enforceAdmins, forKey: "enforce_admins")
+                try values.encode(requiredPullRequestReviews, forKey: "required_pull_request_reviews")
+                try values.encode(restrictions, forKey: "restrictions")
                 try values.encodeIfPresent(isRequiredLinearHistory, forKey: "required_linear_history")
                 try values.encodeIfPresent(allowForcePushes, forKey: "allow_force_pushes")
                 try values.encodeIfPresent(allowDeletions, forKey: "allow_deletions")

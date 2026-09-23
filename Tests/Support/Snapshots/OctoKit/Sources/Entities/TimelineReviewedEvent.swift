@@ -120,15 +120,15 @@ public struct TimelineReviewedEvent: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.user = try values.decode(SimpleUser.self, forKey: "user")
-        self.body = try values.decodeIfPresent(String.self, forKey: "body")
+        self.body = try values.decode(String?.self, forKey: "body")
         self.state = try values.decode(String.self, forKey: "state")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.pullRequestURL = try values.decode(URL.self, forKey: "pull_request_url")
         self.links = try values.decode(Links.self, forKey: "_links")
-        self.submittedAt = try values.decodeIfPresent(Date.self, forKey: "submitted_at")
+        self.submittedAt = values.contains("submitted_at") ? Optional.some(try values.decode(Date.self, forKey: "submitted_at")) : nil
         self.commitID = try values.decode(String.self, forKey: "commit_id")
-        self.bodyHTML = try values.decodeIfPresent(String.self, forKey: "body_html")
-        self.bodyText = try values.decodeIfPresent(String.self, forKey: "body_text")
+        self.bodyHTML = values.contains("body_html") ? Optional.some(try values.decode(String.self, forKey: "body_html")) : nil
+        self.bodyText = values.contains("body_text") ? Optional.some(try values.decode(String.self, forKey: "body_text")) : nil
         self.authorAssociation = try values.decode(AuthorAssociation.self, forKey: "author_association")
     }
 
@@ -138,7 +138,7 @@ public struct TimelineReviewedEvent: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(user, forKey: "user")
-        try values.encodeIfPresent(body, forKey: "body")
+        try values.encode(body, forKey: "body")
         try values.encode(state, forKey: "state")
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(pullRequestURL, forKey: "pull_request_url")

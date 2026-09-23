@@ -16,7 +16,7 @@ public struct AdvancedSecurityActiveCommitters: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.totalAdvancedSecurityCommitters = try values.decodeIfPresent(Int.self, forKey: "total_advanced_security_committers")
+        self.totalAdvancedSecurityCommitters = values.contains("total_advanced_security_committers") ? Optional.some(try values.decode(Int.self, forKey: "total_advanced_security_committers")) : nil
         self.repositories = try values.decode([AdvancedSecurityActiveCommittersRepository].self, forKey: "repositories")
     }
 

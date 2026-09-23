@@ -143,7 +143,7 @@ public struct PullRequestSimple: Codable, Sendable {
             self.ref = try values.decode(String.self, forKey: "ref")
             self.repo = try values.decode(Repository.self, forKey: "repo")
             self.sha = try values.decode(String.self, forKey: "sha")
-            self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
+            self.user = try values.decode(SimpleUser?.self, forKey: "user")
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -152,7 +152,7 @@ public struct PullRequestSimple: Codable, Sendable {
             try values.encode(ref, forKey: "ref")
             try values.encode(repo, forKey: "repo")
             try values.encode(sha, forKey: "sha")
-            try values.encodeIfPresent(user, forKey: "user")
+            try values.encode(user, forKey: "user")
         }
     }
 
@@ -181,7 +181,7 @@ public struct PullRequestSimple: Codable, Sendable {
             self.ref = try values.decode(String.self, forKey: "ref")
             self.repo = try values.decode(Repository.self, forKey: "repo")
             self.sha = try values.decode(String.self, forKey: "sha")
-            self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
+            self.user = try values.decode(SimpleUser?.self, forKey: "user")
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -190,7 +190,7 @@ public struct PullRequestSimple: Codable, Sendable {
             try values.encode(ref, forKey: "ref")
             try values.encode(repo, forKey: "repo")
             try values.encode(sha, forKey: "sha")
-            try values.encodeIfPresent(user, forKey: "user")
+            try values.encode(user, forKey: "user")
         }
     }
 
@@ -321,17 +321,17 @@ public struct PullRequestSimple: Codable, Sendable {
         self.state = try values.decode(String.self, forKey: "state")
         self.isLocked = try values.decode(Bool.self, forKey: "locked")
         self.title = try values.decode(String.self, forKey: "title")
-        self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
-        self.body = try values.decodeIfPresent(String.self, forKey: "body")
+        self.user = try values.decode(SimpleUser?.self, forKey: "user")
+        self.body = try values.decode(String?.self, forKey: "body")
         self.labels = try values.decode([Label].self, forKey: "labels")
-        self.milestone = try values.decodeIfPresent(Milestone.self, forKey: "milestone")
+        self.milestone = try values.decode(Milestone?.self, forKey: "milestone")
         self.activeLockReason = try values.decodeIfPresent(String.self, forKey: "active_lock_reason")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.closedAt = try values.decodeIfPresent(Date.self, forKey: "closed_at")
-        self.mergedAt = try values.decodeIfPresent(Date.self, forKey: "merged_at")
-        self.mergeCommitSha = try values.decodeIfPresent(String.self, forKey: "merge_commit_sha")
-        self.assignee = try values.decodeIfPresent(SimpleUser.self, forKey: "assignee")
+        self.closedAt = try values.decode(Date?.self, forKey: "closed_at")
+        self.mergedAt = try values.decode(Date?.self, forKey: "merged_at")
+        self.mergeCommitSha = try values.decode(String?.self, forKey: "merge_commit_sha")
+        self.assignee = try values.decode(SimpleUser?.self, forKey: "assignee")
         self.assignees = try values.decodeIfPresent([SimpleUser].self, forKey: "assignees")
         self.requestedReviewers = try values.decodeIfPresent([SimpleUser].self, forKey: "requested_reviewers")
         self.requestedTeams = try values.decodeIfPresent([Team].self, forKey: "requested_teams")
@@ -339,8 +339,8 @@ public struct PullRequestSimple: Codable, Sendable {
         self.base = try values.decode(Base.self, forKey: "base")
         self.links = try values.decode(Links.self, forKey: "_links")
         self.authorAssociation = try values.decode(AuthorAssociation.self, forKey: "author_association")
-        self.autoMerge = try values.decodeIfPresent(AutoMerge.self, forKey: "auto_merge")
-        self.isDraft = try values.decodeIfPresent(Bool.self, forKey: "draft")
+        self.autoMerge = try values.decode(AutoMerge?.self, forKey: "auto_merge")
+        self.isDraft = values.contains("draft") ? Optional.some(try values.decode(Bool.self, forKey: "draft")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -361,17 +361,17 @@ public struct PullRequestSimple: Codable, Sendable {
         try values.encode(state, forKey: "state")
         try values.encode(isLocked, forKey: "locked")
         try values.encode(title, forKey: "title")
-        try values.encodeIfPresent(user, forKey: "user")
-        try values.encodeIfPresent(body, forKey: "body")
+        try values.encode(user, forKey: "user")
+        try values.encode(body, forKey: "body")
         try values.encode(labels, forKey: "labels")
-        try values.encodeIfPresent(milestone, forKey: "milestone")
+        try values.encode(milestone, forKey: "milestone")
         try values.encodeIfPresent(activeLockReason, forKey: "active_lock_reason")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
-        try values.encodeIfPresent(closedAt, forKey: "closed_at")
-        try values.encodeIfPresent(mergedAt, forKey: "merged_at")
-        try values.encodeIfPresent(mergeCommitSha, forKey: "merge_commit_sha")
-        try values.encodeIfPresent(assignee, forKey: "assignee")
+        try values.encode(closedAt, forKey: "closed_at")
+        try values.encode(mergedAt, forKey: "merged_at")
+        try values.encode(mergeCommitSha, forKey: "merge_commit_sha")
+        try values.encode(assignee, forKey: "assignee")
         try values.encodeIfPresent(assignees, forKey: "assignees")
         try values.encodeIfPresent(requestedReviewers, forKey: "requested_reviewers")
         try values.encodeIfPresent(requestedTeams, forKey: "requested_teams")
@@ -379,7 +379,7 @@ public struct PullRequestSimple: Codable, Sendable {
         try values.encode(base, forKey: "base")
         try values.encode(links, forKey: "_links")
         try values.encode(authorAssociation, forKey: "author_association")
-        try values.encodeIfPresent(autoMerge, forKey: "auto_merge")
+        try values.encode(autoMerge, forKey: "auto_merge")
         try values.encodeIfPresent(isDraft, forKey: "draft")
     }
 }

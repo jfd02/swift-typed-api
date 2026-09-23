@@ -57,7 +57,7 @@ public struct OrganizationSimple: Codable, Sendable {
         self.membersURL = try values.decode(String.self, forKey: "members_url")
         self.publicMembersURL = try values.decode(String.self, forKey: "public_members_url")
         self.avatarURL = try values.decode(String.self, forKey: "avatar_url")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -73,6 +73,6 @@ public struct OrganizationSimple: Codable, Sendable {
         try values.encode(membersURL, forKey: "members_url")
         try values.encode(publicMembersURL, forKey: "public_members_url")
         try values.encode(avatarURL, forKey: "avatar_url")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
     }
 }

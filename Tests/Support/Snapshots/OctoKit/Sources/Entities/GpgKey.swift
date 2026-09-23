@@ -66,8 +66,8 @@ public struct GpgKey: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.email = try values.decodeIfPresent(String.self, forKey: "email")
-            self.isVerified = try values.decodeIfPresent(Bool.self, forKey: "verified")
+            self.email = values.contains("email") ? Optional.some(try values.decode(String.self, forKey: "email")) : nil
+            self.isVerified = values.contains("verified") ? Optional.some(try values.decode(Bool.self, forKey: "verified")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -110,17 +110,17 @@ public struct GpgKey: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-            self.primaryKeyID = try values.decodeIfPresent(Int.self, forKey: "primary_key_id")
-            self.keyID = try values.decodeIfPresent(String.self, forKey: "key_id")
-            self.publicKey = try values.decodeIfPresent(String.self, forKey: "public_key")
-            self.emails = try values.decodeIfPresent([AnyJSON].self, forKey: "emails")
-            self.subkeys = try values.decodeIfPresent([AnyJSON].self, forKey: "subkeys")
-            self.canSign = try values.decodeIfPresent(Bool.self, forKey: "can_sign")
-            self.canEncryptComms = try values.decodeIfPresent(Bool.self, forKey: "can_encrypt_comms")
-            self.canEncryptStorage = try values.decodeIfPresent(Bool.self, forKey: "can_encrypt_storage")
-            self.canCertify = try values.decodeIfPresent(Bool.self, forKey: "can_certify")
-            self.createdAt = try values.decodeIfPresent(String.self, forKey: "created_at")
+            self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+            self.primaryKeyID = values.contains("primary_key_id") ? Optional.some(try values.decode(Int.self, forKey: "primary_key_id")) : nil
+            self.keyID = values.contains("key_id") ? Optional.some(try values.decode(String.self, forKey: "key_id")) : nil
+            self.publicKey = values.contains("public_key") ? Optional.some(try values.decode(String.self, forKey: "public_key")) : nil
+            self.emails = values.contains("emails") ? Optional.some(try values.decode([AnyJSON].self, forKey: "emails")) : nil
+            self.subkeys = values.contains("subkeys") ? Optional.some(try values.decode([AnyJSON].self, forKey: "subkeys")) : nil
+            self.canSign = values.contains("can_sign") ? Optional.some(try values.decode(Bool.self, forKey: "can_sign")) : nil
+            self.canEncryptComms = values.contains("can_encrypt_comms") ? Optional.some(try values.decode(Bool.self, forKey: "can_encrypt_comms")) : nil
+            self.canEncryptStorage = values.contains("can_encrypt_storage") ? Optional.some(try values.decode(Bool.self, forKey: "can_encrypt_storage")) : nil
+            self.canCertify = values.contains("can_certify") ? Optional.some(try values.decode(Bool.self, forKey: "can_certify")) : nil
+            self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(String.self, forKey: "created_at")) : nil
             self.expiresAt = try values.decodeIfPresent(String.self, forKey: "expires_at")
             self.rawKey = try values.decodeIfPresent(String.self, forKey: "raw_key")
         }
@@ -162,7 +162,7 @@ public struct GpgKey: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(Int.self, forKey: "id")
-        self.primaryKeyID = try values.decodeIfPresent(Int.self, forKey: "primary_key_id")
+        self.primaryKeyID = try values.decode(Int?.self, forKey: "primary_key_id")
         self.keyID = try values.decode(String.self, forKey: "key_id")
         self.publicKey = try values.decode(String.self, forKey: "public_key")
         self.emails = try values.decode([Email].self, forKey: "emails")
@@ -172,14 +172,14 @@ public struct GpgKey: Codable, Sendable {
         self.canEncryptStorage = try values.decode(Bool.self, forKey: "can_encrypt_storage")
         self.canCertify = try values.decode(Bool.self, forKey: "can_certify")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
-        self.expiresAt = try values.decodeIfPresent(Date.self, forKey: "expires_at")
-        self.rawKey = try values.decodeIfPresent(String.self, forKey: "raw_key")
+        self.expiresAt = try values.decode(Date?.self, forKey: "expires_at")
+        self.rawKey = try values.decode(String?.self, forKey: "raw_key")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(id, forKey: "id")
-        try values.encodeIfPresent(primaryKeyID, forKey: "primary_key_id")
+        try values.encode(primaryKeyID, forKey: "primary_key_id")
         try values.encode(keyID, forKey: "key_id")
         try values.encode(publicKey, forKey: "public_key")
         try values.encode(emails, forKey: "emails")
@@ -189,7 +189,7 @@ public struct GpgKey: Codable, Sendable {
         try values.encode(canEncryptStorage, forKey: "can_encrypt_storage")
         try values.encode(canCertify, forKey: "can_certify")
         try values.encode(createdAt, forKey: "created_at")
-        try values.encodeIfPresent(expiresAt, forKey: "expires_at")
-        try values.encodeIfPresent(rawKey, forKey: "raw_key")
+        try values.encode(expiresAt, forKey: "expires_at")
+        try values.encode(rawKey, forKey: "raw_key")
     }
 }

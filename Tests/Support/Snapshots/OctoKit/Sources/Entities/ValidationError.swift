@@ -59,11 +59,11 @@ public struct ValidationError: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.resource = try values.decodeIfPresent(String.self, forKey: "resource")
-            self.field = try values.decodeIfPresent(String.self, forKey: "field")
-            self.message = try values.decodeIfPresent(String.self, forKey: "message")
+            self.resource = values.contains("resource") ? Optional.some(try values.decode(String.self, forKey: "resource")) : nil
+            self.field = values.contains("field") ? Optional.some(try values.decode(String.self, forKey: "field")) : nil
+            self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
             self.code = try values.decode(String.self, forKey: "code")
-            self.index = try values.decodeIfPresent(Int.self, forKey: "index")
+            self.index = values.contains("index") ? Optional.some(try values.decode(Int.self, forKey: "index")) : nil
             self.value = try values.decodeIfPresent(Value.self, forKey: "value")
         }
 
@@ -88,7 +88,7 @@ public struct ValidationError: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.message = try values.decode(String.self, forKey: "message")
         self.documentationURL = try values.decode(String.self, forKey: "documentation_url")
-        self.errors = try values.decodeIfPresent([Error].self, forKey: "errors")
+        self.errors = values.contains("errors") ? Optional.some(try values.decode([Error].self, forKey: "errors")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

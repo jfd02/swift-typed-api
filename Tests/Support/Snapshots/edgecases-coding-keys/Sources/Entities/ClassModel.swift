@@ -15,4 +15,9 @@ public struct ClassModel: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case `class` = "_class"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.class = values.contains(.`class`) ? Optional.some(try values.decode(String.self, forKey: .`class`)) : nil
+    }
 }

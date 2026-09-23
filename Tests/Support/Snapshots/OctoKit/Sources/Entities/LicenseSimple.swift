@@ -30,18 +30,18 @@ public struct LicenseSimple: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.key = try values.decode(String.self, forKey: "key")
         self.name = try values.decode(String.self, forKey: "name")
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-        self.spdxID = try values.decodeIfPresent(String.self, forKey: "spdx_id")
+        self.url = try values.decode(URL?.self, forKey: "url")
+        self.spdxID = try values.decode(String?.self, forKey: "spdx_id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(URL.self, forKey: "html_url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(key, forKey: "key")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(url, forKey: "url")
-        try values.encodeIfPresent(spdxID, forKey: "spdx_id")
+        try values.encode(url, forKey: "url")
+        try values.encode(spdxID, forKey: "spdx_id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encodeIfPresent(htmlURL, forKey: "html_url")
     }

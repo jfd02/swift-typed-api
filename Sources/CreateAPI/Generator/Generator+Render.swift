@@ -64,12 +64,17 @@ extension Generator {
                     if let keys = templates.codingKeys(for: properties) {
                         contents.append(keys)
                     }
-                    if decl.protocols.isDecodable, properties.contains(where: { $0.defaultValue != nil }) {
+                    if decl.protocols.isDecodable, properties.contains(where: { $0.defaultValue != nil || $0.isRequiredNullable || $0.rejectsNull || $0.type.isOptional }) {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: true))
                     }
+                    if decl.protocols.isEncodable, properties.contains(where: { $0.isRequiredNullable }) {
+                        contents.append(templates.encode(properties: properties))
+                    }
                 } else {
-                    let hasCustomDecoder = decl.protocols.isDecodable && !properties.isEmpty && options.entities.alwaysIncludeDecodableImplementation
-                    let hasCustomEncoder = decl.protocols.isEncodable && !properties.isEmpty && options.entities.alwaysIncludeEncodableImplementation
+                    let requiresNullableCoding = properties.contains(where: { $0.isRequiredNullable })
+                    let requiresPresenceCheck = properties.contains(where: { $0.rejectsNull || $0.type.isOptional })
+                    let hasCustomDecoder = decl.protocols.isDecodable && !properties.isEmpty && (options.entities.alwaysIncludeDecodableImplementation || requiresNullableCoding || requiresPresenceCheck)
+                    let hasCustomEncoder = decl.protocols.isEncodable && !properties.isEmpty && (options.entities.alwaysIncludeEncodableImplementation || requiresNullableCoding)
                     if hasCustomDecoder {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: false))
                     }
@@ -86,10 +91,11 @@ extension Generator {
                 }
             case .anyOf:
                 if decl.protocols.isDecodable {
-                    contents.append(templates.initFromDecoderAnyOf(properties: properties))
+                    contents.append(templates.initFromDecoderAnyOf(properties: properties, allowsNull: decl.allowsNull))
                 }
                 if decl.protocols.isEncodable {
-                    contents.append(templates.encodeAnyOf(properties: properties))
+                    lock.sync { isAnyOfEncoderUsed = true }
+                    contents.append(templates.encodeAnyOf(properties: properties, allowsNull: decl.allowsNull))
                 }
             case .allOf:
                 var needsValues = false

@@ -159,11 +159,11 @@ public struct MinimalRepository: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.isAdmin = try values.decodeIfPresent(Bool.self, forKey: "admin")
-            self.isMaintain = try values.decodeIfPresent(Bool.self, forKey: "maintain")
-            self.isPush = try values.decodeIfPresent(Bool.self, forKey: "push")
-            self.isTriage = try values.decodeIfPresent(Bool.self, forKey: "triage")
-            self.isPull = try values.decodeIfPresent(Bool.self, forKey: "pull")
+            self.isAdmin = values.contains("admin") ? Optional.some(try values.decode(Bool.self, forKey: "admin")) : nil
+            self.isMaintain = values.contains("maintain") ? Optional.some(try values.decode(Bool.self, forKey: "maintain")) : nil
+            self.isPush = values.contains("push") ? Optional.some(try values.decode(Bool.self, forKey: "push")) : nil
+            self.isTriage = values.contains("triage") ? Optional.some(try values.decode(Bool.self, forKey: "triage")) : nil
+            self.isPull = values.contains("pull") ? Optional.some(try values.decode(Bool.self, forKey: "pull")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -193,11 +193,11 @@ public struct MinimalRepository: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.key = try values.decodeIfPresent(String.self, forKey: "key")
-            self.name = try values.decodeIfPresent(String.self, forKey: "name")
-            self.spdxID = try values.decodeIfPresent(String.self, forKey: "spdx_id")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
+            self.key = values.contains("key") ? Optional.some(try values.decode(String.self, forKey: "key")) : nil
+            self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+            self.spdxID = values.contains("spdx_id") ? Optional.some(try values.decode(String.self, forKey: "spdx_id")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -307,7 +307,7 @@ public struct MinimalRepository: Codable, Sendable {
         self.owner = try values.decode(SimpleUser.self, forKey: "owner")
         self.isPrivate = try values.decode(Bool.self, forKey: "private")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
         self.isFork = try values.decode(Bool.self, forKey: "fork")
         self.url = try values.decode(URL.self, forKey: "url")
         self.archiveURL = try values.decode(String.self, forKey: "archive_url")
@@ -327,7 +327,7 @@ public struct MinimalRepository: Codable, Sendable {
         self.gitCommitsURL = try values.decode(String.self, forKey: "git_commits_url")
         self.gitRefsURL = try values.decode(String.self, forKey: "git_refs_url")
         self.gitTagsURL = try values.decode(String.self, forKey: "git_tags_url")
-        self.gitURL = try values.decodeIfPresent(String.self, forKey: "git_url")
+        self.gitURL = values.contains("git_url") ? Optional.some(try values.decode(String.self, forKey: "git_url")) : nil
         self.issueCommentURL = try values.decode(String.self, forKey: "issue_comment_url")
         self.issueEventsURL = try values.decode(String.self, forKey: "issue_events_url")
         self.issuesURL = try values.decode(String.self, forKey: "issues_url")
@@ -339,7 +339,7 @@ public struct MinimalRepository: Codable, Sendable {
         self.notificationsURL = try values.decode(String.self, forKey: "notifications_url")
         self.pullsURL = try values.decode(String.self, forKey: "pulls_url")
         self.releasesURL = try values.decode(String.self, forKey: "releases_url")
-        self.sshURL = try values.decodeIfPresent(String.self, forKey: "ssh_url")
+        self.sshURL = values.contains("ssh_url") ? Optional.some(try values.decode(String.self, forKey: "ssh_url")) : nil
         self.stargazersURL = try values.decode(URL.self, forKey: "stargazers_url")
         self.statusesURL = try values.decode(String.self, forKey: "statuses_url")
         self.subscribersURL = try values.decode(URL.self, forKey: "subscribers_url")
@@ -347,44 +347,44 @@ public struct MinimalRepository: Codable, Sendable {
         self.tagsURL = try values.decode(URL.self, forKey: "tags_url")
         self.teamsURL = try values.decode(URL.self, forKey: "teams_url")
         self.treesURL = try values.decode(String.self, forKey: "trees_url")
-        self.cloneURL = try values.decodeIfPresent(String.self, forKey: "clone_url")
+        self.cloneURL = values.contains("clone_url") ? Optional.some(try values.decode(String.self, forKey: "clone_url")) : nil
         self.mirrorURL = try values.decodeIfPresent(String.self, forKey: "mirror_url")
         self.hooksURL = try values.decode(URL.self, forKey: "hooks_url")
-        self.svnURL = try values.decodeIfPresent(String.self, forKey: "svn_url")
+        self.svnURL = values.contains("svn_url") ? Optional.some(try values.decode(String.self, forKey: "svn_url")) : nil
         self.homepage = try values.decodeIfPresent(String.self, forKey: "homepage")
         self.language = try values.decodeIfPresent(String.self, forKey: "language")
-        self.forksCount = try values.decodeIfPresent(Int.self, forKey: "forks_count")
-        self.stargazersCount = try values.decodeIfPresent(Int.self, forKey: "stargazers_count")
-        self.watchersCount = try values.decodeIfPresent(Int.self, forKey: "watchers_count")
-        self.size = try values.decodeIfPresent(Int.self, forKey: "size")
-        self.defaultBranch = try values.decodeIfPresent(String.self, forKey: "default_branch")
-        self.openIssuesCount = try values.decodeIfPresent(Int.self, forKey: "open_issues_count")
-        self.isTemplate = try values.decodeIfPresent(Bool.self, forKey: "is_template")
-        self.topics = try values.decodeIfPresent([String].self, forKey: "topics")
-        self.hasIssues = try values.decodeIfPresent(Bool.self, forKey: "has_issues")
-        self.hasProjects = try values.decodeIfPresent(Bool.self, forKey: "has_projects")
-        self.hasWiki = try values.decodeIfPresent(Bool.self, forKey: "has_wiki")
-        self.hasPages = try values.decodeIfPresent(Bool.self, forKey: "has_pages")
-        self.hasDownloads = try values.decodeIfPresent(Bool.self, forKey: "has_downloads")
-        self.isArchived = try values.decodeIfPresent(Bool.self, forKey: "archived")
-        self.isDisabled = try values.decodeIfPresent(Bool.self, forKey: "disabled")
-        self.visibility = try values.decodeIfPresent(String.self, forKey: "visibility")
+        self.forksCount = values.contains("forks_count") ? Optional.some(try values.decode(Int.self, forKey: "forks_count")) : nil
+        self.stargazersCount = values.contains("stargazers_count") ? Optional.some(try values.decode(Int.self, forKey: "stargazers_count")) : nil
+        self.watchersCount = values.contains("watchers_count") ? Optional.some(try values.decode(Int.self, forKey: "watchers_count")) : nil
+        self.size = values.contains("size") ? Optional.some(try values.decode(Int.self, forKey: "size")) : nil
+        self.defaultBranch = values.contains("default_branch") ? Optional.some(try values.decode(String.self, forKey: "default_branch")) : nil
+        self.openIssuesCount = values.contains("open_issues_count") ? Optional.some(try values.decode(Int.self, forKey: "open_issues_count")) : nil
+        self.isTemplate = values.contains("is_template") ? Optional.some(try values.decode(Bool.self, forKey: "is_template")) : nil
+        self.topics = values.contains("topics") ? Optional.some(try values.decode([String].self, forKey: "topics")) : nil
+        self.hasIssues = values.contains("has_issues") ? Optional.some(try values.decode(Bool.self, forKey: "has_issues")) : nil
+        self.hasProjects = values.contains("has_projects") ? Optional.some(try values.decode(Bool.self, forKey: "has_projects")) : nil
+        self.hasWiki = values.contains("has_wiki") ? Optional.some(try values.decode(Bool.self, forKey: "has_wiki")) : nil
+        self.hasPages = values.contains("has_pages") ? Optional.some(try values.decode(Bool.self, forKey: "has_pages")) : nil
+        self.hasDownloads = values.contains("has_downloads") ? Optional.some(try values.decode(Bool.self, forKey: "has_downloads")) : nil
+        self.isArchived = values.contains("archived") ? Optional.some(try values.decode(Bool.self, forKey: "archived")) : nil
+        self.isDisabled = values.contains("disabled") ? Optional.some(try values.decode(Bool.self, forKey: "disabled")) : nil
+        self.visibility = values.contains("visibility") ? Optional.some(try values.decode(String.self, forKey: "visibility")) : nil
         self.pushedAt = try values.decodeIfPresent(Date.self, forKey: "pushed_at")
         self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
         self.updatedAt = try values.decodeIfPresent(Date.self, forKey: "updated_at")
-        self.permissions = try values.decodeIfPresent(Permissions.self, forKey: "permissions")
-        self.roleName = try values.decodeIfPresent(String.self, forKey: "role_name")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode(Permissions.self, forKey: "permissions")) : nil
+        self.roleName = values.contains("role_name") ? Optional.some(try values.decode(String.self, forKey: "role_name")) : nil
         self.templateRepository = try values.decodeIfPresent(Repository.self, forKey: "template_repository")
-        self.tempCloneToken = try values.decodeIfPresent(String.self, forKey: "temp_clone_token")
-        self.deleteBranchOnMerge = try values.decodeIfPresent(Bool.self, forKey: "delete_branch_on_merge")
-        self.subscribersCount = try values.decodeIfPresent(Int.self, forKey: "subscribers_count")
-        self.networkCount = try values.decodeIfPresent(Int.self, forKey: "network_count")
-        self.codeOfConduct = try values.decodeIfPresent(CodeOfConduct.self, forKey: "code_of_conduct")
+        self.tempCloneToken = values.contains("temp_clone_token") ? Optional.some(try values.decode(String.self, forKey: "temp_clone_token")) : nil
+        self.deleteBranchOnMerge = values.contains("delete_branch_on_merge") ? Optional.some(try values.decode(Bool.self, forKey: "delete_branch_on_merge")) : nil
+        self.subscribersCount = values.contains("subscribers_count") ? Optional.some(try values.decode(Int.self, forKey: "subscribers_count")) : nil
+        self.networkCount = values.contains("network_count") ? Optional.some(try values.decode(Int.self, forKey: "network_count")) : nil
+        self.codeOfConduct = values.contains("code_of_conduct") ? Optional.some(try values.decode(CodeOfConduct.self, forKey: "code_of_conduct")) : nil
         self.license = try values.decodeIfPresent(License.self, forKey: "license")
-        self.forks = try values.decodeIfPresent(Int.self, forKey: "forks")
-        self.openIssues = try values.decodeIfPresent(Int.self, forKey: "open_issues")
-        self.watchers = try values.decodeIfPresent(Int.self, forKey: "watchers")
-        self.allowForking = try values.decodeIfPresent(Bool.self, forKey: "allow_forking")
+        self.forks = values.contains("forks") ? Optional.some(try values.decode(Int.self, forKey: "forks")) : nil
+        self.openIssues = values.contains("open_issues") ? Optional.some(try values.decode(Int.self, forKey: "open_issues")) : nil
+        self.watchers = values.contains("watchers") ? Optional.some(try values.decode(Int.self, forKey: "watchers")) : nil
+        self.allowForking = values.contains("allow_forking") ? Optional.some(try values.decode(Bool.self, forKey: "allow_forking")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -396,7 +396,7 @@ public struct MinimalRepository: Codable, Sendable {
         try values.encode(owner, forKey: "owner")
         try values.encode(isPrivate, forKey: "private")
         try values.encode(htmlURL, forKey: "html_url")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encode(isFork, forKey: "fork")
         try values.encode(url, forKey: "url")
         try values.encode(archiveURL, forKey: "archive_url")

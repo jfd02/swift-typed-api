@@ -90,15 +90,15 @@ public struct ScimUser: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.givenName = try values.decodeIfPresent(String.self, forKey: "givenName")
-            self.familyName = try values.decodeIfPresent(String.self, forKey: "familyName")
+            self.givenName = try values.decode(String?.self, forKey: "givenName")
+            self.familyName = try values.decode(String?.self, forKey: "familyName")
             self.formatted = try values.decodeIfPresent(String.self, forKey: "formatted")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
-            try values.encodeIfPresent(givenName, forKey: "givenName")
-            try values.encodeIfPresent(familyName, forKey: "familyName")
+            try values.encode(givenName, forKey: "givenName")
+            try values.encode(familyName, forKey: "familyName")
             try values.encodeIfPresent(formatted, forKey: "formatted")
         }
     }
@@ -115,7 +115,7 @@ public struct ScimUser: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.value = try values.decode(String.self, forKey: "value")
-            self.isPrimary = try values.decodeIfPresent(Bool.self, forKey: "primary")
+            self.isPrimary = values.contains("primary") ? Optional.some(try values.decode(Bool.self, forKey: "primary")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -144,10 +144,10 @@ public struct ScimUser: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.resourceType = try values.decodeIfPresent(String.self, forKey: "resourceType")
-            self.created = try values.decodeIfPresent(Date.self, forKey: "created")
-            self.lastModified = try values.decodeIfPresent(Date.self, forKey: "lastModified")
-            self.location = try values.decodeIfPresent(URL.self, forKey: "location")
+            self.resourceType = values.contains("resourceType") ? Optional.some(try values.decode(String.self, forKey: "resourceType")) : nil
+            self.created = values.contains("created") ? Optional.some(try values.decode(Date.self, forKey: "created")) : nil
+            self.lastModified = values.contains("lastModified") ? Optional.some(try values.decode(Date.self, forKey: "lastModified")) : nil
+            self.location = values.contains("location") ? Optional.some(try values.decode(URL.self, forKey: "location")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -210,8 +210,8 @@ public struct ScimUser: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.op = try values.decode(Op.self, forKey: "op")
-            self.path = try values.decodeIfPresent(String.self, forKey: "path")
-            self.value = try values.decodeIfPresent(Value.self, forKey: "value")
+            self.path = values.contains("path") ? Optional.some(try values.decode(String.self, forKey: "path")) : nil
+            self.value = values.contains("value") ? Optional.some(try values.decode(Value.self, forKey: "value")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -233,8 +233,8 @@ public struct ScimUser: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.value = try values.decodeIfPresent(String.self, forKey: "value")
-            self.display = try values.decodeIfPresent(String.self, forKey: "display")
+            self.value = values.contains("value") ? Optional.some(try values.decode(String.self, forKey: "value")) : nil
+            self.display = values.contains("display") ? Optional.some(try values.decode(String.self, forKey: "display")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -263,24 +263,24 @@ public struct ScimUser: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.schemas = try values.decode([String].self, forKey: "schemas")
         self.id = try values.decode(String.self, forKey: "id")
-        self.externalID = try values.decodeIfPresent(String.self, forKey: "externalId")
-        self.userName = try values.decodeIfPresent(String.self, forKey: "userName")
+        self.externalID = try values.decode(String?.self, forKey: "externalId")
+        self.userName = try values.decode(String?.self, forKey: "userName")
         self.displayName = try values.decodeIfPresent(String.self, forKey: "displayName")
         self.name = try values.decode(Name.self, forKey: "name")
         self.emails = try values.decode([Email].self, forKey: "emails")
         self.isActive = try values.decode(Bool.self, forKey: "active")
         self.meta = try values.decode(Meta.self, forKey: "meta")
-        self.organizationID = try values.decodeIfPresent(Int.self, forKey: "organization_id")
-        self.operations = try values.decodeIfPresent([Operation].self, forKey: "operations")
-        self.groups = try values.decodeIfPresent([Group].self, forKey: "groups")
+        self.organizationID = values.contains("organization_id") ? Optional.some(try values.decode(Int.self, forKey: "organization_id")) : nil
+        self.operations = values.contains("operations") ? Optional.some(try values.decode([Operation].self, forKey: "operations")) : nil
+        self.groups = values.contains("groups") ? Optional.some(try values.decode([Group].self, forKey: "groups")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(schemas, forKey: "schemas")
         try values.encode(id, forKey: "id")
-        try values.encodeIfPresent(externalID, forKey: "externalId")
-        try values.encodeIfPresent(userName, forKey: "userName")
+        try values.encode(externalID, forKey: "externalId")
+        try values.encode(userName, forKey: "userName")
         try values.encodeIfPresent(displayName, forKey: "displayName")
         try values.encode(name, forKey: "name")
         try values.encode(emails, forKey: "emails")

@@ -68,12 +68,12 @@ public struct CredentialAuthorization: Codable, Sendable {
         self.login = try values.decode(String.self, forKey: "login")
         self.credentialID = try values.decode(Int.self, forKey: "credential_id")
         self.credentialType = try values.decode(String.self, forKey: "credential_type")
-        self.tokenLastEight = try values.decodeIfPresent(String.self, forKey: "token_last_eight")
+        self.tokenLastEight = values.contains("token_last_eight") ? Optional.some(try values.decode(String.self, forKey: "token_last_eight")) : nil
         self.credentialAuthorizedAt = try values.decode(Date.self, forKey: "credential_authorized_at")
-        self.scopes = try values.decodeIfPresent([String].self, forKey: "scopes")
-        self.fingerprint = try values.decodeIfPresent(String.self, forKey: "fingerprint")
-        self.credentialAccessedAt = try values.decodeIfPresent(Date.self, forKey: "credential_accessed_at")
-        self.authorizedCredentialID = try values.decodeIfPresent(Int.self, forKey: "authorized_credential_id")
+        self.scopes = values.contains("scopes") ? Optional.some(try values.decode([String].self, forKey: "scopes")) : nil
+        self.fingerprint = values.contains("fingerprint") ? Optional.some(try values.decode(String.self, forKey: "fingerprint")) : nil
+        self.credentialAccessedAt = try values.decode(Date?.self, forKey: "credential_accessed_at")
+        self.authorizedCredentialID = try values.decode(Int?.self, forKey: "authorized_credential_id")
         self.authorizedCredentialTitle = try values.decodeIfPresent(String.self, forKey: "authorized_credential_title")
         self.authorizedCredentialNote = try values.decodeIfPresent(String.self, forKey: "authorized_credential_note")
         self.authorizedCredentialExpiresAt = try values.decodeIfPresent(Date.self, forKey: "authorized_credential_expires_at")
@@ -88,8 +88,8 @@ public struct CredentialAuthorization: Codable, Sendable {
         try values.encode(credentialAuthorizedAt, forKey: "credential_authorized_at")
         try values.encodeIfPresent(scopes, forKey: "scopes")
         try values.encodeIfPresent(fingerprint, forKey: "fingerprint")
-        try values.encodeIfPresent(credentialAccessedAt, forKey: "credential_accessed_at")
-        try values.encodeIfPresent(authorizedCredentialID, forKey: "authorized_credential_id")
+        try values.encode(credentialAccessedAt, forKey: "credential_accessed_at")
+        try values.encode(authorizedCredentialID, forKey: "authorized_credential_id")
         try values.encodeIfPresent(authorizedCredentialTitle, forKey: "authorized_credential_title")
         try values.encodeIfPresent(authorizedCredentialNote, forKey: "authorized_credential_note")
         try values.encodeIfPresent(authorizedCredentialExpiresAt, forKey: "authorized_credential_expires_at")

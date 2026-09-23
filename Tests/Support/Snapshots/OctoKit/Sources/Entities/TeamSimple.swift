@@ -65,13 +65,13 @@ public struct TeamSimple: Codable, Sendable {
         self.url = try values.decode(URL.self, forKey: "url")
         self.membersURL = try values.decode(String.self, forKey: "members_url")
         self.name = try values.decode(String.self, forKey: "name")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
         self.permission = try values.decode(String.self, forKey: "permission")
-        self.privacy = try values.decodeIfPresent(String.self, forKey: "privacy")
+        self.privacy = values.contains("privacy") ? Optional.some(try values.decode(String.self, forKey: "privacy")) : nil
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.repositoriesURL = try values.decode(URL.self, forKey: "repositories_url")
         self.slug = try values.decode(String.self, forKey: "slug")
-        self.ldapDn = try values.decodeIfPresent(String.self, forKey: "ldap_dn")
+        self.ldapDn = values.contains("ldap_dn") ? Optional.some(try values.decode(String.self, forKey: "ldap_dn")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -81,7 +81,7 @@ public struct TeamSimple: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(membersURL, forKey: "members_url")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encode(permission, forKey: "permission")
         try values.encodeIfPresent(privacy, forKey: "privacy")
         try values.encode(htmlURL, forKey: "html_url")

@@ -29,9 +29,9 @@ public struct Blob: Codable, Sendable {
         self.encoding = try values.decode(String.self, forKey: "encoding")
         self.url = try values.decode(URL.self, forKey: "url")
         self.sha = try values.decode(String.self, forKey: "sha")
-        self.size = try values.decodeIfPresent(Int.self, forKey: "size")
+        self.size = try values.decode(Int?.self, forKey: "size")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.highlightedContent = try values.decodeIfPresent(String.self, forKey: "highlighted_content")
+        self.highlightedContent = values.contains("highlighted_content") ? Optional.some(try values.decode(String.self, forKey: "highlighted_content")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -40,7 +40,7 @@ public struct Blob: Codable, Sendable {
         try values.encode(encoding, forKey: "encoding")
         try values.encode(url, forKey: "url")
         try values.encode(sha, forKey: "sha")
-        try values.encodeIfPresent(size, forKey: "size")
+        try values.encode(size, forKey: "size")
         try values.encode(nodeID, forKey: "node_id")
         try values.encodeIfPresent(highlightedContent, forKey: "highlighted_content")
     }

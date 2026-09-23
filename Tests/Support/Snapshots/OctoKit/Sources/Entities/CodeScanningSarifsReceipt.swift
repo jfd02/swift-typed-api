@@ -19,8 +19,8 @@ public struct CodeScanningSarifsReceipt: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.id = try values.decodeIfPresent(String.self, forKey: "id")
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
+        self.id = values.contains("id") ? Optional.some(try values.decode(String.self, forKey: "id")) : nil
+        self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -522,6 +522,8 @@ the documented cases, so typos and newly documented cases are still caught at co
 time, and carries anything else through as `.unknown`, preserving the raw value.
 
 `init(rawValue:)` becomes non-failable, and `allCases` lists only the documented cases.
+If a documented case is already named `unknown`, the fallback uses `unknownValue`
+(or `unknownValue2`, `unknownValue3`, etc. if those names are also taken).
 
 <br/>
 

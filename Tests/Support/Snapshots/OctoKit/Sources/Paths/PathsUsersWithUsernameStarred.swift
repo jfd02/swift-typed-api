@@ -37,8 +37,16 @@ extension Paths.Users.WithUsername {
 
             public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
-                self.starredRepositories = try? container.decode([OctoKit.StarredRepository].self)
-                self.repositories = try? container.decode([OctoKit.Repository].self)
+                let decodedValue0 = try? container.decode([OctoKit.StarredRepository].self)
+                let decodedValue1 = try? container.decode([OctoKit.Repository].self)
+                guard decodedValue0 != nil || decodedValue1 != nil else {
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Data could not be decoded as any of the expected types ([OctoKit.StarredRepository], [OctoKit.Repository])."
+                    )
+                }
+                self.starredRepositories = decodedValue0
+                self.repositories = decodedValue1
             }
         }
 

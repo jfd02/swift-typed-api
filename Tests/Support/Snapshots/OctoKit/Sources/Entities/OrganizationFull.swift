@@ -112,8 +112,8 @@ public struct OrganizationFull: Codable, Sendable {
             self.name = try values.decode(String.self, forKey: "name")
             self.space = try values.decode(Int.self, forKey: "space")
             self.privateRepos = try values.decode(Int.self, forKey: "private_repos")
-            self.filledSeats = try values.decodeIfPresent(Int.self, forKey: "filled_seats")
-            self.seats = try values.decodeIfPresent(Int.self, forKey: "seats")
+            self.filledSeats = values.contains("filled_seats") ? Optional.some(try values.decode(Int.self, forKey: "filled_seats")) : nil
+            self.seats = values.contains("seats") ? Optional.some(try values.decode(Int.self, forKey: "seats")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -189,14 +189,14 @@ public struct OrganizationFull: Codable, Sendable {
         self.membersURL = try values.decode(String.self, forKey: "members_url")
         self.publicMembersURL = try values.decode(String.self, forKey: "public_members_url")
         self.avatarURL = try values.decode(String.self, forKey: "avatar_url")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
-        self.company = try values.decodeIfPresent(String.self, forKey: "company")
-        self.blog = try values.decodeIfPresent(URL.self, forKey: "blog")
-        self.location = try values.decodeIfPresent(String.self, forKey: "location")
-        self.email = try values.decodeIfPresent(String.self, forKey: "email")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+        self.company = values.contains("company") ? Optional.some(try values.decode(String.self, forKey: "company")) : nil
+        self.blog = values.contains("blog") ? Optional.some(try values.decode(URL.self, forKey: "blog")) : nil
+        self.location = values.contains("location") ? Optional.some(try values.decode(String.self, forKey: "location")) : nil
+        self.email = values.contains("email") ? Optional.some(try values.decode(String.self, forKey: "email")) : nil
         self.twitterUsername = try values.decodeIfPresent(String.self, forKey: "twitter_username")
-        self.isVerified = try values.decodeIfPresent(Bool.self, forKey: "is_verified")
+        self.isVerified = values.contains("is_verified") ? Optional.some(try values.decode(Bool.self, forKey: "is_verified")) : nil
         self.hasOrganizationProjects = try values.decode(Bool.self, forKey: "has_organization_projects")
         self.hasRepositoryProjects = try values.decode(Bool.self, forKey: "has_repository_projects")
         self.publicRepos = try values.decode(Int.self, forKey: "public_repos")
@@ -206,23 +206,23 @@ public struct OrganizationFull: Codable, Sendable {
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.type = try values.decode(String.self, forKey: "type")
-        self.totalPrivateRepos = try values.decodeIfPresent(Int.self, forKey: "total_private_repos")
-        self.ownedPrivateRepos = try values.decodeIfPresent(Int.self, forKey: "owned_private_repos")
+        self.totalPrivateRepos = values.contains("total_private_repos") ? Optional.some(try values.decode(Int.self, forKey: "total_private_repos")) : nil
+        self.ownedPrivateRepos = values.contains("owned_private_repos") ? Optional.some(try values.decode(Int.self, forKey: "owned_private_repos")) : nil
         self.privateGists = try values.decodeIfPresent(Int.self, forKey: "private_gists")
         self.diskUsage = try values.decodeIfPresent(Int.self, forKey: "disk_usage")
         self.collaborators = try values.decodeIfPresent(Int.self, forKey: "collaborators")
         self.billingEmail = try values.decodeIfPresent(String.self, forKey: "billing_email")
-        self.plan = try values.decodeIfPresent(Plan.self, forKey: "plan")
+        self.plan = values.contains("plan") ? Optional.some(try values.decode(Plan.self, forKey: "plan")) : nil
         self.defaultRepositoryPermission = try values.decodeIfPresent(String.self, forKey: "default_repository_permission")
         self.membersCanCreateRepositories = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_repositories")
         self.isTwoFactorRequirementEnabled = try values.decodeIfPresent(Bool.self, forKey: "two_factor_requirement_enabled")
-        self.membersAllowedRepositoryCreationType = try values.decodeIfPresent(String.self, forKey: "members_allowed_repository_creation_type")
-        self.membersCanCreatePublicRepositories = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_public_repositories")
-        self.membersCanCreatePrivateRepositories = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_private_repositories")
-        self.membersCanCreateInternalRepositories = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_internal_repositories")
-        self.membersCanCreatePages = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_pages")
-        self.membersCanCreatePublicPages = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_public_pages")
-        self.membersCanCreatePrivatePages = try values.decodeIfPresent(Bool.self, forKey: "members_can_create_private_pages")
+        self.membersAllowedRepositoryCreationType = values.contains("members_allowed_repository_creation_type") ? Optional.some(try values.decode(String.self, forKey: "members_allowed_repository_creation_type")) : nil
+        self.membersCanCreatePublicRepositories = values.contains("members_can_create_public_repositories") ? Optional.some(try values.decode(Bool.self, forKey: "members_can_create_public_repositories")) : nil
+        self.membersCanCreatePrivateRepositories = values.contains("members_can_create_private_repositories") ? Optional.some(try values.decode(Bool.self, forKey: "members_can_create_private_repositories")) : nil
+        self.membersCanCreateInternalRepositories = values.contains("members_can_create_internal_repositories") ? Optional.some(try values.decode(Bool.self, forKey: "members_can_create_internal_repositories")) : nil
+        self.membersCanCreatePages = values.contains("members_can_create_pages") ? Optional.some(try values.decode(Bool.self, forKey: "members_can_create_pages")) : nil
+        self.membersCanCreatePublicPages = values.contains("members_can_create_public_pages") ? Optional.some(try values.decode(Bool.self, forKey: "members_can_create_public_pages")) : nil
+        self.membersCanCreatePrivatePages = values.contains("members_can_create_private_pages") ? Optional.some(try values.decode(Bool.self, forKey: "members_can_create_private_pages")) : nil
         self.membersCanForkPrivateRepositories = try values.decodeIfPresent(Bool.self, forKey: "members_can_fork_private_repositories")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
     }
@@ -240,7 +240,7 @@ public struct OrganizationFull: Codable, Sendable {
         try values.encode(membersURL, forKey: "members_url")
         try values.encode(publicMembersURL, forKey: "public_members_url")
         try values.encode(avatarURL, forKey: "avatar_url")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encodeIfPresent(name, forKey: "name")
         try values.encodeIfPresent(company, forKey: "company")
         try values.encodeIfPresent(blog, forKey: "blog")

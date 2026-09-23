@@ -22,8 +22,8 @@ public struct SearchResultTextMatch: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.text = try values.decodeIfPresent(String.self, forKey: "text")
-            self.indices = try values.decodeIfPresent([Int].self, forKey: "indices")
+            self.text = values.contains("text") ? Optional.some(try values.decode(String.self, forKey: "text")) : nil
+            self.indices = values.contains("indices") ? Optional.some(try values.decode([Int].self, forKey: "indices")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -43,11 +43,11 @@ public struct SearchResultTextMatch: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.objectURL = try values.decodeIfPresent(String.self, forKey: "object_url")
+        self.objectURL = values.contains("object_url") ? Optional.some(try values.decode(String.self, forKey: "object_url")) : nil
         self.objectType = try values.decodeIfPresent(String.self, forKey: "object_type")
-        self.property = try values.decodeIfPresent(String.self, forKey: "property")
-        self.fragment = try values.decodeIfPresent(String.self, forKey: "fragment")
-        self.matches = try values.decodeIfPresent([Match].self, forKey: "matches")
+        self.property = values.contains("property") ? Optional.some(try values.decode(String.self, forKey: "property")) : nil
+        self.fragment = values.contains("fragment") ? Optional.some(try values.decode(String.self, forKey: "fragment")) : nil
+        self.matches = values.contains("matches") ? Optional.some(try values.decode([Match].self, forKey: "matches")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

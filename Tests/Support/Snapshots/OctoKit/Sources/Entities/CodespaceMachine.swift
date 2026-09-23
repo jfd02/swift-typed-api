@@ -60,7 +60,7 @@ public struct CodespaceMachine: Codable, Sendable {
         self.storageInBytes = try values.decode(Int.self, forKey: "storage_in_bytes")
         self.memoryInBytes = try values.decode(Int.self, forKey: "memory_in_bytes")
         self.cpus = try values.decode(Int.self, forKey: "cpus")
-        self.prebuildAvailability = try values.decodeIfPresent(PrebuildAvailability.self, forKey: "prebuild_availability")
+        self.prebuildAvailability = try values.decode(PrebuildAvailability?.self, forKey: "prebuild_availability")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -71,6 +71,6 @@ public struct CodespaceMachine: Codable, Sendable {
         try values.encode(storageInBytes, forKey: "storage_in_bytes")
         try values.encode(memoryInBytes, forKey: "memory_in_bytes")
         try values.encode(cpus, forKey: "cpus")
-        try values.encodeIfPresent(prebuildAvailability, forKey: "prebuild_availability")
+        try values.encode(prebuildAvailability, forKey: "prebuild_availability")
     }
 }

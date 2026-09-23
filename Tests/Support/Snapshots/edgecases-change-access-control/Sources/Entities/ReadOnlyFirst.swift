@@ -15,8 +15,8 @@ struct ReadOnlyFirst: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.bar = try values.decodeIfPresent(String.self, forKey: "bar")
-        self.baz = try values.decodeIfPresent(String.self, forKey: "baz")
+        self.bar = values.contains("bar") ? Optional.some(try values.decode(String.self, forKey: "bar")) : nil
+        self.baz = values.contains("baz") ? Optional.some(try values.decode(String.self, forKey: "baz")) : nil
     }
 
     func encode(to encoder: Encoder) throws {

@@ -12,4 +12,10 @@ public struct Animal: Codable, Sendable {
         self.className = className
         self.color = color
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.className = try values.decode(String.self, forKey: .className)
+        self.color = values.contains(.color) ? Optional.some(try values.decode(String.self, forKey: .color)) : nil
+    }
 }

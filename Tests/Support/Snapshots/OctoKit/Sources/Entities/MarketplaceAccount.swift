@@ -28,7 +28,7 @@ public struct MarketplaceAccount: Codable, Sendable {
         self.url = try values.decode(URL.self, forKey: "url")
         self.id = try values.decode(Int.self, forKey: "id")
         self.type = try values.decode(String.self, forKey: "type")
-        self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
+        self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
         self.login = try values.decode(String.self, forKey: "login")
         self.email = try values.decodeIfPresent(String.self, forKey: "email")
         self.organizationBillingEmail = try values.decodeIfPresent(String.self, forKey: "organization_billing_email")

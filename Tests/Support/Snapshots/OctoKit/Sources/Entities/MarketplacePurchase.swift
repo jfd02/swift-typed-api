@@ -32,11 +32,11 @@ public struct MarketplacePurchase: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.isInstalled = try values.decodeIfPresent(Bool.self, forKey: "is_installed")
-            self.effectiveDate = try values.decodeIfPresent(String.self, forKey: "effective_date")
+            self.isInstalled = values.contains("is_installed") ? Optional.some(try values.decode(Bool.self, forKey: "is_installed")) : nil
+            self.effectiveDate = values.contains("effective_date") ? Optional.some(try values.decode(String.self, forKey: "effective_date")) : nil
             self.unitCount = try values.decodeIfPresent(Int.self, forKey: "unit_count")
-            self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-            self.plan = try values.decodeIfPresent(MarketplaceListingPlan.self, forKey: "plan")
+            self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+            self.plan = values.contains("plan") ? Optional.some(try values.decode(MarketplaceListingPlan.self, forKey: "plan")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -73,14 +73,14 @@ public struct MarketplacePurchase: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.billingCycle = try values.decodeIfPresent(String.self, forKey: "billing_cycle")
+            self.billingCycle = values.contains("billing_cycle") ? Optional.some(try values.decode(String.self, forKey: "billing_cycle")) : nil
             self.nextBillingDate = try values.decodeIfPresent(String.self, forKey: "next_billing_date")
-            self.isInstalled = try values.decodeIfPresent(Bool.self, forKey: "is_installed")
+            self.isInstalled = values.contains("is_installed") ? Optional.some(try values.decode(Bool.self, forKey: "is_installed")) : nil
             self.unitCount = try values.decodeIfPresent(Int.self, forKey: "unit_count")
-            self.isOnFreeTrial = try values.decodeIfPresent(Bool.self, forKey: "on_free_trial")
+            self.isOnFreeTrial = values.contains("on_free_trial") ? Optional.some(try values.decode(Bool.self, forKey: "on_free_trial")) : nil
             self.freeTrialEndsOn = try values.decodeIfPresent(String.self, forKey: "free_trial_ends_on")
-            self.updatedAt = try values.decodeIfPresent(String.self, forKey: "updated_at")
-            self.plan = try values.decodeIfPresent(MarketplaceListingPlan.self, forKey: "plan")
+            self.updatedAt = values.contains("updated_at") ? Optional.some(try values.decode(String.self, forKey: "updated_at")) : nil
+            self.plan = values.contains("plan") ? Optional.some(try values.decode(MarketplaceListingPlan.self, forKey: "plan")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -113,7 +113,7 @@ public struct MarketplacePurchase: Codable, Sendable {
         self.type = try values.decode(String.self, forKey: "type")
         self.id = try values.decode(Int.self, forKey: "id")
         self.login = try values.decode(String.self, forKey: "login")
-        self.organizationBillingEmail = try values.decodeIfPresent(String.self, forKey: "organization_billing_email")
+        self.organizationBillingEmail = values.contains("organization_billing_email") ? Optional.some(try values.decode(String.self, forKey: "organization_billing_email")) : nil
         self.email = try values.decodeIfPresent(String.self, forKey: "email")
         self.marketplacePendingChange = try values.decodeIfPresent(MarketplacePendingChange.self, forKey: "marketplace_pending_change")
         self.marketplacePurchase = try values.decode(MarketplacePurchase.self, forKey: "marketplace_purchase")

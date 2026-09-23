@@ -80,15 +80,15 @@ public struct Team: Codable, Sendable {
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.name = try values.decode(String.self, forKey: "name")
         self.slug = try values.decode(String.self, forKey: "slug")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.privacy = try values.decodeIfPresent(String.self, forKey: "privacy")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.privacy = values.contains("privacy") ? Optional.some(try values.decode(String.self, forKey: "privacy")) : nil
         self.permission = try values.decode(String.self, forKey: "permission")
-        self.permissions = try values.decodeIfPresent(Permissions.self, forKey: "permissions")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode(Permissions.self, forKey: "permissions")) : nil
         self.url = try values.decode(URL.self, forKey: "url")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.membersURL = try values.decode(String.self, forKey: "members_url")
         self.repositoriesURL = try values.decode(URL.self, forKey: "repositories_url")
-        self.parent = try values.decodeIfPresent(TeamSimple.self, forKey: "parent")
+        self.parent = try values.decode(TeamSimple?.self, forKey: "parent")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -97,7 +97,7 @@ public struct Team: Codable, Sendable {
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(name, forKey: "name")
         try values.encode(slug, forKey: "slug")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encodeIfPresent(privacy, forKey: "privacy")
         try values.encode(permission, forKey: "permission")
         try values.encodeIfPresent(permissions, forKey: "permissions")
@@ -105,6 +105,6 @@ public struct Team: Codable, Sendable {
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(membersURL, forKey: "members_url")
         try values.encode(repositoriesURL, forKey: "repositories_url")
-        try values.encodeIfPresent(parent, forKey: "parent")
+        try values.encode(parent, forKey: "parent")
     }
 }

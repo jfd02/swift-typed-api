@@ -4,6 +4,12 @@ This project is a fork of [CreateAPI](https://github.com/CreateAPI/CreateAPI). I
 
 ## Unreleased
 
+- **Open enum name collisions.** If an enum already declares `unknown`, the generated fallback uses `unknownValue` (with a numeric suffix when needed), preserving the documented cases and producing compilable Swift.
+
+- **Required and nullable fields.** Required nullable properties now reject missing keys and encode `nil` as `null`. Optional non-nullable properties reject explicit `null`, including properties with defaults. Nullable array elements and dictionary values retain their optional Swift types.
+- **Union coding.** `anyOf` decoding rejects payloads that match no variant. Encoding merges compatible overlapping variants, including nested objects and arrays, and reports conflicting values instead of discarding fields. Explicit null variants remain supported, and encoding preserves caller strategies for dates, data, floats and keys.
+- **PATCH field presence.** With `paths.makeOptionalPatchParametersDoubleOptional`, nullable optional fields preserve the distinction between omitted and explicitly null values when decoded. Required and non-nullable fields no longer gain an extra optional layer.
+
 - **Open string enums.** New `entities.openEnums` option (default `false`). When enabled, string enums gain an `unknown(String)` case and decode through it instead of throwing, so a value added to the API after generation no longer fails the whole response. Documented cases still exist, so typos and newly documented cases remain compile-time errors. Open enums also adopt `entities.protocols`, which string enums otherwise ignore.
 - **Response overrides by status.** `paths.overriddenResponses` can now target an HTTP status by its generated name (such as `accepted`) or code (such as `"202"`), including inline responses. Component response overrides also work consistently when an operation declares multiple successful responses.
 - **Swift 6 generated-code compatibility.** Generated string enums conform to `Sendable`, mutable and non-final classes use `@unchecked Sendable`, generated code imports the legacy `HTTPHeaders` and `NaiveDate` modules with `@preconcurrency`, and generated package dependency declarations use the current SwiftPM APIs.

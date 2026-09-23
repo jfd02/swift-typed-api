@@ -18,13 +18,13 @@ public struct Package: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.weight = try values.decode(Int.self, forKey: "weight")
         self.address = try values.decode(String.self, forKey: "address")
-        self.receivedBy = try values.decodeIfPresent(Person.self, forKey: "receivedBy")
+        self.receivedBy = try values.decode(Person?.self, forKey: "receivedBy")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(weight, forKey: "weight")
         try values.encode(address, forKey: "address")
-        try values.encodeIfPresent(receivedBy, forKey: "receivedBy")
+        try values.encode(receivedBy, forKey: "receivedBy")
     }
 }

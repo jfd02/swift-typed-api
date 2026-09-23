@@ -12,4 +12,10 @@ public struct Category: Codable, Sendable {
         self.id = id
         self.name = name
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = values.contains(.id) ? Optional.some(try values.decode(Int64.self, forKey: .id)) : nil
+        self.name = values.contains(.name) ? Optional.some(try values.decode(String.self, forKey: .name)) : nil
+    }
 }

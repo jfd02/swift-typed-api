@@ -18,8 +18,8 @@ public struct Cat: Codable, Sendable {
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
     self.className = try values.decode(String.self, forKey: "className")
-    self.color = try values.decodeIfPresent(String.self, forKey: "color")
-    self.isDeclawed = try values.decodeIfPresent(Bool.self, forKey: "declawed")
+    self.color = values.contains("color") ? Optional.some(try values.decode(String.self, forKey: "color")) : nil
+    self.isDeclawed = values.contains("declawed") ? Optional.some(try values.decode(Bool.self, forKey: "declawed")) : nil
   }
 
   public func encode(to encoder: Encoder) throws {

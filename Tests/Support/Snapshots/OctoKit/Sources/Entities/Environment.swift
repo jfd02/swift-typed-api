@@ -61,7 +61,7 @@ public struct Environment: Codable, Sendable {
                 self.id = try values.decode(Int.self, forKey: "id")
                 self.nodeID = try values.decode(String.self, forKey: "node_id")
                 self.type = try values.decode(String.self, forKey: "type")
-                self.waitTimer = try values.decodeIfPresent(Int.self, forKey: "wait_timer")
+                self.waitTimer = values.contains("wait_timer") ? Optional.some(try values.decode(Int.self, forKey: "wait_timer")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -102,21 +102,23 @@ public struct Environment: Codable, Sendable {
 
                     public init(from decoder: Decoder) throws {
                         let container = try decoder.singleValueContainer()
-                        self.simpleUser = try? container.decode(SimpleUser.self)
-                        self.team = try? container.decode(Team.self)
+                        let decodedValue0 = try? container.decode(SimpleUser.self)
+                        let decodedValue1 = try? container.decode(Team.self)
+                        guard decodedValue0 != nil || decodedValue1 != nil else {
+                            throw DecodingError.dataCorruptedError(
+                                in: container,
+                                debugDescription: "Data could not be decoded as any of the expected types (SimpleUser, Team)."
+                            )
+                        }
+                        self.simpleUser = decodedValue0
+                        self.team = decodedValue1
                     }
 
                     public func encode(to encoder: Encoder) throws {
-                        let encodedValueCount = [simpleUser != nil, team != nil].filter { $0 }.count
-                        guard encodedValueCount == 1 else {
-                            throw EncodingError.invalidValue(
-                                self,
-                                .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-                            )
-                        }
-                        var container = encoder.singleValueContainer()
+                        let container = AnyOfEncoder(encoder: encoder)
                         if let value = simpleUser { try container.encode(value) }
                         if let value = team { try container.encode(value) }
+                        try container.finish(allowsNull: false)
                     }
                 }
 
@@ -127,8 +129,8 @@ public struct Environment: Codable, Sendable {
 
                 public init(from decoder: Decoder) throws {
                     let values = try decoder.container(keyedBy: StringCodingKey.self)
-                    self.type = try values.decodeIfPresent(DeploymentReviewerType.self, forKey: "type")
-                    self.reviewer = try values.decodeIfPresent(Reviewer.self, forKey: "reviewer")
+                    self.type = values.contains("type") ? Optional.some(try values.decode(DeploymentReviewerType.self, forKey: "type")) : nil
+                    self.reviewer = values.contains("reviewer") ? Optional.some(try values.decode(Reviewer.self, forKey: "reviewer")) : nil
                 }
 
                 public func encode(to encoder: Encoder) throws {
@@ -150,7 +152,7 @@ public struct Environment: Codable, Sendable {
                 self.id = try values.decode(Int.self, forKey: "id")
                 self.nodeID = try values.decode(String.self, forKey: "node_id")
                 self.type = try values.decode(String.self, forKey: "type")
-                self.reviewers = try values.decodeIfPresent([Reviewer].self, forKey: "reviewers")
+                self.reviewers = values.contains("reviewers") ? Optional.some(try values.decode([Reviewer].self, forKey: "reviewers")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -199,23 +201,26 @@ public struct Environment: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
-            self.a = try? container.decode(A.self)
-            self.b = try? container.decode(B.self)
-            self.c = try? container.decode(C.self)
+            let decodedValue0 = try? container.decode(A.self)
+            let decodedValue1 = try? container.decode(B.self)
+            let decodedValue2 = try? container.decode(C.self)
+            guard decodedValue0 != nil || decodedValue1 != nil || decodedValue2 != nil else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Data could not be decoded as any of the expected types (A, B, C)."
+                )
+            }
+            self.a = decodedValue0
+            self.b = decodedValue1
+            self.c = decodedValue2
         }
 
         public func encode(to encoder: Encoder) throws {
-            let encodedValueCount = [a != nil, b != nil, c != nil].filter { $0 }.count
-            guard encodedValueCount == 1 else {
-                throw EncodingError.invalidValue(
-                    self,
-                    .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-                )
-            }
-            var container = encoder.singleValueContainer()
+            let container = AnyOfEncoder(encoder: encoder)
             if let value = a { try container.encode(value) }
             if let value = b { try container.encode(value) }
             if let value = c { try container.encode(value) }
+            try container.finish(allowsNull: false)
         }
     }
 
@@ -240,7 +245,7 @@ public struct Environment: Codable, Sendable {
         self.htmlURL = try values.decode(String.self, forKey: "html_url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.protectionRules = try values.decodeIfPresent([ProtectionRule].self, forKey: "protection_rules")
+        self.protectionRules = values.contains("protection_rules") ? Optional.some(try values.decode([ProtectionRule].self, forKey: "protection_rules")) : nil
         self.deploymentBranchPolicy = try values.decodeIfPresent(DeploymentBranchPolicy.self, forKey: "deployment_branch_policy")
     }
 

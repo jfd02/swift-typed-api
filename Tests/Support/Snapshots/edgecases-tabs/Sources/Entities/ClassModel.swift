@@ -14,7 +14,7 @@ public struct ClassModel: Codable, Sendable {
 
 	public init(from decoder: Decoder) throws {
 		let values = try decoder.container(keyedBy: StringCodingKey.self)
-		self.class = try values.decodeIfPresent(String.self, forKey: "_class")
+		self.class = values.contains("_class") ? Optional.some(try values.decode(String.self, forKey: "_class")) : nil
 	}
 
 	public func encode(to encoder: Encoder) throws {

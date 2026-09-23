@@ -125,7 +125,7 @@ extension Paths {
                 self.currentUserRepositoriesURL = try values.decode(String.self, forKey: "current_user_repositories_url")
                 self.starredURL = try values.decode(String.self, forKey: "starred_url")
                 self.starredGistsURL = try values.decode(String.self, forKey: "starred_gists_url")
-                self.topicSearchURL = try values.decodeIfPresent(String.self, forKey: "topic_search_url")
+                self.topicSearchURL = values.contains("topic_search_url") ? Optional.some(try values.decode(String.self, forKey: "topic_search_url")) : nil
                 self.userURL = try values.decode(String.self, forKey: "user_url")
                 self.userOrganizationsURL = try values.decode(String.self, forKey: "user_organizations_url")
                 self.userRepositoriesURL = try values.decode(String.self, forKey: "user_repositories_url")

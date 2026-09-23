@@ -1568,14 +1568,14 @@ final class TypedErrorGenerationTests: XCTestCase {
 }
 
 final class GeneratorTemplateTests: XCTestCase {
-    func testAnyOfEncoderRequiresExactlyOneValue() {
+    func testAnyOfEncoderMergesMatchingValues() {
         let templates = Templates(options: .default)
         let output = templates.encodeAnyOf(properties: [
             Property(name: PropertyName("foo"), type: .builtin("String"), isOptional: true, key: "foo"),
             Property(name: PropertyName("bar"), type: .builtin("Int"), isOptional: true, key: "bar")
         ])
 
-        XCTAssertTrue(output.contains("encodedValueCount == 1"))
-        XCTAssertTrue(output.contains("Expected exactly one anyOf value to be set."))
+        XCTAssertTrue(output.contains("AnyOfEncoder(encoder: encoder)"))
+        XCTAssertTrue(output.contains("try container.finish(allowsNull: false)"))
     }
 }

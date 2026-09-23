@@ -179,9 +179,9 @@ extension Paths.Projects.Columns.Cards {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.message = try values.decodeIfPresent(String.self, forKey: "message")
-                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
-                self.errors = try values.decodeIfPresent([String].self, forKey: "errors")
+                self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
+                self.documentationURL = values.contains("documentation_url") ? Optional.some(try values.decode(String.self, forKey: "documentation_url")) : nil
+                self.errors = values.contains("errors") ? Optional.some(try values.decode([String].self, forKey: "errors")) : nil
             }
         }
     }

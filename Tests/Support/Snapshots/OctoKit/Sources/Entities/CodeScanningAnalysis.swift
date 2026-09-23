@@ -63,7 +63,7 @@ public struct CodeScanningAnalysis: Codable, Sendable {
         self.commitSha = try values.decode(String.self, forKey: "commit_sha")
         self.analysisKey = try values.decode(String.self, forKey: "analysis_key")
         self.environment = try values.decode(String.self, forKey: "environment")
-        self.category = try values.decodeIfPresent(String.self, forKey: "category")
+        self.category = values.contains("category") ? Optional.some(try values.decode(String.self, forKey: "category")) : nil
         self.error = try values.decode(String.self, forKey: "error")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.resultsCount = try values.decode(Int.self, forKey: "results_count")

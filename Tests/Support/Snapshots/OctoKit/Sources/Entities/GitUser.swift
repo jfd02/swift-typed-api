@@ -21,9 +21,9 @@ public struct GitUser: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
-        self.email = try values.decodeIfPresent(String.self, forKey: "email")
-        self.date = try values.decodeIfPresent(String.self, forKey: "date")
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+        self.email = values.contains("email") ? Optional.some(try values.decode(String.self, forKey: "email")) : nil
+        self.date = values.contains("date") ? Optional.some(try values.decode(String.self, forKey: "date")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

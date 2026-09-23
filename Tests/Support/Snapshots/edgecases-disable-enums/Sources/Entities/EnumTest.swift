@@ -19,10 +19,10 @@ public struct EnumTest: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.enumString = try values.decodeIfPresent(String.self, forKey: "enum_string")
-        self.enumInteger = try values.decodeIfPresent(Int32.self, forKey: "enum_integer")
-        self.enumNumber = try values.decodeIfPresent(Double.self, forKey: "enum_number")
-        self.outerEnum = try values.decodeIfPresent(String.self, forKey: "outerEnum")
+        self.enumString = values.contains("enum_string") ? Optional.some(try values.decode(String.self, forKey: "enum_string")) : nil
+        self.enumInteger = values.contains("enum_integer") ? Optional.some(try values.decode(Int32.self, forKey: "enum_integer")) : nil
+        self.enumNumber = values.contains("enum_number") ? Optional.some(try values.decode(Double.self, forKey: "enum_number")) : nil
+        self.outerEnum = values.contains("outerEnum") ? Optional.some(try values.decode(String.self, forKey: "outerEnum")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

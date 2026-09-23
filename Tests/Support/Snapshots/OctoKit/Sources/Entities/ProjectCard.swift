@@ -56,15 +56,15 @@ public struct ProjectCard: Codable, Sendable {
         self.url = try values.decode(URL.self, forKey: "url")
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.note = try values.decodeIfPresent(String.self, forKey: "note")
-        self.creator = try values.decodeIfPresent(SimpleUser.self, forKey: "creator")
+        self.note = try values.decode(String?.self, forKey: "note")
+        self.creator = try values.decode(SimpleUser?.self, forKey: "creator")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.isArchived = try values.decodeIfPresent(Bool.self, forKey: "archived")
-        self.columnName = try values.decodeIfPresent(String.self, forKey: "column_name")
-        self.projectID = try values.decodeIfPresent(String.self, forKey: "project_id")
+        self.isArchived = values.contains("archived") ? Optional.some(try values.decode(Bool.self, forKey: "archived")) : nil
+        self.columnName = values.contains("column_name") ? Optional.some(try values.decode(String.self, forKey: "column_name")) : nil
+        self.projectID = values.contains("project_id") ? Optional.some(try values.decode(String.self, forKey: "project_id")) : nil
         self.columnURL = try values.decode(URL.self, forKey: "column_url")
-        self.contentURL = try values.decodeIfPresent(URL.self, forKey: "content_url")
+        self.contentURL = values.contains("content_url") ? Optional.some(try values.decode(URL.self, forKey: "content_url")) : nil
         self.projectURL = try values.decode(URL.self, forKey: "project_url")
     }
 
@@ -73,8 +73,8 @@ public struct ProjectCard: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
-        try values.encodeIfPresent(note, forKey: "note")
-        try values.encodeIfPresent(creator, forKey: "creator")
+        try values.encode(note, forKey: "note")
+        try values.encode(creator, forKey: "creator")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
         try values.encodeIfPresent(isArchived, forKey: "archived")

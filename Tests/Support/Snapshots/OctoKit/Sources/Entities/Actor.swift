@@ -25,8 +25,8 @@ public struct Actor: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(Int.self, forKey: "id")
         self.login = try values.decode(String.self, forKey: "login")
-        self.displayLogin = try values.decodeIfPresent(String.self, forKey: "display_login")
-        self.gravatarID = try values.decodeIfPresent(String.self, forKey: "gravatar_id")
+        self.displayLogin = values.contains("display_login") ? Optional.some(try values.decode(String.self, forKey: "display_login")) : nil
+        self.gravatarID = try values.decode(String?.self, forKey: "gravatar_id")
         self.url = try values.decode(URL.self, forKey: "url")
         self.avatarURL = try values.decode(URL.self, forKey: "avatar_url")
     }
@@ -36,7 +36,7 @@ public struct Actor: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(login, forKey: "login")
         try values.encodeIfPresent(displayLogin, forKey: "display_login")
-        try values.encodeIfPresent(gravatarID, forKey: "gravatar_id")
+        try values.encode(gravatarID, forKey: "gravatar_id")
         try values.encode(url, forKey: "url")
         try values.encode(avatarURL, forKey: "avatar_url")
     }

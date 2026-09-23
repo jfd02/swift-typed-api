@@ -39,8 +39,8 @@ extension Paths.Organizations.WithOrganizationID {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.totalCount = try values.decodeIfPresent(Int.self, forKey: "total_count")
-                self.customRoles = try values.decodeIfPresent([OctoKit.OrganizationCustomRepositoryRole].self, forKey: "custom_roles")
+                self.totalCount = values.contains("total_count") ? Optional.some(try values.decode(Int.self, forKey: "total_count")) : nil
+                self.customRoles = values.contains("custom_roles") ? Optional.some(try values.decode([OctoKit.OrganizationCustomRepositoryRole].self, forKey: "custom_roles")) : nil
             }
         }
     }

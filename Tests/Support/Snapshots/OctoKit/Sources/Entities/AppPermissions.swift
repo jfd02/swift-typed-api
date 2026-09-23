@@ -291,36 +291,36 @@ public struct AppPermissions: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.actions = try values.decodeIfPresent(Actions.self, forKey: "actions")
-        self.administration = try values.decodeIfPresent(Administration.self, forKey: "administration")
-        self.checks = try values.decodeIfPresent(Checks.self, forKey: "checks")
-        self.contents = try values.decodeIfPresent(Contents.self, forKey: "contents")
-        self.deployments = try values.decodeIfPresent(Deployments.self, forKey: "deployments")
-        self.environments = try values.decodeIfPresent(Environments.self, forKey: "environments")
-        self.issues = try values.decodeIfPresent(Issues.self, forKey: "issues")
-        self.metadata = try values.decodeIfPresent(Metadata.self, forKey: "metadata")
-        self.packages = try values.decodeIfPresent(Packages.self, forKey: "packages")
-        self.pages = try values.decodeIfPresent(Pages.self, forKey: "pages")
-        self.pullRequests = try values.decodeIfPresent(PullRequests.self, forKey: "pull_requests")
-        self.repositoryHooks = try values.decodeIfPresent(RepositoryHooks.self, forKey: "repository_hooks")
-        self.repositoryProjects = try values.decodeIfPresent(RepositoryProjects.self, forKey: "repository_projects")
-        self.secretScanningAlerts = try values.decodeIfPresent(SecretScanningAlerts.self, forKey: "secret_scanning_alerts")
-        self.secrets = try values.decodeIfPresent(Secrets.self, forKey: "secrets")
-        self.securityEvents = try values.decodeIfPresent(SecurityEvents.self, forKey: "security_events")
-        self.singleFile = try values.decodeIfPresent(SingleFile.self, forKey: "single_file")
-        self.statuses = try values.decodeIfPresent(Statuses.self, forKey: "statuses")
-        self.vulnerabilityAlerts = try values.decodeIfPresent(VulnerabilityAlerts.self, forKey: "vulnerability_alerts")
-        self.workflows = try values.decodeIfPresent(Workflows.self, forKey: "workflows")
-        self.members = try values.decodeIfPresent(Members.self, forKey: "members")
-        self.organizationAdministration = try values.decodeIfPresent(OrganizationAdministration.self, forKey: "organization_administration")
-        self.organizationHooks = try values.decodeIfPresent(OrganizationHooks.self, forKey: "organization_hooks")
-        self.organizationPlan = try values.decodeIfPresent(OrganizationPlan.self, forKey: "organization_plan")
-        self.organizationProjects = try values.decodeIfPresent(OrganizationProjects.self, forKey: "organization_projects")
-        self.organizationPackages = try values.decodeIfPresent(OrganizationPackages.self, forKey: "organization_packages")
-        self.organizationSecrets = try values.decodeIfPresent(OrganizationSecrets.self, forKey: "organization_secrets")
-        self.organizationSelfHostedRunners = try values.decodeIfPresent(OrganizationSelfHostedRunners.self, forKey: "organization_self_hosted_runners")
-        self.organizationUserBlocking = try values.decodeIfPresent(OrganizationUserBlocking.self, forKey: "organization_user_blocking")
-        self.teamDiscussions = try values.decodeIfPresent(TeamDiscussions.self, forKey: "team_discussions")
+        self.actions = values.contains("actions") ? Optional.some(try values.decode(Actions.self, forKey: "actions")) : nil
+        self.administration = values.contains("administration") ? Optional.some(try values.decode(Administration.self, forKey: "administration")) : nil
+        self.checks = values.contains("checks") ? Optional.some(try values.decode(Checks.self, forKey: "checks")) : nil
+        self.contents = values.contains("contents") ? Optional.some(try values.decode(Contents.self, forKey: "contents")) : nil
+        self.deployments = values.contains("deployments") ? Optional.some(try values.decode(Deployments.self, forKey: "deployments")) : nil
+        self.environments = values.contains("environments") ? Optional.some(try values.decode(Environments.self, forKey: "environments")) : nil
+        self.issues = values.contains("issues") ? Optional.some(try values.decode(Issues.self, forKey: "issues")) : nil
+        self.metadata = values.contains("metadata") ? Optional.some(try values.decode(Metadata.self, forKey: "metadata")) : nil
+        self.packages = values.contains("packages") ? Optional.some(try values.decode(Packages.self, forKey: "packages")) : nil
+        self.pages = values.contains("pages") ? Optional.some(try values.decode(Pages.self, forKey: "pages")) : nil
+        self.pullRequests = values.contains("pull_requests") ? Optional.some(try values.decode(PullRequests.self, forKey: "pull_requests")) : nil
+        self.repositoryHooks = values.contains("repository_hooks") ? Optional.some(try values.decode(RepositoryHooks.self, forKey: "repository_hooks")) : nil
+        self.repositoryProjects = values.contains("repository_projects") ? Optional.some(try values.decode(RepositoryProjects.self, forKey: "repository_projects")) : nil
+        self.secretScanningAlerts = values.contains("secret_scanning_alerts") ? Optional.some(try values.decode(SecretScanningAlerts.self, forKey: "secret_scanning_alerts")) : nil
+        self.secrets = values.contains("secrets") ? Optional.some(try values.decode(Secrets.self, forKey: "secrets")) : nil
+        self.securityEvents = values.contains("security_events") ? Optional.some(try values.decode(SecurityEvents.self, forKey: "security_events")) : nil
+        self.singleFile = values.contains("single_file") ? Optional.some(try values.decode(SingleFile.self, forKey: "single_file")) : nil
+        self.statuses = values.contains("statuses") ? Optional.some(try values.decode(Statuses.self, forKey: "statuses")) : nil
+        self.vulnerabilityAlerts = values.contains("vulnerability_alerts") ? Optional.some(try values.decode(VulnerabilityAlerts.self, forKey: "vulnerability_alerts")) : nil
+        self.workflows = values.contains("workflows") ? Optional.some(try values.decode(Workflows.self, forKey: "workflows")) : nil
+        self.members = values.contains("members") ? Optional.some(try values.decode(Members.self, forKey: "members")) : nil
+        self.organizationAdministration = values.contains("organization_administration") ? Optional.some(try values.decode(OrganizationAdministration.self, forKey: "organization_administration")) : nil
+        self.organizationHooks = values.contains("organization_hooks") ? Optional.some(try values.decode(OrganizationHooks.self, forKey: "organization_hooks")) : nil
+        self.organizationPlan = values.contains("organization_plan") ? Optional.some(try values.decode(OrganizationPlan.self, forKey: "organization_plan")) : nil
+        self.organizationProjects = values.contains("organization_projects") ? Optional.some(try values.decode(OrganizationProjects.self, forKey: "organization_projects")) : nil
+        self.organizationPackages = values.contains("organization_packages") ? Optional.some(try values.decode(OrganizationPackages.self, forKey: "organization_packages")) : nil
+        self.organizationSecrets = values.contains("organization_secrets") ? Optional.some(try values.decode(OrganizationSecrets.self, forKey: "organization_secrets")) : nil
+        self.organizationSelfHostedRunners = values.contains("organization_self_hosted_runners") ? Optional.some(try values.decode(OrganizationSelfHostedRunners.self, forKey: "organization_self_hosted_runners")) : nil
+        self.organizationUserBlocking = values.contains("organization_user_blocking") ? Optional.some(try values.decode(OrganizationUserBlocking.self, forKey: "organization_user_blocking")) : nil
+        self.teamDiscussions = values.contains("team_discussions") ? Optional.some(try values.decode(TeamDiscussions.self, forKey: "team_discussions")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

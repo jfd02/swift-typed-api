@@ -12,7 +12,7 @@ public struct ContainerA: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.a = try values.decodeIfPresent(String.self, forKey: "a")
+        self.a = values.contains("a") ? Optional.some(try values.decode(String.self, forKey: "a")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

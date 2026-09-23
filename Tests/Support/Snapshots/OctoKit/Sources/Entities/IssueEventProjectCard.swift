@@ -28,7 +28,7 @@ public struct IssueEventProjectCard: Codable, Sendable {
         self.projectURL = try values.decode(URL.self, forKey: "project_url")
         self.projectID = try values.decode(Int.self, forKey: "project_id")
         self.columnName = try values.decode(String.self, forKey: "column_name")
-        self.previousColumnName = try values.decodeIfPresent(String.self, forKey: "previous_column_name")
+        self.previousColumnName = values.contains("previous_column_name") ? Optional.some(try values.decode(String.self, forKey: "previous_column_name")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

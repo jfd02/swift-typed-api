@@ -54,38 +54,58 @@ public struct TimelineIssueEvents: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.labeledIssueEvent = try? container.decode(LabeledIssueEvent.self)
-        self.unlabeledIssueEvent = try? container.decode(UnlabeledIssueEvent.self)
-        self.milestonedIssueEvent = try? container.decode(MilestonedIssueEvent.self)
-        self.demilestonedIssueEvent = try? container.decode(DemilestonedIssueEvent.self)
-        self.renamedIssueEvent = try? container.decode(RenamedIssueEvent.self)
-        self.reviewRequestedIssueEvent = try? container.decode(ReviewRequestedIssueEvent.self)
-        self.reviewRequestRemovedIssueEvent = try? container.decode(ReviewRequestRemovedIssueEvent.self)
-        self.reviewDismissedIssueEvent = try? container.decode(ReviewDismissedIssueEvent.self)
-        self.lockedIssueEvent = try? container.decode(LockedIssueEvent.self)
-        self.addedToProjectIssueEvent = try? container.decode(AddedToProjectIssueEvent.self)
-        self.movedColumnInProjectIssueEvent = try? container.decode(MovedColumnInProjectIssueEvent.self)
-        self.removedFromProjectIssueEvent = try? container.decode(RemovedFromProjectIssueEvent.self)
-        self.convertedNoteToIssueIssueEvent = try? container.decode(ConvertedNoteToIssueIssueEvent.self)
-        self.timelineCommentEvent = try? container.decode(TimelineCommentEvent.self)
-        self.timelineCrossReferencedEvent = try? container.decode(TimelineCrossReferencedEvent.self)
-        self.timelineCommittedEvent = try? container.decode(TimelineCommittedEvent.self)
-        self.timelineReviewedEvent = try? container.decode(TimelineReviewedEvent.self)
-        self.timelineLineCommentedEvent = try? container.decode(TimelineLineCommentedEvent.self)
-        self.timelineCommitCommentedEvent = try? container.decode(TimelineCommitCommentedEvent.self)
-        self.timelineAssignedIssueEvent = try? container.decode(TimelineAssignedIssueEvent.self)
-        self.timelineUnassignedIssueEvent = try? container.decode(TimelineUnassignedIssueEvent.self)
+        let decodedValue0 = try? container.decode(LabeledIssueEvent.self)
+        let decodedValue1 = try? container.decode(UnlabeledIssueEvent.self)
+        let decodedValue2 = try? container.decode(MilestonedIssueEvent.self)
+        let decodedValue3 = try? container.decode(DemilestonedIssueEvent.self)
+        let decodedValue4 = try? container.decode(RenamedIssueEvent.self)
+        let decodedValue5 = try? container.decode(ReviewRequestedIssueEvent.self)
+        let decodedValue6 = try? container.decode(ReviewRequestRemovedIssueEvent.self)
+        let decodedValue7 = try? container.decode(ReviewDismissedIssueEvent.self)
+        let decodedValue8 = try? container.decode(LockedIssueEvent.self)
+        let decodedValue9 = try? container.decode(AddedToProjectIssueEvent.self)
+        let decodedValue10 = try? container.decode(MovedColumnInProjectIssueEvent.self)
+        let decodedValue11 = try? container.decode(RemovedFromProjectIssueEvent.self)
+        let decodedValue12 = try? container.decode(ConvertedNoteToIssueIssueEvent.self)
+        let decodedValue13 = try? container.decode(TimelineCommentEvent.self)
+        let decodedValue14 = try? container.decode(TimelineCrossReferencedEvent.self)
+        let decodedValue15 = try? container.decode(TimelineCommittedEvent.self)
+        let decodedValue16 = try? container.decode(TimelineReviewedEvent.self)
+        let decodedValue17 = try? container.decode(TimelineLineCommentedEvent.self)
+        let decodedValue18 = try? container.decode(TimelineCommitCommentedEvent.self)
+        let decodedValue19 = try? container.decode(TimelineAssignedIssueEvent.self)
+        let decodedValue20 = try? container.decode(TimelineUnassignedIssueEvent.self)
+        guard decodedValue0 != nil || decodedValue1 != nil || decodedValue2 != nil || decodedValue3 != nil || decodedValue4 != nil || decodedValue5 != nil || decodedValue6 != nil || decodedValue7 != nil || decodedValue8 != nil || decodedValue9 != nil || decodedValue10 != nil || decodedValue11 != nil || decodedValue12 != nil || decodedValue13 != nil || decodedValue14 != nil || decodedValue15 != nil || decodedValue16 != nil || decodedValue17 != nil || decodedValue18 != nil || decodedValue19 != nil || decodedValue20 != nil else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Data could not be decoded as any of the expected types (LabeledIssueEvent, UnlabeledIssueEvent, MilestonedIssueEvent, DemilestonedIssueEvent, RenamedIssueEvent, ReviewRequestedIssueEvent, ReviewRequestRemovedIssueEvent, ReviewDismissedIssueEvent, LockedIssueEvent, AddedToProjectIssueEvent, MovedColumnInProjectIssueEvent, RemovedFromProjectIssueEvent, ConvertedNoteToIssueIssueEvent, TimelineCommentEvent, TimelineCrossReferencedEvent, TimelineCommittedEvent, TimelineReviewedEvent, TimelineLineCommentedEvent, TimelineCommitCommentedEvent, TimelineAssignedIssueEvent, TimelineUnassignedIssueEvent)."
+            )
+        }
+        self.labeledIssueEvent = decodedValue0
+        self.unlabeledIssueEvent = decodedValue1
+        self.milestonedIssueEvent = decodedValue2
+        self.demilestonedIssueEvent = decodedValue3
+        self.renamedIssueEvent = decodedValue4
+        self.reviewRequestedIssueEvent = decodedValue5
+        self.reviewRequestRemovedIssueEvent = decodedValue6
+        self.reviewDismissedIssueEvent = decodedValue7
+        self.lockedIssueEvent = decodedValue8
+        self.addedToProjectIssueEvent = decodedValue9
+        self.movedColumnInProjectIssueEvent = decodedValue10
+        self.removedFromProjectIssueEvent = decodedValue11
+        self.convertedNoteToIssueIssueEvent = decodedValue12
+        self.timelineCommentEvent = decodedValue13
+        self.timelineCrossReferencedEvent = decodedValue14
+        self.timelineCommittedEvent = decodedValue15
+        self.timelineReviewedEvent = decodedValue16
+        self.timelineLineCommentedEvent = decodedValue17
+        self.timelineCommitCommentedEvent = decodedValue18
+        self.timelineAssignedIssueEvent = decodedValue19
+        self.timelineUnassignedIssueEvent = decodedValue20
     }
 
     public func encode(to encoder: Encoder) throws {
-        let encodedValueCount = [labeledIssueEvent != nil, unlabeledIssueEvent != nil, milestonedIssueEvent != nil, demilestonedIssueEvent != nil, renamedIssueEvent != nil, reviewRequestedIssueEvent != nil, reviewRequestRemovedIssueEvent != nil, reviewDismissedIssueEvent != nil, lockedIssueEvent != nil, addedToProjectIssueEvent != nil, movedColumnInProjectIssueEvent != nil, removedFromProjectIssueEvent != nil, convertedNoteToIssueIssueEvent != nil, timelineCommentEvent != nil, timelineCrossReferencedEvent != nil, timelineCommittedEvent != nil, timelineReviewedEvent != nil, timelineLineCommentedEvent != nil, timelineCommitCommentedEvent != nil, timelineAssignedIssueEvent != nil, timelineUnassignedIssueEvent != nil].filter { $0 }.count
-        guard encodedValueCount == 1 else {
-            throw EncodingError.invalidValue(
-                self,
-                .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-            )
-        }
-        var container = encoder.singleValueContainer()
+        let container = AnyOfEncoder(encoder: encoder)
         if let value = labeledIssueEvent { try container.encode(value) }
         if let value = unlabeledIssueEvent { try container.encode(value) }
         if let value = milestonedIssueEvent { try container.encode(value) }
@@ -107,5 +127,6 @@ public struct TimelineIssueEvents: Codable, Sendable {
         if let value = timelineCommitCommentedEvent { try container.encode(value) }
         if let value = timelineAssignedIssueEvent { try container.encode(value) }
         if let value = timelineUnassignedIssueEvent { try container.encode(value) }
+        try container.finish(allowsNull: false)
     }
 }

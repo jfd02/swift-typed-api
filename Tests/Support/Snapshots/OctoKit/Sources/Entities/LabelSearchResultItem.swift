@@ -36,9 +36,9 @@ public struct LabelSearchResultItem: Codable, Sendable {
         self.name = try values.decode(String.self, forKey: "name")
         self.color = try values.decode(String.self, forKey: "color")
         self.isDefault = try values.decode(Bool.self, forKey: "default")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
         self.score = try values.decode(Double.self, forKey: "score")
-        self.textMatches = try values.decodeIfPresent([SearchResultTextMatch].self, forKey: "text_matches")
+        self.textMatches = values.contains("text_matches") ? Optional.some(try values.decode([SearchResultTextMatch].self, forKey: "text_matches")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -49,7 +49,7 @@ public struct LabelSearchResultItem: Codable, Sendable {
         try values.encode(name, forKey: "name")
         try values.encode(color, forKey: "color")
         try values.encode(isDefault, forKey: "default")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encode(score, forKey: "score")
         try values.encodeIfPresent(textMatches, forKey: "text_matches")
     }

@@ -14,4 +14,9 @@ public struct List: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case _123List = "123-list"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self._123List = values.contains(._123List) ? Optional.some(try values.decode(String.self, forKey: ._123List)) : nil
+    }
 }

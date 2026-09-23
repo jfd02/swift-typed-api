@@ -57,8 +57,8 @@ public struct BranchWithProtection: Codable, Sendable {
         self.isProtected = try values.decode(Bool.self, forKey: "protected")
         self.protection = try values.decode(BranchProtection.self, forKey: "protection")
         self.protectionURL = try values.decode(URL.self, forKey: "protection_url")
-        self.pattern = try values.decodeIfPresent(String.self, forKey: "pattern")
-        self.requiredApprovingReviewCount = try values.decodeIfPresent(Int.self, forKey: "required_approving_review_count")
+        self.pattern = values.contains("pattern") ? Optional.some(try values.decode(String.self, forKey: "pattern")) : nil
+        self.requiredApprovingReviewCount = values.contains("required_approving_review_count") ? Optional.some(try values.decode(Int.self, forKey: "required_approving_review_count")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

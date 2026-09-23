@@ -15,8 +15,8 @@ public struct AdditionalPropertiesClass: Codable, Sendable {
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.mapProperty = try values.decodeIfPresent([String: String].self, forKey: "map_property")
-    self.mapOfMapProperty = try values.decodeIfPresent([String: [String: String]].self, forKey: "map_of_map_property")
+    self.mapProperty = values.contains("map_property") ? Optional.some(try values.decode([String: String].self, forKey: "map_property")) : nil
+    self.mapOfMapProperty = values.contains("map_of_map_property") ? Optional.some(try values.decode([String: [String: String]].self, forKey: "map_of_map_property")) : nil
   }
 
   public func encode(to encoder: Encoder) throws {

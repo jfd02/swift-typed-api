@@ -24,12 +24,12 @@ struct Capitalization: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.smallCamel = try values.decodeIfPresent(String.self, forKey: "smallCamel")
-        self.capitalCamel = try values.decodeIfPresent(String.self, forKey: "CapitalCamel")
-        self.smallSnake = try values.decodeIfPresent(String.self, forKey: "small_Snake")
-        self.capitalSnake = try values.decodeIfPresent(String.self, forKey: "Capital_Snake")
-        self.sCAETHFlowPoints = try values.decodeIfPresent(String.self, forKey: "SCA_ETH_Flow_Points")
-        self.attName = try values.decodeIfPresent(String.self, forKey: "ATT_NAME")
+        self.smallCamel = values.contains("smallCamel") ? Optional.some(try values.decode(String.self, forKey: "smallCamel")) : nil
+        self.capitalCamel = values.contains("CapitalCamel") ? Optional.some(try values.decode(String.self, forKey: "CapitalCamel")) : nil
+        self.smallSnake = values.contains("small_Snake") ? Optional.some(try values.decode(String.self, forKey: "small_Snake")) : nil
+        self.capitalSnake = values.contains("Capital_Snake") ? Optional.some(try values.decode(String.self, forKey: "Capital_Snake")) : nil
+        self.sCAETHFlowPoints = values.contains("SCA_ETH_Flow_Points") ? Optional.some(try values.decode(String.self, forKey: "SCA_ETH_Flow_Points")) : nil
+        self.attName = values.contains("ATT_NAME") ? Optional.some(try values.decode(String.self, forKey: "ATT_NAME")) : nil
     }
 
     func encode(to encoder: Encoder) throws {

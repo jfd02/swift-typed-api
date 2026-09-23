@@ -48,11 +48,11 @@ public struct PendingDeployment: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-            self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-            self.name = try values.decodeIfPresent(String.self, forKey: "name")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
+            self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+            self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+            self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -84,21 +84,23 @@ public struct PendingDeployment: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
-                self.simpleUser = try? container.decode(SimpleUser.self)
-                self.team = try? container.decode(Team.self)
+                let decodedValue0 = try? container.decode(SimpleUser.self)
+                let decodedValue1 = try? container.decode(Team.self)
+                guard decodedValue0 != nil || decodedValue1 != nil else {
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Data could not be decoded as any of the expected types (SimpleUser, Team)."
+                    )
+                }
+                self.simpleUser = decodedValue0
+                self.team = decodedValue1
             }
 
             public func encode(to encoder: Encoder) throws {
-                let encodedValueCount = [simpleUser != nil, team != nil].filter { $0 }.count
-                guard encodedValueCount == 1 else {
-                    throw EncodingError.invalidValue(
-                        self,
-                        .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-                    )
-                }
-                var container = encoder.singleValueContainer()
+                let container = AnyOfEncoder(encoder: encoder)
                 if let value = simpleUser { try container.encode(value) }
                 if let value = team { try container.encode(value) }
+                try container.finish(allowsNull: false)
             }
         }
 
@@ -109,8 +111,8 @@ public struct PendingDeployment: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.type = try values.decodeIfPresent(DeploymentReviewerType.self, forKey: "type")
-            self.reviewer = try values.decodeIfPresent(Reviewer.self, forKey: "reviewer")
+            self.type = values.contains("type") ? Optional.some(try values.decode(DeploymentReviewerType.self, forKey: "type")) : nil
+            self.reviewer = values.contains("reviewer") ? Optional.some(try values.decode(Reviewer.self, forKey: "reviewer")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -132,7 +134,7 @@ public struct PendingDeployment: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.environment = try values.decode(Environment.self, forKey: "environment")
         self.waitTimer = try values.decode(Int.self, forKey: "wait_timer")
-        self.waitTimerStartedAt = try values.decodeIfPresent(Date.self, forKey: "wait_timer_started_at")
+        self.waitTimerStartedAt = try values.decode(Date?.self, forKey: "wait_timer_started_at")
         self.currentUserCanApprove = try values.decode(Bool.self, forKey: "current_user_can_approve")
         self.reviewers = try values.decode([Reviewer].self, forKey: "reviewers")
     }
@@ -141,7 +143,7 @@ public struct PendingDeployment: Codable, Sendable {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(environment, forKey: "environment")
         try values.encode(waitTimer, forKey: "wait_timer")
-        try values.encodeIfPresent(waitTimerStartedAt, forKey: "wait_timer_started_at")
+        try values.encode(waitTimerStartedAt, forKey: "wait_timer_started_at")
         try values.encode(currentUserCanApprove, forKey: "current_user_can_approve")
         try values.encode(reviewers, forKey: "reviewers")
     }

@@ -73,7 +73,7 @@ struct ContainerA: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.child = try values.decodeIfPresent(Child.self, forKey: "child")
+        self.child = values.contains("child") ? Optional.some(try values.decode(Child.self, forKey: "child")) : nil
         self.refChild = try values.decode(AnyJSON.self, forKey: "refChild")
     }
 

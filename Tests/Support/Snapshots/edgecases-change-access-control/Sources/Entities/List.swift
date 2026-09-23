@@ -13,7 +13,7 @@ struct List: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self._123List = try values.decodeIfPresent(String.self, forKey: "123-list")
+        self._123List = values.contains("123-list") ? Optional.some(try values.decode(String.self, forKey: "123-list")) : nil
     }
 
     func encode(to encoder: Encoder) throws {

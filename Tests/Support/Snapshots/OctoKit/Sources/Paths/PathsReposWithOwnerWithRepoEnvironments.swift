@@ -38,8 +38,8 @@ extension Paths.Repos.WithOwner.WithRepo {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.totalCount = try values.decodeIfPresent(Int.self, forKey: "total_count")
-                self.environments = try values.decodeIfPresent([OctoKit.Environment].self, forKey: "environments")
+                self.totalCount = values.contains("total_count") ? Optional.some(try values.decode(Int.self, forKey: "total_count")) : nil
+                self.environments = values.contains("environments") ? Optional.some(try values.decode([OctoKit.Environment].self, forKey: "environments")) : nil
             }
         }
     }

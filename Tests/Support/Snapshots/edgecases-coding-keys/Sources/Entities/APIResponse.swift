@@ -14,4 +14,11 @@ public struct APIResponse: Codable, Sendable {
         self.type = type
         self.message = message
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.code = values.contains(.code) ? Optional.some(try values.decode(Int32.self, forKey: .code)) : nil
+        self.type = values.contains(.type) ? Optional.some(try values.decode(String.self, forKey: .type)) : nil
+        self.message = values.contains(.message) ? Optional.some(try values.decode(String.self, forKey: .message)) : nil
+    }
 }

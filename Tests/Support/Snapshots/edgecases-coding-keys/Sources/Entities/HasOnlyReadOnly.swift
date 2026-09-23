@@ -12,4 +12,10 @@ public struct HasOnlyReadOnly: Codable, Sendable {
         self.bar = bar
         self.foo = foo
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.bar = values.contains(.bar) ? Optional.some(try values.decode(String.self, forKey: .bar)) : nil
+        self.foo = values.contains(.foo) ? Optional.some(try values.decode(String.self, forKey: .foo)) : nil
+    }
 }

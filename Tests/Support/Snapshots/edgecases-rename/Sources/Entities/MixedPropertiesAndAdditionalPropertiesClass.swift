@@ -17,9 +17,9 @@ public struct MixedPropertiesAndAdditionalPropertiesClass: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.uuid = try values.decodeIfPresent(UUID.self, forKey: "uuid")
-        self.dateTime = try values.decodeIfPresent(Date.self, forKey: "dateTime")
-        self.map = try values.decodeIfPresent([String: Animal].self, forKey: "map")
+        self.uuid = values.contains("uuid") ? Optional.some(try values.decode(UUID.self, forKey: "uuid")) : nil
+        self.dateTime = values.contains("dateTime") ? Optional.some(try values.decode(Date.self, forKey: "dateTime")) : nil
+        self.map = values.contains("map") ? Optional.some(try values.decode([String: Animal].self, forKey: "map")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

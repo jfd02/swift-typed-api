@@ -50,12 +50,12 @@ public struct InstallationToken: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.token = try values.decode(String.self, forKey: "token")
         self.expiresAt = try values.decode(String.self, forKey: "expires_at")
-        self.permissions = try values.decodeIfPresent(AppPermissions.self, forKey: "permissions")
-        self.repositorySelection = try values.decodeIfPresent(RepositorySelection.self, forKey: "repository_selection")
-        self.repositories = try values.decodeIfPresent([Repository].self, forKey: "repositories")
-        self.singleFile = try values.decodeIfPresent(String.self, forKey: "single_file")
-        self.hasMultipleSingleFiles = try values.decodeIfPresent(Bool.self, forKey: "has_multiple_single_files")
-        self.singleFilePaths = try values.decodeIfPresent([String].self, forKey: "single_file_paths")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode(AppPermissions.self, forKey: "permissions")) : nil
+        self.repositorySelection = values.contains("repository_selection") ? Optional.some(try values.decode(RepositorySelection.self, forKey: "repository_selection")) : nil
+        self.repositories = values.contains("repositories") ? Optional.some(try values.decode([Repository].self, forKey: "repositories")) : nil
+        self.singleFile = values.contains("single_file") ? Optional.some(try values.decode(String.self, forKey: "single_file")) : nil
+        self.hasMultipleSingleFiles = values.contains("has_multiple_single_files") ? Optional.some(try values.decode(Bool.self, forKey: "has_multiple_single_files")) : nil
+        self.singleFilePaths = values.contains("single_file_paths") ? Optional.some(try values.decode([String].self, forKey: "single_file_paths")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

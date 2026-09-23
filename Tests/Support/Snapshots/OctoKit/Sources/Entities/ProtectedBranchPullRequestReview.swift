@@ -36,11 +36,11 @@ public struct ProtectedBranchPullRequestReview: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.users = try values.decodeIfPresent([SimpleUser].self, forKey: "users")
-            self.teams = try values.decodeIfPresent([Team].self, forKey: "teams")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.usersURL = try values.decodeIfPresent(String.self, forKey: "users_url")
-            self.teamsURL = try values.decodeIfPresent(String.self, forKey: "teams_url")
+            self.users = values.contains("users") ? Optional.some(try values.decode([SimpleUser].self, forKey: "users")) : nil
+            self.teams = values.contains("teams") ? Optional.some(try values.decode([Team].self, forKey: "teams")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.usersURL = values.contains("users_url") ? Optional.some(try values.decode(String.self, forKey: "users_url")) : nil
+            self.teamsURL = values.contains("teams_url") ? Optional.some(try values.decode(String.self, forKey: "teams_url")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -63,11 +63,11 @@ public struct ProtectedBranchPullRequestReview: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-        self.dismissalRestrictions = try values.decodeIfPresent(DismissalRestrictions.self, forKey: "dismissal_restrictions")
+        self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
+        self.dismissalRestrictions = values.contains("dismissal_restrictions") ? Optional.some(try values.decode(DismissalRestrictions.self, forKey: "dismissal_restrictions")) : nil
         self.dismissStaleReviews = try values.decode(Bool.self, forKey: "dismiss_stale_reviews")
         self.requireCodeOwnerReviews = try values.decode(Bool.self, forKey: "require_code_owner_reviews")
-        self.requiredApprovingReviewCount = try values.decodeIfPresent(Int.self, forKey: "required_approving_review_count")
+        self.requiredApprovingReviewCount = values.contains("required_approving_review_count") ? Optional.some(try values.decode(Int.self, forKey: "required_approving_review_count")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

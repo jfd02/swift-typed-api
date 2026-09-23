@@ -41,32 +41,46 @@ public struct IssueEventForIssue: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.labeledIssueEvent = try? container.decode(LabeledIssueEvent.self)
-        self.unlabeledIssueEvent = try? container.decode(UnlabeledIssueEvent.self)
-        self.assignedIssueEvent = try? container.decode(AssignedIssueEvent.self)
-        self.unassignedIssueEvent = try? container.decode(UnassignedIssueEvent.self)
-        self.milestonedIssueEvent = try? container.decode(MilestonedIssueEvent.self)
-        self.demilestonedIssueEvent = try? container.decode(DemilestonedIssueEvent.self)
-        self.renamedIssueEvent = try? container.decode(RenamedIssueEvent.self)
-        self.reviewRequestedIssueEvent = try? container.decode(ReviewRequestedIssueEvent.self)
-        self.reviewRequestRemovedIssueEvent = try? container.decode(ReviewRequestRemovedIssueEvent.self)
-        self.reviewDismissedIssueEvent = try? container.decode(ReviewDismissedIssueEvent.self)
-        self.lockedIssueEvent = try? container.decode(LockedIssueEvent.self)
-        self.addedToProjectIssueEvent = try? container.decode(AddedToProjectIssueEvent.self)
-        self.movedColumnInProjectIssueEvent = try? container.decode(MovedColumnInProjectIssueEvent.self)
-        self.removedFromProjectIssueEvent = try? container.decode(RemovedFromProjectIssueEvent.self)
-        self.convertedNoteToIssueIssueEvent = try? container.decode(ConvertedNoteToIssueIssueEvent.self)
+        let decodedValue0 = try? container.decode(LabeledIssueEvent.self)
+        let decodedValue1 = try? container.decode(UnlabeledIssueEvent.self)
+        let decodedValue2 = try? container.decode(AssignedIssueEvent.self)
+        let decodedValue3 = try? container.decode(UnassignedIssueEvent.self)
+        let decodedValue4 = try? container.decode(MilestonedIssueEvent.self)
+        let decodedValue5 = try? container.decode(DemilestonedIssueEvent.self)
+        let decodedValue6 = try? container.decode(RenamedIssueEvent.self)
+        let decodedValue7 = try? container.decode(ReviewRequestedIssueEvent.self)
+        let decodedValue8 = try? container.decode(ReviewRequestRemovedIssueEvent.self)
+        let decodedValue9 = try? container.decode(ReviewDismissedIssueEvent.self)
+        let decodedValue10 = try? container.decode(LockedIssueEvent.self)
+        let decodedValue11 = try? container.decode(AddedToProjectIssueEvent.self)
+        let decodedValue12 = try? container.decode(MovedColumnInProjectIssueEvent.self)
+        let decodedValue13 = try? container.decode(RemovedFromProjectIssueEvent.self)
+        let decodedValue14 = try? container.decode(ConvertedNoteToIssueIssueEvent.self)
+        guard decodedValue0 != nil || decodedValue1 != nil || decodedValue2 != nil || decodedValue3 != nil || decodedValue4 != nil || decodedValue5 != nil || decodedValue6 != nil || decodedValue7 != nil || decodedValue8 != nil || decodedValue9 != nil || decodedValue10 != nil || decodedValue11 != nil || decodedValue12 != nil || decodedValue13 != nil || decodedValue14 != nil else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Data could not be decoded as any of the expected types (LabeledIssueEvent, UnlabeledIssueEvent, AssignedIssueEvent, UnassignedIssueEvent, MilestonedIssueEvent, DemilestonedIssueEvent, RenamedIssueEvent, ReviewRequestedIssueEvent, ReviewRequestRemovedIssueEvent, ReviewDismissedIssueEvent, LockedIssueEvent, AddedToProjectIssueEvent, MovedColumnInProjectIssueEvent, RemovedFromProjectIssueEvent, ConvertedNoteToIssueIssueEvent)."
+            )
+        }
+        self.labeledIssueEvent = decodedValue0
+        self.unlabeledIssueEvent = decodedValue1
+        self.assignedIssueEvent = decodedValue2
+        self.unassignedIssueEvent = decodedValue3
+        self.milestonedIssueEvent = decodedValue4
+        self.demilestonedIssueEvent = decodedValue5
+        self.renamedIssueEvent = decodedValue6
+        self.reviewRequestedIssueEvent = decodedValue7
+        self.reviewRequestRemovedIssueEvent = decodedValue8
+        self.reviewDismissedIssueEvent = decodedValue9
+        self.lockedIssueEvent = decodedValue10
+        self.addedToProjectIssueEvent = decodedValue11
+        self.movedColumnInProjectIssueEvent = decodedValue12
+        self.removedFromProjectIssueEvent = decodedValue13
+        self.convertedNoteToIssueIssueEvent = decodedValue14
     }
 
     public func encode(to encoder: Encoder) throws {
-        let encodedValueCount = [labeledIssueEvent != nil, unlabeledIssueEvent != nil, assignedIssueEvent != nil, unassignedIssueEvent != nil, milestonedIssueEvent != nil, demilestonedIssueEvent != nil, renamedIssueEvent != nil, reviewRequestedIssueEvent != nil, reviewRequestRemovedIssueEvent != nil, reviewDismissedIssueEvent != nil, lockedIssueEvent != nil, addedToProjectIssueEvent != nil, movedColumnInProjectIssueEvent != nil, removedFromProjectIssueEvent != nil, convertedNoteToIssueIssueEvent != nil].filter { $0 }.count
-        guard encodedValueCount == 1 else {
-            throw EncodingError.invalidValue(
-                self,
-                .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-            )
-        }
-        var container = encoder.singleValueContainer()
+        let container = AnyOfEncoder(encoder: encoder)
         if let value = labeledIssueEvent { try container.encode(value) }
         if let value = unlabeledIssueEvent { try container.encode(value) }
         if let value = assignedIssueEvent { try container.encode(value) }
@@ -82,5 +96,6 @@ public struct IssueEventForIssue: Codable, Sendable {
         if let value = movedColumnInProjectIssueEvent { try container.encode(value) }
         if let value = removedFromProjectIssueEvent { try container.encode(value) }
         if let value = convertedNoteToIssueIssueEvent { try container.encode(value) }
+        try container.finish(allowsNull: false)
     }
 }

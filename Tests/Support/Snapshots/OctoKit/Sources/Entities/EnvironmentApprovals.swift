@@ -57,13 +57,13 @@ public struct EnvironmentApprovals: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-            self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-            self.name = try values.decodeIfPresent(String.self, forKey: "name")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-            self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
-            self.updatedAt = try values.decodeIfPresent(Date.self, forKey: "updated_at")
+            self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+            self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+            self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+            self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(Date.self, forKey: "created_at")) : nil
+            self.updatedAt = values.contains("updated_at") ? Optional.some(try values.decode(Date.self, forKey: "updated_at")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {

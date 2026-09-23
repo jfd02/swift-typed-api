@@ -28,13 +28,13 @@ public struct StatusCheckPolicy: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.context = try values.decode(String.self, forKey: "context")
-            self.appID = try values.decodeIfPresent(Int.self, forKey: "app_id")
+            self.appID = try values.decode(Int?.self, forKey: "app_id")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encode(context, forKey: "context")
-            try values.encodeIfPresent(appID, forKey: "app_id")
+            try values.encode(appID, forKey: "app_id")
         }
     }
 

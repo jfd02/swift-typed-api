@@ -14,4 +14,11 @@ public struct MixedPropertiesAndAdditionalPropertiesClass: Codable, Sendable {
         self.dateTime = dateTime
         self.map = map
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.uuid = values.contains(.uuid) ? Optional.some(try values.decode(UUID.self, forKey: .uuid)) : nil
+        self.dateTime = values.contains(.dateTime) ? Optional.some(try values.decode(Date.self, forKey: .dateTime)) : nil
+        self.map = values.contains(.map) ? Optional.some(try values.decode([String: Animal].self, forKey: .map)) : nil
+    }
 }

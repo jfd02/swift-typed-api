@@ -82,23 +82,23 @@ public struct Page: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.url = try values.decode(URL.self, forKey: "url")
-        self.status = try values.decodeIfPresent(Status.self, forKey: "status")
-        self.cname = try values.decodeIfPresent(String.self, forKey: "cname")
+        self.status = try values.decode(Status?.self, forKey: "status")
+        self.cname = try values.decode(String?.self, forKey: "cname")
         self.protectedDomainState = try values.decodeIfPresent(ProtectedDomainState.self, forKey: "protected_domain_state")
         self.pendingDomainUnverifiedAt = try values.decodeIfPresent(Date.self, forKey: "pending_domain_unverified_at")
         self.isCustom404 = try values.decode(Bool.self, forKey: "custom_404")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
-        self.source = try values.decodeIfPresent(PagesSourceHash.self, forKey: "source")
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(URL.self, forKey: "html_url")) : nil
+        self.source = values.contains("source") ? Optional.some(try values.decode(PagesSourceHash.self, forKey: "source")) : nil
         self.isPublic = try values.decode(Bool.self, forKey: "public")
-        self.httpsCertificate = try values.decodeIfPresent(PagesHTTPSCertificate.self, forKey: "https_certificate")
-        self.isHTTPSEnforced = try values.decodeIfPresent(Bool.self, forKey: "https_enforced")
+        self.httpsCertificate = values.contains("https_certificate") ? Optional.some(try values.decode(PagesHTTPSCertificate.self, forKey: "https_certificate")) : nil
+        self.isHTTPSEnforced = values.contains("https_enforced") ? Optional.some(try values.decode(Bool.self, forKey: "https_enforced")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(url, forKey: "url")
-        try values.encodeIfPresent(status, forKey: "status")
-        try values.encodeIfPresent(cname, forKey: "cname")
+        try values.encode(status, forKey: "status")
+        try values.encode(cname, forKey: "cname")
         try values.encodeIfPresent(protectedDomainState, forKey: "protected_domain_state")
         try values.encodeIfPresent(pendingDomainUnverifiedAt, forKey: "pending_domain_unverified_at")
         try values.encode(isCustom404, forKey: "custom_404")

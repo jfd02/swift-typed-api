@@ -108,6 +108,16 @@ final class Templates {
     /// keep `Type(rawValue:)` and `.rawValue` but never get `nil`. `allCases` lists only
     /// the documented cases; `.unknown` carries the value the server actually sent.
     func openEnumOfStrings(name: TypeName, cases: [(name: String, key: String)], protocols: Protocols) -> String {
+        let caseNames = Set(cases.map { $0.name.replacingOccurrences(of: "`", with: "") })
+        var unknownCase = "unknown"
+        if caseNames.contains(unknownCase) {
+            unknownCase = "unknownValue"
+            var suffix = 2
+            while caseNames.contains(unknownCase) {
+                unknownCase = "unknownValue\(suffix)"
+                suffix += 1
+            }
+        }
         let conformances = protocols.rawValue
             .union(["CaseIterable", "Hashable", "RawRepresentable", "Sendable"])
             .sorted()
@@ -119,14 +129,14 @@ final class Templates {
         lines += cases.map { "    case \($0.name)" }
         lines += [
             "    /// A value added to the API after this client was generated.",
-            "    case unknown(String)",
+            "    case \(unknownCase)(String)",
             "",
             "    \(access)init(rawValue: String) {",
             "        switch rawValue {",
         ]
         lines += cases.map { "        case \(literal($0.key)): self = .\($0.name)" }
         lines += [
-            "        default: self = .unknown(rawValue)",
+            "        default: self = .\(unknownCase)(rawValue)",
             "        }",
             "    }",
             "",
@@ -135,7 +145,7 @@ final class Templates {
         ]
         lines += cases.map { "        case .\($0.name): return \(literal($0.key))" }
         lines += [
-            "        case .unknown(let value): return value",
+            "        case .\(unknownCase)(let value): return value",
             "        }",
             "    }",
             "",
@@ -293,10 +303,16 @@ final class Templates {
     ///
     ///     self.id = values.decode(Int.self, forKey: "id")
     func decode(property: Property, isUsingCodingKeys: Bool) -> String {
-        let decode = property.isOptional ? "decodeIfPresent" : "decode"
+        let decode = property.isOptional && !property.isRequiredNullable ? "decodeIfPresent" : "decode"
+        let type = "\(property.type)\(property.isRequiredNullable ? "?" : "")"
         let key = isUsingCodingKeys ? ".\(property.name)" : "\"\(property.key)\""
         let defaultValue = (property.isOptional && property.defaultValue != nil) ? " ?? \(property.defaultValue!)" : ""
-        return "self.\(property.name.accessor) = try values.\(decode)(\(property.type).self, forKey: \(key))\(defaultValue)"
+        if property.isOptional && !property.isRequiredNullable && (property.rejectsNull || property.type.isOptional) {
+            let missing = property.defaultValue ?? "nil"
+            let present = property.defaultValue == nil ? "Optional.some(try values.decode(\(type).self, forKey: \(key)))" : "try values.decode(\(type).self, forKey: \(key))"
+            return "self.\(property.name.accessor) = values.contains(\(key)) ? \(present) : \(missing)"
+        }
+        return "self.\(property.name.accessor) = try values.\(decode)(\(type).self, forKey: \(key))\(defaultValue)"
     }
 
     func defaultValue(for property: Property) -> String {
@@ -327,18 +343,27 @@ final class Templates {
         """
     }
 
-    func initFromDecoderAnyOf(properties: [Property]) -> String {
-        let contents = properties.map {
-            let defaultValue = self.defaultValue(for: $0)
-            if defaultValue.isEmpty {
-                return "self.\($0.name.accessor) = try? container.decode(\($0.type).self)"
-            } else {
-                return "self.\($0.name.accessor) = (try? container.decode(\($0.type).self))\(defaultValue)"
-            }
+    func initFromDecoderAnyOf(properties: [Property], allowsNull: Bool = false) -> String {
+        let attempts = properties.enumerated().map { index, property in
+            "let decodedValue\(index) = try? container.decode(\(property.type).self)"
         }.joined(separator: "\n")
+        var matches = properties.indices.map { "decodedValue\($0) != nil" }
+        if allowsNull { matches.append("container.decodeNil()") }
+        let condition = matches.isEmpty ? "false" : matches.joined(separator: " || ")
+        let contents = properties.enumerated().map { index, property in
+            "self.\(property.name.accessor) = decodedValue\(index)\(defaultValue(for: property))"
+        }.joined(separator: "\n")
+        let typesList = properties.map(\.type.name.rawValue).joined(separator: ", ")
         return """
         \(access)init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
+        \(attempts.indented)
+            guard \(condition) else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Data could not be decoded as any of the expected types (\(typesList))."
+                )
+            }
         \(contents.indented)
         }
         """
@@ -427,21 +452,15 @@ final class Templates {
         """
     }
 
-    func encodeAnyOf(properties: [Property]) -> String {
+    func encodeAnyOf(properties: [Property], allowsNull: Bool = false) -> String {
         let statements = properties.map {
             "if let value = \($0.name) { try container.encode(value) }"
         }
         return """
         \(access)func encode(to encoder: Encoder) throws {
-            let encodedValueCount = [\(properties.map { "\($0.name) != nil" }.joined(separator: ", "))].filter { $0 }.count
-            guard encodedValueCount == 1 else {
-                throw EncodingError.invalidValue(
-                    self,
-                    .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-                )
-            }
-            var container = encoder.singleValueContainer()
+            let container = AnyOfEncoder(encoder: encoder)
         \(statements.joined(separator: "\n").indented)
+            try container.finish(allowsNull: \(allowsNull))
         }
         """
     }
@@ -450,7 +469,7 @@ final class Templates {
 
     func encode(properties: [Property]) -> String {
         let contents = properties.map {
-            let encode = $0.isOptional ? "encodeIfPresent" : "encode"
+            let encode = $0.isOptional && !$0.isRequiredNullable ? "encodeIfPresent" : "encode"
             let getter = $0.name.rawValue == "values" ? "self.values" : $0.name.rawValue
             return "try values.\(encode)(\(getter), forKey: \"\($0.key)\")"
         }.joined(separator: "\n")

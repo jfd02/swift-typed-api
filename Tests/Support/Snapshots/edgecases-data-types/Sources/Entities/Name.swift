@@ -21,9 +21,9 @@ public struct Name: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.name = try values.decode(Double.self, forKey: "name")
-        self.snakeCase = try values.decodeIfPresent(Double.self, forKey: "snake_case")
-        self.property = try values.decodeIfPresent(String.self, forKey: "property")
-        self._123Number = try values.decodeIfPresent(Int.self, forKey: "123Number")
+        self.snakeCase = values.contains("snake_case") ? Optional.some(try values.decode(Double.self, forKey: "snake_case")) : nil
+        self.property = values.contains("property") ? Optional.some(try values.decode(String.self, forKey: "property")) : nil
+        self._123Number = values.contains("123Number") ? Optional.some(try values.decode(Int.self, forKey: "123Number")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

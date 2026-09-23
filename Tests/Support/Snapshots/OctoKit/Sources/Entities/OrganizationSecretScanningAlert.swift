@@ -47,18 +47,18 @@ public struct OrganizationSecretScanningAlert: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.number = try values.decodeIfPresent(Int.self, forKey: "number")
-        self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
-        self.locationsURL = try values.decodeIfPresent(URL.self, forKey: "locations_url")
-        self.state = try values.decodeIfPresent(SecretScanningAlertState.self, forKey: "state")
+        self.number = values.contains("number") ? Optional.some(try values.decode(Int.self, forKey: "number")) : nil
+        self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(Date.self, forKey: "created_at")) : nil
+        self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(URL.self, forKey: "html_url")) : nil
+        self.locationsURL = values.contains("locations_url") ? Optional.some(try values.decode(URL.self, forKey: "locations_url")) : nil
+        self.state = values.contains("state") ? Optional.some(try values.decode(SecretScanningAlertState.self, forKey: "state")) : nil
         self.resolution = try values.decodeIfPresent(SecretScanningAlertResolution.self, forKey: "resolution")
         self.resolvedAt = try values.decodeIfPresent(Date.self, forKey: "resolved_at")
         self.resolvedBy = try values.decodeIfPresent(SimpleUser.self, forKey: "resolved_by")
-        self.secretType = try values.decodeIfPresent(String.self, forKey: "secret_type")
-        self.secret = try values.decodeIfPresent(String.self, forKey: "secret")
-        self.repository = try values.decodeIfPresent(MinimalRepository.self, forKey: "repository")
+        self.secretType = values.contains("secret_type") ? Optional.some(try values.decode(String.self, forKey: "secret_type")) : nil
+        self.secret = values.contains("secret") ? Optional.some(try values.decode(String.self, forKey: "secret")) : nil
+        self.repository = values.contains("repository") ? Optional.some(try values.decode(MinimalRepository.self, forKey: "repository")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

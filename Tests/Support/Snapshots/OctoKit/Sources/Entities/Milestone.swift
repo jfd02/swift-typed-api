@@ -80,14 +80,14 @@ public struct Milestone: Codable, Sendable {
         self.number = try values.decode(Int.self, forKey: "number")
         self.state = try values.decode(State.self, forKey: "state")
         self.title = try values.decode(String.self, forKey: "title")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.creator = try values.decodeIfPresent(SimpleUser.self, forKey: "creator")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.creator = try values.decode(SimpleUser?.self, forKey: "creator")
         self.openIssues = try values.decode(Int.self, forKey: "open_issues")
         self.closedIssues = try values.decode(Int.self, forKey: "closed_issues")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.closedAt = try values.decodeIfPresent(Date.self, forKey: "closed_at")
-        self.dueOn = try values.decodeIfPresent(Date.self, forKey: "due_on")
+        self.closedAt = try values.decode(Date?.self, forKey: "closed_at")
+        self.dueOn = try values.decode(Date?.self, forKey: "due_on")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -100,13 +100,13 @@ public struct Milestone: Codable, Sendable {
         try values.encode(number, forKey: "number")
         try values.encode(state, forKey: "state")
         try values.encode(title, forKey: "title")
-        try values.encodeIfPresent(description, forKey: "description")
-        try values.encodeIfPresent(creator, forKey: "creator")
+        try values.encode(description, forKey: "description")
+        try values.encode(creator, forKey: "creator")
         try values.encode(openIssues, forKey: "open_issues")
         try values.encode(closedIssues, forKey: "closed_issues")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
-        try values.encodeIfPresent(closedAt, forKey: "closed_at")
-        try values.encodeIfPresent(dueOn, forKey: "due_on")
+        try values.encode(closedAt, forKey: "closed_at")
+        try values.encode(dueOn, forKey: "due_on")
     }
 }

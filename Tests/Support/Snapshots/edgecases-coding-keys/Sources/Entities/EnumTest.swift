@@ -29,4 +29,12 @@ public struct EnumTest: Codable, Sendable {
         case enumNumber = "enum_number"
         case outerEnum
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.enumString = values.contains(.enumString) ? Optional.some(try values.decode(EnumString.self, forKey: .enumString)) : nil
+        self.enumInteger = values.contains(.enumInteger) ? Optional.some(try values.decode(Int32.self, forKey: .enumInteger)) : nil
+        self.enumNumber = values.contains(.enumNumber) ? Optional.some(try values.decode(Double.self, forKey: .enumNumber)) : nil
+        self.outerEnum = values.contains(.outerEnum) ? Optional.some(try values.decode(OuterEnum.self, forKey: .outerEnum)) : nil
+    }
 }

@@ -41,10 +41,10 @@ public struct TopicSearchResultItem: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-                self.name = try values.decodeIfPresent(String.self, forKey: "name")
-                self.topicID = try values.decodeIfPresent(Int.self, forKey: "topic_id")
-                self.relationType = try values.decodeIfPresent(String.self, forKey: "relation_type")
+                self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+                self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+                self.topicID = values.contains("topic_id") ? Optional.some(try values.decode(Int.self, forKey: "topic_id")) : nil
+                self.relationType = values.contains("relation_type") ? Optional.some(try values.decode(String.self, forKey: "relation_type")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -62,7 +62,7 @@ public struct TopicSearchResultItem: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.topicRelation = try values.decodeIfPresent(TopicRelation.self, forKey: "topic_relation")
+            self.topicRelation = values.contains("topic_relation") ? Optional.some(try values.decode(TopicRelation.self, forKey: "topic_relation")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -89,10 +89,10 @@ public struct TopicSearchResultItem: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-                self.name = try values.decodeIfPresent(String.self, forKey: "name")
-                self.topicID = try values.decodeIfPresent(Int.self, forKey: "topic_id")
-                self.relationType = try values.decodeIfPresent(String.self, forKey: "relation_type")
+                self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+                self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+                self.topicID = values.contains("topic_id") ? Optional.some(try values.decode(Int.self, forKey: "topic_id")) : nil
+                self.relationType = values.contains("relation_type") ? Optional.some(try values.decode(String.self, forKey: "relation_type")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -110,7 +110,7 @@ public struct TopicSearchResultItem: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.topicRelation = try values.decodeIfPresent(TopicRelation.self, forKey: "topic_relation")
+            self.topicRelation = values.contains("topic_relation") ? Optional.some(try values.decode(TopicRelation.self, forKey: "topic_relation")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -141,11 +141,11 @@ public struct TopicSearchResultItem: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.name = try values.decode(String.self, forKey: "name")
-        self.displayName = try values.decodeIfPresent(String.self, forKey: "display_name")
-        self.shortDescription = try values.decodeIfPresent(String.self, forKey: "short_description")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.createdBy = try values.decodeIfPresent(String.self, forKey: "created_by")
-        self.released = try values.decodeIfPresent(String.self, forKey: "released")
+        self.displayName = try values.decode(String?.self, forKey: "display_name")
+        self.shortDescription = try values.decode(String?.self, forKey: "short_description")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.createdBy = try values.decode(String?.self, forKey: "created_by")
+        self.released = try values.decode(String?.self, forKey: "released")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.isFeatured = try values.decode(Bool.self, forKey: "featured")
@@ -153,7 +153,7 @@ public struct TopicSearchResultItem: Codable, Sendable {
         self.score = try values.decode(Double.self, forKey: "score")
         self.repositoryCount = try values.decodeIfPresent(Int.self, forKey: "repository_count")
         self.logoURL = try values.decodeIfPresent(URL.self, forKey: "logo_url")
-        self.textMatches = try values.decodeIfPresent([SearchResultTextMatch].self, forKey: "text_matches")
+        self.textMatches = values.contains("text_matches") ? Optional.some(try values.decode([SearchResultTextMatch].self, forKey: "text_matches")) : nil
         self.related = try values.decodeIfPresent([RelatedItem].self, forKey: "related")
         self.aliases = try values.decodeIfPresent([Alias].self, forKey: "aliases")
     }
@@ -161,11 +161,11 @@ public struct TopicSearchResultItem: Codable, Sendable {
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(displayName, forKey: "display_name")
-        try values.encodeIfPresent(shortDescription, forKey: "short_description")
-        try values.encodeIfPresent(description, forKey: "description")
-        try values.encodeIfPresent(createdBy, forKey: "created_by")
-        try values.encodeIfPresent(released, forKey: "released")
+        try values.encode(displayName, forKey: "display_name")
+        try values.encode(shortDescription, forKey: "short_description")
+        try values.encode(description, forKey: "description")
+        try values.encode(createdBy, forKey: "created_by")
+        try values.encode(released, forKey: "released")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
         try values.encode(isFeatured, forKey: "featured")

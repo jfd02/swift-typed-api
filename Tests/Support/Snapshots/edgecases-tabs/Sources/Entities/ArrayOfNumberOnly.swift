@@ -13,7 +13,7 @@ public struct ArrayOfNumberOnly: Codable, Sendable {
 
 	public init(from decoder: Decoder) throws {
 		let values = try decoder.container(keyedBy: StringCodingKey.self)
-		self.arrayNumber = try values.decodeIfPresent([Double].self, forKey: "ArrayNumber")
+		self.arrayNumber = values.contains("ArrayNumber") ? Optional.some(try values.decode([Double].self, forKey: "ArrayNumber")) : nil
 	}
 
 	public func encode(to encoder: Encoder) throws {

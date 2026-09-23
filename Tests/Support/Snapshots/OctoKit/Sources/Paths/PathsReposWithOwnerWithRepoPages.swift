@@ -217,16 +217,10 @@ extension Paths.Repos.WithOwner.WithRepo {
                 }
 
                 public func encode(to encoder: Encoder) throws {
-                    let encodedValueCount = [a != nil, b != nil].filter { $0 }.count
-                    guard encodedValueCount == 1 else {
-                        throw EncodingError.invalidValue(
-                            self,
-                            .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-                        )
-                    }
-                    var container = encoder.singleValueContainer()
+                    let container = AnyOfEncoder(encoder: encoder)
                     if let value = a { try container.encode(value) }
                     if let value = b { try container.encode(value) }
+                    try container.finish(allowsNull: false)
                 }
             }
 

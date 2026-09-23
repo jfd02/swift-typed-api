@@ -24,9 +24,9 @@ public struct MergedUpstream: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.message = try values.decodeIfPresent(String.self, forKey: "message")
-        self.mergeType = try values.decodeIfPresent(MergeType.self, forKey: "merge_type")
-        self.baseBranch = try values.decodeIfPresent(String.self, forKey: "base_branch")
+        self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
+        self.mergeType = values.contains("merge_type") ? Optional.some(try values.decode(MergeType.self, forKey: "merge_type")) : nil
+        self.baseBranch = values.contains("base_branch") ? Optional.some(try values.decode(String.self, forKey: "base_branch")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

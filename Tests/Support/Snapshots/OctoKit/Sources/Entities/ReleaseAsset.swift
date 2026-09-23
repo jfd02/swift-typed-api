@@ -54,14 +54,14 @@ public struct ReleaseAsset: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.name = try values.decode(String.self, forKey: "name")
-        self.label = try values.decodeIfPresent(String.self, forKey: "label")
+        self.label = try values.decode(String?.self, forKey: "label")
         self.state = try values.decode(State.self, forKey: "state")
         self.contentType = try values.decode(String.self, forKey: "content_type")
         self.size = try values.decode(Int.self, forKey: "size")
         self.downloadCount = try values.decode(Int.self, forKey: "download_count")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.uploader = try values.decodeIfPresent(SimpleUser.self, forKey: "uploader")
+        self.uploader = try values.decode(SimpleUser?.self, forKey: "uploader")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -71,13 +71,13 @@ public struct ReleaseAsset: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(label, forKey: "label")
+        try values.encode(label, forKey: "label")
         try values.encode(state, forKey: "state")
         try values.encode(contentType, forKey: "content_type")
         try values.encode(size, forKey: "size")
         try values.encode(downloadCount, forKey: "download_count")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
-        try values.encodeIfPresent(uploader, forKey: "uploader")
+        try values.encode(uploader, forKey: "uploader")
     }
 }

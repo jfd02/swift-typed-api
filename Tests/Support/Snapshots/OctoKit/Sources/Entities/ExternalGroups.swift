@@ -63,7 +63,7 @@ public struct ExternalGroups: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.groups = try values.decodeIfPresent([Group].self, forKey: "groups")
+        self.groups = values.contains("groups") ? Optional.some(try values.decode([Group].self, forKey: "groups")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -43,7 +43,7 @@ public struct Label: Codable, Sendable {
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.url = try values.decode(URL.self, forKey: "url")
         self.name = try values.decode(String.self, forKey: "name")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = try values.decode(String?.self, forKey: "description")
         self.color = try values.decode(String.self, forKey: "color")
         self.isDefault = try values.decode(Bool.self, forKey: "default")
     }
@@ -54,7 +54,7 @@ public struct Label: Codable, Sendable {
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(url, forKey: "url")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encode(color, forKey: "color")
         try values.encode(isDefault, forKey: "default")
     }

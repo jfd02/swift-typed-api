@@ -15,8 +15,8 @@ public struct Category: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.identifier = try values.decodeIfPresent(Int64.self, forKey: "id")
-        self.title = try values.decodeIfPresent(String.self, forKey: "name")
+        self.identifier = values.contains("id") ? Optional.some(try values.decode(Int64.self, forKey: "id")) : nil
+        self.title = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

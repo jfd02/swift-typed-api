@@ -44,7 +44,7 @@ public struct MovedColumnInProjectIssueEvent: Codable, Sendable {
             self.projectID = try values.decode(Int.self, forKey: "project_id")
             self.projectURL = try values.decode(URL.self, forKey: "project_url")
             self.columnName = try values.decode(String.self, forKey: "column_name")
-            self.previousColumnName = try values.decodeIfPresent(String.self, forKey: "previous_column_name")
+            self.previousColumnName = values.contains("previous_column_name") ? Optional.some(try values.decode(String.self, forKey: "previous_column_name")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -78,11 +78,11 @@ public struct MovedColumnInProjectIssueEvent: Codable, Sendable {
         self.url = try values.decode(String.self, forKey: "url")
         self.actor = try values.decode(SimpleUser.self, forKey: "actor")
         self.event = try values.decode(String.self, forKey: "event")
-        self.commitID = try values.decodeIfPresent(String.self, forKey: "commit_id")
-        self.commitURL = try values.decodeIfPresent(String.self, forKey: "commit_url")
+        self.commitID = try values.decode(String?.self, forKey: "commit_id")
+        self.commitURL = try values.decode(String?.self, forKey: "commit_url")
         self.createdAt = try values.decode(String.self, forKey: "created_at")
-        self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
-        self.projectCard = try values.decodeIfPresent(ProjectCard.self, forKey: "project_card")
+        self.performedViaGithubApp = try values.decode(Integration?.self, forKey: "performed_via_github_app")
+        self.projectCard = values.contains("project_card") ? Optional.some(try values.decode(ProjectCard.self, forKey: "project_card")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -92,10 +92,10 @@ public struct MovedColumnInProjectIssueEvent: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(actor, forKey: "actor")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(commitID, forKey: "commit_id")
-        try values.encodeIfPresent(commitURL, forKey: "commit_url")
+        try values.encode(commitID, forKey: "commit_id")
+        try values.encode(commitURL, forKey: "commit_url")
         try values.encode(createdAt, forKey: "created_at")
-        try values.encodeIfPresent(performedViaGithubApp, forKey: "performed_via_github_app")
+        try values.encode(performedViaGithubApp, forKey: "performed_via_github_app")
         try values.encodeIfPresent(projectCard, forKey: "project_card")
     }
 }

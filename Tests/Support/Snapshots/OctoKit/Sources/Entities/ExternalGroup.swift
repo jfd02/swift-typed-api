@@ -129,7 +129,7 @@ public struct ExternalGroup: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.groupID = try values.decode(Int.self, forKey: "group_id")
         self.groupName = try values.decode(String.self, forKey: "group_name")
-        self.updatedAt = try values.decodeIfPresent(String.self, forKey: "updated_at")
+        self.updatedAt = values.contains("updated_at") ? Optional.some(try values.decode(String.self, forKey: "updated_at")) : nil
         self.teams = try values.decode([Team].self, forKey: "teams")
         self.members = try values.decode([Member].self, forKey: "members")
     }

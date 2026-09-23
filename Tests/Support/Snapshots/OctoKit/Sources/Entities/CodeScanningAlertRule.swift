@@ -52,11 +52,11 @@ public struct CodeScanningAlertRule: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decodeIfPresent(String.self, forKey: "id")
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
         self.severity = try values.decodeIfPresent(Severity.self, forKey: "severity")
         self.securitySeverityLevel = try values.decodeIfPresent(SecuritySeverityLevel.self, forKey: "security_severity_level")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.fullDescription = try values.decodeIfPresent(String.self, forKey: "full_description")
+        self.description = values.contains("description") ? Optional.some(try values.decode(String.self, forKey: "description")) : nil
+        self.fullDescription = values.contains("full_description") ? Optional.some(try values.decode(String.self, forKey: "full_description")) : nil
         self.tags = try values.decodeIfPresent([String].self, forKey: "tags")
         self.help = try values.decodeIfPresent(String.self, forKey: "help")
     }

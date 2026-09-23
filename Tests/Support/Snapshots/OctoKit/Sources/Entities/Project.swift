@@ -77,14 +77,14 @@ public struct Project: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.name = try values.decode(String.self, forKey: "name")
-        self.body = try values.decodeIfPresent(String.self, forKey: "body")
+        self.body = try values.decode(String?.self, forKey: "body")
         self.number = try values.decode(Int.self, forKey: "number")
         self.state = try values.decode(String.self, forKey: "state")
-        self.creator = try values.decodeIfPresent(SimpleUser.self, forKey: "creator")
+        self.creator = try values.decode(SimpleUser?.self, forKey: "creator")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.organizationPermission = try values.decodeIfPresent(OrganizationPermission.self, forKey: "organization_permission")
-        self.isPrivate = try values.decodeIfPresent(Bool.self, forKey: "private")
+        self.organizationPermission = values.contains("organization_permission") ? Optional.some(try values.decode(OrganizationPermission.self, forKey: "organization_permission")) : nil
+        self.isPrivate = values.contains("private") ? Optional.some(try values.decode(Bool.self, forKey: "private")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -96,10 +96,10 @@ public struct Project: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(body, forKey: "body")
+        try values.encode(body, forKey: "body")
         try values.encode(number, forKey: "number")
         try values.encode(state, forKey: "state")
-        try values.encodeIfPresent(creator, forKey: "creator")
+        try values.encode(creator, forKey: "creator")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
         try values.encodeIfPresent(organizationPermission, forKey: "organization_permission")

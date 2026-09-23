@@ -25,4 +25,16 @@ public struct User: Codable, Sendable {
         self.phone = phone
         self.userStatus = userStatus
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = values.contains(.id) ? Optional.some(try values.decode(Int64.self, forKey: .id)) : nil
+        self.username = values.contains(.username) ? Optional.some(try values.decode(String.self, forKey: .username)) : nil
+        self.firstName = values.contains(.firstName) ? Optional.some(try values.decode(String.self, forKey: .firstName)) : nil
+        self.lastName = values.contains(.lastName) ? Optional.some(try values.decode(String.self, forKey: .lastName)) : nil
+        self.email = values.contains(.email) ? Optional.some(try values.decode(String.self, forKey: .email)) : nil
+        self.password = values.contains(.password) ? Optional.some(try values.decode(String.self, forKey: .password)) : nil
+        self.phone = values.contains(.phone) ? Optional.some(try values.decode(String.self, forKey: .phone)) : nil
+        self.userStatus = values.contains(.userStatus) ? Optional.some(try values.decode(Int32.self, forKey: .userStatus)) : nil
+    }
 }

@@ -15,4 +15,9 @@ public struct Return: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case `return`
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.return = values.contains(.`return`) ? Optional.some(try values.decode(Int32.self, forKey: .`return`)) : nil
+    }
 }

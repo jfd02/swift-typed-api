@@ -97,18 +97,18 @@ public struct CommitSearchResultItem: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.author = try values.decode(Author.self, forKey: "author")
-            self.committer = try values.decodeIfPresent(GitUser.self, forKey: "committer")
+            self.committer = try values.decode(GitUser?.self, forKey: "committer")
             self.commentCount = try values.decode(Int.self, forKey: "comment_count")
             self.message = try values.decode(String.self, forKey: "message")
             self.tree = try values.decode(Tree.self, forKey: "tree")
             self.url = try values.decode(URL.self, forKey: "url")
-            self.verification = try values.decodeIfPresent(Verification.self, forKey: "verification")
+            self.verification = values.contains("verification") ? Optional.some(try values.decode(Verification.self, forKey: "verification")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encode(author, forKey: "author")
-            try values.encodeIfPresent(committer, forKey: "committer")
+            try values.encode(committer, forKey: "committer")
             try values.encode(commentCount, forKey: "comment_count")
             try values.encode(message, forKey: "message")
             try values.encode(tree, forKey: "tree")
@@ -130,9 +130,9 @@ public struct CommitSearchResultItem: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-            self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+            self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -165,13 +165,13 @@ public struct CommitSearchResultItem: Codable, Sendable {
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.commentsURL = try values.decode(URL.self, forKey: "comments_url")
         self.commit = try values.decode(Commit.self, forKey: "commit")
-        self.author = try values.decodeIfPresent(SimpleUser.self, forKey: "author")
-        self.committer = try values.decodeIfPresent(GitUser.self, forKey: "committer")
+        self.author = try values.decode(SimpleUser?.self, forKey: "author")
+        self.committer = try values.decode(GitUser?.self, forKey: "committer")
         self.parents = try values.decode([Parent].self, forKey: "parents")
         self.repository = try values.decode(MinimalRepository.self, forKey: "repository")
         self.score = try values.decode(Double.self, forKey: "score")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.textMatches = try values.decodeIfPresent([SearchResultTextMatch].self, forKey: "text_matches")
+        self.textMatches = values.contains("text_matches") ? Optional.some(try values.decode([SearchResultTextMatch].self, forKey: "text_matches")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -181,8 +181,8 @@ public struct CommitSearchResultItem: Codable, Sendable {
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(commentsURL, forKey: "comments_url")
         try values.encode(commit, forKey: "commit")
-        try values.encodeIfPresent(author, forKey: "author")
-        try values.encodeIfPresent(committer, forKey: "committer")
+        try values.encode(author, forKey: "author")
+        try values.encode(committer, forKey: "committer")
         try values.encode(parents, forKey: "parents")
         try values.encode(repository, forKey: "repository")
         try values.encode(score, forKey: "score")

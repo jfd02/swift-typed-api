@@ -22,4 +22,10 @@ public struct MapTest: Codable, Sendable {
         case mapMapOfString = "map_map_of_string"
         case mapOfEnumString = "map_of_enum_string"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.mapMapOfString = values.contains(.mapMapOfString) ? Optional.some(try values.decode([String: [String: String]].self, forKey: .mapMapOfString)) : nil
+        self.mapOfEnumString = values.contains(.mapOfEnumString) ? Optional.some(try values.decode([String: MapOfEnumStringItem].self, forKey: .mapOfEnumString)) : nil
+    }
 }

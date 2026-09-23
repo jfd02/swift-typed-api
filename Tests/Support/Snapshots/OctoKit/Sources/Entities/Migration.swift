@@ -55,7 +55,7 @@ public struct Migration: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(Int.self, forKey: "id")
-        self.owner = try values.decodeIfPresent(SimpleUser.self, forKey: "owner")
+        self.owner = try values.decode(SimpleUser?.self, forKey: "owner")
         self.guid = try values.decode(String.self, forKey: "guid")
         self.state = try values.decode(String.self, forKey: "state")
         self.lockRepositories = try values.decode(Bool.self, forKey: "lock_repositories")
@@ -69,14 +69,14 @@ public struct Migration: Codable, Sendable {
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.archiveURL = try values.decodeIfPresent(URL.self, forKey: "archive_url")
-        self.exclude = try values.decodeIfPresent([AnyJSON].self, forKey: "exclude")
+        self.archiveURL = values.contains("archive_url") ? Optional.some(try values.decode(URL.self, forKey: "archive_url")) : nil
+        self.exclude = values.contains("exclude") ? Optional.some(try values.decode([AnyJSON].self, forKey: "exclude")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(id, forKey: "id")
-        try values.encodeIfPresent(owner, forKey: "owner")
+        try values.encode(owner, forKey: "owner")
         try values.encode(guid, forKey: "guid")
         try values.encode(state, forKey: "state")
         try values.encode(lockRepositories, forKey: "lock_repositories")

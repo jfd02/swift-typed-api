@@ -27,7 +27,7 @@ public struct CodeOfConductSimple: Codable, Sendable {
         self.url = try values.decode(URL.self, forKey: "url")
         self.key = try values.decode(String.self, forKey: "key")
         self.name = try values.decode(String.self, forKey: "name")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
+        self.htmlURL = try values.decode(URL?.self, forKey: "html_url")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -35,6 +35,6 @@ public struct CodeOfConductSimple: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(key, forKey: "key")
         try values.encode(name, forKey: "name")
-        try values.encodeIfPresent(htmlURL, forKey: "html_url")
+        try values.encode(htmlURL, forKey: "html_url")
     }
 }

@@ -20,7 +20,7 @@ public struct CodeScanningAnalysisTool: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
         self.version = try values.decodeIfPresent(String.self, forKey: "version")
         self.guid = try values.decodeIfPresent(String.self, forKey: "guid")
     }

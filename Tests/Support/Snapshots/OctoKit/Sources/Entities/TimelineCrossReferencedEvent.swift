@@ -24,8 +24,8 @@ public struct TimelineCrossReferencedEvent: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.type = try values.decodeIfPresent(String.self, forKey: "type")
-            self.issue = try values.decodeIfPresent(Issue.self, forKey: "issue")
+            self.type = values.contains("type") ? Optional.some(try values.decode(String.self, forKey: "type")) : nil
+            self.issue = values.contains("issue") ? Optional.some(try values.decode(Issue.self, forKey: "issue")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -46,7 +46,7 @@ public struct TimelineCrossReferencedEvent: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.event = try values.decode(String.self, forKey: "event")
-        self.actor = try values.decodeIfPresent(SimpleUser.self, forKey: "actor")
+        self.actor = values.contains("actor") ? Optional.some(try values.decode(SimpleUser.self, forKey: "actor")) : nil
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.source = try values.decode(Source.self, forKey: "source")

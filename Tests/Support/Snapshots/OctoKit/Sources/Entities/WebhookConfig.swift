@@ -31,10 +31,10 @@ public struct WebhookConfig: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-        self.contentType = try values.decodeIfPresent(String.self, forKey: "content_type")
-        self.secret = try values.decodeIfPresent(String.self, forKey: "secret")
-        self.insecureSSL = try values.decodeIfPresent(WebhookConfigInsecureSSL.self, forKey: "insecure_ssl")
+        self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
+        self.contentType = values.contains("content_type") ? Optional.some(try values.decode(String.self, forKey: "content_type")) : nil
+        self.secret = values.contains("secret") ? Optional.some(try values.decode(String.self, forKey: "secret")) : nil
+        self.insecureSSL = values.contains("insecure_ssl") ? Optional.some(try values.decode(WebhookConfigInsecureSSL.self, forKey: "insecure_ssl")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -168,16 +168,16 @@ public struct GitCommit: Codable, Sendable {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.isVerified = try values.decode(Bool.self, forKey: "verified")
             self.reason = try values.decode(String.self, forKey: "reason")
-            self.signature = try values.decodeIfPresent(String.self, forKey: "signature")
-            self.payload = try values.decodeIfPresent(String.self, forKey: "payload")
+            self.signature = try values.decode(String?.self, forKey: "signature")
+            self.payload = try values.decode(String?.self, forKey: "payload")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encode(isVerified, forKey: "verified")
             try values.encode(reason, forKey: "reason")
-            try values.encodeIfPresent(signature, forKey: "signature")
-            try values.encodeIfPresent(payload, forKey: "payload")
+            try values.encode(signature, forKey: "signature")
+            try values.encode(payload, forKey: "payload")
         }
     }
 

@@ -19,10 +19,10 @@ public struct BasicError: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.message = try values.decodeIfPresent(String.self, forKey: "message")
-        self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
-        self.url = try values.decodeIfPresent(String.self, forKey: "url")
-        self.status = try values.decodeIfPresent(String.self, forKey: "status")
+        self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
+        self.documentationURL = values.contains("documentation_url") ? Optional.some(try values.decode(String.self, forKey: "documentation_url")) : nil
+        self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+        self.status = values.contains("status") ? Optional.some(try values.decode(String.self, forKey: "status")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -51,9 +51,9 @@ public struct ScopedInstallation: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.permissions = try values.decode(AppPermissions.self, forKey: "permissions")
         self.repositorySelection = try values.decode(RepositorySelection.self, forKey: "repository_selection")
-        self.singleFileName = try values.decodeIfPresent(String.self, forKey: "single_file_name")
-        self.hasMultipleSingleFiles = try values.decodeIfPresent(Bool.self, forKey: "has_multiple_single_files")
-        self.singleFilePaths = try values.decodeIfPresent([String].self, forKey: "single_file_paths")
+        self.singleFileName = try values.decode(String?.self, forKey: "single_file_name")
+        self.hasMultipleSingleFiles = values.contains("has_multiple_single_files") ? Optional.some(try values.decode(Bool.self, forKey: "has_multiple_single_files")) : nil
+        self.singleFilePaths = values.contains("single_file_paths") ? Optional.some(try values.decode([String].self, forKey: "single_file_paths")) : nil
         self.repositoriesURL = try values.decode(URL.self, forKey: "repositories_url")
         self.account = try values.decode(SimpleUser.self, forKey: "account")
     }
@@ -62,7 +62,7 @@ public struct ScopedInstallation: Codable, Sendable {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(permissions, forKey: "permissions")
         try values.encode(repositorySelection, forKey: "repository_selection")
-        try values.encodeIfPresent(singleFileName, forKey: "single_file_name")
+        try values.encode(singleFileName, forKey: "single_file_name")
         try values.encodeIfPresent(hasMultipleSingleFiles, forKey: "has_multiple_single_files")
         try values.encodeIfPresent(singleFilePaths, forKey: "single_file_paths")
         try values.encode(repositoriesURL, forKey: "repositories_url")

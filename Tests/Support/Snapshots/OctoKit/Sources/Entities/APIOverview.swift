@@ -42,10 +42,10 @@ public struct APIOverview: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.sha256Rsa = try values.decodeIfPresent(String.self, forKey: "SHA256_RSA")
-            self.sha256Dsa = try values.decodeIfPresent(String.self, forKey: "SHA256_DSA")
-            self.sha256Ecdsa = try values.decodeIfPresent(String.self, forKey: "SHA256_ECDSA")
-            self.sha256Ed25519 = try values.decodeIfPresent(String.self, forKey: "SHA256_ED25519")
+            self.sha256Rsa = values.contains("SHA256_RSA") ? Optional.some(try values.decode(String.self, forKey: "SHA256_RSA")) : nil
+            self.sha256Dsa = values.contains("SHA256_DSA") ? Optional.some(try values.decode(String.self, forKey: "SHA256_DSA")) : nil
+            self.sha256Ecdsa = values.contains("SHA256_ECDSA") ? Optional.some(try values.decode(String.self, forKey: "SHA256_ECDSA")) : nil
+            self.sha256Ed25519 = values.contains("SHA256_ED25519") ? Optional.some(try values.decode(String.self, forKey: "SHA256_ED25519")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -74,16 +74,16 @@ public struct APIOverview: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.isVerifiablePasswordAuthentication = try values.decode(Bool.self, forKey: "verifiable_password_authentication")
-        self.sshKeyFingerprints = try values.decodeIfPresent(SshKeyFingerprints.self, forKey: "ssh_key_fingerprints")
-        self.hooks = try values.decodeIfPresent([String].self, forKey: "hooks")
-        self.web = try values.decodeIfPresent([String].self, forKey: "web")
-        self.api = try values.decodeIfPresent([String].self, forKey: "api")
-        self.git = try values.decodeIfPresent([String].self, forKey: "git")
-        self.packages = try values.decodeIfPresent([String].self, forKey: "packages")
-        self.pages = try values.decodeIfPresent([String].self, forKey: "pages")
-        self.importer = try values.decodeIfPresent([String].self, forKey: "importer")
-        self.actions = try values.decodeIfPresent([String].self, forKey: "actions")
-        self.dependabot = try values.decodeIfPresent([String].self, forKey: "dependabot")
+        self.sshKeyFingerprints = values.contains("ssh_key_fingerprints") ? Optional.some(try values.decode(SshKeyFingerprints.self, forKey: "ssh_key_fingerprints")) : nil
+        self.hooks = values.contains("hooks") ? Optional.some(try values.decode([String].self, forKey: "hooks")) : nil
+        self.web = values.contains("web") ? Optional.some(try values.decode([String].self, forKey: "web")) : nil
+        self.api = values.contains("api") ? Optional.some(try values.decode([String].self, forKey: "api")) : nil
+        self.git = values.contains("git") ? Optional.some(try values.decode([String].self, forKey: "git")) : nil
+        self.packages = values.contains("packages") ? Optional.some(try values.decode([String].self, forKey: "packages")) : nil
+        self.pages = values.contains("pages") ? Optional.some(try values.decode([String].self, forKey: "pages")) : nil
+        self.importer = values.contains("importer") ? Optional.some(try values.decode([String].self, forKey: "importer")) : nil
+        self.actions = values.contains("actions") ? Optional.some(try values.decode([String].self, forKey: "actions")) : nil
+        self.dependabot = values.contains("dependabot") ? Optional.some(try values.decode([String].self, forKey: "dependabot")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

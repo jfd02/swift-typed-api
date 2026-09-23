@@ -87,16 +87,16 @@ public struct DeploymentStatus: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.state = try values.decode(State.self, forKey: "state")
-        self.creator = try values.decodeIfPresent(SimpleUser.self, forKey: "creator")
+        self.creator = try values.decode(SimpleUser?.self, forKey: "creator")
         self.description = try values.decode(String.self, forKey: "description")
-        self.environment = try values.decodeIfPresent(String.self, forKey: "environment")
+        self.environment = values.contains("environment") ? Optional.some(try values.decode(String.self, forKey: "environment")) : nil
         self.targetURL = try values.decode(URL.self, forKey: "target_url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.deploymentURL = try values.decode(URL.self, forKey: "deployment_url")
         self.repositoryURL = try values.decode(URL.self, forKey: "repository_url")
-        self.environmentURL = try values.decodeIfPresent(URL.self, forKey: "environment_url")
-        self.logURL = try values.decodeIfPresent(URL.self, forKey: "log_url")
+        self.environmentURL = values.contains("environment_url") ? Optional.some(try values.decode(URL.self, forKey: "environment_url")) : nil
+        self.logURL = values.contains("log_url") ? Optional.some(try values.decode(URL.self, forKey: "log_url")) : nil
         self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
     }
 
@@ -106,7 +106,7 @@ public struct DeploymentStatus: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(state, forKey: "state")
-        try values.encodeIfPresent(creator, forKey: "creator")
+        try values.encode(creator, forKey: "creator")
         try values.encode(description, forKey: "description")
         try values.encodeIfPresent(environment, forKey: "environment")
         try values.encode(targetURL, forKey: "target_url")

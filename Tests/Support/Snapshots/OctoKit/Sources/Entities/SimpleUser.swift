@@ -76,7 +76,7 @@ public struct SimpleUser: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.avatarURL = try values.decode(URL.self, forKey: "avatar_url")
-        self.gravatarID = try values.decodeIfPresent(String.self, forKey: "gravatar_id")
+        self.gravatarID = try values.decode(String?.self, forKey: "gravatar_id")
         self.url = try values.decode(URL.self, forKey: "url")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.followersURL = try values.decode(URL.self, forKey: "followers_url")
@@ -90,7 +90,7 @@ public struct SimpleUser: Codable, Sendable {
         self.receivedEventsURL = try values.decode(URL.self, forKey: "received_events_url")
         self.type = try values.decode(String.self, forKey: "type")
         self.isSiteAdmin = try values.decode(Bool.self, forKey: "site_admin")
-        self.starredAt = try values.decodeIfPresent(String.self, forKey: "starred_at")
+        self.starredAt = values.contains("starred_at") ? Optional.some(try values.decode(String.self, forKey: "starred_at")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -101,7 +101,7 @@ public struct SimpleUser: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(avatarURL, forKey: "avatar_url")
-        try values.encodeIfPresent(gravatarID, forKey: "gravatar_id")
+        try values.encode(gravatarID, forKey: "gravatar_id")
         try values.encode(url, forKey: "url")
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(followersURL, forKey: "followers_url")

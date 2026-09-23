@@ -14,4 +14,9 @@ public struct ArrayOfNumberOnly: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case arrayNumber = "ArrayNumber"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.arrayNumber = values.contains(.arrayNumber) ? Optional.some(try values.decode([Double].self, forKey: .arrayNumber)) : nil
+    }
 }

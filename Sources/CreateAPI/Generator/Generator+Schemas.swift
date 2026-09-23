@@ -115,6 +115,9 @@ extension Generator {
         if isAnyJSONUsed {
             extensions.append(GeneratedFile(name: "AnyJSON", contents: templates.anyJSON))
         }
+        if isAnyOfEncoderUsed {
+            extensions.append(GeneratedFile(name: "AnyOfEncoder", contents: anyOfEncoder))
+        }
         extensions.append(GeneratedFile(name: "StringCodingKey", contents: stringCodingKey))
 
         return extensions
@@ -402,9 +405,9 @@ extension Generator {
             let decl = try _makeDeclaration(name: nestedTypeName, schema: schema, context: context)
             switch decl {
             case let alias as TypealiasDeclaration:
-                return AdditionalProperties(type: .dictionary(value: alias.type), info: info)
+                return AdditionalProperties(type: .dictionary(value: collectionValueType(alias.type, schema: schema)), info: info, nested: alias.nested)
             default:
-                return AdditionalProperties(type: .dictionary(value: .userDefined(name: nestedTypeName)), info: info, nested: decl)
+                return AdditionalProperties(type: .dictionary(value: collectionValueType(.userDefined(name: nestedTypeName), schema: schema)), info: info, nested: decl)
             }
         }
     }
@@ -471,7 +474,17 @@ extension Generator {
 
         let (entity, context) = makeEntity(name: name, type: .anyOf, info: info, context: context)
 
-        var properties = try makeProperties(for: schemas, context: context)
+        entity.allowsNull = info.nullable || schemas.contains { schemaAllowsNull($0) }
+        let nonNullSchemas = schemas.filter {
+            if case .null = $0.value { return false }
+            return true
+        }
+        var properties = try makeProperties(for: nonNullSchemas, context: context).map {
+            var property = $0
+            // A variant default cannot stand in for a successful anyOf match.
+            property.defaultValue = nil
+            return property
+        }
         // `anyOf` where one type is off just means optional response
         if let index = properties.firstIndex(where: { $0.type.isVoid }) {
             properties.remove(at: index)
@@ -580,9 +593,31 @@ extension Generator {
         let decl = try _makeDeclaration(name: itemName.name, schema: item, context: context)
         switch decl {
         case let decl as TypealiasDeclaration:
-            return TypealiasDeclaration(name: name, type: decl.type.asArray(), nested: decl.nested)
+            return TypealiasDeclaration(name: name, type: collectionValueType(decl.type, schema: item).asArray(), nested: decl.nested)
         default:
-            return TypealiasDeclaration(name: name, type: itemName.asArray(), nested: decl)
+            return TypealiasDeclaration(name: name, type: collectionValueType(itemName, schema: item).asArray(), nested: decl)
+        }
+    }
+
+    private func collectionValueType(_ type: TypeIdentifier, schema: JSONSchema) -> TypeIdentifier {
+        // AnyJSON already represents JSON null without an optional wrapper.
+        schemaAllowsNull(schema) && type != .anyJSON && !type.isOptional ? .optional(wrapped: type) : type
+    }
+
+    private func schemaAllowsNull(_ schema: JSONSchema, visited: Set<String> = []) -> Bool {
+        if schema.nullable { return true }
+        switch schema.value {
+        case .null, .fragment:
+            return true
+        case .reference(let reference, _):
+            guard let name = reference.name, !visited.contains(name), let target = getSchema(for: reference) else { return false }
+            return schemaAllowsNull(target, visited: visited.union([name]))
+        case .any(let schemas, _), .one(let schemas, _):
+            return schemas.contains { schemaAllowsNull($0, visited: visited) }
+        case .all(let schemas, _):
+            return schemas.allSatisfy { schemaAllowsNull($0, visited: visited) }
+        default:
+            return false
         }
     }
 
@@ -684,12 +719,13 @@ extension Generator {
         func property(type: TypeIdentifier, info: JSONSchemaContext?, nested: Declaration? = nil) -> Property {
             let nullable = info?.nullable ?? false
             let isOptional = !isRequired || nullable || schema.isNullableComposition
+            let isRequiredNullable = isRequired && (nullable || schema.isNullableComposition)
             var type = type
-            if context.isPatch && isOptional && options.paths.makeOptionalPatchParametersDoubleOptional {
+            if context.isPatch && !isRequired && schemaAllowsNull(schema) && options.paths.makeOptionalPatchParametersDoubleOptional {
                 type = type.asPatchParameter()
             }
             var defaultValue: String?
-            if options.entities.includeDefaultValues {
+            if options.entities.includeDefaultValues && !isRequiredNullable {
                 if type.isBool {
                     defaultValue = (info?.defaultValue?.value as? Bool).map { $0 ? "true" : "false" }
                 }
@@ -705,6 +741,8 @@ extension Generator {
                             type: type,
                             isOptional: isOptional,
                             key: key,
+                            isRequiredNullable: isRequiredNullable,
+                            rejectsNull: !isRequired && !schemaAllowsNull(schema),
                             defaultValue: defaultValue,
                             metadata: .init(info),
                             nested: nested,

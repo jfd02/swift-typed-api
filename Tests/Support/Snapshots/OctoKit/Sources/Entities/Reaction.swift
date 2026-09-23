@@ -44,7 +44,7 @@ public struct Reaction: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
-        self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
+        self.user = try values.decode(SimpleUser?.self, forKey: "user")
         self.content = try values.decode(Content.self, forKey: "content")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
     }
@@ -53,7 +53,7 @@ public struct Reaction: Codable, Sendable {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
-        try values.encodeIfPresent(user, forKey: "user")
+        try values.encode(user, forKey: "user")
         try values.encode(content, forKey: "content")
         try values.encode(createdAt, forKey: "created_at")
     }

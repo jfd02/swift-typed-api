@@ -17,9 +17,9 @@ public struct APIResponse: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.code = try values.decodeIfPresent(Int32.self, forKey: "code")
-        self.type = try values.decodeIfPresent(String.self, forKey: "type")
-        self.message = try values.decodeIfPresent(String.self, forKey: "message")
+        self.code = values.contains("code") ? Optional.some(try values.decode(Int32.self, forKey: "code")) : nil
+        self.type = values.contains("type") ? Optional.some(try values.decode(String.self, forKey: "type")) : nil
+        self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

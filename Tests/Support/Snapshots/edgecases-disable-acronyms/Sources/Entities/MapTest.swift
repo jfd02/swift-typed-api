@@ -20,8 +20,8 @@ public struct MapTest: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.mapMapOfString = try values.decodeIfPresent([String: [String: String]].self, forKey: "map_map_of_string")
-        self.mapOfEnumString = try values.decodeIfPresent([String: MapOfEnumStringItem].self, forKey: "map_of_enum_string")
+        self.mapMapOfString = values.contains("map_map_of_string") ? Optional.some(try values.decode([String: [String: String]].self, forKey: "map_map_of_string")) : nil
+        self.mapOfEnumString = values.contains("map_of_enum_string") ? Optional.some(try values.decode([String: MapOfEnumStringItem].self, forKey: "map_of_enum_string")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

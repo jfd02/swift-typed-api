@@ -23,7 +23,7 @@ public struct CodeScanningAlertInstance: Codable, Sendable {
     public var htmlURL: String?
     /// Classifications that have been applied to the file that triggered the alert.
     /// For example identifying it as documentation, or a generated file.
-    public var classifications: [CodeScanningAlertClassification]?
+    public var classifications: [CodeScanningAlertClassification?]?
 
     public struct Message: Codable, Sendable {
         public var text: String?
@@ -34,7 +34,7 @@ public struct CodeScanningAlertInstance: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.text = try values.decodeIfPresent(String.self, forKey: "text")
+            self.text = values.contains("text") ? Optional.some(try values.decode(String.self, forKey: "text")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -43,7 +43,7 @@ public struct CodeScanningAlertInstance: Codable, Sendable {
         }
     }
 
-    public init(ref: String? = nil, analysisKey: String? = nil, environment: String? = nil, category: String? = nil, state: CodeScanningAlertState? = nil, commitSha: String? = nil, message: Message? = nil, location: CodeScanningAlertLocation? = nil, htmlURL: String? = nil, classifications: [CodeScanningAlertClassification]? = nil) {
+    public init(ref: String? = nil, analysisKey: String? = nil, environment: String? = nil, category: String? = nil, state: CodeScanningAlertState? = nil, commitSha: String? = nil, message: Message? = nil, location: CodeScanningAlertLocation? = nil, htmlURL: String? = nil, classifications: [CodeScanningAlertClassification?]? = nil) {
         self.ref = ref
         self.analysisKey = analysisKey
         self.environment = environment
@@ -58,16 +58,16 @@ public struct CodeScanningAlertInstance: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.ref = try values.decodeIfPresent(String.self, forKey: "ref")
-        self.analysisKey = try values.decodeIfPresent(String.self, forKey: "analysis_key")
-        self.environment = try values.decodeIfPresent(String.self, forKey: "environment")
-        self.category = try values.decodeIfPresent(String.self, forKey: "category")
-        self.state = try values.decodeIfPresent(CodeScanningAlertState.self, forKey: "state")
-        self.commitSha = try values.decodeIfPresent(String.self, forKey: "commit_sha")
-        self.message = try values.decodeIfPresent(Message.self, forKey: "message")
-        self.location = try values.decodeIfPresent(CodeScanningAlertLocation.self, forKey: "location")
-        self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-        self.classifications = try values.decodeIfPresent([CodeScanningAlertClassification].self, forKey: "classifications")
+        self.ref = values.contains("ref") ? Optional.some(try values.decode(String.self, forKey: "ref")) : nil
+        self.analysisKey = values.contains("analysis_key") ? Optional.some(try values.decode(String.self, forKey: "analysis_key")) : nil
+        self.environment = values.contains("environment") ? Optional.some(try values.decode(String.self, forKey: "environment")) : nil
+        self.category = values.contains("category") ? Optional.some(try values.decode(String.self, forKey: "category")) : nil
+        self.state = values.contains("state") ? Optional.some(try values.decode(CodeScanningAlertState.self, forKey: "state")) : nil
+        self.commitSha = values.contains("commit_sha") ? Optional.some(try values.decode(String.self, forKey: "commit_sha")) : nil
+        self.message = values.contains("message") ? Optional.some(try values.decode(Message.self, forKey: "message")) : nil
+        self.location = values.contains("location") ? Optional.some(try values.decode(CodeScanningAlertLocation.self, forKey: "location")) : nil
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+        self.classifications = values.contains("classifications") ? Optional.some(try values.decode([CodeScanningAlertClassification?].self, forKey: "classifications")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

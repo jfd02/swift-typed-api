@@ -72,8 +72,8 @@ extension Paths.Gists {
 
                 public init(from decoder: Decoder) throws {
                     let values = try decoder.container(keyedBy: StringCodingKey.self)
-                    self.reason = try values.decodeIfPresent(String.self, forKey: "reason")
-                    self.createdAt = try values.decodeIfPresent(String.self, forKey: "created_at")
+                    self.reason = values.contains("reason") ? Optional.some(try values.decode(String.self, forKey: "reason")) : nil
+                    self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(String.self, forKey: "created_at")) : nil
                     self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
                 }
             }
@@ -86,9 +86,9 @@ extension Paths.Gists {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.block = try values.decodeIfPresent(Block.self, forKey: "block")
-                self.message = try values.decodeIfPresent(String.self, forKey: "message")
-                self.documentationURL = try values.decodeIfPresent(String.self, forKey: "documentation_url")
+                self.block = values.contains("block") ? Optional.some(try values.decode(Block.self, forKey: "block")) : nil
+                self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
+                self.documentationURL = values.contains("documentation_url") ? Optional.some(try values.decode(String.self, forKey: "documentation_url")) : nil
             }
         }
 

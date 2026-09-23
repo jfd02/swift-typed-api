@@ -34,10 +34,10 @@ public struct RunnerGroupsOrg: Codable, Sendable {
         self.name = try values.decode(String.self, forKey: "name")
         self.visibility = try values.decode(String.self, forKey: "visibility")
         self.isDefault = try values.decode(Bool.self, forKey: "default")
-        self.selectedRepositoriesURL = try values.decodeIfPresent(String.self, forKey: "selected_repositories_url")
+        self.selectedRepositoriesURL = values.contains("selected_repositories_url") ? Optional.some(try values.decode(String.self, forKey: "selected_repositories_url")) : nil
         self.runnersURL = try values.decode(String.self, forKey: "runners_url")
         self.isInherited = try values.decode(Bool.self, forKey: "inherited")
-        self.inheritedAllowsPublicRepositories = try values.decodeIfPresent(Bool.self, forKey: "inherited_allows_public_repositories")
+        self.inheritedAllowsPublicRepositories = values.contains("inherited_allows_public_repositories") ? Optional.some(try values.decode(Bool.self, forKey: "inherited_allows_public_repositories")) : nil
         self.allowsPublicRepositories = try values.decode(Bool.self, forKey: "allows_public_repositories")
     }
 

@@ -19,7 +19,7 @@ public struct Pet: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(String.self, forKey: "name")
-        self.tag = try values.decodeIfPresent(String.self, forKey: "tag")
+        self.tag = values.contains("tag") ? Optional.some(try values.decode(String.self, forKey: "tag")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

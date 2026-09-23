@@ -29,9 +29,9 @@ public struct RunnerLabel: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.id = try values.decodeIfPresent(Int.self, forKey: "id")
+        self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
         self.name = try values.decode(String.self, forKey: "name")
-        self.type = try values.decodeIfPresent(`Type`.self, forKey: "type")
+        self.type = values.contains("type") ? Optional.some(try values.decode(`Type`.self, forKey: "type")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

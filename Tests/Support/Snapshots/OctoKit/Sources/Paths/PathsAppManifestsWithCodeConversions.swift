@@ -76,7 +76,7 @@ extension Paths.AppManifests.WithCode {
                 self.integration = try OctoKit.Integration(from: decoder)
                 self.clientID = try values.decode(String.self, forKey: "client_id")
                 self.clientSecret = try values.decode(String.self, forKey: "client_secret")
-                self.webhookSecret = try values.decodeIfPresent(String.self, forKey: "webhook_secret")
+                self.webhookSecret = try values.decode(String?.self, forKey: "webhook_secret")
                 self.pem = try values.decode(String.self, forKey: "pem")
             }
         }

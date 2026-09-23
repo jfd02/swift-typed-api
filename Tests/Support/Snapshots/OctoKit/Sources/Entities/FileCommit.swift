@@ -33,9 +33,9 @@ public struct FileCommit: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.this = try values.decodeIfPresent(String.self, forKey: "self")
-                self.git = try values.decodeIfPresent(String.self, forKey: "git")
-                self.html = try values.decodeIfPresent(String.self, forKey: "html")
+                self.this = values.contains("self") ? Optional.some(try values.decode(String.self, forKey: "self")) : nil
+                self.git = values.contains("git") ? Optional.some(try values.decode(String.self, forKey: "git")) : nil
+                self.html = values.contains("html") ? Optional.some(try values.decode(String.self, forKey: "html")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -61,16 +61,16 @@ public struct FileCommit: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.name = try values.decodeIfPresent(String.self, forKey: "name")
-            self.path = try values.decodeIfPresent(String.self, forKey: "path")
-            self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
-            self.size = try values.decodeIfPresent(Int.self, forKey: "size")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-            self.gitURL = try values.decodeIfPresent(String.self, forKey: "git_url")
-            self.downloadURL = try values.decodeIfPresent(String.self, forKey: "download_url")
-            self.type = try values.decodeIfPresent(String.self, forKey: "type")
-            self.links = try values.decodeIfPresent(Links.self, forKey: "_links")
+            self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+            self.path = values.contains("path") ? Optional.some(try values.decode(String.self, forKey: "path")) : nil
+            self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
+            self.size = values.contains("size") ? Optional.some(try values.decode(Int.self, forKey: "size")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+            self.gitURL = values.contains("git_url") ? Optional.some(try values.decode(String.self, forKey: "git_url")) : nil
+            self.downloadURL = values.contains("download_url") ? Optional.some(try values.decode(String.self, forKey: "download_url")) : nil
+            self.type = values.contains("type") ? Optional.some(try values.decode(String.self, forKey: "type")) : nil
+            self.links = values.contains("_links") ? Optional.some(try values.decode(Links.self, forKey: "_links")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -113,9 +113,9 @@ public struct FileCommit: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.date = try values.decodeIfPresent(String.self, forKey: "date")
-                self.name = try values.decodeIfPresent(String.self, forKey: "name")
-                self.email = try values.decodeIfPresent(String.self, forKey: "email")
+                self.date = values.contains("date") ? Optional.some(try values.decode(String.self, forKey: "date")) : nil
+                self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+                self.email = values.contains("email") ? Optional.some(try values.decode(String.self, forKey: "email")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -139,9 +139,9 @@ public struct FileCommit: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.date = try values.decodeIfPresent(String.self, forKey: "date")
-                self.name = try values.decodeIfPresent(String.self, forKey: "name")
-                self.email = try values.decodeIfPresent(String.self, forKey: "email")
+                self.date = values.contains("date") ? Optional.some(try values.decode(String.self, forKey: "date")) : nil
+                self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
+                self.email = values.contains("email") ? Optional.some(try values.decode(String.self, forKey: "email")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -163,8 +163,8 @@ public struct FileCommit: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.url = try values.decodeIfPresent(String.self, forKey: "url")
-                self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
+                self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+                self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -187,9 +187,9 @@ public struct FileCommit: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.url = try values.decodeIfPresent(String.self, forKey: "url")
-                self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-                self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
+                self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+                self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+                self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -215,8 +215,8 @@ public struct FileCommit: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.isVerified = try values.decodeIfPresent(Bool.self, forKey: "verified")
-                self.reason = try values.decodeIfPresent(String.self, forKey: "reason")
+                self.isVerified = values.contains("verified") ? Optional.some(try values.decode(Bool.self, forKey: "verified")) : nil
+                self.reason = values.contains("reason") ? Optional.some(try values.decode(String.self, forKey: "reason")) : nil
                 self.signature = try values.decodeIfPresent(String.self, forKey: "signature")
                 self.payload = try values.decodeIfPresent(String.self, forKey: "payload")
             }
@@ -245,16 +245,16 @@ public struct FileCommit: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
-            self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-            self.author = try values.decodeIfPresent(Author.self, forKey: "author")
-            self.committer = try values.decodeIfPresent(Committer.self, forKey: "committer")
-            self.message = try values.decodeIfPresent(String.self, forKey: "message")
-            self.tree = try values.decodeIfPresent(Tree.self, forKey: "tree")
-            self.parents = try values.decodeIfPresent([Parent].self, forKey: "parents")
-            self.verification = try values.decodeIfPresent(Verification.self, forKey: "verification")
+            self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
+            self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+            self.author = values.contains("author") ? Optional.some(try values.decode(Author.self, forKey: "author")) : nil
+            self.committer = values.contains("committer") ? Optional.some(try values.decode(Committer.self, forKey: "committer")) : nil
+            self.message = values.contains("message") ? Optional.some(try values.decode(String.self, forKey: "message")) : nil
+            self.tree = values.contains("tree") ? Optional.some(try values.decode(Tree.self, forKey: "tree")) : nil
+            self.parents = values.contains("parents") ? Optional.some(try values.decode([Parent].self, forKey: "parents")) : nil
+            self.verification = values.contains("verification") ? Optional.some(try values.decode(Verification.self, forKey: "verification")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -279,13 +279,13 @@ public struct FileCommit: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.content = try values.decodeIfPresent(Content.self, forKey: "content")
+        self.content = try values.decode(Content?.self, forKey: "content")
         self.commit = try values.decode(Commit.self, forKey: "commit")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
-        try values.encodeIfPresent(content, forKey: "content")
+        try values.encode(content, forKey: "content")
         try values.encode(commit, forKey: "commit")
     }
 }

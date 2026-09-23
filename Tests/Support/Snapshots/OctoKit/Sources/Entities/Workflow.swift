@@ -63,7 +63,7 @@ public struct Workflow: Codable, Sendable {
         self.url = try values.decode(String.self, forKey: "url")
         self.htmlURL = try values.decode(String.self, forKey: "html_url")
         self.badgeURL = try values.decode(String.self, forKey: "badge_url")
-        self.deletedAt = try values.decodeIfPresent(Date.self, forKey: "deleted_at")
+        self.deletedAt = values.contains("deleted_at") ? Optional.some(try values.decode(Date.self, forKey: "deleted_at")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

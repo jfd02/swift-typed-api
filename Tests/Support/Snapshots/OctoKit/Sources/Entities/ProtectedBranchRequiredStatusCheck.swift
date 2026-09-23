@@ -24,13 +24,13 @@ public struct ProtectedBranchRequiredStatusCheck: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.context = try values.decode(String.self, forKey: "context")
-            self.appID = try values.decodeIfPresent(Int.self, forKey: "app_id")
+            self.appID = try values.decode(Int?.self, forKey: "app_id")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encode(context, forKey: "context")
-            try values.encodeIfPresent(appID, forKey: "app_id")
+            try values.encode(appID, forKey: "app_id")
         }
     }
 
@@ -45,12 +45,12 @@ public struct ProtectedBranchRequiredStatusCheck: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.url = try values.decodeIfPresent(String.self, forKey: "url")
-        self.enforcementLevel = try values.decodeIfPresent(String.self, forKey: "enforcement_level")
+        self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+        self.enforcementLevel = values.contains("enforcement_level") ? Optional.some(try values.decode(String.self, forKey: "enforcement_level")) : nil
         self.contexts = try values.decode([String].self, forKey: "contexts")
         self.checks = try values.decode([Check].self, forKey: "checks")
-        self.contextsURL = try values.decodeIfPresent(String.self, forKey: "contexts_url")
-        self.isStrict = try values.decodeIfPresent(Bool.self, forKey: "strict")
+        self.contextsURL = values.contains("contexts_url") ? Optional.some(try values.decode(String.self, forKey: "contexts_url")) : nil
+        self.isStrict = values.contains("strict") ? Optional.some(try values.decode(Bool.self, forKey: "strict")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

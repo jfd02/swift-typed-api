@@ -10,4 +10,9 @@ public struct Client: Codable, Sendable {
     public init(client: String? = nil) {
         self.client = client
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.client = values.contains(.client) ? Optional.some(try values.decode(String.self, forKey: .client)) : nil
+    }
 }

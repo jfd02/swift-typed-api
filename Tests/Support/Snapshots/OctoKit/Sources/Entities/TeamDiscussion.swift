@@ -76,14 +76,14 @@ public struct TeamDiscussion: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.author = try values.decodeIfPresent(SimpleUser.self, forKey: "author")
+        self.author = try values.decode(SimpleUser?.self, forKey: "author")
         self.body = try values.decode(String.self, forKey: "body")
         self.bodyHTML = try values.decode(String.self, forKey: "body_html")
         self.bodyVersion = try values.decode(String.self, forKey: "body_version")
         self.commentsCount = try values.decode(Int.self, forKey: "comments_count")
         self.commentsURL = try values.decode(URL.self, forKey: "comments_url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
-        self.lastEditedAt = try values.decodeIfPresent(Date.self, forKey: "last_edited_at")
+        self.lastEditedAt = try values.decode(Date?.self, forKey: "last_edited_at")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.number = try values.decode(Int.self, forKey: "number")
@@ -93,19 +93,19 @@ public struct TeamDiscussion: Codable, Sendable {
         self.title = try values.decode(String.self, forKey: "title")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.reactions = try values.decodeIfPresent(ReactionRollup.self, forKey: "reactions")
+        self.reactions = values.contains("reactions") ? Optional.some(try values.decode(ReactionRollup.self, forKey: "reactions")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
-        try values.encodeIfPresent(author, forKey: "author")
+        try values.encode(author, forKey: "author")
         try values.encode(body, forKey: "body")
         try values.encode(bodyHTML, forKey: "body_html")
         try values.encode(bodyVersion, forKey: "body_version")
         try values.encode(commentsCount, forKey: "comments_count")
         try values.encode(commentsURL, forKey: "comments_url")
         try values.encode(createdAt, forKey: "created_at")
-        try values.encodeIfPresent(lastEditedAt, forKey: "last_edited_at")
+        try values.encode(lastEditedAt, forKey: "last_edited_at")
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(number, forKey: "number")

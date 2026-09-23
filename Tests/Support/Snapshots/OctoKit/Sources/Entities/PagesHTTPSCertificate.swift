@@ -43,7 +43,7 @@ public struct PagesHTTPSCertificate: Codable, Sendable {
         self.state = try values.decode(State.self, forKey: "state")
         self.description = try values.decode(String.self, forKey: "description")
         self.domains = try values.decode([String].self, forKey: "domains")
-        self.expiresAt = try values.decodeIfPresent(NaiveDate.self, forKey: "expires_at")
+        self.expiresAt = values.contains("expires_at") ? Optional.some(try values.decode(NaiveDate.self, forKey: "expires_at")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -29,7 +29,7 @@ public struct RunnerGroupsEnterprise: Codable, Sendable {
         self.name = try values.decode(String.self, forKey: "name")
         self.visibility = try values.decode(String.self, forKey: "visibility")
         self.isDefault = try values.decode(Bool.self, forKey: "default")
-        self.selectedOrganizationsURL = try values.decodeIfPresent(String.self, forKey: "selected_organizations_url")
+        self.selectedOrganizationsURL = values.contains("selected_organizations_url") ? Optional.some(try values.decode(String.self, forKey: "selected_organizations_url")) : nil
         self.runnersURL = try values.decode(String.self, forKey: "runners_url")
         self.allowsPublicRepositories = try values.decode(Bool.self, forKey: "allows_public_repositories")
     }

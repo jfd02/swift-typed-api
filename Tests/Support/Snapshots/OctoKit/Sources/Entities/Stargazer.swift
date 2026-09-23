@@ -17,12 +17,12 @@ public struct Stargazer: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.starredAt = try values.decode(Date.self, forKey: "starred_at")
-        self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
+        self.user = try values.decode(SimpleUser?.self, forKey: "user")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(starredAt, forKey: "starred_at")
-        try values.encodeIfPresent(user, forKey: "user")
+        try values.encode(user, forKey: "user")
     }
 }

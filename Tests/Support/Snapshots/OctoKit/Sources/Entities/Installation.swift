@@ -63,21 +63,23 @@ public struct Installation: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
-            self.simpleUser = try? container.decode(SimpleUser.self)
-            self.enterprise = try? container.decode(Enterprise.self)
+            let decodedValue0 = try? container.decode(SimpleUser.self)
+            let decodedValue1 = try? container.decode(Enterprise.self)
+            guard decodedValue0 != nil || decodedValue1 != nil || container.decodeNil() else {
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "Data could not be decoded as any of the expected types (SimpleUser, Enterprise)."
+                )
+            }
+            self.simpleUser = decodedValue0
+            self.enterprise = decodedValue1
         }
 
         public func encode(to encoder: Encoder) throws {
-            let encodedValueCount = [simpleUser != nil, enterprise != nil].filter { $0 }.count
-            guard encodedValueCount == 1 else {
-                throw EncodingError.invalidValue(
-                    self,
-                    .init(codingPath: encoder.codingPath, debugDescription: "Expected exactly one anyOf value to be set.")
-                )
-            }
-            var container = encoder.singleValueContainer()
+            let container = AnyOfEncoder(encoder: encoder)
             if let value = simpleUser { try container.encode(value) }
             if let value = enterprise { try container.encode(value) }
+            try container.finish(allowsNull: true)
         }
     }
 
@@ -113,7 +115,7 @@ public struct Installation: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decode(Int.self, forKey: "id")
-        self.account = try values.decodeIfPresent(Account.self, forKey: "account")
+        self.account = try values.decode(Account?.self, forKey: "account")
         self.repositorySelection = try values.decode(RepositorySelection.self, forKey: "repository_selection")
         self.accessTokensURL = try values.decode(URL.self, forKey: "access_tokens_url")
         self.repositoriesURL = try values.decode(URL.self, forKey: "repositories_url")
@@ -125,19 +127,19 @@ public struct Installation: Codable, Sendable {
         self.events = try values.decode([String].self, forKey: "events")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.singleFileName = try values.decodeIfPresent(String.self, forKey: "single_file_name")
-        self.hasMultipleSingleFiles = try values.decodeIfPresent(Bool.self, forKey: "has_multiple_single_files")
-        self.singleFilePaths = try values.decodeIfPresent([String].self, forKey: "single_file_paths")
+        self.singleFileName = try values.decode(String?.self, forKey: "single_file_name")
+        self.hasMultipleSingleFiles = values.contains("has_multiple_single_files") ? Optional.some(try values.decode(Bool.self, forKey: "has_multiple_single_files")) : nil
+        self.singleFilePaths = values.contains("single_file_paths") ? Optional.some(try values.decode([String].self, forKey: "single_file_paths")) : nil
         self.appSlug = try values.decode(String.self, forKey: "app_slug")
-        self.suspendedBy = try values.decodeIfPresent(SimpleUser.self, forKey: "suspended_by")
-        self.suspendedAt = try values.decodeIfPresent(Date.self, forKey: "suspended_at")
+        self.suspendedBy = try values.decode(SimpleUser?.self, forKey: "suspended_by")
+        self.suspendedAt = try values.decode(Date?.self, forKey: "suspended_at")
         self.contactEmail = try values.decodeIfPresent(String.self, forKey: "contact_email")
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(id, forKey: "id")
-        try values.encodeIfPresent(account, forKey: "account")
+        try values.encode(account, forKey: "account")
         try values.encode(repositorySelection, forKey: "repository_selection")
         try values.encode(accessTokensURL, forKey: "access_tokens_url")
         try values.encode(repositoriesURL, forKey: "repositories_url")
@@ -149,12 +151,12 @@ public struct Installation: Codable, Sendable {
         try values.encode(events, forKey: "events")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
-        try values.encodeIfPresent(singleFileName, forKey: "single_file_name")
+        try values.encode(singleFileName, forKey: "single_file_name")
         try values.encodeIfPresent(hasMultipleSingleFiles, forKey: "has_multiple_single_files")
         try values.encodeIfPresent(singleFilePaths, forKey: "single_file_paths")
         try values.encode(appSlug, forKey: "app_slug")
-        try values.encodeIfPresent(suspendedBy, forKey: "suspended_by")
-        try values.encodeIfPresent(suspendedAt, forKey: "suspended_at")
+        try values.encode(suspendedBy, forKey: "suspended_by")
+        try values.encode(suspendedAt, forKey: "suspended_at")
         try values.encodeIfPresent(contactEmail, forKey: "contact_email")
     }
 }

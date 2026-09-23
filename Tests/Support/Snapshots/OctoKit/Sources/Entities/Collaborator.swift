@@ -63,9 +63,9 @@ public struct Collaborator: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.isPull = try values.decode(Bool.self, forKey: "pull")
-            self.isTriage = try values.decodeIfPresent(Bool.self, forKey: "triage")
+            self.isTriage = values.contains("triage") ? Optional.some(try values.decode(Bool.self, forKey: "triage")) : nil
             self.isPush = try values.decode(Bool.self, forKey: "push")
-            self.isMaintain = try values.decodeIfPresent(Bool.self, forKey: "maintain")
+            self.isMaintain = values.contains("maintain") ? Optional.some(try values.decode(Bool.self, forKey: "maintain")) : nil
             self.isAdmin = try values.decode(Bool.self, forKey: "admin")
         }
 
@@ -112,7 +112,7 @@ public struct Collaborator: Codable, Sendable {
         self.name = try values.decodeIfPresent(String.self, forKey: "name")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.avatarURL = try values.decode(URL.self, forKey: "avatar_url")
-        self.gravatarID = try values.decodeIfPresent(String.self, forKey: "gravatar_id")
+        self.gravatarID = try values.decode(String?.self, forKey: "gravatar_id")
         self.url = try values.decode(URL.self, forKey: "url")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.followersURL = try values.decode(URL.self, forKey: "followers_url")
@@ -126,7 +126,7 @@ public struct Collaborator: Codable, Sendable {
         self.receivedEventsURL = try values.decode(URL.self, forKey: "received_events_url")
         self.type = try values.decode(String.self, forKey: "type")
         self.isSiteAdmin = try values.decode(Bool.self, forKey: "site_admin")
-        self.permissions = try values.decodeIfPresent(Permissions.self, forKey: "permissions")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode(Permissions.self, forKey: "permissions")) : nil
         self.roleName = try values.decode(String.self, forKey: "role_name")
     }
 
@@ -138,7 +138,7 @@ public struct Collaborator: Codable, Sendable {
         try values.encodeIfPresent(name, forKey: "name")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(avatarURL, forKey: "avatar_url")
-        try values.encodeIfPresent(gravatarID, forKey: "gravatar_id")
+        try values.encode(gravatarID, forKey: "gravatar_id")
         try values.encode(url, forKey: "url")
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(followersURL, forKey: "followers_url")

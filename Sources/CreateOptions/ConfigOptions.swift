@@ -436,6 +436,8 @@ public struct ConfigOptions: ParsableConfiguration {
         /// the first time the API returns a value added after the client was generated.
         /// An open enum keeps the documented cases (so typos and new cases are still
         /// caught at compile time) and carries anything else through as `.unknown`.
+        /// If `unknown` is already a documented case, the fallback uses
+        /// `unknownValue`, adding a numeric suffix if needed to avoid collisions.
         @Option public var openEnums: Bool = false
 
         /// Automatically generate `Identifiable` conformance for entities that include an `id` property.

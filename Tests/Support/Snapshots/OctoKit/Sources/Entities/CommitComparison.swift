@@ -65,7 +65,7 @@ public struct CommitComparison: Codable, Sendable {
         self.behindBy = try values.decode(Int.self, forKey: "behind_by")
         self.totalCommits = try values.decode(Int.self, forKey: "total_commits")
         self.commits = try values.decode([Commit].self, forKey: "commits")
-        self.files = try values.decodeIfPresent([DiffEntry].self, forKey: "files")
+        self.files = values.contains("files") ? Optional.some(try values.decode([DiffEntry].self, forKey: "files")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

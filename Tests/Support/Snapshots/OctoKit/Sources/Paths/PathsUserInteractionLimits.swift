@@ -36,7 +36,14 @@ extension Paths.User {
 
             public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
-                self.interactionLimitResponse = try? container.decode(OctoKit.InteractionLimitResponse.self)
+                let decodedValue0 = try? container.decode(OctoKit.InteractionLimitResponse.self)
+                guard decodedValue0 != nil else {
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Data could not be decoded as any of the expected types (OctoKit.InteractionLimitResponse)."
+                    )
+                }
+                self.interactionLimitResponse = decodedValue0
             }
         }
 

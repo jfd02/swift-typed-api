@@ -19,7 +19,7 @@ public struct GistSimple: Codable, Sendable {
     public var gitPullURL: String?
     public var gitPushURL: String?
     public var htmlURL: String?
-    public var files: [String: File]?
+    public var files: [String: File?]?
     public var isPublic: Bool?
     public var createdAt: String?
     public var updatedAt: String?
@@ -49,11 +49,11 @@ public struct GistSimple: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.id = try values.decodeIfPresent(String.self, forKey: "id")
-            self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-            self.user = try values.decodeIfPresent(PublicUser.self, forKey: "user")
-            self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
-            self.updatedAt = try values.decodeIfPresent(Date.self, forKey: "updated_at")
+            self.id = values.contains("id") ? Optional.some(try values.decode(String.self, forKey: "id")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
+            self.user = values.contains("user") ? Optional.some(try values.decode(PublicUser.self, forKey: "user")) : nil
+            self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(Date.self, forKey: "created_at")) : nil
+            self.updatedAt = values.contains("updated_at") ? Optional.some(try values.decode(Date.self, forKey: "updated_at")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -108,11 +108,11 @@ public struct GistSimple: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.filename = try values.decodeIfPresent(String.self, forKey: "filename")
-                self.type = try values.decodeIfPresent(String.self, forKey: "type")
-                self.language = try values.decodeIfPresent(String.self, forKey: "language")
-                self.rawURL = try values.decodeIfPresent(String.self, forKey: "raw_url")
-                self.size = try values.decodeIfPresent(Int.self, forKey: "size")
+                self.filename = values.contains("filename") ? Optional.some(try values.decode(String.self, forKey: "filename")) : nil
+                self.type = values.contains("type") ? Optional.some(try values.decode(String.self, forKey: "type")) : nil
+                self.language = values.contains("language") ? Optional.some(try values.decode(String.self, forKey: "language")) : nil
+                self.rawURL = values.contains("raw_url") ? Optional.some(try values.decode(String.self, forKey: "raw_url")) : nil
+                self.size = values.contains("size") ? Optional.some(try values.decode(Int.self, forKey: "size")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -162,14 +162,14 @@ public struct GistSimple: Codable, Sendable {
             self.isPublic = try values.decode(Bool.self, forKey: "public")
             self.createdAt = try values.decode(Date.self, forKey: "created_at")
             self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-            self.description = try values.decodeIfPresent(String.self, forKey: "description")
+            self.description = try values.decode(String?.self, forKey: "description")
             self.comments = try values.decode(Int.self, forKey: "comments")
-            self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
+            self.user = try values.decode(SimpleUser?.self, forKey: "user")
             self.commentsURL = try values.decode(URL.self, forKey: "comments_url")
             self.owner = try values.decodeIfPresent(SimpleUser.self, forKey: "owner")
-            self.isTruncated = try values.decodeIfPresent(Bool.self, forKey: "truncated")
-            self.forks = try values.decodeIfPresent([AnyJSON].self, forKey: "forks")
-            self.history = try values.decodeIfPresent([AnyJSON].self, forKey: "history")
+            self.isTruncated = values.contains("truncated") ? Optional.some(try values.decode(Bool.self, forKey: "truncated")) : nil
+            self.forks = values.contains("forks") ? Optional.some(try values.decode([AnyJSON].self, forKey: "forks")) : nil
+            self.history = values.contains("history") ? Optional.some(try values.decode([AnyJSON].self, forKey: "history")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -186,9 +186,9 @@ public struct GistSimple: Codable, Sendable {
             try values.encode(isPublic, forKey: "public")
             try values.encode(createdAt, forKey: "created_at")
             try values.encode(updatedAt, forKey: "updated_at")
-            try values.encodeIfPresent(description, forKey: "description")
+            try values.encode(description, forKey: "description")
             try values.encode(comments, forKey: "comments")
-            try values.encodeIfPresent(user, forKey: "user")
+            try values.encode(user, forKey: "user")
             try values.encode(commentsURL, forKey: "comments_url")
             try values.encodeIfPresent(owner, forKey: "owner")
             try values.encodeIfPresent(isTruncated, forKey: "truncated")
@@ -218,13 +218,13 @@ public struct GistSimple: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.filename = try values.decodeIfPresent(String.self, forKey: "filename")
-            self.type = try values.decodeIfPresent(String.self, forKey: "type")
-            self.language = try values.decodeIfPresent(String.self, forKey: "language")
-            self.rawURL = try values.decodeIfPresent(String.self, forKey: "raw_url")
-            self.size = try values.decodeIfPresent(Int.self, forKey: "size")
-            self.isTruncated = try values.decodeIfPresent(Bool.self, forKey: "truncated")
-            self.content = try values.decodeIfPresent(String.self, forKey: "content")
+            self.filename = values.contains("filename") ? Optional.some(try values.decode(String.self, forKey: "filename")) : nil
+            self.type = values.contains("type") ? Optional.some(try values.decode(String.self, forKey: "type")) : nil
+            self.language = values.contains("language") ? Optional.some(try values.decode(String.self, forKey: "language")) : nil
+            self.rawURL = values.contains("raw_url") ? Optional.some(try values.decode(String.self, forKey: "raw_url")) : nil
+            self.size = values.contains("size") ? Optional.some(try values.decode(Int.self, forKey: "size")) : nil
+            self.isTruncated = values.contains("truncated") ? Optional.some(try values.decode(Bool.self, forKey: "truncated")) : nil
+            self.content = values.contains("content") ? Optional.some(try values.decode(String.self, forKey: "content")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -239,7 +239,7 @@ public struct GistSimple: Codable, Sendable {
         }
     }
 
-    public init(forks: [Fork]? = nil, history: [GistHistory]? = nil, forkOf: ForkOf? = nil, url: String? = nil, forksURL: String? = nil, commitsURL: String? = nil, id: String? = nil, nodeID: String? = nil, gitPullURL: String? = nil, gitPushURL: String? = nil, htmlURL: String? = nil, files: [String: File]? = nil, isPublic: Bool? = nil, createdAt: String? = nil, updatedAt: String? = nil, description: String? = nil, comments: Int? = nil, user: String? = nil, commentsURL: String? = nil, owner: SimpleUser? = nil, isTruncated: Bool? = nil) {
+    public init(forks: [Fork]? = nil, history: [GistHistory]? = nil, forkOf: ForkOf? = nil, url: String? = nil, forksURL: String? = nil, commitsURL: String? = nil, id: String? = nil, nodeID: String? = nil, gitPullURL: String? = nil, gitPushURL: String? = nil, htmlURL: String? = nil, files: [String: File?]? = nil, isPublic: Bool? = nil, createdAt: String? = nil, updatedAt: String? = nil, description: String? = nil, comments: Int? = nil, user: String? = nil, commentsURL: String? = nil, owner: SimpleUser? = nil, isTruncated: Bool? = nil) {
         self.forks = forks
         self.history = history
         self.forkOf = forkOf
@@ -268,24 +268,24 @@ public struct GistSimple: Codable, Sendable {
         self.forks = try values.decodeIfPresent([Fork].self, forKey: "forks")
         self.history = try values.decodeIfPresent([GistHistory].self, forKey: "history")
         self.forkOf = try values.decodeIfPresent(ForkOf.self, forKey: "fork_of")
-        self.url = try values.decodeIfPresent(String.self, forKey: "url")
-        self.forksURL = try values.decodeIfPresent(String.self, forKey: "forks_url")
-        self.commitsURL = try values.decodeIfPresent(String.self, forKey: "commits_url")
-        self.id = try values.decodeIfPresent(String.self, forKey: "id")
-        self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-        self.gitPullURL = try values.decodeIfPresent(String.self, forKey: "git_pull_url")
-        self.gitPushURL = try values.decodeIfPresent(String.self, forKey: "git_push_url")
-        self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-        self.files = try values.decodeIfPresent([String: File].self, forKey: "files")
-        self.isPublic = try values.decodeIfPresent(Bool.self, forKey: "public")
-        self.createdAt = try values.decodeIfPresent(String.self, forKey: "created_at")
-        self.updatedAt = try values.decodeIfPresent(String.self, forKey: "updated_at")
+        self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+        self.forksURL = values.contains("forks_url") ? Optional.some(try values.decode(String.self, forKey: "forks_url")) : nil
+        self.commitsURL = values.contains("commits_url") ? Optional.some(try values.decode(String.self, forKey: "commits_url")) : nil
+        self.id = values.contains("id") ? Optional.some(try values.decode(String.self, forKey: "id")) : nil
+        self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+        self.gitPullURL = values.contains("git_pull_url") ? Optional.some(try values.decode(String.self, forKey: "git_pull_url")) : nil
+        self.gitPushURL = values.contains("git_push_url") ? Optional.some(try values.decode(String.self, forKey: "git_push_url")) : nil
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+        self.files = values.contains("files") ? Optional.some(try values.decode([String: File?].self, forKey: "files")) : nil
+        self.isPublic = values.contains("public") ? Optional.some(try values.decode(Bool.self, forKey: "public")) : nil
+        self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(String.self, forKey: "created_at")) : nil
+        self.updatedAt = values.contains("updated_at") ? Optional.some(try values.decode(String.self, forKey: "updated_at")) : nil
         self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.comments = try values.decodeIfPresent(Int.self, forKey: "comments")
+        self.comments = values.contains("comments") ? Optional.some(try values.decode(Int.self, forKey: "comments")) : nil
         self.user = try values.decodeIfPresent(String.self, forKey: "user")
-        self.commentsURL = try values.decodeIfPresent(String.self, forKey: "comments_url")
-        self.owner = try values.decodeIfPresent(SimpleUser.self, forKey: "owner")
-        self.isTruncated = try values.decodeIfPresent(Bool.self, forKey: "truncated")
+        self.commentsURL = values.contains("comments_url") ? Optional.some(try values.decode(String.self, forKey: "comments_url")) : nil
+        self.owner = values.contains("owner") ? Optional.some(try values.decode(SimpleUser.self, forKey: "owner")) : nil
+        self.isTruncated = values.contains("truncated") ? Optional.some(try values.decode(Bool.self, forKey: "truncated")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -17,9 +17,9 @@ public struct TimelineLineCommentedEvent: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.event = try values.decodeIfPresent(String.self, forKey: "event")
-        self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-        self.comments = try values.decodeIfPresent([PullRequestReviewComment].self, forKey: "comments")
+        self.event = values.contains("event") ? Optional.some(try values.decode(String.self, forKey: "event")) : nil
+        self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+        self.comments = values.contains("comments") ? Optional.some(try values.decode([PullRequestReviewComment].self, forKey: "comments")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

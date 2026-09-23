@@ -17,9 +17,9 @@ public struct ArrayTest: Codable, Sendable {
 
 	public init(from decoder: Decoder) throws {
 		let values = try decoder.container(keyedBy: StringCodingKey.self)
-		self.arrayOfString = try values.decodeIfPresent([String].self, forKey: "array_of_string")
-		self.arrayArrayOfInteger = try values.decodeIfPresent([[Int64]].self, forKey: "array_array_of_integer")
-		self.arrayArrayOfModel = try values.decodeIfPresent([[ReadOnlyFirst]].self, forKey: "array_array_of_model")
+		self.arrayOfString = values.contains("array_of_string") ? Optional.some(try values.decode([String].self, forKey: "array_of_string")) : nil
+		self.arrayArrayOfInteger = values.contains("array_array_of_integer") ? Optional.some(try values.decode([[Int64]].self, forKey: "array_array_of_integer")) : nil
+		self.arrayArrayOfModel = values.contains("array_array_of_model") ? Optional.some(try values.decode([[ReadOnlyFirst]].self, forKey: "array_array_of_model")) : nil
 	}
 
 	public func encode(to encoder: Encoder) throws {

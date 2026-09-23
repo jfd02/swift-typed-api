@@ -44,10 +44,10 @@ public struct OrgHook: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
-            self.insecureSSL = try values.decodeIfPresent(String.self, forKey: "insecure_ssl")
-            self.contentType = try values.decodeIfPresent(String.self, forKey: "content_type")
-            self.secret = try values.decodeIfPresent(String.self, forKey: "secret")
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+            self.insecureSSL = values.contains("insecure_ssl") ? Optional.some(try values.decode(String.self, forKey: "insecure_ssl")) : nil
+            self.contentType = values.contains("content_type") ? Optional.some(try values.decode(String.self, forKey: "content_type")) : nil
+            self.secret = values.contains("secret") ? Optional.some(try values.decode(String.self, forKey: "secret")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -78,7 +78,7 @@ public struct OrgHook: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.url = try values.decode(URL.self, forKey: "url")
         self.pingURL = try values.decode(URL.self, forKey: "ping_url")
-        self.deliveriesURL = try values.decodeIfPresent(URL.self, forKey: "deliveries_url")
+        self.deliveriesURL = values.contains("deliveries_url") ? Optional.some(try values.decode(URL.self, forKey: "deliveries_url")) : nil
         self.name = try values.decode(String.self, forKey: "name")
         self.events = try values.decode([String].self, forKey: "events")
         self.isActive = try values.decode(Bool.self, forKey: "active")

@@ -49,13 +49,13 @@ public struct ReviewRequestRemovedIssueEvent: Codable, Sendable {
         self.url = try values.decode(String.self, forKey: "url")
         self.actor = try values.decode(SimpleUser.self, forKey: "actor")
         self.event = try values.decode(String.self, forKey: "event")
-        self.commitID = try values.decodeIfPresent(String.self, forKey: "commit_id")
-        self.commitURL = try values.decodeIfPresent(String.self, forKey: "commit_url")
+        self.commitID = try values.decode(String?.self, forKey: "commit_id")
+        self.commitURL = try values.decode(String?.self, forKey: "commit_url")
         self.createdAt = try values.decode(String.self, forKey: "created_at")
-        self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
+        self.performedViaGithubApp = try values.decode(Integration?.self, forKey: "performed_via_github_app")
         self.reviewRequester = try values.decode(SimpleUser.self, forKey: "review_requester")
-        self.requestedTeam = try values.decodeIfPresent(Team.self, forKey: "requested_team")
-        self.requestedReviewer = try values.decodeIfPresent(SimpleUser.self, forKey: "requested_reviewer")
+        self.requestedTeam = values.contains("requested_team") ? Optional.some(try values.decode(Team.self, forKey: "requested_team")) : nil
+        self.requestedReviewer = values.contains("requested_reviewer") ? Optional.some(try values.decode(SimpleUser.self, forKey: "requested_reviewer")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -65,10 +65,10 @@ public struct ReviewRequestRemovedIssueEvent: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(actor, forKey: "actor")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(commitID, forKey: "commit_id")
-        try values.encodeIfPresent(commitURL, forKey: "commit_url")
+        try values.encode(commitID, forKey: "commit_id")
+        try values.encode(commitURL, forKey: "commit_url")
         try values.encode(createdAt, forKey: "created_at")
-        try values.encodeIfPresent(performedViaGithubApp, forKey: "performed_via_github_app")
+        try values.encode(performedViaGithubApp, forKey: "performed_via_github_app")
         try values.encode(reviewRequester, forKey: "review_requester")
         try values.encodeIfPresent(requestedTeam, forKey: "requested_team")
         try values.encodeIfPresent(requestedReviewer, forKey: "requested_reviewer")

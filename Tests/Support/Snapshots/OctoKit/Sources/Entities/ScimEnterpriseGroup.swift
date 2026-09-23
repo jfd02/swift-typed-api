@@ -25,9 +25,9 @@ public struct ScimEnterpriseGroup: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.value = try values.decodeIfPresent(String.self, forKey: "value")
-            self.ref = try values.decodeIfPresent(String.self, forKey: "$ref")
-            self.display = try values.decodeIfPresent(String.self, forKey: "display")
+            self.value = values.contains("value") ? Optional.some(try values.decode(String.self, forKey: "value")) : nil
+            self.ref = values.contains("$ref") ? Optional.some(try values.decode(String.self, forKey: "$ref")) : nil
+            self.display = values.contains("display") ? Optional.some(try values.decode(String.self, forKey: "display")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -53,10 +53,10 @@ public struct ScimEnterpriseGroup: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.resourceType = try values.decodeIfPresent(String.self, forKey: "resourceType")
-            self.created = try values.decodeIfPresent(String.self, forKey: "created")
-            self.lastModified = try values.decodeIfPresent(String.self, forKey: "lastModified")
-            self.location = try values.decodeIfPresent(String.self, forKey: "location")
+            self.resourceType = values.contains("resourceType") ? Optional.some(try values.decode(String.self, forKey: "resourceType")) : nil
+            self.created = values.contains("created") ? Optional.some(try values.decode(String.self, forKey: "created")) : nil
+            self.lastModified = values.contains("lastModified") ? Optional.some(try values.decode(String.self, forKey: "lastModified")) : nil
+            self.location = values.contains("location") ? Optional.some(try values.decode(String.self, forKey: "location")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -82,9 +82,9 @@ public struct ScimEnterpriseGroup: Codable, Sendable {
         self.schemas = try values.decode([String].self, forKey: "schemas")
         self.id = try values.decode(String.self, forKey: "id")
         self.externalID = try values.decodeIfPresent(String.self, forKey: "externalId")
-        self.displayName = try values.decodeIfPresent(String.self, forKey: "displayName")
-        self.members = try values.decodeIfPresent([Member].self, forKey: "members")
-        self.meta = try values.decodeIfPresent(Meta.self, forKey: "meta")
+        self.displayName = values.contains("displayName") ? Optional.some(try values.decode(String.self, forKey: "displayName")) : nil
+        self.members = values.contains("members") ? Optional.some(try values.decode([Member].self, forKey: "members")) : nil
+        self.meta = values.contains("meta") ? Optional.some(try values.decode(Meta.self, forKey: "meta")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -72,10 +72,10 @@ public struct PagesHealthCheck: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.host = try values.decodeIfPresent(String.self, forKey: "host")
-            self.uri = try values.decodeIfPresent(String.self, forKey: "uri")
-            self.nameservers = try values.decodeIfPresent(String.self, forKey: "nameservers")
-            self.dnsResolves = try values.decodeIfPresent(Bool.self, forKey: "dns_resolves")
+            self.host = values.contains("host") ? Optional.some(try values.decode(String.self, forKey: "host")) : nil
+            self.uri = values.contains("uri") ? Optional.some(try values.decode(String.self, forKey: "uri")) : nil
+            self.nameservers = values.contains("nameservers") ? Optional.some(try values.decode(String.self, forKey: "nameservers")) : nil
+            self.dnsResolves = values.contains("dns_resolves") ? Optional.some(try values.decode(Bool.self, forKey: "dns_resolves")) : nil
             self.isProxied = try values.decodeIfPresent(Bool.self, forKey: "is_proxied")
             self.isCloudflareIp = try values.decodeIfPresent(Bool.self, forKey: "is_cloudflare_ip")
             self.isFastlyIp = try values.decodeIfPresent(Bool.self, forKey: "is_fastly_ip")
@@ -83,20 +83,20 @@ public struct PagesHealthCheck: Codable, Sendable {
             self.isARecord = try values.decodeIfPresent(Bool.self, forKey: "is_a_record")
             self.hasCnameRecord = try values.decodeIfPresent(Bool.self, forKey: "has_cname_record")
             self.hasMxRecordsPresent = try values.decodeIfPresent(Bool.self, forKey: "has_mx_records_present")
-            self.isValidDomain = try values.decodeIfPresent(Bool.self, forKey: "is_valid_domain")
-            self.isApexDomain = try values.decodeIfPresent(Bool.self, forKey: "is_apex_domain")
+            self.isValidDomain = values.contains("is_valid_domain") ? Optional.some(try values.decode(Bool.self, forKey: "is_valid_domain")) : nil
+            self.isApexDomain = values.contains("is_apex_domain") ? Optional.some(try values.decode(Bool.self, forKey: "is_apex_domain")) : nil
             self.shouldBeARecord = try values.decodeIfPresent(Bool.self, forKey: "should_be_a_record")
             self.isCnameToGithubUserDomain = try values.decodeIfPresent(Bool.self, forKey: "is_cname_to_github_user_domain")
             self.isCnameToPagesDotGithubDotCom = try values.decodeIfPresent(Bool.self, forKey: "is_cname_to_pages_dot_github_dot_com")
             self.isCnameToFastly = try values.decodeIfPresent(Bool.self, forKey: "is_cname_to_fastly")
             self.isPointedToGithubPagesIp = try values.decodeIfPresent(Bool.self, forKey: "is_pointed_to_github_pages_ip")
             self.isNonGithubPagesIpPresent = try values.decodeIfPresent(Bool.self, forKey: "is_non_github_pages_ip_present")
-            self.isPagesDomain = try values.decodeIfPresent(Bool.self, forKey: "is_pages_domain")
+            self.isPagesDomain = values.contains("is_pages_domain") ? Optional.some(try values.decode(Bool.self, forKey: "is_pages_domain")) : nil
             self.isServedByPages = try values.decodeIfPresent(Bool.self, forKey: "is_served_by_pages")
-            self.isValid = try values.decodeIfPresent(Bool.self, forKey: "is_valid")
+            self.isValid = values.contains("is_valid") ? Optional.some(try values.decode(Bool.self, forKey: "is_valid")) : nil
             self.reason = try values.decodeIfPresent(String.self, forKey: "reason")
-            self.respondsToHTTPS = try values.decodeIfPresent(Bool.self, forKey: "responds_to_https")
-            self.enforcesHTTPS = try values.decodeIfPresent(Bool.self, forKey: "enforces_https")
+            self.respondsToHTTPS = values.contains("responds_to_https") ? Optional.some(try values.decode(Bool.self, forKey: "responds_to_https")) : nil
+            self.enforcesHTTPS = values.contains("enforces_https") ? Optional.some(try values.decode(Bool.self, forKey: "enforces_https")) : nil
             self.httpsError = try values.decodeIfPresent(String.self, forKey: "https_error")
             self.isHTTPSEligible = try values.decodeIfPresent(Bool.self, forKey: "is_https_eligible")
             self.caaError = try values.decodeIfPresent(String.self, forKey: "caa_error")
@@ -198,10 +198,10 @@ public struct PagesHealthCheck: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.host = try values.decodeIfPresent(String.self, forKey: "host")
-            self.uri = try values.decodeIfPresent(String.self, forKey: "uri")
-            self.nameservers = try values.decodeIfPresent(String.self, forKey: "nameservers")
-            self.dnsResolves = try values.decodeIfPresent(Bool.self, forKey: "dns_resolves")
+            self.host = values.contains("host") ? Optional.some(try values.decode(String.self, forKey: "host")) : nil
+            self.uri = values.contains("uri") ? Optional.some(try values.decode(String.self, forKey: "uri")) : nil
+            self.nameservers = values.contains("nameservers") ? Optional.some(try values.decode(String.self, forKey: "nameservers")) : nil
+            self.dnsResolves = values.contains("dns_resolves") ? Optional.some(try values.decode(Bool.self, forKey: "dns_resolves")) : nil
             self.isProxied = try values.decodeIfPresent(Bool.self, forKey: "is_proxied")
             self.isCloudflareIp = try values.decodeIfPresent(Bool.self, forKey: "is_cloudflare_ip")
             self.isFastlyIp = try values.decodeIfPresent(Bool.self, forKey: "is_fastly_ip")
@@ -209,20 +209,20 @@ public struct PagesHealthCheck: Codable, Sendable {
             self.isARecord = try values.decodeIfPresent(Bool.self, forKey: "is_a_record")
             self.hasCnameRecord = try values.decodeIfPresent(Bool.self, forKey: "has_cname_record")
             self.hasMxRecordsPresent = try values.decodeIfPresent(Bool.self, forKey: "has_mx_records_present")
-            self.isValidDomain = try values.decodeIfPresent(Bool.self, forKey: "is_valid_domain")
-            self.isApexDomain = try values.decodeIfPresent(Bool.self, forKey: "is_apex_domain")
+            self.isValidDomain = values.contains("is_valid_domain") ? Optional.some(try values.decode(Bool.self, forKey: "is_valid_domain")) : nil
+            self.isApexDomain = values.contains("is_apex_domain") ? Optional.some(try values.decode(Bool.self, forKey: "is_apex_domain")) : nil
             self.shouldBeARecord = try values.decodeIfPresent(Bool.self, forKey: "should_be_a_record")
             self.isCnameToGithubUserDomain = try values.decodeIfPresent(Bool.self, forKey: "is_cname_to_github_user_domain")
             self.isCnameToPagesDotGithubDotCom = try values.decodeIfPresent(Bool.self, forKey: "is_cname_to_pages_dot_github_dot_com")
             self.isCnameToFastly = try values.decodeIfPresent(Bool.self, forKey: "is_cname_to_fastly")
             self.isPointedToGithubPagesIp = try values.decodeIfPresent(Bool.self, forKey: "is_pointed_to_github_pages_ip")
             self.isNonGithubPagesIpPresent = try values.decodeIfPresent(Bool.self, forKey: "is_non_github_pages_ip_present")
-            self.isPagesDomain = try values.decodeIfPresent(Bool.self, forKey: "is_pages_domain")
+            self.isPagesDomain = values.contains("is_pages_domain") ? Optional.some(try values.decode(Bool.self, forKey: "is_pages_domain")) : nil
             self.isServedByPages = try values.decodeIfPresent(Bool.self, forKey: "is_served_by_pages")
-            self.isValid = try values.decodeIfPresent(Bool.self, forKey: "is_valid")
+            self.isValid = values.contains("is_valid") ? Optional.some(try values.decode(Bool.self, forKey: "is_valid")) : nil
             self.reason = try values.decodeIfPresent(String.self, forKey: "reason")
-            self.respondsToHTTPS = try values.decodeIfPresent(Bool.self, forKey: "responds_to_https")
-            self.enforcesHTTPS = try values.decodeIfPresent(Bool.self, forKey: "enforces_https")
+            self.respondsToHTTPS = values.contains("responds_to_https") ? Optional.some(try values.decode(Bool.self, forKey: "responds_to_https")) : nil
+            self.enforcesHTTPS = values.contains("enforces_https") ? Optional.some(try values.decode(Bool.self, forKey: "enforces_https")) : nil
             self.httpsError = try values.decodeIfPresent(String.self, forKey: "https_error")
             self.isHTTPSEligible = try values.decodeIfPresent(Bool.self, forKey: "is_https_eligible")
             self.caaError = try values.decodeIfPresent(String.self, forKey: "caa_error")
@@ -268,7 +268,7 @@ public struct PagesHealthCheck: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.domain = try values.decodeIfPresent(Domain.self, forKey: "domain")
+        self.domain = values.contains("domain") ? Optional.some(try values.decode(Domain.self, forKey: "domain")) : nil
         self.altDomain = try values.decodeIfPresent(AltDomain.self, forKey: "alt_domain")
     }
 

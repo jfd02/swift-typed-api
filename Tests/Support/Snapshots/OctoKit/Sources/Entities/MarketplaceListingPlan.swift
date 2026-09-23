@@ -58,7 +58,7 @@ public struct MarketplaceListingPlan: Codable, Sendable {
         self.yearlyPriceInCents = try values.decode(Int.self, forKey: "yearly_price_in_cents")
         self.priceModel = try values.decode(String.self, forKey: "price_model")
         self.hasFreeTrial = try values.decode(Bool.self, forKey: "has_free_trial")
-        self.unitName = try values.decodeIfPresent(String.self, forKey: "unit_name")
+        self.unitName = try values.decode(String?.self, forKey: "unit_name")
         self.state = try values.decode(String.self, forKey: "state")
         self.bullets = try values.decode([String].self, forKey: "bullets")
     }
@@ -75,7 +75,7 @@ public struct MarketplaceListingPlan: Codable, Sendable {
         try values.encode(yearlyPriceInCents, forKey: "yearly_price_in_cents")
         try values.encode(priceModel, forKey: "price_model")
         try values.encode(hasFreeTrial, forKey: "has_free_trial")
-        try values.encodeIfPresent(unitName, forKey: "unit_name")
+        try values.encode(unitName, forKey: "unit_name")
         try values.encode(state, forKey: "state")
         try values.encode(bullets, forKey: "bullets")
     }

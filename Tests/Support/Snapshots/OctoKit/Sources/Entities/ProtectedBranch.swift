@@ -71,10 +71,10 @@ public struct ProtectedBranch: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.url = try values.decode(URL.self, forKey: "url")
-            self.dismissStaleReviews = try values.decodeIfPresent(Bool.self, forKey: "dismiss_stale_reviews")
-            self.requireCodeOwnerReviews = try values.decodeIfPresent(Bool.self, forKey: "require_code_owner_reviews")
-            self.requiredApprovingReviewCount = try values.decodeIfPresent(Int.self, forKey: "required_approving_review_count")
-            self.dismissalRestrictions = try values.decodeIfPresent(DismissalRestrictions.self, forKey: "dismissal_restrictions")
+            self.dismissStaleReviews = values.contains("dismiss_stale_reviews") ? Optional.some(try values.decode(Bool.self, forKey: "dismiss_stale_reviews")) : nil
+            self.requireCodeOwnerReviews = values.contains("require_code_owner_reviews") ? Optional.some(try values.decode(Bool.self, forKey: "require_code_owner_reviews")) : nil
+            self.requiredApprovingReviewCount = values.contains("required_approving_review_count") ? Optional.some(try values.decode(Int.self, forKey: "required_approving_review_count")) : nil
+            self.dismissalRestrictions = values.contains("dismissal_restrictions") ? Optional.some(try values.decode(DismissalRestrictions.self, forKey: "dismissal_restrictions")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -196,7 +196,7 @@ public struct ProtectedBranch: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.isEnabled = try values.decodeIfPresent(Bool.self, forKey: "enabled")
+            self.isEnabled = values.contains("enabled") ? Optional.some(try values.decode(Bool.self, forKey: "enabled")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -221,15 +221,15 @@ public struct ProtectedBranch: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.url = try values.decode(URL.self, forKey: "url")
-        self.requiredStatusChecks = try values.decodeIfPresent(StatusCheckPolicy.self, forKey: "required_status_checks")
-        self.requiredPullRequestReviews = try values.decodeIfPresent(RequiredPullRequestReviews.self, forKey: "required_pull_request_reviews")
-        self.requiredSignatures = try values.decodeIfPresent(RequiredSignatures.self, forKey: "required_signatures")
-        self.enforceAdmins = try values.decodeIfPresent(EnforceAdmins.self, forKey: "enforce_admins")
-        self.requiredLinearHistory = try values.decodeIfPresent(RequiredLinearHistory.self, forKey: "required_linear_history")
-        self.allowForcePushes = try values.decodeIfPresent(AllowForcePushes.self, forKey: "allow_force_pushes")
-        self.allowDeletions = try values.decodeIfPresent(AllowDeletions.self, forKey: "allow_deletions")
-        self.restrictions = try values.decodeIfPresent(BranchRestrictionPolicy.self, forKey: "restrictions")
-        self.requiredConversationResolution = try values.decodeIfPresent(RequiredConversationResolution.self, forKey: "required_conversation_resolution")
+        self.requiredStatusChecks = values.contains("required_status_checks") ? Optional.some(try values.decode(StatusCheckPolicy.self, forKey: "required_status_checks")) : nil
+        self.requiredPullRequestReviews = values.contains("required_pull_request_reviews") ? Optional.some(try values.decode(RequiredPullRequestReviews.self, forKey: "required_pull_request_reviews")) : nil
+        self.requiredSignatures = values.contains("required_signatures") ? Optional.some(try values.decode(RequiredSignatures.self, forKey: "required_signatures")) : nil
+        self.enforceAdmins = values.contains("enforce_admins") ? Optional.some(try values.decode(EnforceAdmins.self, forKey: "enforce_admins")) : nil
+        self.requiredLinearHistory = values.contains("required_linear_history") ? Optional.some(try values.decode(RequiredLinearHistory.self, forKey: "required_linear_history")) : nil
+        self.allowForcePushes = values.contains("allow_force_pushes") ? Optional.some(try values.decode(AllowForcePushes.self, forKey: "allow_force_pushes")) : nil
+        self.allowDeletions = values.contains("allow_deletions") ? Optional.some(try values.decode(AllowDeletions.self, forKey: "allow_deletions")) : nil
+        self.restrictions = values.contains("restrictions") ? Optional.some(try values.decode(BranchRestrictionPolicy.self, forKey: "restrictions")) : nil
+        self.requiredConversationResolution = values.contains("required_conversation_resolution") ? Optional.some(try values.decode(RequiredConversationResolution.self, forKey: "required_conversation_resolution")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

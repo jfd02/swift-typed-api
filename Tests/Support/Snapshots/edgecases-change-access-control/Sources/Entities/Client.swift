@@ -13,7 +13,7 @@ struct Client: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.client = try values.decodeIfPresent(String.self, forKey: "client")
+        self.client = values.contains("client") ? Optional.some(try values.decode(String.self, forKey: "client")) : nil
     }
 
     func encode(to encoder: Encoder) throws {

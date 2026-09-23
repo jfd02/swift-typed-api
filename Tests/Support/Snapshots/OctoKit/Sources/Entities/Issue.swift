@@ -97,13 +97,13 @@ public struct Issue: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.id = try values.decodeIfPresent(Int64.self, forKey: "id")
-                self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-                self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-                self.name = try values.decodeIfPresent(String.self, forKey: "name")
+                self.id = values.contains("id") ? Optional.some(try values.decode(Int64.self, forKey: "id")) : nil
+                self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+                self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
+                self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
                 self.description = try values.decodeIfPresent(String.self, forKey: "description")
                 self.color = try values.decodeIfPresent(String.self, forKey: "color")
-                self.isDefault = try values.decodeIfPresent(Bool.self, forKey: "default")
+                self.isDefault = values.contains("default") ? Optional.some(try values.decode(Bool.self, forKey: "default")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -159,19 +159,19 @@ public struct Issue: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.mergedAt = try values.decodeIfPresent(Date.self, forKey: "merged_at")
-            self.diffURL = try values.decodeIfPresent(URL.self, forKey: "diff_url")
-            self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
-            self.patchURL = try values.decodeIfPresent(URL.self, forKey: "patch_url")
-            self.url = try values.decodeIfPresent(URL.self, forKey: "url")
+            self.diffURL = try values.decode(URL?.self, forKey: "diff_url")
+            self.htmlURL = try values.decode(URL?.self, forKey: "html_url")
+            self.patchURL = try values.decode(URL?.self, forKey: "patch_url")
+            self.url = try values.decode(URL?.self, forKey: "url")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encodeIfPresent(mergedAt, forKey: "merged_at")
-            try values.encodeIfPresent(diffURL, forKey: "diff_url")
-            try values.encodeIfPresent(htmlURL, forKey: "html_url")
-            try values.encodeIfPresent(patchURL, forKey: "patch_url")
-            try values.encodeIfPresent(url, forKey: "url")
+            try values.encode(diffURL, forKey: "diff_url")
+            try values.encode(htmlURL, forKey: "html_url")
+            try values.encode(patchURL, forKey: "patch_url")
+            try values.encode(url, forKey: "url")
         }
     }
 
@@ -225,27 +225,27 @@ public struct Issue: Codable, Sendable {
         self.state = try values.decode(String.self, forKey: "state")
         self.title = try values.decode(String.self, forKey: "title")
         self.body = try values.decodeIfPresent(String.self, forKey: "body")
-        self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
+        self.user = try values.decode(SimpleUser?.self, forKey: "user")
         self.labels = try values.decode([Label].self, forKey: "labels")
-        self.assignee = try values.decodeIfPresent(SimpleUser.self, forKey: "assignee")
+        self.assignee = try values.decode(SimpleUser?.self, forKey: "assignee")
         self.assignees = try values.decodeIfPresent([SimpleUser].self, forKey: "assignees")
-        self.milestone = try values.decodeIfPresent(Milestone.self, forKey: "milestone")
+        self.milestone = try values.decode(Milestone?.self, forKey: "milestone")
         self.isLocked = try values.decode(Bool.self, forKey: "locked")
         self.activeLockReason = try values.decodeIfPresent(String.self, forKey: "active_lock_reason")
         self.comments = try values.decode(Int.self, forKey: "comments")
-        self.pullRequest = try values.decodeIfPresent(PullRequest.self, forKey: "pull_request")
-        self.closedAt = try values.decodeIfPresent(Date.self, forKey: "closed_at")
+        self.pullRequest = values.contains("pull_request") ? Optional.some(try values.decode(PullRequest.self, forKey: "pull_request")) : nil
+        self.closedAt = try values.decode(Date?.self, forKey: "closed_at")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.isDraft = try values.decodeIfPresent(Bool.self, forKey: "draft")
+        self.isDraft = values.contains("draft") ? Optional.some(try values.decode(Bool.self, forKey: "draft")) : nil
         self.closedBy = try values.decodeIfPresent(SimpleUser.self, forKey: "closed_by")
-        self.bodyHTML = try values.decodeIfPresent(String.self, forKey: "body_html")
-        self.bodyText = try values.decodeIfPresent(String.self, forKey: "body_text")
-        self.timelineURL = try values.decodeIfPresent(URL.self, forKey: "timeline_url")
-        self.repository = try values.decodeIfPresent(Repository.self, forKey: "repository")
+        self.bodyHTML = values.contains("body_html") ? Optional.some(try values.decode(String.self, forKey: "body_html")) : nil
+        self.bodyText = values.contains("body_text") ? Optional.some(try values.decode(String.self, forKey: "body_text")) : nil
+        self.timelineURL = values.contains("timeline_url") ? Optional.some(try values.decode(URL.self, forKey: "timeline_url")) : nil
+        self.repository = values.contains("repository") ? Optional.some(try values.decode(Repository.self, forKey: "repository")) : nil
         self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
         self.authorAssociation = try values.decode(AuthorAssociation.self, forKey: "author_association")
-        self.reactions = try values.decodeIfPresent(ReactionRollup.self, forKey: "reactions")
+        self.reactions = values.contains("reactions") ? Optional.some(try values.decode(ReactionRollup.self, forKey: "reactions")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -262,16 +262,16 @@ public struct Issue: Codable, Sendable {
         try values.encode(state, forKey: "state")
         try values.encode(title, forKey: "title")
         try values.encodeIfPresent(body, forKey: "body")
-        try values.encodeIfPresent(user, forKey: "user")
+        try values.encode(user, forKey: "user")
         try values.encode(labels, forKey: "labels")
-        try values.encodeIfPresent(assignee, forKey: "assignee")
+        try values.encode(assignee, forKey: "assignee")
         try values.encodeIfPresent(assignees, forKey: "assignees")
-        try values.encodeIfPresent(milestone, forKey: "milestone")
+        try values.encode(milestone, forKey: "milestone")
         try values.encode(isLocked, forKey: "locked")
         try values.encodeIfPresent(activeLockReason, forKey: "active_lock_reason")
         try values.encode(comments, forKey: "comments")
         try values.encodeIfPresent(pullRequest, forKey: "pull_request")
-        try values.encodeIfPresent(closedAt, forKey: "closed_at")
+        try values.encode(closedAt, forKey: "closed_at")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
         try values.encodeIfPresent(isDraft, forKey: "draft")

@@ -27,4 +27,10 @@ public struct EnumArrays: Codable, Sendable {
         case justSymbol = "just_symbol"
         case arrayEnum = "array_enum"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.justSymbol = values.contains(.justSymbol) ? Optional.some(try values.decode(JustSymbol.self, forKey: .justSymbol)) : nil
+        self.arrayEnum = values.contains(.arrayEnum) ? Optional.some(try values.decode([ArrayEnumItem].self, forKey: .arrayEnum)) : nil
+    }
 }

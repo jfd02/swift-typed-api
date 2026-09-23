@@ -113,16 +113,16 @@ public struct Deployment: Codable, Sendable {
         self.ref = try values.decode(String.self, forKey: "ref")
         self.task = try values.decode(String.self, forKey: "task")
         self.payload = try values.decode(Payload.self, forKey: "payload")
-        self.originalEnvironment = try values.decodeIfPresent(String.self, forKey: "original_environment")
+        self.originalEnvironment = values.contains("original_environment") ? Optional.some(try values.decode(String.self, forKey: "original_environment")) : nil
         self.environment = try values.decode(String.self, forKey: "environment")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.creator = try values.decodeIfPresent(SimpleUser.self, forKey: "creator")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.creator = try values.decode(SimpleUser?.self, forKey: "creator")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.statusesURL = try values.decode(URL.self, forKey: "statuses_url")
         self.repositoryURL = try values.decode(URL.self, forKey: "repository_url")
-        self.isTransientEnvironment = try values.decodeIfPresent(Bool.self, forKey: "transient_environment")
-        self.isProductionEnvironment = try values.decodeIfPresent(Bool.self, forKey: "production_environment")
+        self.isTransientEnvironment = values.contains("transient_environment") ? Optional.some(try values.decode(Bool.self, forKey: "transient_environment")) : nil
+        self.isProductionEnvironment = values.contains("production_environment") ? Optional.some(try values.decode(Bool.self, forKey: "production_environment")) : nil
         self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
     }
 
@@ -137,8 +137,8 @@ public struct Deployment: Codable, Sendable {
         try values.encode(payload, forKey: "payload")
         try values.encodeIfPresent(originalEnvironment, forKey: "original_environment")
         try values.encode(environment, forKey: "environment")
-        try values.encodeIfPresent(description, forKey: "description")
-        try values.encodeIfPresent(creator, forKey: "creator")
+        try values.encode(description, forKey: "description")
+        try values.encode(creator, forKey: "creator")
         try values.encode(createdAt, forKey: "created_at")
         try values.encode(updatedAt, forKey: "updated_at")
         try values.encode(statusesURL, forKey: "statuses_url")

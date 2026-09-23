@@ -13,6 +13,9 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
     // Dictionary
     case dictionary(key: TypeIdentifier, value: TypeIdentifier)
 
+    // Optional collection element or explicit PATCH value
+    case optional(wrapped: TypeIdentifier)
+
     // MARK: Helpers
 
     var isBool: Bool { builtinTypeName == "Bool" }
@@ -39,7 +42,12 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
     }
 
     func asPatchParameter() -> TypeIdentifier {
-        .userDefined(name: TypeName("\(self)?")) // TODO: Refactor
+        .optional(wrapped: self)
+    }
+
+    var isOptional: Bool {
+        if case .optional = self { return true }
+        return false
     }
 
     var name: TypeName {
@@ -51,12 +59,14 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
         case .builtin, .userDefined: return self
         case .array(let element): return element.elementType
         case .dictionary(_, let value): return value.elementType
+        case .optional(let wrapped): return wrapped.elementType
         }
     }
 
     // Generates a type identifier adding a namespace if needed.
     func identifier(namespace: String) -> TypeName {
         switch self {
+        case .optional(let wrapped): return TypeName("\(wrapped.identifier(namespace: namespace))?")
         case .builtin(let name): return name
         case .userDefined(let name): return name.namespace(namespace)
         case .array(let element): return TypeName("[\(element.identifier(namespace: namespace))]")
@@ -82,6 +92,7 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
 
     var description: String {
         switch self {
+        case .optional(let wrapped): return "\(wrapped)?"
         case .array(let element): return "[\(element)]"
         case .dictionary(let key, let value): return "[\(key): \(value)]"
         case .userDefined(let name), .builtin(let name): return name.rawValue
@@ -144,6 +155,8 @@ struct Property {
     var isOptional: Bool
     // Key in the JSON
     var key: String
+    var isRequiredNullable = false
+    var rejectsNull = false
     // warning: - This is currently only used for query parameters
     var explode = true
     // warning: - This is currently only used for query parameters
@@ -194,6 +207,7 @@ final class EntityDeclaration: Declaration {
     var protocols = Protocols()
     var properties: [Property] = []
     var discriminator: Discriminator?
+    var allowsNull = false
 
     var isRenderedAsStruct = false
     weak var parent: EntityDeclaration?

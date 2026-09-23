@@ -41,7 +41,7 @@ public struct CheckSuitePreference: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.autoTriggerChecks = try values.decodeIfPresent([AutoTriggerCheck].self, forKey: "auto_trigger_checks")
+            self.autoTriggerChecks = values.contains("auto_trigger_checks") ? Optional.some(try values.decode([AutoTriggerCheck].self, forKey: "auto_trigger_checks")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {

@@ -46,10 +46,10 @@ public struct AuthenticationToken: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.token = try values.decode(String.self, forKey: "token")
         self.expiresAt = try values.decode(Date.self, forKey: "expires_at")
-        self.permissions = try values.decodeIfPresent([String: AnyJSON].self, forKey: "permissions")
-        self.repositories = try values.decodeIfPresent([Repository].self, forKey: "repositories")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode([String: AnyJSON].self, forKey: "permissions")) : nil
+        self.repositories = values.contains("repositories") ? Optional.some(try values.decode([Repository].self, forKey: "repositories")) : nil
         self.singleFile = try values.decodeIfPresent(String.self, forKey: "single_file")
-        self.repositorySelection = try values.decodeIfPresent(RepositorySelection.self, forKey: "repository_selection")
+        self.repositorySelection = values.contains("repository_selection") ? Optional.some(try values.decode(RepositorySelection.self, forKey: "repository_selection")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

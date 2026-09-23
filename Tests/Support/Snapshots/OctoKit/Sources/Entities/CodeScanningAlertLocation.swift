@@ -22,11 +22,11 @@ public struct CodeScanningAlertLocation: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.path = try values.decodeIfPresent(String.self, forKey: "path")
-        self.startLine = try values.decodeIfPresent(Int.self, forKey: "start_line")
-        self.endLine = try values.decodeIfPresent(Int.self, forKey: "end_line")
-        self.startColumn = try values.decodeIfPresent(Int.self, forKey: "start_column")
-        self.endColumn = try values.decodeIfPresent(Int.self, forKey: "end_column")
+        self.path = values.contains("path") ? Optional.some(try values.decode(String.self, forKey: "path")) : nil
+        self.startLine = values.contains("start_line") ? Optional.some(try values.decode(Int.self, forKey: "start_line")) : nil
+        self.endLine = values.contains("end_line") ? Optional.some(try values.decode(Int.self, forKey: "end_line")) : nil
+        self.startColumn = values.contains("start_column") ? Optional.some(try values.decode(Int.self, forKey: "start_column")) : nil
+        self.endColumn = values.contains("end_column") ? Optional.some(try values.decode(Int.self, forKey: "end_column")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

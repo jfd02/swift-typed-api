@@ -30,4 +30,14 @@ public struct Capitalization: Codable, Sendable {
         case sCAETHFlowPoints = "SCA_ETH_Flow_Points"
         case attName = "ATT_NAME"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.smallCamel = values.contains(.smallCamel) ? Optional.some(try values.decode(String.self, forKey: .smallCamel)) : nil
+        self.capitalCamel = values.contains(.capitalCamel) ? Optional.some(try values.decode(String.self, forKey: .capitalCamel)) : nil
+        self.smallSnake = values.contains(.smallSnake) ? Optional.some(try values.decode(String.self, forKey: .smallSnake)) : nil
+        self.capitalSnake = values.contains(.capitalSnake) ? Optional.some(try values.decode(String.self, forKey: .capitalSnake)) : nil
+        self.sCAETHFlowPoints = values.contains(.sCAETHFlowPoints) ? Optional.some(try values.decode(String.self, forKey: .sCAETHFlowPoints)) : nil
+        self.attName = values.contains(.attName) ? Optional.some(try values.decode(String.self, forKey: .attName)) : nil
+    }
 }

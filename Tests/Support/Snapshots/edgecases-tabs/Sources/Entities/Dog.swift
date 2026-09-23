@@ -26,9 +26,9 @@ public struct Dog: Codable, Sendable {
 	public init(from decoder: Decoder) throws {
 		let values = try decoder.container(keyedBy: StringCodingKey.self)
 		self.className = try values.decode(String.self, forKey: "className")
-		self.color = try values.decodeIfPresent(String.self, forKey: "color")
-		self.breed = try values.decodeIfPresent(Breed.self, forKey: "breed")
-		self.image = try values.decodeIfPresent(Image.self, forKey: "image")
+		self.color = values.contains("color") ? Optional.some(try values.decode(String.self, forKey: "color")) : nil
+		self.breed = values.contains("breed") ? Optional.some(try values.decode(Breed.self, forKey: "breed")) : nil
+		self.image = values.contains("image") ? Optional.some(try values.decode(Image.self, forKey: "image")) : nil
 	}
 
 	public func encode(to encoder: Encoder) throws {

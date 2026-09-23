@@ -19,10 +19,10 @@ public struct TimelineCommitCommentedEvent: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.event = try values.decodeIfPresent(String.self, forKey: "event")
-        self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-        self.commitID = try values.decodeIfPresent(String.self, forKey: "commit_id")
-        self.comments = try values.decodeIfPresent([CommitComment].self, forKey: "comments")
+        self.event = values.contains("event") ? Optional.some(try values.decode(String.self, forKey: "event")) : nil
+        self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+        self.commitID = values.contains("commit_id") ? Optional.some(try values.decode(String.self, forKey: "commit_id")) : nil
+        self.comments = values.contains("comments") ? Optional.some(try values.decode([CommitComment].self, forKey: "comments")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -64,8 +64,8 @@ public struct DiffEntry: Codable, Sendable {
         self.blobURL = try values.decode(URL.self, forKey: "blob_url")
         self.rawURL = try values.decode(URL.self, forKey: "raw_url")
         self.contentsURL = try values.decode(URL.self, forKey: "contents_url")
-        self.patch = try values.decodeIfPresent(String.self, forKey: "patch")
-        self.previousFilename = try values.decodeIfPresent(String.self, forKey: "previous_filename")
+        self.patch = values.contains("patch") ? Optional.some(try values.decode(String.self, forKey: "patch")) : nil
+        self.previousFilename = values.contains("previous_filename") ? Optional.some(try values.decode(String.self, forKey: "previous_filename")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

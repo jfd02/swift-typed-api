@@ -78,12 +78,12 @@ public struct GitTree: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.path = try values.decodeIfPresent(String.self, forKey: "path")
-            self.mode = try values.decodeIfPresent(String.self, forKey: "mode")
-            self.type = try values.decodeIfPresent(String.self, forKey: "type")
-            self.sha = try values.decodeIfPresent(String.self, forKey: "sha")
-            self.size = try values.decodeIfPresent(Int.self, forKey: "size")
-            self.url = try values.decodeIfPresent(String.self, forKey: "url")
+            self.path = values.contains("path") ? Optional.some(try values.decode(String.self, forKey: "path")) : nil
+            self.mode = values.contains("mode") ? Optional.some(try values.decode(String.self, forKey: "mode")) : nil
+            self.type = values.contains("type") ? Optional.some(try values.decode(String.self, forKey: "type")) : nil
+            self.sha = values.contains("sha") ? Optional.some(try values.decode(String.self, forKey: "sha")) : nil
+            self.size = values.contains("size") ? Optional.some(try values.decode(Int.self, forKey: "size")) : nil
+            self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {

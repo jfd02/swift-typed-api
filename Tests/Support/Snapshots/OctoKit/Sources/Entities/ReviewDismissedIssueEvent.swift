@@ -37,15 +37,15 @@ public struct ReviewDismissedIssueEvent: Codable, Sendable {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.state = try values.decode(String.self, forKey: "state")
             self.reviewID = try values.decode(Int.self, forKey: "review_id")
-            self.dismissalMessage = try values.decodeIfPresent(String.self, forKey: "dismissal_message")
-            self.dismissalCommitID = try values.decodeIfPresent(String.self, forKey: "dismissal_commit_id")
+            self.dismissalMessage = try values.decode(String?.self, forKey: "dismissal_message")
+            self.dismissalCommitID = values.contains("dismissal_commit_id") ? Optional.some(try values.decode(String.self, forKey: "dismissal_commit_id")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
             try values.encode(state, forKey: "state")
             try values.encode(reviewID, forKey: "review_id")
-            try values.encodeIfPresent(dismissalMessage, forKey: "dismissal_message")
+            try values.encode(dismissalMessage, forKey: "dismissal_message")
             try values.encodeIfPresent(dismissalCommitID, forKey: "dismissal_commit_id")
         }
     }
@@ -70,10 +70,10 @@ public struct ReviewDismissedIssueEvent: Codable, Sendable {
         self.url = try values.decode(String.self, forKey: "url")
         self.actor = try values.decode(SimpleUser.self, forKey: "actor")
         self.event = try values.decode(String.self, forKey: "event")
-        self.commitID = try values.decodeIfPresent(String.self, forKey: "commit_id")
-        self.commitURL = try values.decodeIfPresent(String.self, forKey: "commit_url")
+        self.commitID = try values.decode(String?.self, forKey: "commit_id")
+        self.commitURL = try values.decode(String?.self, forKey: "commit_url")
         self.createdAt = try values.decode(String.self, forKey: "created_at")
-        self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
+        self.performedViaGithubApp = try values.decode(Integration?.self, forKey: "performed_via_github_app")
         self.dismissedReview = try values.decode(DismissedReview.self, forKey: "dismissed_review")
     }
 
@@ -84,10 +84,10 @@ public struct ReviewDismissedIssueEvent: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(actor, forKey: "actor")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(commitID, forKey: "commit_id")
-        try values.encodeIfPresent(commitURL, forKey: "commit_url")
+        try values.encode(commitID, forKey: "commit_id")
+        try values.encode(commitURL, forKey: "commit_url")
         try values.encode(createdAt, forKey: "created_at")
-        try values.encodeIfPresent(performedViaGithubApp, forKey: "performed_via_github_app")
+        try values.encode(performedViaGithubApp, forKey: "performed_via_github_app")
         try values.encode(dismissedReview, forKey: "dismissed_review")
     }
 }

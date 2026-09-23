@@ -63,8 +63,16 @@ extension Paths.Repos.WithOwner.WithRepo {
 
             public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
-                self.simpleUsers = try? container.decode([OctoKit.SimpleUser].self)
-                self.stargazers = try? container.decode([OctoKit.Stargazer].self)
+                let decodedValue0 = try? container.decode([OctoKit.SimpleUser].self)
+                let decodedValue1 = try? container.decode([OctoKit.Stargazer].self)
+                guard decodedValue0 != nil || decodedValue1 != nil else {
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Data could not be decoded as any of the expected types ([OctoKit.SimpleUser], [OctoKit.Stargazer])."
+                    )
+                }
+                self.simpleUsers = decodedValue0
+                self.stargazers = decodedValue1
             }
         }
 

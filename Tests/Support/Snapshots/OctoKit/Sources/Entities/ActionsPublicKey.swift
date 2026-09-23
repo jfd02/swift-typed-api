@@ -35,10 +35,10 @@ public struct ActionsPublicKey: Codable, Sendable {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.keyID = try values.decode(String.self, forKey: "key_id")
         self.key = try values.decode(String.self, forKey: "key")
-        self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-        self.url = try values.decodeIfPresent(String.self, forKey: "url")
-        self.title = try values.decodeIfPresent(String.self, forKey: "title")
-        self.createdAt = try values.decodeIfPresent(String.self, forKey: "created_at")
+        self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+        self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
+        self.title = values.contains("title") ? Optional.some(try values.decode(String.self, forKey: "title")) : nil
+        self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(String.self, forKey: "created_at")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

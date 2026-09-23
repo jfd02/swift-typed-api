@@ -32,9 +32,9 @@ public struct CodeScanningAlertRuleSummary: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.id = try values.decodeIfPresent(String.self, forKey: "id")
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
         self.severity = try values.decodeIfPresent(Severity.self, forKey: "severity")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.description = values.contains("description") ? Optional.some(try values.decode(String.self, forKey: "description")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

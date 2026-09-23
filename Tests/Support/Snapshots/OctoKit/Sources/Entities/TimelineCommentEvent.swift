@@ -70,9 +70,9 @@ public struct TimelineCommentEvent: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.body = try values.decodeIfPresent(String.self, forKey: "body")
-        self.bodyText = try values.decodeIfPresent(String.self, forKey: "body_text")
-        self.bodyHTML = try values.decodeIfPresent(String.self, forKey: "body_html")
+        self.body = values.contains("body") ? Optional.some(try values.decode(String.self, forKey: "body")) : nil
+        self.bodyText = values.contains("body_text") ? Optional.some(try values.decode(String.self, forKey: "body_text")) : nil
+        self.bodyHTML = values.contains("body_html") ? Optional.some(try values.decode(String.self, forKey: "body_html")) : nil
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.user = try values.decode(SimpleUser.self, forKey: "user")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
@@ -80,7 +80,7 @@ public struct TimelineCommentEvent: Codable, Sendable {
         self.issueURL = try values.decode(URL.self, forKey: "issue_url")
         self.authorAssociation = try values.decode(AuthorAssociation.self, forKey: "author_association")
         self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
-        self.reactions = try values.decodeIfPresent(ReactionRollup.self, forKey: "reactions")
+        self.reactions = values.contains("reactions") ? Optional.some(try values.decode(ReactionRollup.self, forKey: "reactions")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

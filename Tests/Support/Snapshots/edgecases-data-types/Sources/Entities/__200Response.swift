@@ -16,8 +16,8 @@ public struct __200Response: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.name = try values.decodeIfPresent(Double.self, forKey: "name")
-        self.class = try values.decodeIfPresent(String.self, forKey: "class")
+        self.name = values.contains("name") ? Optional.some(try values.decode(Double.self, forKey: "name")) : nil
+        self.class = values.contains("class") ? Optional.some(try values.decode(String.self, forKey: "class")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

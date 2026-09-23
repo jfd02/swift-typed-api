@@ -77,9 +77,9 @@ public struct HookDeliveryItem: Codable, Sendable {
         self.status = try values.decode(String.self, forKey: "status")
         self.statusCode = try values.decode(Int.self, forKey: "status_code")
         self.event = try values.decode(String.self, forKey: "event")
-        self.action = try values.decodeIfPresent(String.self, forKey: "action")
-        self.installationID = try values.decodeIfPresent(Int.self, forKey: "installation_id")
-        self.repositoryID = try values.decodeIfPresent(Int.self, forKey: "repository_id")
+        self.action = try values.decode(String?.self, forKey: "action")
+        self.installationID = try values.decode(Int?.self, forKey: "installation_id")
+        self.repositoryID = try values.decode(Int?.self, forKey: "repository_id")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -92,8 +92,8 @@ public struct HookDeliveryItem: Codable, Sendable {
         try values.encode(status, forKey: "status")
         try values.encode(statusCode, forKey: "status_code")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(action, forKey: "action")
-        try values.encodeIfPresent(installationID, forKey: "installation_id")
-        try values.encodeIfPresent(repositoryID, forKey: "repository_id")
+        try values.encode(action, forKey: "action")
+        try values.encode(installationID, forKey: "installation_id")
+        try values.encode(repositoryID, forKey: "repository_id")
     }
 }

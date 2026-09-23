@@ -40,7 +40,7 @@ public struct OrganizationActionsSecret: Codable, Sendable {
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.visibility = try values.decode(Visibility.self, forKey: "visibility")
-        self.selectedRepositoriesURL = try values.decodeIfPresent(URL.self, forKey: "selected_repositories_url")
+        self.selectedRepositoriesURL = values.contains("selected_repositories_url") ? Optional.some(try values.decode(URL.self, forKey: "selected_repositories_url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

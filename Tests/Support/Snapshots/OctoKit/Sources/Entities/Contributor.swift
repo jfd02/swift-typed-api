@@ -53,27 +53,27 @@ public struct Contributor: Codable, Sendable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
-        self.login = try values.decodeIfPresent(String.self, forKey: "login")
-        self.id = try values.decodeIfPresent(Int.self, forKey: "id")
-        self.nodeID = try values.decodeIfPresent(String.self, forKey: "node_id")
-        self.avatarURL = try values.decodeIfPresent(URL.self, forKey: "avatar_url")
+        self.login = values.contains("login") ? Optional.some(try values.decode(String.self, forKey: "login")) : nil
+        self.id = values.contains("id") ? Optional.some(try values.decode(Int.self, forKey: "id")) : nil
+        self.nodeID = values.contains("node_id") ? Optional.some(try values.decode(String.self, forKey: "node_id")) : nil
+        self.avatarURL = values.contains("avatar_url") ? Optional.some(try values.decode(URL.self, forKey: "avatar_url")) : nil
         self.gravatarID = try values.decodeIfPresent(String.self, forKey: "gravatar_id")
-        self.url = try values.decodeIfPresent(URL.self, forKey: "url")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
-        self.followersURL = try values.decodeIfPresent(URL.self, forKey: "followers_url")
-        self.followingURL = try values.decodeIfPresent(String.self, forKey: "following_url")
-        self.gistsURL = try values.decodeIfPresent(String.self, forKey: "gists_url")
-        self.starredURL = try values.decodeIfPresent(String.self, forKey: "starred_url")
-        self.subscriptionsURL = try values.decodeIfPresent(URL.self, forKey: "subscriptions_url")
-        self.organizationsURL = try values.decodeIfPresent(URL.self, forKey: "organizations_url")
-        self.reposURL = try values.decodeIfPresent(URL.self, forKey: "repos_url")
-        self.eventsURL = try values.decodeIfPresent(String.self, forKey: "events_url")
-        self.receivedEventsURL = try values.decodeIfPresent(URL.self, forKey: "received_events_url")
+        self.url = values.contains("url") ? Optional.some(try values.decode(URL.self, forKey: "url")) : nil
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(URL.self, forKey: "html_url")) : nil
+        self.followersURL = values.contains("followers_url") ? Optional.some(try values.decode(URL.self, forKey: "followers_url")) : nil
+        self.followingURL = values.contains("following_url") ? Optional.some(try values.decode(String.self, forKey: "following_url")) : nil
+        self.gistsURL = values.contains("gists_url") ? Optional.some(try values.decode(String.self, forKey: "gists_url")) : nil
+        self.starredURL = values.contains("starred_url") ? Optional.some(try values.decode(String.self, forKey: "starred_url")) : nil
+        self.subscriptionsURL = values.contains("subscriptions_url") ? Optional.some(try values.decode(URL.self, forKey: "subscriptions_url")) : nil
+        self.organizationsURL = values.contains("organizations_url") ? Optional.some(try values.decode(URL.self, forKey: "organizations_url")) : nil
+        self.reposURL = values.contains("repos_url") ? Optional.some(try values.decode(URL.self, forKey: "repos_url")) : nil
+        self.eventsURL = values.contains("events_url") ? Optional.some(try values.decode(String.self, forKey: "events_url")) : nil
+        self.receivedEventsURL = values.contains("received_events_url") ? Optional.some(try values.decode(URL.self, forKey: "received_events_url")) : nil
         self.type = try values.decode(String.self, forKey: "type")
-        self.isSiteAdmin = try values.decodeIfPresent(Bool.self, forKey: "site_admin")
+        self.isSiteAdmin = values.contains("site_admin") ? Optional.some(try values.decode(Bool.self, forKey: "site_admin")) : nil
         self.contributions = try values.decode(Int.self, forKey: "contributions")
-        self.email = try values.decodeIfPresent(String.self, forKey: "email")
-        self.name = try values.decodeIfPresent(String.self, forKey: "name")
+        self.email = values.contains("email") ? Optional.some(try values.decode(String.self, forKey: "email")) : nil
+        self.name = values.contains("name") ? Optional.some(try values.decode(String.self, forKey: "name")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

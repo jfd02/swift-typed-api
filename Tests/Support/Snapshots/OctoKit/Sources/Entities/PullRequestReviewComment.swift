@@ -215,7 +215,7 @@ public struct PullRequestReviewComment: Codable, Sendable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: StringCodingKey.self)
         self.url = try values.decode(String.self, forKey: "url")
-        self.pullRequestReviewID = try values.decodeIfPresent(Int.self, forKey: "pull_request_review_id")
+        self.pullRequestReviewID = try values.decode(Int?.self, forKey: "pull_request_review_id")
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.diffHunk = try values.decode(String.self, forKey: "diff_hunk")
@@ -224,7 +224,7 @@ public struct PullRequestReviewComment: Codable, Sendable {
         self.originalPosition = try values.decode(Int.self, forKey: "original_position")
         self.commitID = try values.decode(String.self, forKey: "commit_id")
         self.originalCommitID = try values.decode(String.self, forKey: "original_commit_id")
-        self.inReplyToID = try values.decodeIfPresent(Int.self, forKey: "in_reply_to_id")
+        self.inReplyToID = values.contains("in_reply_to_id") ? Optional.some(try values.decode(Int.self, forKey: "in_reply_to_id")) : nil
         self.user = try values.decode(SimpleUser.self, forKey: "user")
         self.body = try values.decode(String.self, forKey: "body")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
@@ -236,18 +236,18 @@ public struct PullRequestReviewComment: Codable, Sendable {
         self.startLine = try values.decodeIfPresent(Int.self, forKey: "start_line")
         self.originalStartLine = try values.decodeIfPresent(Int.self, forKey: "original_start_line")
         self.startSide = try values.decodeIfPresent(StartSide.self, forKey: "start_side")
-        self.line = try values.decodeIfPresent(Int.self, forKey: "line")
-        self.originalLine = try values.decodeIfPresent(Int.self, forKey: "original_line")
-        self.side = try values.decodeIfPresent(Side.self, forKey: "side")
-        self.reactions = try values.decodeIfPresent(ReactionRollup.self, forKey: "reactions")
-        self.bodyHTML = try values.decodeIfPresent(String.self, forKey: "body_html")
-        self.bodyText = try values.decodeIfPresent(String.self, forKey: "body_text")
+        self.line = values.contains("line") ? Optional.some(try values.decode(Int.self, forKey: "line")) : nil
+        self.originalLine = values.contains("original_line") ? Optional.some(try values.decode(Int.self, forKey: "original_line")) : nil
+        self.side = values.contains("side") ? Optional.some(try values.decode(Side.self, forKey: "side")) : nil
+        self.reactions = values.contains("reactions") ? Optional.some(try values.decode(ReactionRollup.self, forKey: "reactions")) : nil
+        self.bodyHTML = values.contains("body_html") ? Optional.some(try values.decode(String.self, forKey: "body_html")) : nil
+        self.bodyText = values.contains("body_text") ? Optional.some(try values.decode(String.self, forKey: "body_text")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: StringCodingKey.self)
         try values.encode(url, forKey: "url")
-        try values.encodeIfPresent(pullRequestReviewID, forKey: "pull_request_review_id")
+        try values.encode(pullRequestReviewID, forKey: "pull_request_review_id")
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(diffHunk, forKey: "diff_hunk")

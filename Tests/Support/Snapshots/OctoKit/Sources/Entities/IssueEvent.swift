@@ -86,23 +86,23 @@ public struct IssueEvent: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.actor = try values.decodeIfPresent(SimpleUser.self, forKey: "actor")
+        self.actor = try values.decode(SimpleUser?.self, forKey: "actor")
         self.event = try values.decode(String.self, forKey: "event")
-        self.commitID = try values.decodeIfPresent(String.self, forKey: "commit_id")
-        self.commitURL = try values.decodeIfPresent(String.self, forKey: "commit_url")
+        self.commitID = try values.decode(String?.self, forKey: "commit_id")
+        self.commitURL = try values.decode(String?.self, forKey: "commit_url")
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.issue = try values.decodeIfPresent(Issue.self, forKey: "issue")
-        self.label = try values.decodeIfPresent(IssueEventLabel.self, forKey: "label")
+        self.label = values.contains("label") ? Optional.some(try values.decode(IssueEventLabel.self, forKey: "label")) : nil
         self.assignee = try values.decodeIfPresent(SimpleUser.self, forKey: "assignee")
         self.assigner = try values.decodeIfPresent(SimpleUser.self, forKey: "assigner")
         self.reviewRequester = try values.decodeIfPresent(SimpleUser.self, forKey: "review_requester")
         self.requestedReviewer = try values.decodeIfPresent(SimpleUser.self, forKey: "requested_reviewer")
-        self.requestedTeam = try values.decodeIfPresent(Team.self, forKey: "requested_team")
-        self.dismissedReview = try values.decodeIfPresent(IssueEventDismissedReview.self, forKey: "dismissed_review")
-        self.milestone = try values.decodeIfPresent(IssueEventMilestone.self, forKey: "milestone")
-        self.projectCard = try values.decodeIfPresent(IssueEventProjectCard.self, forKey: "project_card")
-        self.rename = try values.decodeIfPresent(IssueEventRename.self, forKey: "rename")
-        self.authorAssociation = try values.decodeIfPresent(AuthorAssociation.self, forKey: "author_association")
+        self.requestedTeam = values.contains("requested_team") ? Optional.some(try values.decode(Team.self, forKey: "requested_team")) : nil
+        self.dismissedReview = values.contains("dismissed_review") ? Optional.some(try values.decode(IssueEventDismissedReview.self, forKey: "dismissed_review")) : nil
+        self.milestone = values.contains("milestone") ? Optional.some(try values.decode(IssueEventMilestone.self, forKey: "milestone")) : nil
+        self.projectCard = values.contains("project_card") ? Optional.some(try values.decode(IssueEventProjectCard.self, forKey: "project_card")) : nil
+        self.rename = values.contains("rename") ? Optional.some(try values.decode(IssueEventRename.self, forKey: "rename")) : nil
+        self.authorAssociation = values.contains("author_association") ? Optional.some(try values.decode(AuthorAssociation.self, forKey: "author_association")) : nil
         self.lockReason = try values.decodeIfPresent(String.self, forKey: "lock_reason")
         self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
     }
@@ -112,10 +112,10 @@ public struct IssueEvent: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(url, forKey: "url")
-        try values.encodeIfPresent(actor, forKey: "actor")
+        try values.encode(actor, forKey: "actor")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(commitID, forKey: "commit_id")
-        try values.encodeIfPresent(commitURL, forKey: "commit_url")
+        try values.encode(commitID, forKey: "commit_id")
+        try values.encode(commitURL, forKey: "commit_url")
         try values.encode(createdAt, forKey: "created_at")
         try values.encodeIfPresent(issue, forKey: "issue")
         try values.encodeIfPresent(label, forKey: "label")

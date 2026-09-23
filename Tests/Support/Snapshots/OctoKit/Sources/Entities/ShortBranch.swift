@@ -47,8 +47,8 @@ public struct ShortBranch: Codable, Sendable {
         self.name = try values.decode(String.self, forKey: "name")
         self.commit = try values.decode(Commit.self, forKey: "commit")
         self.isProtected = try values.decode(Bool.self, forKey: "protected")
-        self.protection = try values.decodeIfPresent(BranchProtection.self, forKey: "protection")
-        self.protectionURL = try values.decodeIfPresent(URL.self, forKey: "protection_url")
+        self.protection = values.contains("protection") ? Optional.some(try values.decode(BranchProtection.self, forKey: "protection")) : nil
+        self.protectionURL = values.contains("protection_url") ? Optional.some(try values.decode(URL.self, forKey: "protection_url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

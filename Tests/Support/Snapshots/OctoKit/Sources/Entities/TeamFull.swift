@@ -95,8 +95,8 @@ public struct TeamFull: Codable, Sendable {
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.name = try values.decode(String.self, forKey: "name")
         self.slug = try values.decode(String.self, forKey: "slug")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
-        self.privacy = try values.decodeIfPresent(Privacy.self, forKey: "privacy")
+        self.description = try values.decode(String?.self, forKey: "description")
+        self.privacy = values.contains("privacy") ? Optional.some(try values.decode(Privacy.self, forKey: "privacy")) : nil
         self.permission = try values.decode(String.self, forKey: "permission")
         self.membersURL = try values.decode(String.self, forKey: "members_url")
         self.repositoriesURL = try values.decode(URL.self, forKey: "repositories_url")
@@ -106,7 +106,7 @@ public struct TeamFull: Codable, Sendable {
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
         self.organization = try values.decode(OrganizationFull.self, forKey: "organization")
-        self.ldapDn = try values.decodeIfPresent(String.self, forKey: "ldap_dn")
+        self.ldapDn = values.contains("ldap_dn") ? Optional.some(try values.decode(String.self, forKey: "ldap_dn")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -117,7 +117,7 @@ public struct TeamFull: Codable, Sendable {
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(name, forKey: "name")
         try values.encode(slug, forKey: "slug")
-        try values.encodeIfPresent(description, forKey: "description")
+        try values.encode(description, forKey: "description")
         try values.encodeIfPresent(privacy, forKey: "privacy")
         try values.encode(permission, forKey: "permission")
         try values.encode(membersURL, forKey: "members_url")

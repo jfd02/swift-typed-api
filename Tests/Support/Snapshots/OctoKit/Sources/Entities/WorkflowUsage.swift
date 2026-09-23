@@ -21,7 +21,7 @@ public struct WorkflowUsage: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.totalMs = try values.decodeIfPresent(Int.self, forKey: "total_ms")
+                self.totalMs = values.contains("total_ms") ? Optional.some(try values.decode(Int.self, forKey: "total_ms")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -39,7 +39,7 @@ public struct WorkflowUsage: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.totalMs = try values.decodeIfPresent(Int.self, forKey: "total_ms")
+                self.totalMs = values.contains("total_ms") ? Optional.some(try values.decode(Int.self, forKey: "total_ms")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -57,7 +57,7 @@ public struct WorkflowUsage: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.totalMs = try values.decodeIfPresent(Int.self, forKey: "total_ms")
+                self.totalMs = values.contains("total_ms") ? Optional.some(try values.decode(Int.self, forKey: "total_ms")) : nil
             }
 
             public func encode(to encoder: Encoder) throws {
@@ -74,9 +74,9 @@ public struct WorkflowUsage: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.ubuntu = try values.decodeIfPresent(Ubuntu.self, forKey: "UBUNTU")
-            self.macos = try values.decodeIfPresent(Macos.self, forKey: "MACOS")
-            self.windows = try values.decodeIfPresent(Windows.self, forKey: "WINDOWS")
+            self.ubuntu = values.contains("UBUNTU") ? Optional.some(try values.decode(Ubuntu.self, forKey: "UBUNTU")) : nil
+            self.macos = values.contains("MACOS") ? Optional.some(try values.decode(Macos.self, forKey: "MACOS")) : nil
+            self.windows = values.contains("WINDOWS") ? Optional.some(try values.decode(Windows.self, forKey: "WINDOWS")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {

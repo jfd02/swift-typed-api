@@ -80,7 +80,7 @@ public struct PackageVersion: Codable, Sendable {
 
             public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: StringCodingKey.self)
-                self.tag = try values.decodeIfPresent([String].self, forKey: "tag")
+                self.tag = values.contains("tag") ? Optional.some(try values.decode([String].self, forKey: "tag")) : nil
                 self.tags = try values.decode(AnyJSON.self, forKey: "tags")
             }
 
@@ -100,8 +100,8 @@ public struct PackageVersion: Codable, Sendable {
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
             self.packageType = try values.decode(PackageType.self, forKey: "package_type")
-            self.container = try values.decodeIfPresent(Container.self, forKey: "container")
-            self.docker = try values.decodeIfPresent(Docker.self, forKey: "docker")
+            self.container = values.contains("container") ? Optional.some(try values.decode(Container.self, forKey: "container")) : nil
+            self.docker = values.contains("docker") ? Optional.some(try values.decode(Docker.self, forKey: "docker")) : nil
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -132,13 +132,13 @@ public struct PackageVersion: Codable, Sendable {
         self.name = try values.decode(String.self, forKey: "name")
         self.url = try values.decode(String.self, forKey: "url")
         self.packageHTMLURL = try values.decode(String.self, forKey: "package_html_url")
-        self.htmlURL = try values.decodeIfPresent(String.self, forKey: "html_url")
-        self.license = try values.decodeIfPresent(String.self, forKey: "license")
-        self.description = try values.decodeIfPresent(String.self, forKey: "description")
+        self.htmlURL = values.contains("html_url") ? Optional.some(try values.decode(String.self, forKey: "html_url")) : nil
+        self.license = values.contains("license") ? Optional.some(try values.decode(String.self, forKey: "license")) : nil
+        self.description = values.contains("description") ? Optional.some(try values.decode(String.self, forKey: "description")) : nil
         self.createdAt = try values.decode(Date.self, forKey: "created_at")
         self.updatedAt = try values.decode(Date.self, forKey: "updated_at")
-        self.deletedAt = try values.decodeIfPresent(Date.self, forKey: "deleted_at")
-        self.metadata = try values.decodeIfPresent(Metadata.self, forKey: "metadata")
+        self.deletedAt = values.contains("deleted_at") ? Optional.some(try values.decode(Date.self, forKey: "deleted_at")) : nil
+        self.metadata = values.contains("metadata") ? Optional.some(try values.decode(Metadata.self, forKey: "metadata")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {

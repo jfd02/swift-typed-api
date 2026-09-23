@@ -35,15 +35,15 @@ public struct ContentFile: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.git = try values.decodeIfPresent(URL.self, forKey: "git")
-            self.html = try values.decodeIfPresent(URL.self, forKey: "html")
+            self.git = try values.decode(URL?.self, forKey: "git")
+            self.html = try values.decode(URL?.self, forKey: "html")
             self.this = try values.decode(URL.self, forKey: "self")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
-            try values.encodeIfPresent(git, forKey: "git")
-            try values.encodeIfPresent(html, forKey: "html")
+            try values.encode(git, forKey: "git")
+            try values.encode(html, forKey: "html")
             try values.encode(this, forKey: "self")
         }
     }
@@ -75,12 +75,12 @@ public struct ContentFile: Codable, Sendable {
         self.content = try values.decode(String.self, forKey: "content")
         self.sha = try values.decode(String.self, forKey: "sha")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.gitURL = try values.decodeIfPresent(URL.self, forKey: "git_url")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
-        self.downloadURL = try values.decodeIfPresent(URL.self, forKey: "download_url")
+        self.gitURL = try values.decode(URL?.self, forKey: "git_url")
+        self.htmlURL = try values.decode(URL?.self, forKey: "html_url")
+        self.downloadURL = try values.decode(URL?.self, forKey: "download_url")
         self.links = try values.decode(Links.self, forKey: "_links")
-        self.target = try values.decodeIfPresent(String.self, forKey: "target")
-        self.submoduleGitURL = try values.decodeIfPresent(String.self, forKey: "submodule_git_url")
+        self.target = values.contains("target") ? Optional.some(try values.decode(String.self, forKey: "target")) : nil
+        self.submoduleGitURL = values.contains("submodule_git_url") ? Optional.some(try values.decode(String.self, forKey: "submodule_git_url")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -93,9 +93,9 @@ public struct ContentFile: Codable, Sendable {
         try values.encode(content, forKey: "content")
         try values.encode(sha, forKey: "sha")
         try values.encode(url, forKey: "url")
-        try values.encodeIfPresent(gitURL, forKey: "git_url")
-        try values.encodeIfPresent(htmlURL, forKey: "html_url")
-        try values.encodeIfPresent(downloadURL, forKey: "download_url")
+        try values.encode(gitURL, forKey: "git_url")
+        try values.encode(htmlURL, forKey: "html_url")
+        try values.encode(downloadURL, forKey: "download_url")
         try values.encode(links, forKey: "_links")
         try values.encodeIfPresent(target, forKey: "target")
         try values.encodeIfPresent(submoduleGitURL, forKey: "submodule_git_url")

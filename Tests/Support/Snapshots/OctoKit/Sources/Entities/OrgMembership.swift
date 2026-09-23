@@ -75,8 +75,8 @@ public struct OrgMembership: Codable, Sendable {
         self.role = try values.decode(Role.self, forKey: "role")
         self.organizationURL = try values.decode(URL.self, forKey: "organization_url")
         self.organization = try values.decode(OrganizationSimple.self, forKey: "organization")
-        self.user = try values.decodeIfPresent(SimpleUser.self, forKey: "user")
-        self.permissions = try values.decodeIfPresent(Permissions.self, forKey: "permissions")
+        self.user = try values.decode(SimpleUser?.self, forKey: "user")
+        self.permissions = values.contains("permissions") ? Optional.some(try values.decode(Permissions.self, forKey: "permissions")) : nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -86,7 +86,7 @@ public struct OrgMembership: Codable, Sendable {
         try values.encode(role, forKey: "role")
         try values.encode(organizationURL, forKey: "organization_url")
         try values.encode(organization, forKey: "organization")
-        try values.encodeIfPresent(user, forKey: "user")
+        try values.encode(user, forKey: "user")
         try values.encodeIfPresent(permissions, forKey: "permissions")
     }
 }

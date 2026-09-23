@@ -84,7 +84,7 @@ public struct UserSearchResultItem: Codable, Sendable {
         self.id = try values.decode(Int.self, forKey: "id")
         self.nodeID = try values.decode(String.self, forKey: "node_id")
         self.avatarURL = try values.decode(URL.self, forKey: "avatar_url")
-        self.gravatarID = try values.decodeIfPresent(String.self, forKey: "gravatar_id")
+        self.gravatarID = try values.decode(String?.self, forKey: "gravatar_id")
         self.url = try values.decode(URL.self, forKey: "url")
         self.htmlURL = try values.decode(URL.self, forKey: "html_url")
         self.followersURL = try values.decode(URL.self, forKey: "followers_url")
@@ -98,19 +98,19 @@ public struct UserSearchResultItem: Codable, Sendable {
         self.gistsURL = try values.decode(String.self, forKey: "gists_url")
         self.starredURL = try values.decode(String.self, forKey: "starred_url")
         self.eventsURL = try values.decode(String.self, forKey: "events_url")
-        self.publicRepos = try values.decodeIfPresent(Int.self, forKey: "public_repos")
-        self.publicGists = try values.decodeIfPresent(Int.self, forKey: "public_gists")
-        self.followers = try values.decodeIfPresent(Int.self, forKey: "followers")
-        self.following = try values.decodeIfPresent(Int.self, forKey: "following")
-        self.createdAt = try values.decodeIfPresent(Date.self, forKey: "created_at")
-        self.updatedAt = try values.decodeIfPresent(Date.self, forKey: "updated_at")
+        self.publicRepos = values.contains("public_repos") ? Optional.some(try values.decode(Int.self, forKey: "public_repos")) : nil
+        self.publicGists = values.contains("public_gists") ? Optional.some(try values.decode(Int.self, forKey: "public_gists")) : nil
+        self.followers = values.contains("followers") ? Optional.some(try values.decode(Int.self, forKey: "followers")) : nil
+        self.following = values.contains("following") ? Optional.some(try values.decode(Int.self, forKey: "following")) : nil
+        self.createdAt = values.contains("created_at") ? Optional.some(try values.decode(Date.self, forKey: "created_at")) : nil
+        self.updatedAt = values.contains("updated_at") ? Optional.some(try values.decode(Date.self, forKey: "updated_at")) : nil
         self.name = try values.decodeIfPresent(String.self, forKey: "name")
         self.bio = try values.decodeIfPresent(String.self, forKey: "bio")
         self.email = try values.decodeIfPresent(String.self, forKey: "email")
         self.location = try values.decodeIfPresent(String.self, forKey: "location")
         self.isSiteAdmin = try values.decode(Bool.self, forKey: "site_admin")
         self.isHireable = try values.decodeIfPresent(Bool.self, forKey: "hireable")
-        self.textMatches = try values.decodeIfPresent([SearchResultTextMatch].self, forKey: "text_matches")
+        self.textMatches = values.contains("text_matches") ? Optional.some(try values.decode([SearchResultTextMatch].self, forKey: "text_matches")) : nil
         self.blog = try values.decodeIfPresent(String.self, forKey: "blog")
         self.company = try values.decodeIfPresent(String.self, forKey: "company")
         self.suspendedAt = try values.decodeIfPresent(Date.self, forKey: "suspended_at")
@@ -122,7 +122,7 @@ public struct UserSearchResultItem: Codable, Sendable {
         try values.encode(id, forKey: "id")
         try values.encode(nodeID, forKey: "node_id")
         try values.encode(avatarURL, forKey: "avatar_url")
-        try values.encodeIfPresent(gravatarID, forKey: "gravatar_id")
+        try values.encode(gravatarID, forKey: "gravatar_id")
         try values.encode(url, forKey: "url")
         try values.encode(htmlURL, forKey: "html_url")
         try values.encode(followersURL, forKey: "followers_url")

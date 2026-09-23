@@ -32,12 +32,12 @@ public struct Pet: Codable, Sendable {
 
   public init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: StringCodingKey.self)
-    self.id = try values.decodeIfPresent(Int64.self, forKey: "id")
-    self.category = try values.decodeIfPresent(Category.self, forKey: "category")
+    self.id = values.contains("id") ? Optional.some(try values.decode(Int64.self, forKey: "id")) : nil
+    self.category = values.contains("category") ? Optional.some(try values.decode(Category.self, forKey: "category")) : nil
     self.name = try values.decode(String.self, forKey: "name")
     self.photoURLs = try values.decode([String].self, forKey: "photoUrls")
-    self.tags = try values.decodeIfPresent([Tag].self, forKey: "tags")
-    self.status = try values.decodeIfPresent(Status.self, forKey: "status")
+    self.tags = values.contains("tags") ? Optional.some(try values.decode([Tag].self, forKey: "tags")) : nil
+    self.status = values.contains("status") ? Optional.some(try values.decode(Status.self, forKey: "status")) : nil
   }
 
   public func encode(to encoder: Encoder) throws {

@@ -41,11 +41,11 @@ public struct LockedIssueEvent: Codable, Sendable {
         self.url = try values.decode(String.self, forKey: "url")
         self.actor = try values.decode(SimpleUser.self, forKey: "actor")
         self.event = try values.decode(String.self, forKey: "event")
-        self.commitID = try values.decodeIfPresent(String.self, forKey: "commit_id")
-        self.commitURL = try values.decodeIfPresent(String.self, forKey: "commit_url")
+        self.commitID = try values.decode(String?.self, forKey: "commit_id")
+        self.commitURL = try values.decode(String?.self, forKey: "commit_url")
         self.createdAt = try values.decode(String.self, forKey: "created_at")
-        self.performedViaGithubApp = try values.decodeIfPresent(Integration.self, forKey: "performed_via_github_app")
-        self.lockReason = try values.decodeIfPresent(String.self, forKey: "lock_reason")
+        self.performedViaGithubApp = try values.decode(Integration?.self, forKey: "performed_via_github_app")
+        self.lockReason = try values.decode(String?.self, forKey: "lock_reason")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -55,10 +55,10 @@ public struct LockedIssueEvent: Codable, Sendable {
         try values.encode(url, forKey: "url")
         try values.encode(actor, forKey: "actor")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(commitID, forKey: "commit_id")
-        try values.encodeIfPresent(commitURL, forKey: "commit_url")
+        try values.encode(commitID, forKey: "commit_id")
+        try values.encode(commitURL, forKey: "commit_url")
         try values.encode(createdAt, forKey: "created_at")
-        try values.encodeIfPresent(performedViaGithubApp, forKey: "performed_via_github_app")
-        try values.encodeIfPresent(lockReason, forKey: "lock_reason")
+        try values.encode(performedViaGithubApp, forKey: "performed_via_github_app")
+        try values.encode(lockReason, forKey: "lock_reason")
     }
 }

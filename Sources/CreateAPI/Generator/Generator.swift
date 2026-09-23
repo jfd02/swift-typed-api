@@ -13,6 +13,7 @@ final class Generator {
 
     // State collected during generation
     var isAnyJSONUsed = false
+    var isAnyOfEncoderUsed = false
     var isHTTPHeadersDependencyNeeded = false
     var isEmptyObjectNeeded = false
     var isQueryEncoderNeeded = false

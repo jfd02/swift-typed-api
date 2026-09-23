@@ -67,7 +67,7 @@ public struct Thread: Codable, Sendable {
         self.reason = try values.decode(String.self, forKey: "reason")
         self.isUnread = try values.decode(Bool.self, forKey: "unread")
         self.updatedAt = try values.decode(String.self, forKey: "updated_at")
-        self.lastReadAt = try values.decodeIfPresent(String.self, forKey: "last_read_at")
+        self.lastReadAt = try values.decode(String?.self, forKey: "last_read_at")
         self.url = try values.decode(String.self, forKey: "url")
         self.subscriptionURL = try values.decode(String.self, forKey: "subscription_url")
     }
@@ -80,7 +80,7 @@ public struct Thread: Codable, Sendable {
         try values.encode(reason, forKey: "reason")
         try values.encode(isUnread, forKey: "unread")
         try values.encode(updatedAt, forKey: "updated_at")
-        try values.encodeIfPresent(lastReadAt, forKey: "last_read_at")
+        try values.encode(lastReadAt, forKey: "last_read_at")
         try values.encode(url, forKey: "url")
         try values.encode(subscriptionURL, forKey: "subscription_url")
     }

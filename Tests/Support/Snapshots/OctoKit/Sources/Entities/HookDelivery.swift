@@ -72,14 +72,14 @@ public struct HookDelivery: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.headers = try values.decodeIfPresent([String: AnyJSON].self, forKey: "headers")
-            self.payload = try values.decodeIfPresent([String: AnyJSON].self, forKey: "payload")
+            self.headers = try values.decode([String: AnyJSON]?.self, forKey: "headers")
+            self.payload = try values.decode([String: AnyJSON]?.self, forKey: "payload")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
-            try values.encodeIfPresent(headers, forKey: "headers")
-            try values.encodeIfPresent(payload, forKey: "payload")
+            try values.encode(headers, forKey: "headers")
+            try values.encode(payload, forKey: "payload")
         }
     }
 
@@ -96,14 +96,14 @@ public struct HookDelivery: Codable, Sendable {
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: StringCodingKey.self)
-            self.headers = try values.decodeIfPresent([String: AnyJSON].self, forKey: "headers")
-            self.payload = try values.decodeIfPresent(String.self, forKey: "payload")
+            self.headers = try values.decode([String: AnyJSON]?.self, forKey: "headers")
+            self.payload = try values.decode(String?.self, forKey: "payload")
         }
 
         public func encode(to encoder: Encoder) throws {
             var values = encoder.container(keyedBy: StringCodingKey.self)
-            try values.encodeIfPresent(headers, forKey: "headers")
-            try values.encodeIfPresent(payload, forKey: "payload")
+            try values.encode(headers, forKey: "headers")
+            try values.encode(payload, forKey: "payload")
         }
     }
 
@@ -134,10 +134,10 @@ public struct HookDelivery: Codable, Sendable {
         self.status = try values.decode(String.self, forKey: "status")
         self.statusCode = try values.decode(Int.self, forKey: "status_code")
         self.event = try values.decode(String.self, forKey: "event")
-        self.action = try values.decodeIfPresent(String.self, forKey: "action")
-        self.installationID = try values.decodeIfPresent(Int.self, forKey: "installation_id")
-        self.repositoryID = try values.decodeIfPresent(Int.self, forKey: "repository_id")
-        self.url = try values.decodeIfPresent(String.self, forKey: "url")
+        self.action = try values.decode(String?.self, forKey: "action")
+        self.installationID = try values.decode(Int?.self, forKey: "installation_id")
+        self.repositoryID = try values.decode(Int?.self, forKey: "repository_id")
+        self.url = values.contains("url") ? Optional.some(try values.decode(String.self, forKey: "url")) : nil
         self.request = try values.decode(Request.self, forKey: "request")
         self.response = try values.decode(Response.self, forKey: "response")
     }
@@ -152,9 +152,9 @@ public struct HookDelivery: Codable, Sendable {
         try values.encode(status, forKey: "status")
         try values.encode(statusCode, forKey: "status_code")
         try values.encode(event, forKey: "event")
-        try values.encodeIfPresent(action, forKey: "action")
-        try values.encodeIfPresent(installationID, forKey: "installation_id")
-        try values.encodeIfPresent(repositoryID, forKey: "repository_id")
+        try values.encode(action, forKey: "action")
+        try values.encode(installationID, forKey: "installation_id")
+        try values.encode(repositoryID, forKey: "repository_id")
         try values.encodeIfPresent(url, forKey: "url")
         try values.encode(request, forKey: "request")
         try values.encode(response, forKey: "response")

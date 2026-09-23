@@ -38,4 +38,14 @@ public struct Pet: Codable, Sendable {
         case tags
         case status
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = values.contains(.id) ? Optional.some(try values.decode(Int64.self, forKey: .id)) : nil
+        self.category = values.contains(.category) ? Optional.some(try values.decode(Category.self, forKey: .category)) : nil
+        self.name = try values.decode(String.self, forKey: .name)
+        self.photoURLs = try values.decode([String].self, forKey: .photoURLs)
+        self.tags = values.contains(.tags) ? Optional.some(try values.decode([Tag].self, forKey: .tags)) : nil
+        self.status = values.contains(.status) ? Optional.some(try values.decode(Status.self, forKey: .status)) : nil
+    }
 }

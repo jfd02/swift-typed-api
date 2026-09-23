@@ -78,8 +78,8 @@ public struct CodeOfConduct: Codable, Sendable {
         self.key = try values.decode(String.self, forKey: "key")
         self.name = try values.decode(String.self, forKey: "name")
         self.url = try values.decode(URL.self, forKey: "url")
-        self.body = try values.decodeIfPresent(String.self, forKey: "body")
-        self.htmlURL = try values.decodeIfPresent(URL.self, forKey: "html_url")
+        self.body = values.contains("body") ? Optional.some(try values.decode(String.self, forKey: "body")) : nil
+        self.htmlURL = try values.decode(URL?.self, forKey: "html_url")
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -88,6 +88,6 @@ public struct CodeOfConduct: Codable, Sendable {
         try values.encode(name, forKey: "name")
         try values.encode(url, forKey: "url")
         try values.encodeIfPresent(body, forKey: "body")
-        try values.encodeIfPresent(htmlURL, forKey: "html_url")
+        try values.encode(htmlURL, forKey: "html_url")
     }
 }

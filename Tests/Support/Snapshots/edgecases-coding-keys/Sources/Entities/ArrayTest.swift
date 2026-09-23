@@ -20,4 +20,11 @@ public struct ArrayTest: Codable, Sendable {
         case arrayArrayOfInteger = "array_array_of_integer"
         case arrayArrayOfModel = "array_array_of_model"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.arrayOfString = values.contains(.arrayOfString) ? Optional.some(try values.decode([String].self, forKey: .arrayOfString)) : nil
+        self.arrayArrayOfInteger = values.contains(.arrayArrayOfInteger) ? Optional.some(try values.decode([[Int64]].self, forKey: .arrayArrayOfInteger)) : nil
+        self.arrayArrayOfModel = values.contains(.arrayArrayOfModel) ? Optional.some(try values.decode([[ReadOnlyFirst]].self, forKey: .arrayArrayOfModel)) : nil
+    }
 }

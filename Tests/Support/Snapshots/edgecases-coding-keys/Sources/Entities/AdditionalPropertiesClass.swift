@@ -17,4 +17,10 @@ public struct AdditionalPropertiesClass: Codable, Sendable {
         case mapProperty = "map_property"
         case mapOfMapProperty = "map_of_map_property"
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.mapProperty = values.contains(.mapProperty) ? Optional.some(try values.decode([String: String].self, forKey: .mapProperty)) : nil
+        self.mapOfMapProperty = values.contains(.mapOfMapProperty) ? Optional.some(try values.decode([String: [String: String]].self, forKey: .mapOfMapProperty)) : nil
+    }
 }
