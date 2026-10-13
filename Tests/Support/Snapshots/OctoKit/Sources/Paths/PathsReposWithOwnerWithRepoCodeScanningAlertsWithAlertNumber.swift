@@ -145,9 +145,9 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
             /// Sets the state of the code scanning alert. Can be one of `open` or `dismissed`. You must provide `dismissed_reason` when you set the state to `dismissed`.
             public var state: OctoKit.CodeScanningAlertSetState
             /// **Required when the state is dismissed.** The reason for dismissing or closing the alert. Can be one of: `false positive`, `won't fix`, and `used in tests`.
-            public var dismissedReason: OctoKit.CodeScanningAlertDismissedReason?
+            public var dismissedReason: PatchField<OctoKit.CodeScanningAlertDismissedReason>
 
-            public init(state: OctoKit.CodeScanningAlertSetState, dismissedReason: OctoKit.CodeScanningAlertDismissedReason? = nil) {
+            public init(state: OctoKit.CodeScanningAlertSetState, dismissedReason: PatchField<OctoKit.CodeScanningAlertDismissedReason> = .omitted) {
                 self.state = state
                 self.dismissedReason = dismissedReason
             }
@@ -155,7 +155,7 @@ extension Paths.Repos.WithOwner.WithRepo.CodeScanning.Alerts {
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
                 try values.encode(state, forKey: "state")
-                try values.encodeIfPresent(dismissedReason, forKey: "dismissed_reason")
+                try values.encode(dismissedReason, forKey: "dismissed_reason")
             }
         }
     }

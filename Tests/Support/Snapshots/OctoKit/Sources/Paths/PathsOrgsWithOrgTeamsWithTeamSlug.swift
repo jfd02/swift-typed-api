@@ -81,7 +81,7 @@ extension Paths.Orgs.WithOrg.Teams {
             /// \* `admin` - team members can pull, push and administer newly-added repositories.
             public var permission: Permission?
             /// The ID of a team to set as the parent team.
-            public var parentTeamID: Int?
+            public var parentTeamID: PatchField<Int>
 
             /// The level of privacy this team should have. Editing teams without specifying this parameter leaves `privacy` intact. When a team is nested, the `privacy` for parent teams cannot be `secret`. The options are:  
             /// **For a non-nested team:**  
@@ -104,7 +104,7 @@ extension Paths.Orgs.WithOrg.Teams {
                 case admin
             }
 
-            public init(name: String? = nil, description: String? = nil, privacy: Privacy? = nil, permission: Permission? = nil, parentTeamID: Int? = nil) {
+            public init(name: String? = nil, description: String? = nil, privacy: Privacy? = nil, permission: Permission? = nil, parentTeamID: PatchField<Int> = .omitted) {
                 self.name = name
                 self.description = description
                 self.privacy = privacy
@@ -118,7 +118,7 @@ extension Paths.Orgs.WithOrg.Teams {
                 try values.encodeIfPresent(description, forKey: "description")
                 try values.encodeIfPresent(privacy, forKey: "privacy")
                 try values.encodeIfPresent(permission, forKey: "permission")
-                try values.encodeIfPresent(parentTeamID, forKey: "parent_team_id")
+                try values.encode(parentTeamID, forKey: "parent_team_id")
             }
         }
 

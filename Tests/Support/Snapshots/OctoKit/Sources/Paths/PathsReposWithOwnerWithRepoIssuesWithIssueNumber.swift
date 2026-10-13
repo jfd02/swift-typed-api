@@ -140,14 +140,14 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
 
         public struct PatchRequest: Encodable, Sendable {
             /// The title of the issue.
-            public var title: Title?
+            public var title: PatchField<Title>
             /// The contents of the issue.
-            public var body: String?
+            public var body: PatchField<String>
             /// Login for the user that this issue should be assigned to. **This field is deprecated.**
-            public var assignee: String?
+            public var assignee: PatchField<String>
             /// State of the issue. Either `open` or `closed`.
             public var state: State?
-            public var milestone: Milestone?
+            public var milestone: PatchField<Milestone>
             /// Labels to associate with this issue. Pass one or more Labels to _replace_ the set of Labels on this Issue. Send an empty array (`[]`) to clear all Labels from the Issue. _NOTE: Only users with push access can set labels for issues. Labels are silently dropped otherwise._
             public var labels: [Label]?
             /// Logins for Users to assign to this issue. Pass one or more user logins to _replace_ the set of assignees on this Issue. Send an empty array (`[]`) to clear all assignees from the Issue. _NOTE: Only users with push access can set assignees for new issues. Assignees are silently dropped otherwise._
@@ -221,7 +221,7 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
                 }
             }
 
-            public init(title: Title? = nil, body: String? = nil, assignee: String? = nil, state: State? = nil, milestone: Milestone? = nil, labels: [Label]? = nil, assignees: [String]? = nil) {
+            public init(title: PatchField<Title> = .omitted, body: PatchField<String> = .omitted, assignee: PatchField<String> = .omitted, state: State? = nil, milestone: PatchField<Milestone> = .omitted, labels: [Label]? = nil, assignees: [String]? = nil) {
                 self.title = title
                 self.body = body
                 self.assignee = assignee
@@ -233,11 +233,11 @@ extension Paths.Repos.WithOwner.WithRepo.Issues {
 
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
-                try values.encodeIfPresent(title, forKey: "title")
-                try values.encodeIfPresent(body, forKey: "body")
-                try values.encodeIfPresent(assignee, forKey: "assignee")
+                try values.encode(title, forKey: "title")
+                try values.encode(body, forKey: "body")
+                try values.encode(assignee, forKey: "assignee")
                 try values.encodeIfPresent(state, forKey: "state")
-                try values.encodeIfPresent(milestone, forKey: "milestone")
+                try values.encode(milestone, forKey: "milestone")
                 try values.encodeIfPresent(labels, forKey: "labels")
                 try values.encodeIfPresent(assignees, forKey: "assignees")
             }

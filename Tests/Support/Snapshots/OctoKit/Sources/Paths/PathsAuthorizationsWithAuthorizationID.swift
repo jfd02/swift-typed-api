@@ -101,7 +101,7 @@ extension Paths.Authorizations {
             /// A list of scopes that this authorization is in.
             ///
             /// Example: ["public_repo", "user"]
-            public var scopes: [String]?
+            public var scopes: PatchField<[String]>
             /// A list of scopes to add to this authorization.
             public var addScopes: [String]?
             /// A list of scopes to remove from this authorization.
@@ -115,7 +115,7 @@ extension Paths.Authorizations {
             /// A unique string to distinguish an authorization from others created for the same client ID and user.
             public var fingerprint: String?
 
-            public init(scopes: [String]? = nil, addScopes: [String]? = nil, removeScopes: [String]? = nil, note: String? = nil, noteURL: String? = nil, fingerprint: String? = nil) {
+            public init(scopes: PatchField<[String]> = .omitted, addScopes: [String]? = nil, removeScopes: [String]? = nil, note: String? = nil, noteURL: String? = nil, fingerprint: String? = nil) {
                 self.scopes = scopes
                 self.addScopes = addScopes
                 self.removeScopes = removeScopes
@@ -126,7 +126,7 @@ extension Paths.Authorizations {
 
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
-                try values.encodeIfPresent(scopes, forKey: "scopes")
+                try values.encode(scopes, forKey: "scopes")
                 try values.encodeIfPresent(addScopes, forKey: "add_scopes")
                 try values.encodeIfPresent(removeScopes, forKey: "remove_scopes")
                 try values.encodeIfPresent(note, forKey: "note")

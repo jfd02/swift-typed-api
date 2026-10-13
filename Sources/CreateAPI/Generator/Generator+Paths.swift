@@ -510,6 +510,7 @@ extension Generator {
                       let entity = (requestBody.nested as? EntityDeclaration),
                       entity.properties.count == 1,
                       !entity.isForm,
+                      !entity.properties[0].type.isPatchField,
                       !parameters.contains(where: { $0.hasPrefix(entity.properties[0].name.rawValue + ":") }) {
                 let property = entity.properties[0]
                 if entity.isNested(property.type.elementType) {

@@ -64,14 +64,14 @@ extension Generator {
                     if let keys = templates.codingKeys(for: properties) {
                         contents.append(keys)
                     }
-                    if decl.protocols.isDecodable, properties.contains(where: { $0.defaultValue != nil || $0.isRequiredNullable || $0.rejectsNull || $0.type.isOptional }) {
+                    if decl.protocols.isDecodable, properties.contains(where: { $0.defaultValue != nil || $0.isRequiredNullable || $0.type.isPatchField || $0.rejectsNull || $0.type.isOptional }) {
                         contents.append(templates.initFromDecoder(properties: properties, isUsingCodingKeys: true))
                     }
-                    if decl.protocols.isEncodable, properties.contains(where: { $0.isRequiredNullable }) {
+                    if decl.protocols.isEncodable, properties.contains(where: { $0.isRequiredNullable || $0.type.isPatchField }) {
                         contents.append(templates.encode(properties: properties))
                     }
                 } else {
-                    let requiresNullableCoding = properties.contains(where: { $0.isRequiredNullable })
+                    let requiresNullableCoding = properties.contains(where: { $0.isRequiredNullable || $0.type.isPatchField })
                     let requiresPresenceCheck = properties.contains(where: { $0.rejectsNull || $0.type.isOptional })
                     let hasCustomDecoder = decl.protocols.isDecodable && !properties.isEmpty && (options.entities.alwaysIncludeDecodableImplementation || requiresNullableCoding || requiresPresenceCheck)
                     let hasCustomEncoder = decl.protocols.isEncodable && !properties.isEmpty && (options.entities.alwaysIncludeEncodableImplementation || requiresNullableCoding)

@@ -63,7 +63,8 @@ extension Issue {
         ["paths", "overridenBodyTypes"]: "Replaced by ‘overriddenBodyTypes‘.",
         ["paths", "isInliningSimpleRequests"]: "Replaced by ‘inlineSimpleRequests‘.",
         ["paths", "isInliningSimpleQueryParameters"]: "Replaced by ‘inlineSimpleQueryParameters‘.",
-        ["paths", "isMakingOptionalPatchParametersDoubleOptional"]: "Replaced by ‘makeOptionalPatchParametersDoubleOptional‘.",
+        ["paths", "isMakingOptionalPatchParametersDoubleOptional"]: "Nullable PATCH fields now use PatchField automatically.",
+        ["paths", "makeOptionalPatchParametersDoubleOptional"]: "Nullable PATCH fields now use PatchField automatically.",
         ["paths", "isRemovingRedundantPaths"]: "Replaced by ‘removeRedundantPaths‘.",
         ["paths", "isAddingOperationIds"]: "Enabled by default."
     ]

@@ -13,8 +13,11 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
     // Dictionary
     case dictionary(key: TypeIdentifier, value: TypeIdentifier)
 
-    // Optional collection element or explicit PATCH value
+    // Optional collection element
     case optional(wrapped: TypeIdentifier)
+
+    // An omittable, nullable PATCH field.
+    case patchField(wrapped: TypeIdentifier)
 
     // MARK: Helpers
 
@@ -41,8 +44,9 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
         .array(element: self)
     }
 
-    func asPatchParameter() -> TypeIdentifier {
-        .optional(wrapped: self)
+    var isPatchField: Bool {
+        if case .patchField = self { return true }
+        return false
     }
 
     var isOptional: Bool {
@@ -59,13 +63,14 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
         case .builtin, .userDefined: return self
         case .array(let element): return element.elementType
         case .dictionary(_, let value): return value.elementType
-        case .optional(let wrapped): return wrapped.elementType
+        case .optional(let wrapped), .patchField(let wrapped): return wrapped.elementType
         }
     }
 
     // Generates a type identifier adding a namespace if needed.
     func identifier(namespace: String) -> TypeName {
         switch self {
+        case .patchField(let wrapped): return TypeName("PatchField<\(wrapped.identifier(namespace: namespace))>")
         case .optional(let wrapped): return TypeName("\(wrapped.identifier(namespace: namespace))?")
         case .builtin(let name): return name
         case .userDefined(let name): return name.namespace(namespace)
@@ -92,6 +97,7 @@ indirect enum TypeIdentifier: CustomStringConvertible, Hashable {
 
     var description: String {
         switch self {
+        case .patchField(let wrapped): return "PatchField<\(wrapped)>"
         case .optional(let wrapped): return "\(wrapped)?"
         case .array(let element): return "[\(element)]"
         case .dictionary(let key, let value): return "[\(key): \(value)]"

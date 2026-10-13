@@ -140,7 +140,7 @@ extension Paths {
             /// The new Twitter username of the user.
             ///
             /// Example: "therealomarj"
-            public var twitterUsername: String?
+            public var twitterUsername: PatchField<String>
             /// The new company of the user.
             ///
             /// Example: "Acme corporation"
@@ -154,7 +154,7 @@ extension Paths {
             /// The new short biography of the user.
             public var bio: String?
 
-            public init(name: String? = nil, email: String? = nil, blog: String? = nil, twitterUsername: String? = nil, company: String? = nil, location: String? = nil, isHireable: Bool? = nil, bio: String? = nil) {
+            public init(name: String? = nil, email: String? = nil, blog: String? = nil, twitterUsername: PatchField<String> = .omitted, company: String? = nil, location: String? = nil, isHireable: Bool? = nil, bio: String? = nil) {
                 self.name = name
                 self.email = email
                 self.blog = blog
@@ -170,7 +170,7 @@ extension Paths {
                 try values.encodeIfPresent(name, forKey: "name")
                 try values.encodeIfPresent(email, forKey: "email")
                 try values.encodeIfPresent(blog, forKey: "blog")
-                try values.encodeIfPresent(twitterUsername, forKey: "twitter_username")
+                try values.encode(twitterUsername, forKey: "twitter_username")
                 try values.encodeIfPresent(company, forKey: "company")
                 try values.encodeIfPresent(location, forKey: "location")
                 try values.encodeIfPresent(isHireable, forKey: "hireable")
