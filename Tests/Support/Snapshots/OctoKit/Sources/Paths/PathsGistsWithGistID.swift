@@ -134,7 +134,7 @@ extension Paths.Gists {
             /// Description of the gist
             ///
             /// Example: "Example Ruby script"
-            public var description: String?
+            public var description: PatchField<String>
             /// Names of files to be updated
             ///
             /// Example:
@@ -145,7 +145,7 @@ extension Paths.Gists {
             ///     "filename" : "goodbye.rb"
             ///   }
             /// }
-            public var files: [String: File]?
+            public var files: PatchField<[String: File]>
 
             public struct File: Encodable, Sendable {
                 /// The new content of the file
@@ -165,15 +165,15 @@ extension Paths.Gists {
                 }
             }
 
-            public init(description: String? = nil, files: [String: File]? = nil) {
+            public init(description: PatchField<String> = .omitted, files: PatchField<[String: File]> = .omitted) {
                 self.description = description
                 self.files = files
             }
 
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
-                try values.encodeIfPresent(description, forKey: "description")
-                try values.encodeIfPresent(files, forKey: "files")
+                try values.encode(description, forKey: "description")
+                try values.encode(files, forKey: "files")
             }
         }
 

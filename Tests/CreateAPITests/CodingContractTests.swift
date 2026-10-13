@@ -291,7 +291,6 @@ final class CodingContractTests: XCTestCase {
             let options = try GenerateOptions(data: nil) {
                 $0.entities.protocols = ["Codable"]
                 $0.entities.optimizeCodingKeys = optimizeCodingKeys
-                $0.paths.makeOptionalPatchParametersDoubleOptional = true
                 $0.entities.alwaysIncludeDecodableImplementation = false
                 $0.entities.alwaysIncludeEncodableImplementation = false
             }
@@ -313,20 +312,105 @@ final class CodingContractTests: XCTestCase {
                 arguments: GenerateArguments(isVerbose: false, isParallel: false, isStrict: true, isIgnoringErrors: false))
             let declaration = try generator._makeDeclaration(name: TypeName("Patch"), schema: document.components.schemas["Patch"]!, context: Context(isPatch: true))
             let output = GeneratorOutput(header: "", files: [GeneratedFile(name: "Patch", contents: try generator.render(declaration))],
-                extensions: [GeneratedFile(name: "StringCodingKey", contents: stringCodingKey)])
+                extensions: [GeneratedFile(name: "StringCodingKey", contents: stringCodingKey),
+                             GeneratedFile(name: "PatchField", contents: generator.templates.patchField)])
             try run(output, assertions: #"""
             let decoder = JSONDecoder()
             let missing = try decoder.decode(Patch.self, from: Data(#"{"required_value":null}"#.utf8))
-            if case .some = missing.displayName { fatalError("Absent PATCH field became present") }
+            precondition(missing.displayName == .omitted)
             let null = try decoder.decode(Patch.self, from: Data(#"{"required_value":null,"display_name":null}"#.utf8))
-            guard case .some(.none) = null.displayName else { fatalError("Explicit null PATCH field became absent") }
+            precondition(null.displayName == .null)
             let missingObject = try JSONSerialization.jsonObject(with: JSONEncoder().encode(missing)) as! [String: Any]
             let nullObject = try JSONSerialization.jsonObject(with: JSONEncoder().encode(null)) as! [String: Any]
             precondition(missingObject["display_name"] == nil)
             precondition(nullObject["display_name"] is NSNull)
             precondition(nullObject["required_value"] is NSNull)
             let populated = try decoder.decode(Patch.self, from: Data(#"{"required_value":"a","display_name":"b","label":"c"}"#.utf8))
-            precondition(populated.requiredValue == "a" && populated.displayName! == "b" && populated.label == "c")
+            precondition(populated.requiredValue == "a" && populated.displayName == .value("b") && populated.label == "c")
+            """#)
+        }
+    }
+
+    func testReferencedPatchBodiesPreservePresenceWithoutChangingNestedObjects() throws {
+        for optimizeCodingKeys in [true, false] {
+            let options = try GenerateOptions(data: nil) {
+                $0.entities.protocols = ["Codable", "Hashable", "Sendable"]
+                $0.entities.optimizeCodingKeys = optimizeCodingKeys
+                $0.entities.alwaysIncludeDecodableImplementation = false
+                $0.entities.alwaysIncludeEncodableImplementation = false
+            }
+            let output = try generate("""
+            openapi: '3.1.0'
+            info: {title: Test, version: '1'}
+            paths:
+              /profile:
+                patch:
+                  requestBody: {$ref: '#/components/requestBodies/ProfileBody'}
+                  responses:
+                    '204': {description: Updated}
+            components:
+              requestBodies:
+                ProfileBody:
+                  required: true
+                  content:
+                    application/json:
+                      schema: {$ref: '#/components/schemas/Profile'}
+              schemas:
+                NullableString: {type: [string, 'null']}
+                Profile:
+                  type: object
+                  properties:
+                    display_name: {$ref: '#/components/schemas/NullableString'}
+                    enabled: {type: [boolean, 'null'], default: true}
+                    tags: {type: [array, 'null'], items: {type: string}}
+                    modified_at: {type: [string, 'null'], format: date-time}
+                    nested:
+                      anyOf:
+                        - type: object
+                          properties:
+                            label: {type: [string, 'null']}
+                        - type: 'null'
+                    label: {type: string}
+                Replacement:
+                  type: object
+                  properties:
+                    display_name: {type: [string, 'null']}
+            """, options: options)
+            try run(output, assertions: #"""
+            let decoder = JSONDecoder()
+            let encoder = JSONEncoder()
+            decoder.dateDecodingStrategy = .secondsSince1970
+            encoder.dateEncodingStrategy = .secondsSince1970
+            let empty = Profile()
+            precondition(empty.displayName == .omitted && empty.isEnabled == .omitted)
+            precondition(empty.tags == .omitted && empty.modifiedAt == .omitted)
+            let emptyObject = try JSONSerialization.jsonObject(with: encoder.encode(empty)) as! [String: Any]
+            precondition(emptyObject.isEmpty)
+            for payload in ["{}", #"{"display_name":null,"enabled":null,"tags":null,"modified_at":null,"nested":null}"#,
+                            #"{"display_name":"Lunch","enabled":false,"tags":[],"modified_at":123,"nested":{},"label":"Hi"}"#] {
+                let input = Data(payload.utf8)
+                let decoded = try decoder.decode(Profile.self, from: input)
+                let actual = try JSONSerialization.jsonObject(with: encoder.encode(decoded)) as! NSDictionary
+                let expected = try JSONSerialization.jsonObject(with: input) as! NSDictionary
+                precondition(actual == expected)
+            }
+            let supplied = Profile(displayName: .value(""), isEnabled: .value(false), tags: .value([]), modifiedAt: .value(Date(timeIntervalSince1970: 123)))
+            let suppliedObject = try JSONSerialization.jsonObject(with: encoder.encode(supplied)) as! [String: Any]
+            precondition(suppliedObject["display_name"] as? String == "")
+            precondition(suppliedObject["enabled"] as? Bool == false)
+            precondition(suppliedObject["tags"] as? [String] == [])
+            precondition(suppliedObject["modified_at"] as? Double == 123)
+            let clear = Profile(displayName: .null, isEnabled: .null, tags: .null)
+            let clearObject = try JSONSerialization.jsonObject(with: encoder.encode(clear)) as! [String: Any]
+            precondition(clearObject["display_name"] is NSNull && clearObject["enabled"] is NSNull && clearObject["tags"] is NSNull)
+            precondition(Replacement(displayName: nil).displayName == nil)
+            for invalid in [#"{"label":null}"#, #"{"enabled":"wrong"}"#, #"{"display_name":123}"#] {
+                do {
+                    _ = try decoder.decode(Profile.self, from: Data(invalid.utf8))
+                    fatalError("Invalid PATCH value accepted: \(invalid)")
+                } catch DecodingError.valueNotFound {
+                } catch DecodingError.typeMismatch { }
+            }
             """#)
         }
     }

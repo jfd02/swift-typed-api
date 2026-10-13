@@ -282,7 +282,7 @@ final class Templates {
             return "self.\($0.name.accessor) = \($0.name)\(defaultValue)"
         }.joined(separator: "\n")
         let arguments = properties.map {
-            "\($0.name): \($0.type)\($0.isOptional ? "? = nil" : "")"
+            "\($0.name): \($0.type)\($0.type.isPatchField ? " = .omitted" : ($0.isOptional ? "? = nil" : ""))"
         }.joined(separator: ", ")
         return """
         \(access)init(\(arguments)) {

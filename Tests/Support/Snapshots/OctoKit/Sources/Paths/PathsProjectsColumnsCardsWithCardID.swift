@@ -106,20 +106,20 @@ extension Paths.Projects.Columns.Cards {
             /// The project card's note
             ///
             /// Example: "Update all gems"
-            public var note: String?
+            public var note: PatchField<String>
             /// Whether or not the card is archived
             ///
             /// Example: false
             public var isArchived: Bool?
 
-            public init(note: String? = nil, isArchived: Bool? = nil) {
+            public init(note: PatchField<String> = .omitted, isArchived: Bool? = nil) {
                 self.note = note
                 self.isArchived = isArchived
             }
 
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
-                try values.encodeIfPresent(note, forKey: "note")
+                try values.encode(note, forKey: "note")
                 try values.encodeIfPresent(isArchived, forKey: "archived")
             }
         }

@@ -12,6 +12,7 @@ final class Generator {
     let templates: Templates
 
     // State collected during generation
+    var isPatchFieldUsed = false
     var isAnyJSONUsed = false
     var isAnyOfEncoderUsed = false
     var isHTTPHeadersDependencyNeeded = false

@@ -73,6 +73,7 @@ extension Generator {
     private func makeJobs() throws -> [Job] {
         var jobs: [Job] = []
         var encountered = Set<TypeName>()
+        let patchSchemas = try patchRequestSchemas()
         for (key, schema) in spec.components.schemas {
             guard let name = getTypeName(for: key) else {
                 continue
@@ -83,7 +84,7 @@ extension Generator {
                 continue
             }
 
-            let job = Job(name: name, schema: schema)
+            let job = Job(name: name, schema: schema, isPatch: patchSchemas.contains(key.rawValue))
             if encountered.contains(job.name) {
                 try handle(warning: "Duplicated type name: \(job.name), skipping")
             } else {
@@ -92,6 +93,35 @@ extension Generator {
             }
         }
         return jobs
+    }
+
+    private func patchRequestSchemas() throws -> Set<String> {
+        var names = Set<String>()
+        func collect(_ schema: JSONSchema) {
+            switch schema.value {
+            case .reference(let reference, _):
+                guard let name = reference.name, names.insert(name).inserted,
+                      let target = getSchema(for: reference) else { return }
+                collect(target)
+            case .all(let schemas, _), .one(let schemas, _), .any(let schemas, _):
+                schemas.forEach(collect)
+            default:
+                break
+            }
+        }
+        for (_, path) in spec.paths {
+            let item = try path.resolvedPathItem(in: spec)
+            guard let body = item.patch?.requestBody else { continue }
+            let request = try body.unwrapped(in: spec)
+            for (contentType, media) in request.content where contentType != .form && contentType != .multipartForm {
+                switch media.schema {
+                case .a(let reference): collect(.reference(reference.jsonReference))
+                case .b(let schema): collect(schema)
+                case nil: break
+                }
+            }
+        }
+        return names
     }
 
     private func shouldGenerate(name: String) -> Bool {
@@ -107,11 +137,15 @@ extension Generator {
     private struct Job {
         let name: TypeName
         let schema: JSONSchema
+        let isPatch: Bool
     }
 
     private func makeExtensions() -> [GeneratedFile] {
         var extensions: [GeneratedFile] = []
 
+        if isPatchFieldUsed {
+            extensions.append(GeneratedFile(name: "PatchField", contents: templates.patchField))
+        }
         if isAnyJSONUsed {
             extensions.append(GeneratedFile(name: "AnyJSON", contents: templates.anyJSON))
         }
@@ -159,7 +193,7 @@ extension Generator {
     // MARK: - Declarations
 
     private func makeDeclaration(job: Job) throws -> Declaration? {
-        let context = Context(parents: [])
+        let context = Context(parents: [], isPatch: job.isPatch)
         return try makeDeclaration(name: job.name, schema: job.schema, context: context)
     }
 
@@ -718,11 +752,14 @@ extension Generator {
 
         func property(type: TypeIdentifier, info: JSONSchemaContext?, nested: Declaration? = nil) -> Property {
             let nullable = info?.nullable ?? false
-            let isOptional = !isRequired || nullable || schema.isNullableComposition
+            let isPatchField = context.isPatch && !context.isFormEncoding && !isRequired && schemaAllowsNull(schema)
+            let isOptional = !isPatchField && (!isRequired || nullable || schema.isNullableComposition)
             let isRequiredNullable = isRequired && (nullable || schema.isNullableComposition)
+            let isBoolean = type.isBool
             var type = type
-            if context.isPatch && !isRequired && schemaAllowsNull(schema) && options.paths.makeOptionalPatchParametersDoubleOptional {
-                type = type.asPatchParameter()
+            if isPatchField {
+                type = .patchField(wrapped: type)
+                lock.sync { isPatchFieldUsed = true }
             }
             var defaultValue: String?
             if options.entities.includeDefaultValues && !isRequiredNullable {
@@ -733,7 +770,7 @@ extension Generator {
             
             var propertyName = propertyName
             
-            if type.isBool && options.useSwiftyPropertyNames {
+            if isBoolean && options.useSwiftyPropertyNames {
                 propertyName = propertyName.asBoolean(options)
             }
             
@@ -751,7 +788,7 @@ extension Generator {
 
         // TOOD: This can be done faster for primitive types (no makeTypeName)
         func makeSimpleProperty() throws -> Property {
-            let decl = try _makeDeclaration(name: makeTypeName(key), schema: schema, context: context)
+            let decl = try _makeDeclaration(name: makeTypeName(key), schema: schema, context: context.map { if !$0.parents.isEmpty { $0.isPatch = false } })
             switch decl {
             case let alias as TypealiasDeclaration:
                 return property(type: alias.type, info: schema.coreContext, nested: alias.nested)
@@ -764,7 +801,7 @@ extension Generator {
             // TODO: Refactor (changed it to `null` to avoid issue with cycles)
             // Maybe remove dereferencing entirely?
             let info = getSchema(for: reference)?.coreContext
-            let type = try getTypeIdentifier(for: makeTypeName(key), schema: schema, context: context) ?? .userDefined(name: TypeName(reference.name ?? ""))
+            let type = try getTypeIdentifier(for: makeTypeName(key), schema: schema, context: context.map { if !$0.parents.isEmpty { $0.isPatch = false } }) ?? .userDefined(name: TypeName(reference.name ?? ""))
             return property(type: type, info: info, nested: nil)
         }
 

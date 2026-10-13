@@ -133,7 +133,7 @@ extension Paths.Projects {
             /// Body of the project
             ///
             /// Example: "This project represents the sprint of the first week in January"
-            public var body: String?
+            public var body: PatchField<String>
             /// State of the project; either 'open' or 'closed'
             ///
             /// Example: "open"
@@ -151,7 +151,7 @@ extension Paths.Projects {
                 case `none`
             }
 
-            public init(name: String? = nil, body: String? = nil, state: String? = nil, organizationPermission: OrganizationPermission? = nil, isPrivate: Bool? = nil) {
+            public init(name: String? = nil, body: PatchField<String> = .omitted, state: String? = nil, organizationPermission: OrganizationPermission? = nil, isPrivate: Bool? = nil) {
                 self.name = name
                 self.body = body
                 self.state = state
@@ -162,7 +162,7 @@ extension Paths.Projects {
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
                 try values.encodeIfPresent(name, forKey: "name")
-                try values.encodeIfPresent(body, forKey: "body")
+                try values.encode(body, forKey: "body")
                 try values.encodeIfPresent(state, forKey: "state")
                 try values.encodeIfPresent(organizationPermission, forKey: "organization_permission")
                 try values.encodeIfPresent(isPrivate, forKey: "private")

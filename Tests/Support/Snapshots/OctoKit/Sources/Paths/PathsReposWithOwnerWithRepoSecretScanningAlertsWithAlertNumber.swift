@@ -143,9 +143,9 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
             /// Sets the state of the secret scanning alert. Can be either `open` or `resolved`. You must provide `resolution` when you set the state to `resolved`.
             public var state: OctoKit.SecretScanningAlertState
             /// **Required when the `state` is `resolved`.** The reason for resolving the alert. Can be one of `false_positive`, `wont_fix`, `revoked`, or `used_in_tests`.
-            public var resolution: OctoKit.SecretScanningAlertResolution?
+            public var resolution: PatchField<OctoKit.SecretScanningAlertResolution>
 
-            public init(state: OctoKit.SecretScanningAlertState, resolution: OctoKit.SecretScanningAlertResolution? = nil) {
+            public init(state: OctoKit.SecretScanningAlertState, resolution: PatchField<OctoKit.SecretScanningAlertResolution> = .omitted) {
                 self.state = state
                 self.resolution = resolution
             }
@@ -153,7 +153,7 @@ extension Paths.Repos.WithOwner.WithRepo.SecretScanning.Alerts {
             public func encode(to encoder: Encoder) throws {
                 var values = encoder.container(keyedBy: StringCodingKey.self)
                 try values.encode(state, forKey: "state")
-                try values.encodeIfPresent(resolution, forKey: "resolution")
+                try values.encode(resolution, forKey: "resolution")
             }
         }
     }

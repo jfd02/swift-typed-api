@@ -1,0 +1,39 @@
+import Foundation
+
+extension Templates {
+    var patchField: String {
+        """
+        /// A nullable PATCH field: omit it, clear it with null, or supply a value.
+        \(access)enum PatchField<Value> {
+            case omitted
+            case null
+            case value(Value)
+        }
+
+        extension PatchField: Equatable where Value: Equatable {}
+        extension PatchField: Hashable where Value: Hashable {}
+        extension PatchField: Sendable where Value: Sendable {}
+
+        extension KeyedDecodingContainer {
+            func decode<Value: Decodable>(_ type: PatchField<Value>.Type, forKey key: Key) throws -> PatchField<Value> {
+                guard contains(key) else { return .omitted }
+                if try decodeNil(forKey: key) { return .null }
+                return .value(try decode(Value.self, forKey: key))
+            }
+        }
+
+        extension KeyedEncodingContainer {
+            mutating func encode<Value: Encodable>(_ field: PatchField<Value>, forKey key: Key) throws {
+                switch field {
+                case .omitted:
+                    break
+                case .null:
+                    try encodeNil(forKey: key)
+                case .value(let value):
+                    try encode(value, forKey: key)
+                }
+            }
+        }
+        """
+    }
+}

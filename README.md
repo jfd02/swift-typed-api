@@ -242,3 +242,24 @@ This implementation builds on ideas and prior work from:
 ## Contributing
 
 We always welcome contributions from the community via Issues and Pull Requests. Please be sure to read over the [contributing guidelines](./CONTRIBUTING.md) for more information.
+
+### Nullable PATCH fields
+
+Generated JSON PATCH request models distinguish omitted fields from explicit nulls:
+
+```swift
+TagRequestPatch()                         // {}
+TagRequestPatch(color: .null)             // {"color":null}
+TagRequestPatch(color: .value("#6D5BD0"))  // {"color":"#6D5BD0"}
+```
+
+Optional nullable fields use `PatchField<Value>`, defaulting to `.omitted`. This
+works for inline request bodies and component schemas referenced by PATCH
+operations, including schemas shared with other operations. Optional non-nullable
+fields remain `Value?`, where `nil` means omitted and decoding null fails.
+Required nullable fields remain `Value?`, where `nil` encodes null. Nested objects
+are ordinary replacement values rather than recursive patches.
+
+`PatchField` represents a keyed field, so the generated keyed coding helpers
+handle it instead of giving the enum a standalone JSON representation. Its
+`Equatable`, `Hashable`, and `Sendable` conformances are conditional on `Value`.

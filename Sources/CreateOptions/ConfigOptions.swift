@@ -657,10 +657,6 @@ public struct ConfigOptions: ParsableConfiguration {
         /// The threshold of query parameters to inline when using `inlineSimpleQueryParameters`.
         @Option public var simpleQueryParametersThreshold: Int = 2
 
-        // TODO: Replace this with a better solution for patch params
-        // sourcery: skip
-        @Option public var makeOptionalPatchParametersDoubleOptional: Bool = false
-
         /// Remove redundant paths if possible
         @Option public var removeRedundantPaths: Bool = true
 

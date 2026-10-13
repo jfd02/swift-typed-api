@@ -113,7 +113,7 @@ extension Paths.Repos.WithOwner {
             /// Can be `public` or `private`. If your organization is associated with an enterprise account using GitHub Enterprise Cloud or GitHub Enterprise Server 2.20+, `visibility` can also be `internal`."
             public var visibility: Visibility?
             /// Specify which security and analysis features to enable or disable. For example, to enable GitHub Advanced Security, use this data in the body of the PATCH request: `{"security_and_analysis": {"advanced_security": {"status": "enabled"}}}`. If you have admin permissions for a private repository covered by an Advanced Security license, you can check which security and analysis features are currently enabled by using a `GET /repos/{owner}/{repo}` request.
-            public var securityAndAnalysis: SecurityAndAnalysis?
+            public var securityAndAnalysis: PatchField<SecurityAndAnalysis>
             /// Either `true` to enable issues for this repository or `false` to disable them.
             public var hasIssues: Bool
             /// Either `true` to enable projects for this repository or `false` to disable them. **Note:** If you're creating a repository in an organization that has disabled repository projects, the default is `false`, and if you pass `true`, the API returns an error.
@@ -195,7 +195,7 @@ extension Paths.Repos.WithOwner {
                 }
             }
 
-            public init(name: String? = nil, description: String? = nil, homepage: String? = nil, isPrivate: Bool? = nil, visibility: Visibility? = nil, securityAndAnalysis: SecurityAndAnalysis? = nil, hasIssues: Bool? = nil, hasProjects: Bool? = nil, hasWiki: Bool? = nil, isTemplate: Bool? = nil, defaultBranch: String? = nil, allowSquashMerge: Bool? = nil, allowMergeCommit: Bool? = nil, allowRebaseMerge: Bool? = nil, allowAutoMerge: Bool? = nil, deleteBranchOnMerge: Bool? = nil, isArchived: Bool? = nil, allowForking: Bool? = nil) {
+            public init(name: String? = nil, description: String? = nil, homepage: String? = nil, isPrivate: Bool? = nil, visibility: Visibility? = nil, securityAndAnalysis: PatchField<SecurityAndAnalysis> = .omitted, hasIssues: Bool? = nil, hasProjects: Bool? = nil, hasWiki: Bool? = nil, isTemplate: Bool? = nil, defaultBranch: String? = nil, allowSquashMerge: Bool? = nil, allowMergeCommit: Bool? = nil, allowRebaseMerge: Bool? = nil, allowAutoMerge: Bool? = nil, deleteBranchOnMerge: Bool? = nil, isArchived: Bool? = nil, allowForking: Bool? = nil) {
                 self.name = name
                 self.description = description
                 self.homepage = homepage
@@ -223,7 +223,7 @@ extension Paths.Repos.WithOwner {
                 try values.encodeIfPresent(homepage, forKey: "homepage")
                 try values.encodeIfPresent(isPrivate, forKey: "private")
                 try values.encodeIfPresent(visibility, forKey: "visibility")
-                try values.encodeIfPresent(securityAndAnalysis, forKey: "security_and_analysis")
+                try values.encode(securityAndAnalysis, forKey: "security_and_analysis")
                 try values.encodeIfPresent(hasIssues, forKey: "has_issues")
                 try values.encodeIfPresent(hasProjects, forKey: "has_projects")
                 try values.encodeIfPresent(hasWiki, forKey: "has_wiki")
